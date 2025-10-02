@@ -326,15 +326,70 @@ function updateChart(data) {
   sensorChart.update();
 }
 
-/* ---------- Control Functions (Disabled for Cloud Dashboard) ---------- */
-function toggleFan1Mode() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function toggleFan1() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function toggleFan2Mode() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function toggleFan2() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function togglePump1Mode() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function togglePump1() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function togglePump2Mode() { alert("Controls disabled in cloud dashboard. Use local interface."); }
-function togglePump2() { alert("Controls disabled in cloud dashboard. Use local interface."); }
+/* ---------- Control Functions (Cloud-Enabled) ---------- */
+function toggleFan1Mode() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/fan1/mode";
+    client.send(message);
+  }
+}
+
+function toggleFan1() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/fan1/toggle";
+    client.send(message);
+  }
+}
+
+function toggleFan2Mode() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/fan2/mode";
+    client.send(message);
+  }
+}
+
+function toggleFan2() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/fan2/toggle";
+    client.send(message);
+  }
+}
+
+function togglePump1Mode() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/pump1/mode";
+    client.send(message);
+  }
+}
+
+function togglePump1() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/pump1/toggle";
+    client.send(message);
+  }
+}
+
+function togglePump2Mode() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/pump2/mode";
+    client.send(message);
+  }
+}
+
+function togglePump2() {
+  if (client && client.isConnected()) {
+    const message = new Paho.MQTT.Message("toggle");
+    message.destinationName = "avonic/pump2/toggle";
+    client.send(message);
+  }
+}
 
 /* ---------- Initialize on Page Load ---------- */
 window.onload = function() {
@@ -345,5 +400,6 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
