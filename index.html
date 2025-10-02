@@ -241,6 +241,18 @@ function updateDisplay(data) {
   document.getElementById('temp2').textContent = data.temp2 !== undefined ? data.temp2 : "--";
   document.getElementById('hum2').textContent = data.hum2 !== undefined ? data.hum2 : "--";
   
+  // Soil moisture
+  document.getElementById('soil1').textContent = data.soil1 !== undefined ? data.soil1 : "--";
+  document.getElementById('soil2').textContent = data.soil2 !== undefined ? data.soil2 : "--";
+  
+  // Gas sensors
+  document.getElementById('gas1').textContent = data.gas1 !== undefined ? data.gas1 : "--";
+  document.getElementById('gas2').textContent = data.gas2 !== undefined ? data.gas2 : "--";
+  
+  // DS18B20 and Ultrasonic
+  document.getElementById('ds18b20Temp').textContent = data.ds18b20 !== undefined ? data.ds18b20 : "--";
+  document.getElementById('ultrasonic').textContent = data.ultrasonic !== undefined ? data.ultrasonic : "--";
+  
   // Update timestamp
   const now = new Date().toLocaleTimeString();
   document.getElementById('lastUpdate').textContent = now;
@@ -254,8 +266,21 @@ function updateDisplay(data) {
   document.getElementById('status2').className = 'status ' + (sensor2_ok ? 'online' : 'offline');
   document.getElementById('status2').textContent = sensor2_ok ? 'ONLINE' : 'OFFLINE';
   
-  // Note: Other sensors (soil, gas, etc.) will update when ESP32 publishes them
-  // For now, we're only getting temp1, hum1, temp2, hum2 from your publishSensorData()
+  // Soil bars
+  let s1 = data.soil1 !== undefined ? data.soil1 : 0;
+  let s2 = data.soil2 !== undefined ? data.soil2 : 0;
+  document.getElementById('soilBar1').style.width = s1 + '%';
+  document.getElementById('soilBar2').style.width = s2 + '%';
+  document.getElementById('soilBar1').style.backgroundColor = getSoilColor(s1);
+  document.getElementById('soilBar2').style.backgroundColor = getSoilColor(s2);
+  
+  // Gas bars
+  let g1 = data.gas1 !== undefined ? data.gas1 : 0;
+  let g2 = data.gas2 !== undefined ? data.gas2 : 0;
+  document.getElementById('gasBar1').style.width = Math.min(g1 / 10, 100) + '%';
+  document.getElementById('gasBar2').style.width = Math.min(g2 / 10, 100) + '%';
+  document.getElementById('gasBar1').style.backgroundColor = getGasColor(g1);
+  document.getElementById('gasBar2').style.backgroundColor = getGasColor(g2);
 }
 
 /* ---------- Chart Functions ---------- */
@@ -320,4 +345,5 @@ window.onload = function() {
 
 </body>
 </html>
+
 
