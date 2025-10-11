@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <script src="chart.js"></script> <!-- Chart.js hosted locally -->
+    <script src="chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-            <!-- BIN 2 (unchanged) -->
+            <!-- BIN 2 -->
             <div class="bin-card">
                 <div class="bin-header">
                     <h2>BIN 2</h2>
@@ -133,6 +133,15 @@
                         <div class="pump-thresholds">Triggers: &gt;30C or &lt;30% humidity</div>
                     </div>
 
+                    <!-- Water Level Sensor -->
+                    <div class="sensor-item water-item">
+                        <div class="sensor-icon">Water</div>
+                        <div class="sensor-value"><span id="waterLevel">--</span><span class="unit">%</span></div>
+                        <div class="sensor-label">Water Level</div>
+                        <div class="optimal-range">Tank Status</div>
+                        <div class="water-bar-container"><div class="water-bar" id="waterBar"></div></div>
+                    </div>
+
                     <div class="sensor-item">
                         <div class="sensor-icon">DS18</div>
                         <div class="sensor-value"><span id="ds18b20Temp">--</span><span class="unit">°C</span></div>
@@ -167,7 +176,7 @@
 <script>
 /* ---------- MQTT Configuration ---------- */
 const MQTT_BROKER = "3fbd52903d154a689cae6941ba13bfcf.s1.eu.hivemq.cloud";
-const MQTT_PORT = 8884; // WebSocket Secure port
+const MQTT_PORT = 8884;
 const MQTT_USER = "avonic-system";
 const MQTT_PASS = "Avonic123";
 const MQTT_TOPIC = "avonic/sensors";
@@ -183,7 +192,7 @@ function connectMQTT() {
   client.onConnectionLost = function(responseObject) {
     console.log("MQTT Connection Lost:", responseObject.errorMessage);
     document.getElementById('lastUpdate').textContent = "DISCONNECTED";
-    setTimeout(connectMQTT, 5000); // Reconnect after 5s
+    setTimeout(connectMQTT, 5000);
   };
   
   client.onMessageArrived = function(message) {
@@ -205,7 +214,7 @@ function connectMQTT() {
       console.log("MQTT Connected!");
       document.getElementById('lastUpdate').textContent = "CONNECTED";
       client.subscribe(MQTT_TOPIC);
-      client.subscribe("avonic/#"); // Subscribe to all AVONIC topics
+      client.subscribe("avonic/#");
     },
     onFailure: function(err) {
       console.error("MQTT Connection Failed:", err);
@@ -239,47 +248,77 @@ function updateDisplay(data) {
   const bin1 = data.bin1 || {};
   const bin2 = data.bin2 || {};
   
-  document.getElementById('temp1').textContent = bin1.temp !== undefined ? bin1.temp.toFixed(1) : "--";
-  document.getElementById('hum1').textContent = bin1.humidity !== undefined ? bin1.humidity.toFixed(1) : "--";
-  document.getElementById('soil1').textContent = bin1.soil !== undefined ? bin1.soil : "--";
-  document.getElementById('gas1').textContent = bin1.gas !== undefined ? bin1.gas : "--";
+  // BIN 1
+  document.getElementById('temp1').textContent = (data.temp1 !== undefined) ? data.temp1.toFixed(1) : "--";
+  document.getElementById('hum1').textContent = (data.hum1 !== undefined) ? data.hum1.toFixed(1) : "--";
+  document.getElementById('soil1').textContent = (data.soil1_percent !== undefined) ? data.soil1_percent : "--";
+  document.getElementById('gas1').textContent = (data.gas1_ppm !== undefined) ? data.gas1_ppm : "--";
   
-  document.getElementById('temp2').textContent = bin2.temp !== undefined ? bin2.temp.toFixed(1) : "--";
-  document.getElementById('hum2').textContent = bin2.humidity !== undefined ? bin2.humidity.toFixed(1) : "--";
-  document.getElementById('soil2').textContent = bin2.soil !== undefined ? bin2.soil : "--";
-  document.getElementById('gas2').textContent = bin2.gas !== undefined ? bin2.gas : "--";
+  document.getElementById('fan1Status').textContent = data.fan1_current_state ? 'ON' : 'OFF';
+  document.getElementById('pump1Status').textContent = data.pump1_current_state ? 'ON' : 'OFF';
   
-  document.getElementById('ds18b20Temp').textContent = bin1.ds18b20 !== undefined ? bin1.ds18b20.toFixed(2) : "--";
-  document.getElementById('ultrasonic').textContent = bin1.ultrasonic !== undefined ? bin1.ultrasonic : "--";
+  document.getElementById('status1').className = 'status ' + (data.sensor1_ok ? 'online' : 'offline');
+  document.getElementById('status1').textContent = data.sensor1_ok ? 'ONLINE' : 'OFFLINE';
+  
+  // BIN 2
+  document.getElementById('temp2').textContent = (data.temp2 !== undefined) ? data.temp2.toFixed(1) : "--";
+  document.getElementById('hum2').textContent = (data.hum2 !== undefined) ? data.hum2.toFixed(1) : "--";
+  document.getElementById('soil2').textContent = (data.soil2_percent !== undefined) ? data.soil2_percent : "--";
+  document.getElementById('gas2').textContent = (data.gas2_ppm !== undefined) ? data.gas2_ppm : "--";
+  document.getElementById('ds18b20Temp').textContent = (data.ds18b20_temp !== undefined) ? data.ds18b20_temp.toFixed(1) : "--";
+  document.getElementById('ultrasonic').textContent = (data.ultrasonic !== undefined) ? data.ultrasonic : "--";
+  
+  // Water Level
+  document.getElementById('waterLevel').textContent = (data.water_level !== undefined) ? data.water_level : "--";
+  document.getElementById('waterBar').style.width = (data.water_level || 0) + '%';
+  
+  let waterColor = '#e74c3c';
+  if (data.water_level > 75) waterColor = '#27ae60';
+  else if (data.water_level > 50) waterColor = '#3498db';
+  else if (data.water_level > 25) waterColor = '#f39c12';
+  document.getElementById('waterBar').style.backgroundColor = waterColor;
+  
+  document.getElementById('fan2Status').textContent = data.fan2_current_state ? 'ON' : 'OFF';
+  document.getElementById('pump2Status').textContent = data.pump2_current_state ? 'ON' : 'OFF';
+  
+  document.getElementById('status2').className = 'status ' + (data.sensor2_ok ? 'online' : 'offline');
+  document.getElementById('status2').textContent = data.sensor2_ok ? 'ONLINE' : 'OFFLINE';
   
   // Update timestamp
   const now = new Date().toLocaleTimeString();
   document.getElementById('lastUpdate').textContent = now;
-  
-  // Update status indicators
-  const sensor1_ok = data.temp1 !== undefined && !isNaN(data.temp1);
-  const sensor2_ok = data.temp2 !== undefined && !isNaN(data.temp2);
-  
-  document.getElementById('status1').className = 'status ' + (sensor1_ok ? 'online' : 'offline');
-  document.getElementById('status1').textContent = sensor1_ok ? 'ONLINE' : 'OFFLINE';
-  document.getElementById('status2').className = 'status ' + (sensor2_ok ? 'online' : 'offline');
-  document.getElementById('status2').textContent = sensor2_ok ? 'ONLINE' : 'OFFLINE';
+  document.getElementById('rtcTime').textContent = data.rtc_time || "--";
   
   // Soil bars
-  let s1 = data.soil1 !== undefined ? data.soil1 : 0;
-  let s2 = data.soil2 !== undefined ? data.soil2 : 0;
-  document.getElementById('soilBar1').style.width = s1 + '%';
-  document.getElementById('soilBar2').style.width = s2 + '%';
-  document.getElementById('soilBar1').style.backgroundColor = getSoilColor(s1);
-  document.getElementById('soilBar2').style.backgroundColor = getSoilColor(s2);
+  document.getElementById('soilBar1').style.width = (data.soil1_percent || 0) + '%';
+  document.getElementById('soilBar1').style.backgroundColor = getSoilColor(data.soil1_percent || 0);
+  document.getElementById('soilBar2').style.width = (data.soil2_percent || 0) + '%';
+  document.getElementById('soilBar2').style.backgroundColor = getSoilColor(data.soil2_percent || 0);
   
   // Gas bars
-  let g1 = data.gas1 !== undefined ? data.gas1 : 0;
-  let g2 = data.gas2 !== undefined ? data.gas2 : 0;
-  document.getElementById('gasBar1').style.width = Math.min(g1 / 10, 100) + '%';
-  document.getElementById('gasBar2').style.width = Math.min(g2 / 10, 100) + '%';
-  document.getElementById('gasBar1').style.backgroundColor = getGasColor(g1);
-  document.getElementById('gasBar2').style.backgroundColor = getGasColor(g2);
+  document.getElementById('gasBar1').style.width = Math.min((data.gas1_ppm || 0) / 10, 100) + '%';
+  document.getElementById('gasBar1').style.backgroundColor = getGasColor(data.gas1_ppm || 0);
+  document.getElementById('gasBar2').style.width = Math.min((data.gas2_ppm || 0) / 10, 100) + '%';
+  document.getElementById('gasBar2').style.backgroundColor = getGasColor(data.gas2_ppm || 0);
+  
+  // Alerts
+  let alerts = [];
+  if (data.sensor1_ok && data.temp1 > 30) alerts.push('Bin 1: High temperature (' + data.temp1 + '°C) - needs cooling');
+  if (data.sensor2_ok && data.temp2 > 30) alerts.push('Bin 2: High temperature (' + data.temp2 + '°C) - needs cooling');
+  if (data.sensor1_ok && data.hum1 > 85) alerts.push('Bin 1: High humidity (' + data.hum1 + '%) - increase ventilation');
+  if (data.sensor2_ok && data.hum2 > 85) alerts.push('Bin 2: High humidity (' + data.hum2 + '%) - increase ventilation');
+  if (data.gas1_ppm > 400) alerts.push('Bin 1: High ammonia (' + data.gas1_ppm + 'ppm) - check feeding/moisture');
+  if (data.gas2_ppm > 400) alerts.push('Bin 2: High ammonia (' + data.gas2_ppm + 'ppm) - check feeding/moisture');
+  if (data.sensor2_ok && data.water_level < 20) alerts.push('Bin 2: Low water level (' + data.water_level + '%) - refill tank');
+
+  const alertsDiv = document.getElementById('alerts');
+  if (alerts.length) {
+    alertsDiv.innerHTML = '<h3>Environmental Alerts</h3>' + alerts.map(a => '<div class="alert">' + a + '</div>').join('');
+    alertsDiv.style.display = 'block';
+  } else {
+    alertsDiv.innerHTML = '<div class="success">All conditions optimal for African Nightcrawlers!</div>';
+    alertsDiv.style.display = 'block';
+  }
 }
 
 /* ---------- Chart Functions ---------- */
@@ -292,8 +331,8 @@ function initChart() {
       datasets: [
         { label: 'Temp1 (°C)', data: [], borderColor: 'red', fill: false },
         { label: 'Hum1 (%)', data: [], borderColor: 'blue', fill: false },
-        { label: 'Temp2 (°C)', data: [], borderColor: 'orange', fill: false },
-        { label: 'Hum2 (%)', data: [], borderColor: 'cyan', fill: false }
+        { label: 'Soil1 (%)', data: [], borderColor: 'green', fill: false },
+        { label: 'Gas1 (ppm)', data: [], borderColor: 'orange', fill: false }
       ]
     },
     options: {
@@ -313,10 +352,9 @@ function updateChart(data) {
   sensorChart.data.labels.push(now);
   sensorChart.data.datasets[0].data.push(data.temp1);
   sensorChart.data.datasets[1].data.push(data.hum1);
-  sensorChart.data.datasets[2].data.push(data.temp2);
-  sensorChart.data.datasets[3].data.push(data.hum2);
+  sensorChart.data.datasets[2].data.push(data.soil1_percent);
+  sensorChart.data.datasets[3].data.push(data.gas1_ppm);
   
-  // Keep only last 30 data points
   if (sensorChart.data.labels.length > 30) {
     sensorChart.data.labels.shift();
     sensorChart.data.datasets.forEach(ds => ds.data.shift());
@@ -325,7 +363,7 @@ function updateChart(data) {
   sensorChart.update();
 }
 
-/* ---------- Control Functions (Cloud-Enabled) ---------- */
+/* ---------- Control Functions ---------- */
 function toggleFan1Mode() {
   if (client && client.isConnected()) {
     const message = new Paho.MQTT.Message("toggle");
@@ -399,7 +437,3 @@ window.onload = function() {
 
 </body>
 </html>
-
-
-
-
