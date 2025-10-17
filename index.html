@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVONIC</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+      <!-- sidebar -->
+<nav>
+    <img class="main logo" src="/img/Avonic Logo.svg" alt="">
+    <img class="secondary logo" src="/img/icons/navIcons/Sample Logo Icon.svg" alt="">
+    <ul>
+        <li>
+            <a class="horizontal orientation" href="#/">
+                <img class="navIcon" src="/img/icons/navIcons/HomeIcon.svg" alt="">
+                <span class="navName">Home</span>
+            </a>
+        </li>
+        <li>
+            <a class="horizontal orientation" href="#/dashboard">
+                <img class="navIcon" src="/img/icons/navIcons/DashboardIcon.svg" alt="">
+                <span class="navName">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a class="horizontal orientation" href="#/help">
+                <img class="navIcon" src="/img/icons/navIcons/HelpIcon.svg" alt="">
+                <span class="navName">Help</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+
+    <!-- end of sidebar -->
+
+    <!-- HOME-->
+
+    <div class="content home active"> 
+
+        <img class = "main logo mobile" src="/img/Avonic Logo.svg" alt="">
+        <div class="page-header">Home</div>
+
+                <div class="machine_status">
+                    
+                        <div class="title-container">
+                            <h1>Machine Status</h1>
+                            <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt="">
+                        </div>
+                </div>
+                
+                        <div class="machine_status_container">
+                           
+                            <status-card
+                            dataType="battery"
+                            dataLabel="Battery"
+                            subDataLabel=" "
+                            dataUnit="%"
+                            icon="/img/icons/tankIcons/BatteryIcon.svg"
+                            ></status-card>
+
+                            <status-card
+                            dataType="water-tank"
+                            dataLabel="Water"
+                            subDataLabel=" "
+                            dataUnit="%"
+                            icon="/img/icons/tankIcons/WaterTankIcon.svg"
+                            ></status-card>
+
+                            <status-card
+                            dataType="water-temp"
+                            dataLabel="Water Temp"
+                            subDataLabel=""
+                            dataUnit="°C"
+                            icon="/img/icons/tankIcons/WaterTankIcon.svg"
+                            ></status-card>
+
+                             
+                             
+                        </div>
+
+                </div>
+
+
+                <div class="machine_status">
+                    <h1>Vermicompost Bins</h1>
+                    <div class="bin_container">
+<bin-card
+    bin_name="Bin 1"
+    indicator="/img/indicators/color coded mode indicator - auto.png"
+    mode="Auto-Mode"
+    navigateTo="#/bin?id=1">
+</bin-card>
+
+<bin-card
+    bin_name="Bin 2"
+    indicator="/img/indicators/color coded mode indicator - manual.png"
+    mode="Manual-Mode"
+    navigateTo="#/bin2">
+</bin-card>
+
+                    </div>
+                    
+                </div>
+
+        
+
+           
+
+        </div>
+
+
+
+    </div> 
+
+    
+<!-- inside-bins -->
+
+    <div class="content bin">
+
+    
+        <div class="wrapper">
+                     <img class = "main logo mobile inside-bins" src="/img/Avonic Logo.svg" alt="">
+                    <div class="bin_header_wrapper">
+                        
+                    <img class="back_btn" src="/img/icons/navIcons/backIcon.svg" alt="">
+                
+
+
+                    <h1 class="page-header bin">Monitoring</h1> 
+
+                 <mode-switcher>
+                 
+            </div>
+
+            <div class="bin_monitoring_indicator_card">
+            <div class="bin_name">Bin 1</div>
+            <img class="placeholder-icon" src="/img/more dummies/Placeholder icon.png" alt="">
+
+            </div>
+
+        <div class="bin_header_wrapper">
+             <div class="time-updated">Updated 10s Ago</div>
+             <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt=""></div>
+        </div>
+       
+
+   <div class="sensor-readings container">
+            <status-card
+                    class="sensor-reading"
+                    dataType="Sensors"
+                    dataLabel="Soil Moisture"
+                    subDataLabel=" "
+                    dataUnit="%"
+                    icon="/img/icons/sensorIcons/SoilMoistureIcon.svg"
+                    isClickable="true"
+                    showWaterPressure="true"
+                    showFanRPM="true"
+                    binId="1">  <!-- ✅ Add this -->
+                    ><template class="help">
+                    </template>
+                </status-card>
+             <status-card
+                     class="sensor-reading"
+                     dataType="Sensors"
+                     dataLabel="Temperature"
+                     subDataLabel=" "
+                     dataUnit="°C"
+                     icon="/img/icons/sensorIcons/TempIcon.svg"
+                     isClickable="true"
+                     showWaterPressure=""
+                     showFanRPM="true"
+                     binId="1">  <!-- ✅ Add this -->
+                    ></status-card>
+               <status-card
+                     class="sensor-reading"
+                     dataType="Sensors"
+                     dataLabel="Humidity"
+                     subDataLabel=" "
+                     dataUnit="%"
+                     icon="/img/icons/sensorIcons/HumidityIcon.svg"
+                     isClickable="true"
+                     showWaterPressure="true"
+                     showFanRPM="true"
+                     binId="1">  <!-- ✅ Add this -->
+                    ></status-card>
+<status-card
+                        class="sensor-reading"
+                        dataType="Sensors"
+                        dataLabel="Gas Level"
+                        subDataLabel=" "
+                        dataUnit="%"
+                        icon="/img/icons/sensorIcons/GasIcon.svg"
+                        isClickable="true"
+                        showWaterPressure=""
+                        showFanRPM="true"
+                        binId="1">  <!-- ✅ Add this -->
+                        ></status-card>
+
+        </div> <!-- Close sensor-readings container -->
+                        
+    </div> <!-- Close wrapper -->
+</div> <!-- Close content.bin -->
+
+<!-- BIN 2 PAGE -->
+<div class="content bin2">
+    <div class="wrapper">
+        <img class="main logo mobile inside-bins" src="/img/Avonic Logo.svg" alt="">
+        <div class="bin_header_wrapper">
+            <img class="back_btn" src="/img/icons/navIcons/backIcon.svg" alt="">
+            <h1 class="page-header bin">Monitoring</h1> 
+            <mode-switcher></mode-switcher>
+        </div>
+
+        <div class="bin_monitoring_indicator_card">
+            <div class="bin_name">Bin 2</div>
+            <img class="placeholder-icon" src="/img/more dummies/Placeholder icon.png" alt="">
+        </div>
+
+        <div class="bin_header_wrapper">
+            <div class="time-updated">Updated 10s Ago</div>
+            <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt=""></div>
+        </div>
+
+        <div class="sensor-readings container">
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Soil Moisture"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="/img/icons/sensorIcons/SoilMoistureIcon.svg"
+                isClickable="true"
+                showWaterPressure="true"
+                showFanRPM="true"
+                binId="2">
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Temperature"
+                subDataLabel=" "
+                dataUnit="°C"
+                icon="/img/icons/sensorIcons/TempIcon.svg"
+                isClickable="true"
+                showWaterPressure=""
+                showFanRPM="true"
+                binId="2">
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Humidity"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="/img/icons/sensorIcons/HumidityIcon.svg"
+                isClickable="true"
+                showWaterPressure="true"
+                showFanRPM="true"
+                binId="2">
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Gas Level"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="/img/icons/sensorIcons/GasIcon.svg"
+                isClickable="true"
+                showWaterPressure=""
+                showFanRPM="true"
+                binId="2">
+            </status-card>
+        </div> <!-- Close sensor-readings container -->
+    </div> <!-- Close wrapper -->
+</div> <!-- Close content.bin2 -->
+
+
+       <!-- end of inside-bins -->
+
+
+
+<!-- DASHBOARD PAGE -->
+ <div class="content dashboard">
+
+    <div class="upper-section">
+        <img class = "main logo mobile" src="/img/Avonic Logo.svg" alt="">
+     <div class="scroll-back-widget">
+            <img src="/img/icons/navIcons/ScrollBackIcon.svg" alt="">
+        </div>
+                  <div class="page-header">Dashboard</div>
+                    <div class="qi-title">
+                        <h1>Quick Insights</h1>
+                    <div class="insightsRefresh"><img src="/img/icons/refresh_icon.svg" class="refresh_icon" alt=""><span class="refresh-text">Refresh</span>
+                    </div>
+                </div>
+                
+
+                <div class="quick_insights_card_container">
+                    
+                    
+                       <qinsights-bin
+                        ic_name="Bin 1"
+                        ic_status="Stable"
+                        ic_moremsg=""
+                        is_clickable="true"
+                        >
+                        </qinsights-bin>
+
+                        <qinsights-bin
+                        ic_name="Bin 2"
+                        ic_status="Stable"
+                        ic_moremsg=""
+                        is_clickable="true"
+                        >
+                        </qinsights-bin>
+
+
+                </div>
+    </div>
+    
+
+                <section class="bin-fluctuations">
+                    <div class="bin-fluctuations-nav">
+
+                        <div class="bin-selection">
+                            <img class="arrow left" src="/img/indicators/Arrow.svg" alt="">
+                            <div class="bin">Bin 1</div>
+                            <img class="arrow right" src="/img/indicators/Arrow.svg" alt="">
+                        </div>
+
+                        <div class="bf-content">
+                             <div class="title">
+                                Bin Fluctuation
+                            </div>
+                            <div class="fluctuationDisplayDate">
+                                
+                                <p>July 12, 2025 - July 21, 2025</p>
+                            </div>
+                        </div>
+
+                        <div class="select-date">
+                            <img src="/img/calendarIcon.svg" alt="" class="calendar-icon">
+                            <p class="selection">Select Date</p>
+                        </div>
+                    
+                        
+                   
+                    
+                </div>
+                <section-sensor-fluctuation
+                sensor_name="Soil Moisture"
+                sensor_unit="%"
+                sensor_icon="SoilMoistureIcon">
+
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Temperature"
+                sensor_unit="°C"
+                sensor_icon="TempIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Humidity"
+                sensor_unit="%"
+                sensor_icon="HumidityIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                 
+                <section-sensor-fluctuation
+                sensor_name="Gas Levels"
+                sensor_unit="ppm"
+                sensor_icon="GasIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Temperature"
+                sensor_unit="°C"
+                sensor_icon="TempIcon">
+                    
+                </section-sensor-fluctuation>
+                 
+                
+                </section>
+                
+           <div class="mobile-nav-spacer"></div>
+          
+    </div>
+
+    </div>
+
+    <!-- END OF DASHBOARD PAGE -->
+    
+
+    <!-- HELP PAGE -->
+  <div class="content help">
+         
+        <div class="scroll-back-widget">
+            <img src="/img/icons/navIcons/ScrollBackIcon.svg" alt="">
+        </div>
+       <h1 id="page-header" class="page-header help-sec">Help Page</h1>
+        <div class="section help ">
+         
+        <section class="section get-to-know">
+            <div class="display-msg-help">
+                <span>Get to know</span>
+                <img class="logo-for-gtk" src="/img/Avonic Logo.svg" alt="">
+                <span class="sub-text-help">know the system’s objectives and purpose</span>
+            </div>
+            
+            <div class="btn">Get Started</div>
+        </section>
+
+           <section class="section user-manual">
+            <div class="display-msg-help">
+                
+                <span class="help-header">User Manual</span>
+                <span class="sub-text-help">How to use AVONIC Vermicompost System</span>
+            </div>
+            
+            <div class="btn">Get Started</div>
+        </section>
+
+         <section class="section troubleshoot">
+            <div class="display-msg-help">
+                <span class="help-header">Troubleshoot</span>
+                 
+                <span class="sub-text-help">How to fix basic system troubles</span>
+            </div>
+            
+            <div class="btn ts">Get Started</div>
+        </section>
+
+
+    
+     </div> 
+    
+ <!-- END OF HELP PAGE -->
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="js/url-router.js"></script>
+    <script src="js/main_components.js"></script>
+    <script src="js/dashboard_components.js"></script>
+    <script src="js/other_widgets.js"></script>
+    <script src="/js/data_integration.js"></script>
+
+    <script>
+// Debug: Check router initialization
+setTimeout(() => {
+    console.log('=== ROUTER DEBUG ===');
+    console.log('Router exists:', typeof window.router !== 'undefined');
+    console.log('Current hash:', window.location.hash);
+    console.log('Active pages:', document.querySelectorAll('.content.active').length);
+    console.log('===================');
+}, 1000);
+</script>
+
+</body>
+</body>
+</html>
+
