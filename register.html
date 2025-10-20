@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVONIC Registration</title>
+  <link rel="stylesheet" href="/auth.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 AVONIC System</h1>
+    <p class="subtitle">Register your device</p>
+    <div class="device-id">Device ID: <strong id="deviceId">Loading...</strong></div>
+    
+    <div id="message"></div>
+    
+    <form id="registerForm">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" required minlength="3" maxlength="20" 
+               placeholder="Enter username" pattern="[a-zA-Z0-9_]+">
+        <small>3-20 characters, alphanumeric only</small>
+      </div>
+      
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="your@email.com">
+      </div>
+      
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required minlength="6" placeholder="Min. 6 characters">
+      </div>
+      
+      <button type="submit" class="btn">Register</button>
+    </form>
+  </div>
+  
+  <script>
+    // Get device ID
+    fetch('/api/device-id')
+      .then(r => r.json())
+      .then(d => document.getElementById('deviceId').textContent = d.device_id);
+    
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn');
+      const msg = document.getElementById('message');
+      
+      btn.disabled = true;
+      btn.textContent = 'Registering...';
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      try {
+        const res = await fetch('/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(data)
+        });
+        
+        const json = await res.json();
+        
+        if (res.ok) {
+          msg.innerHTML = '<div class="success">' + json.message + '</div>';
+          setTimeout(() => {
+            msg.innerHTML += '<div class="success">Rebooting... Please connect to AVONIC-Setup WiFi</div>';
+          }, 2000);
+        } else {
+          msg.innerHTML = '<div class="error">' + json.error + '</div>';
+          btn.disabled = false;
+          btn.textContent = 'Register';
+        }
+      } catch (err) {
+        msg.innerHTML = '<div class="error">Connection error</div>';
+        btn.disabled = false;
+        btn.textContent = 'Register';
+      }
+    });
+  </script>
+</body>
+</html>
