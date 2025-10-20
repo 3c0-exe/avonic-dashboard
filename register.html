@@ -4,22 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AVONIC Registration</title>
-  <!-- ✅ FIXED: Removed leading slash -->
   <link rel="stylesheet" href="auth.css">
 </head>
 <body>
   <div class="container">
     <h1>🌱 AVONIC System</h1>
-    <p class="subtitle">Register your device</p>
-    <div class="device-id">Device ID: <strong id="deviceId">Loading...</strong></div>
+    <p class="subtitle">Register your account</p>
     
     <div id="message"></div>
     
     <form id="registerForm">
+      <!-- ✅ NEW: ESP Device ID Field -->
+      <div class="form-group">
+        <label>ESP Device ID</label>
+        <input type="text" name="deviceId" required 
+               placeholder="e.g., AA:BB:CC:DD:EE:FF" 
+               style="font-family: 'Courier New', monospace; text-transform: uppercase;">
+        <small>🔍 Find this on your ESP32 serial monitor or device label</small>
+      </div>
+      
       <div class="form-group">
         <label>Username</label>
         <input type="text" name="username" required minlength="3" maxlength="20" 
-               placeholder="Enter username" pattern="[a-zA-Z0-9_]+" autofocus>
+               placeholder="Enter username" pattern="[a-zA-Z0-9_]+">
         <small>3-20 characters, alphanumeric only</small>
       </div>
       
@@ -36,28 +43,17 @@
       <button type="submit" class="btn">Register</button>
     </form>
     
-    <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #666;">
-      ⚠️ This page registers your ESP32 device.<br>
-      Already registered? <a href="login.html" style="color: #667eea;">Login here</a>
+    <p style="text-align: center; margin-top: 20px;">
+      Already have an account? <a href="login.html" style="color: #667eea;">Login here</a>
     </p>
   </div>
   
   <script>
-    console.log('📄 ESP32 Registration Page Loaded');
+    // ✅ Your Railway backend
+    const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
     
-    // Get device ID from ESP32
-    fetch('/api/device-id')
-      .then(r => r.json())
-      .then(d => {
-        document.getElementById('deviceId').textContent = d.device_id;
-        console.log('✅ Device ID:', d.device_id);
-      })
-      .catch(e => {
-        document.getElementById('deviceId').textContent = 'Error loading';
-        console.error('❌ Failed to load device ID:', e);
-      });
+    console.log('📄 Online Registration Page Loaded');
     
-    // Handle registration form
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.btn');
@@ -70,37 +66,74 @@
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
       
-      console.log('📤 Sending registration to ESP32...');
+      // Convert ESP ID to uppercase
+      data.deviceId = data.deviceId.trim().toUpperCase();
+      
+      console.log('📤 Registering user for device:', data.deviceId);
       
       try {
-        // Register with ESP32
-        const res = await fetch('/register', {
+        // ✅ Call online registration endpoint
+        const res = await fetch(`${API_BASE}/api/register/online`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-          body: new URLSearchParams(data)
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            deviceId: data.deviceId,
+            username: data.username,
+            email: data.email,
+            password: data.password
+          })
         });
         
         const json = await res.json();
-        console.log('📦 ESP32 Response:', json);
+        console.log('📦 Response:', json);
         
-        if (res.ok) {
-          msg.innerHTML = '<div class="success">✅ ' + json.message + '</div>';
-          console.log('✅ Registration successful!');
+        if (res.ok && json.success) {
+          msg.innerHTML = `
+            <div class="success">
+              ✅ <strong>Registration Successful!</strong><br><br>
+              
+              <strong>📱 Device ID:</strong> ${data.deviceId}<br>
+              <strong>👤 Username:</strong> ${data.username}<br><br>
+              
+              <strong>Next Steps:</strong><br>
+              1️⃣ Make sure your ESP32 (${data.deviceId}) is connected to WiFi<br>
+              2️⃣ Wait 1-2 minutes for automatic sync<br>
+              3️⃣ You can now login both online and on your ESP32!<br><br>
+              
+              Redirecting to dashboard...
+            </div>
+          `;
           
-          setTimeout(() => {
-            msg.innerHTML += '<div class="success">🔄 Device rebooting...<br>Please connect to AVONIC-Setup WiFi to configure your network.</div>';
-          }, 2000);
+          // Store token for immediate web access
+          if (json.token) {
+            localStorage.setItem('avonic_token', json.token);
+            localStorage.setItem('avonic_user', JSON.stringify(json.user));
+            
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 5000);
+          } else {
+            setTimeout(() => {
+              window.location.href = 'login.html';
+            }, 5000);
+          }
+          
         } else {
-          msg.innerHTML = '<div class="error">❌ ' + json.error + '</div>';
+          msg.innerHTML = '<div class="error">❌ ' + (json.error || 'Registration failed') + '</div>';
           btn.disabled = false;
           btn.textContent = 'Register';
         }
       } catch (err) {
         console.error('❌ Registration error:', err);
-        msg.innerHTML = '<div class="error">❌ Connection error: ' + err.message + '</div>';
+        msg.innerHTML = '<div class="error">❌ Connection error: ' + err.message + '<br>Please check your internet connection.</div>';
         btn.disabled = false;
         btn.textContent = 'Register';
       }
+    });
+    
+    // Auto-format ESP ID as user types
+    document.querySelector('input[name="deviceId"]').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
     });
   </script>
 </body>
