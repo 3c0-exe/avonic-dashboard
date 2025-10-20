@@ -8,6 +8,8 @@ const routes = {
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'  // ✅ Add Bin 2 route
+    '/login': '.content.login',      // ✅ Added login page
+    '/register': '.content.register' // ✅ Added register page
 };
 
 // Current active page
@@ -140,5 +142,6 @@ window.router = {
     getCurrentPage: () => currentPage,
     routes
 };
+
 
 console.log('📦 url-router.js loaded');
