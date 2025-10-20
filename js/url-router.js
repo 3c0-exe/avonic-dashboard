@@ -7,13 +7,9 @@ const routes = {
     '/dashboard': '.content.dashboard',
     '/help': '.content.help',
     '/bin': '.content.bin',
-    '/bin2': '.content.bin2',
-    '/login': '.content.login',
-    '/register': '.content.register'
+    '/bin2': '.content.bin2'
+    // ✅ No login/register routes - those are separate HTML files
 };
-
-// Pages that don't require authentication
-const publicRoutes = ['/login', '/register'];
 
 // Current active page
 let currentPage = null;
@@ -24,11 +20,11 @@ function isAuthenticated() {
     return !!token; // Returns true if token exists
 }
 
-// ✅ Redirect to login if not authenticated
-function requireAuth(route) {
-    if (!publicRoutes.includes(route) && !isAuthenticated()) {
+// ✅ Redirect to login.html if not authenticated
+function requireAuth() {
+    if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.hash = '#/login';
+        window.location.href = 'login.html';  // ✅ Redirect to login.html
         return false;
     }
     return true;
@@ -37,6 +33,11 @@ function requireAuth(route) {
 // Initialize router
 function initRouter() {
     console.log('🚀 Router initialized');
+    
+    // ✅ Check auth FIRST before doing anything
+    if (!requireAuth()) {
+        return; // Stop here if not authenticated
+    }
     
     if (document.readyState === 'loading') {
         console.log('⏳ DOM still loading, waiting...');
@@ -58,18 +59,13 @@ function initRouter() {
 function handleRouteChange() {
     let hash = window.location.hash.slice(1); // Remove the #
     
-    // ✅ Default to LOGIN if no hash (not home!)
+    // ✅ Default to home if authenticated
     if (!hash || hash === '') {
-        hash = isAuthenticated() ? '/' : '/login';
+        hash = '/';
     }
     
     // Strip query parameters for route matching
     const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
-    
-    // ✅ Check authentication before showing page
-    if (!requireAuth(route)) {
-        return; // Auth check failed, already redirected to login
-    }
     
     // Find matching route
     const pageSelector = routes[route];
@@ -78,7 +74,7 @@ function handleRouteChange() {
         showPage(pageSelector, route);
     } else {
         console.warn(`⚠️ Route not found: ${route}, redirecting to home`);
-        window.location.hash = isAuthenticated() ? '#/' : '#/login';
+        window.location.hash = '#/';
     }
 }
 
@@ -148,7 +144,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.hash = '#/login';
+    window.location.href = 'login.html';  // ✅ Redirect to login.html
 }
 
 // Initialize router
