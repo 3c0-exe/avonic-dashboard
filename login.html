@@ -28,13 +28,13 @@
     </form>
     
     <p style="text-align: center; margin-top: 20px;">
-      Don't have an account? <a href="register.html">Register</a>
+      Don't have an account? <a href="register.html">Register via ESP32</a>
     </p>
   </div>
   
   <script>
-    // ✅ Your backend API URL
-    const API_BASE = 'avonic-main-hub-production.up.railway.app';
+    // ✅ FIXED: Added https:// protocol
+    const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
     
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -43,45 +43,55 @@
       
       btn.disabled = true;
       btn.textContent = 'Logging in...';
+      msg.innerHTML = '';
       
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
       
+      console.log('🔐 Attempting login with username:', data.username);
+      
       try {
-        // ✅ Call online backend
+        // ✅ Call your Railway backend
         const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             username: data.username,
             password: data.password
           })
         });
         
+        console.log('📡 Response status:', res.status);
         const json = await res.json();
+        console.log('📦 Response data:', json);
         
         if (res.ok && json.success) {
-          // ✅ Store token
+          // ✅ Store token and user info
           localStorage.setItem('avonic_token', json.token);
           localStorage.setItem('avonic_user', JSON.stringify(json.user));
           
+          msg.innerHTML = '<div class="success">✅ Login successful! Redirecting...</div>';
+          
           // ✅ Redirect to dashboard
-          window.location.href = 'index.html';
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
         } else {
-          msg.innerHTML = '<div class="error">' + (json.error || 'Login failed') + '</div>';
+          msg.innerHTML = '<div class="error">❌ ' + (json.error || 'Login failed') + '</div>';
           btn.disabled = false;
           btn.textContent = 'Login';
         }
       } catch (err) {
-        console.error('Login error:', err);
-        msg.innerHTML = '<div class="error">Connection error. Please try again.</div>';
+        console.error('❌ Login error:', err);
+        msg.innerHTML = '<div class="error">❌ Connection error: ' + err.message + '</div>';
         btn.disabled = false;
         btn.textContent = 'Login';
       }
     });
+    
+    console.log('✅ Login page loaded');
   </script>
 </body>
 </html>
-
-
-
