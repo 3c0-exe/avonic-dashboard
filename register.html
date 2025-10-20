@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AVONIC Registration</title>
+  <!-- ✅ FIXED: Removed leading slash -->
   <link rel="stylesheet" href="auth.css">
-  <script src="auth.js"></script>
 </head>
 <body>
   <div class="container">
@@ -19,7 +19,7 @@
       <div class="form-group">
         <label>Username</label>
         <input type="text" name="username" required minlength="3" maxlength="20" 
-               placeholder="Enter username" pattern="[a-zA-Z0-9_]+">
+               placeholder="Enter username" pattern="[a-zA-Z0-9_]+" autofocus>
         <small>3-20 characters, alphanumeric only</small>
       </div>
       
@@ -35,14 +35,29 @@
       
       <button type="submit" class="btn">Register</button>
     </form>
+    
+    <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #666;">
+      ⚠️ This page registers your ESP32 device.<br>
+      Already registered? <a href="login.html" style="color: #667eea;">Login here</a>
+    </p>
   </div>
   
   <script>
-    // Get device ID
+    console.log('📄 ESP32 Registration Page Loaded');
+    
+    // Get device ID from ESP32
     fetch('/api/device-id')
       .then(r => r.json())
-      .then(d => document.getElementById('deviceId').textContent = d.device_id);
+      .then(d => {
+        document.getElementById('deviceId').textContent = d.device_id;
+        console.log('✅ Device ID:', d.device_id);
+      })
+      .catch(e => {
+        document.getElementById('deviceId').textContent = 'Error loading';
+        console.error('❌ Failed to load device ID:', e);
+      });
     
+    // Handle registration form
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.btn');
@@ -50,11 +65,15 @@
       
       btn.disabled = true;
       btn.textContent = 'Registering...';
+      msg.innerHTML = '';
       
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
       
+      console.log('📤 Sending registration to ESP32...');
+      
       try {
+        // Register with ESP32
         const res = await fetch('/register', {
           method: 'POST',
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -62,26 +81,27 @@
         });
         
         const json = await res.json();
+        console.log('📦 ESP32 Response:', json);
         
         if (res.ok) {
-          msg.innerHTML = '<div class="success">' + json.message + '</div>';
+          msg.innerHTML = '<div class="success">✅ ' + json.message + '</div>';
+          console.log('✅ Registration successful!');
+          
           setTimeout(() => {
-            msg.innerHTML += '<div class="success">Rebooting... Please connect to AVONIC-Setup WiFi</div>';
+            msg.innerHTML += '<div class="success">🔄 Device rebooting...<br>Please connect to AVONIC-Setup WiFi to configure your network.</div>';
           }, 2000);
         } else {
-          msg.innerHTML = '<div class="error">' + json.error + '</div>';
+          msg.innerHTML = '<div class="error">❌ ' + json.error + '</div>';
           btn.disabled = false;
           btn.textContent = 'Register';
         }
       } catch (err) {
-        msg.innerHTML = '<div class="error">Connection error</div>';
+        console.error('❌ Registration error:', err);
+        msg.innerHTML = '<div class="error">❌ Connection error: ' + err.message + '</div>';
         btn.disabled = false;
         btn.textContent = 'Register';
       }
     });
   </script>
 </body>
-
 </html>
-
-
