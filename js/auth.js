@@ -1,7 +1,7 @@
 // auth.js - Authentication Handler for Hash-Based Routing
 // ✅ UPDATED TO MATCH YOUR BACKEND API
 
-const API_BASE = 'https://avonic-backend.railway.app'; // ← Your actual backend (no /api here)
+const API_BASE = 'avonic-main-hub-production.up.railway.app'; // ← Your actual backend (no /api here)
 
 // Handle Login Form Submission
 async function handleLogin(event) {
