@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AVONIC Login</title>
-  <link rel="stylesheet" href="/auth.css">
+  <link rel="stylesheet" href="auth.css">
 </head>
 <body>
   <div class="container">
@@ -26,9 +26,16 @@
       
       <button type="submit" class="btn">Login</button>
     </form>
+    
+    <p style="text-align: center; margin-top: 20px;">
+      Don't have an account? <a href="register.html">Register</a>
+    </p>
   </div>
   
   <script>
+    // ✅ Your backend API URL
+    const API_BASE = 'https://avonic-backend.railway.app';
+    
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.btn');
@@ -41,32 +48,37 @@
       const data = Object.fromEntries(formData);
       
       try {
-        const res = await fetch('/login', {
+        // ✅ Call online backend
+        const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-          body: new URLSearchParams(data)
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            username: data.username,
+            password: data.password
+          })
         });
         
         const json = await res.json();
         
-        if (res.ok) {
-          window.location.href = '/dashboard';
+        if (res.ok && json.success) {
+          // ✅ Store token
+          localStorage.setItem('avonic_token', json.token);
+          localStorage.setItem('avonic_user', JSON.stringify(json.user));
+          
+          // ✅ Redirect to dashboard
+          window.location.href = 'index.html';
         } else {
-          msg.innerHTML = '<div class="error">' + json.error + '</div>';
+          msg.innerHTML = '<div class="error">' + (json.error || 'Login failed') + '</div>';
           btn.disabled = false;
           btn.textContent = 'Login';
         }
       } catch (err) {
-        msg.innerHTML = '<div class="error">Connection error</div>';
+        console.error('Login error:', err);
+        msg.innerHTML = '<div class="error">Connection error. Please try again.</div>';
         btn.disabled = false;
         btn.textContent = 'Login';
       }
     });
   </script>
-  <script src="auth.js"></script>
 </body>
-
 </html>
-
-
-
