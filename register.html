@@ -7,46 +7,72 @@
   <link rel="stylesheet" href="auth.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🌱 AVONIC System</h1>
-    <p class="subtitle">Register your account</p>
-    
-    <div id="message"></div>
-    
-    <form id="registerForm">
-      <!-- Device ID Field (changes based on environment) -->
-      <div class="form-group" id="deviceIdGroup">
-        <label>ESP Device ID</label>
-        <input type="text" name="deviceId" id="deviceIdInput" required 
-               placeholder="Loading..." 
-               style="font-family: 'Courier New', monospace; text-transform: uppercase;">
-        <small id="deviceIdHelp">Loading device information...</small>
+  <div class="split-container">
+    <!-- LEFT SIDE - Illustration -->
+    <div class="illustration-side">
+      <div class="illustration-placeholder">
+        <!-- STANDBY CODE FOR ILLUSTRATION -->
+        <!-- TO ADD YOUR ILLUSTRATION:
+             Replace this div with:
+             <img src="/path/to/illustration.svg" alt="AVONIC" class="illustration-img">
+        -->
+        🌱 Add your illustration here
       </div>
-      
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" required minlength="3" maxlength="20" 
-               placeholder="Enter username" pattern="[a-zA-Z0-9_]+">
-        <small>3-20 characters, alphanumeric only</small>
+      <div class="brand-tagline">
+        Join the smart farming revolution.<br>Start growing today.
       </div>
-      
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" required placeholder="your@email.com">
+    </div>
+
+    <!-- RIGHT SIDE - Form -->
+    <div class="form-side">
+      <div class="form-container">
+        <div class="logo-container">
+          <img src="/data/img/Avonic Logo.svg" alt="AVONIC Logo">
+          <span class="logo-text">AVONIC</span>
+        </div>
+        
+        <h1>Get started</h1>
+        <p class="subtitle">Create your account</p>
+        
+        <div id="message"></div>
+        
+        <form id="registerForm">
+          <!-- Device ID Field (changes based on environment) -->
+          <div class="form-group" id="deviceIdGroup">
+            <label>ESP Device ID</label>
+            <input type="text" name="deviceId" id="deviceIdInput" required 
+                   placeholder="Loading..." 
+                   style="font-family: 'Courier New', monospace; text-transform: uppercase;">
+            <small id="deviceIdHelp">Loading device information...</small>
+          </div>
+          
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" required minlength="3" maxlength="20" 
+                   placeholder="Choose a username" pattern="[a-zA-Z0-9_]+">
+            <small>3-20 characters, alphanumeric only</small>
+          </div>
+          
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="your@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" required minlength="6" placeholder="Min. 6 characters">
+          </div>
+          
+          <button type="submit" class="btn">Register</button>
+        </form>
+        
+        <div class="divider"></div>
+        
+        <div class="register-prompt">
+          Already have an account? 
+          <a href="login.html" class="link-bold">Login here</a>
+        </div>
       </div>
-      
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required minlength="6" placeholder="Min. 6 characters">
-      </div>
-      
-      <button type="submit" class="btn">Register</button>
-    </form>
-    
-    <div style="text-align: center; margin-top: 20px;">
-      <a href="login.html" style="color: #667eea; font-size: 14px; text-decoration: none;">
-        Already have an account? <strong>Login here</strong>
-      </a>
     </div>
   </div>
   
