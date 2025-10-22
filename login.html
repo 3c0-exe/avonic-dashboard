@@ -7,32 +7,58 @@
   <link rel="stylesheet" href="auth.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🌱 AVONIC System</h1>
-    <p class="subtitle">Login to your dashboard</p>
-    
-    <div id="message"></div>
-    
-    <form id="loginForm">
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" required placeholder="Enter username" autofocus>
+  <div class="split-container">
+    <!-- LEFT SIDE - Illustration -->
+    <div class="illustration-side">
+      <div class="illustration-placeholder">
+        <!-- STANDBY CODE FOR ILLUSTRATION -->
+        <!-- TO ADD YOUR ILLUSTRATION:
+             Replace this div with:
+             <img src="/path/to/illustration.svg" alt="AVONIC" class="illustration-img">
+        -->
+        🌱 Add your illustration here
       </div>
-      
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required placeholder="Enter password">
+      <div class="brand-tagline">
+        Smart hydroponic monitoring.<br>Grow smarter, not harder.
       </div>
-      
-      <button type="submit" class="btn">Login</button>
-    </form>
-    
-    <a href="forgot-password.html" class="link">Forgot Password?</a>
-    
-    <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-      <a href="register.html" style="color: #4CAF50; font-size: 14px; text-decoration: none;">
-        Don't have an account? <strong>Register here</strong>
-      </a>
+    </div>
+
+    <!-- RIGHT SIDE - Form -->
+    <div class="form-side">
+      <div class="form-container">
+        <div class="logo-container">
+          <img src="/data/img/Avonic Logo.svg" alt="AVONIC Logo">
+          <span class="logo-text">AVONIC</span>
+        </div>
+        
+        <h1>Welcome back</h1>
+        <p class="subtitle">Login to your dashboard</p>
+        
+        <div id="message"></div>
+        
+        <form id="loginForm">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" required placeholder="Enter your username" autofocus>
+          </div>
+          
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" required placeholder="Enter your password">
+          </div>
+          
+          <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <a href="forgot-password.html" class="link">Forgot Password?</a>
+        
+        <div class="divider"></div>
+        
+        <div class="register-prompt">
+          Don't have an account? 
+          <a href="register.html" class="link-bold">Register here</a>
+        </div>
+      </div>
     </div>
   </div>
   
