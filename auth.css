@@ -514,3 +514,18 @@ input[name="resetCode"] {
     font-size: 0.9rem;
   }
 }
+
+/* ============================================
+   SECONDARY BUTTON (for Back button)
+   ============================================ */
+
+.btn-secondary {
+  background: var(--text-muted);
+  margin-top: var(--space-3);
+  box-shadow: 0 4px 12px rgba(72, 72, 72, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #333;
+  box-shadow: 0 6px 20px rgba(72, 72, 72, 0.35);
+}
