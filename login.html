@@ -27,15 +27,27 @@
       <button type="submit" class="btn">Login</button>
     </form>
     
-    <p style="text-align: center; margin-top: 20px;">
-      Don't have an account? <a href="register.html">Register via ESP32</a>
-    </p>
+    <a href="forgot-password.html" class="link">Forgot Password?</a>
+    
+    <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+      <a href="register.html" style="color: #4CAF50; font-size: 14px; text-decoration: none;">
+        Don't have an account? <strong>Register here</strong>
+      </a>
+    </div>
   </div>
   
   <script>
-    // ✅ FIXED: Added https:// protocol
-    const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
+    // === ENVIRONMENT DETECTION ===
+    const isESP32 = window.location.hostname.match(/192\.168\.|\.local/) || 
+                    window.location.port === '80' ||
+                    window.location.protocol === 'http:';
     
+    const API_BASE = isESP32 ? '' : 'https://avonic-main-hub-production.up.railway.app';
+    
+    console.log('🌍 Environment:', isESP32 ? 'ESP32 (Offline)' : 'GitHub Pages (Online)');
+    console.log('🔗 API Base:', API_BASE || 'Local ESP32');
+    
+    // === FORM SUBMISSION ===
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.btn');
@@ -48,38 +60,61 @@
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
       
-      console.log('🔐 Attempting login with username:', data.username);
+      console.log('🔐 Attempting login:', data.username);
       
       try {
-        // ✅ Call your Railway backend
-        const res = await fetch(`${API_BASE}/api/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: data.username,
-            password: data.password
-          })
-        });
+        let res, json;
+        
+        if (isESP32) {
+          // === ESP32 LOCAL LOGIN ===
+          res = await fetch('/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({
+              username: data.username,
+              password: data.password
+            })
+          });
+          json = await res.json();
+          
+        } else {
+          // === ONLINE LOGIN (via Railway) ===
+          res = await fetch(`${API_BASE}/api/login`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              username: data.username,
+              password: data.password
+            })
+          });
+          json = await res.json();
+        }
         
         console.log('📡 Response status:', res.status);
-        const json = await res.json();
         console.log('📦 Response data:', json);
         
-        if (res.ok && json.success) {
-          // ✅ Store token and user info
-          localStorage.setItem('avonic_token', json.token);
-          localStorage.setItem('avonic_user', JSON.stringify(json.user));
+        if (res.ok && (json.success || json.token)) {
+          // Store token and user info (works for both environments)
+          if (json.token) {
+            localStorage.setItem('avonic_token', json.token);
+          }
+          if (json.user) {
+            localStorage.setItem('avonic_user', JSON.stringify(json.user));
+          }
           
           msg.innerHTML = '<div class="success">✅ Login successful! Redirecting...</div>';
           
-          // ✅ Redirect to dashboard
+          // Redirect to dashboard
           setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 1000);
+            if (isESP32) {
+              window.location.href = '/dashboard';
+            } else {
+              window.location.href = 'index.html';
+            }
+          }, 800);
+          
         } else {
-          msg.innerHTML = '<div class="error">❌ ' + (json.error || 'Login failed') + '</div>';
+          msg.innerHTML = '<div class="error">❌ ' + (json.error || 'Invalid credentials') + '</div>';
           btn.disabled = false;
           btn.textContent = 'Login';
         }
