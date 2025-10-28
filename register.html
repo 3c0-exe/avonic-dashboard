@@ -152,7 +152,7 @@
           
         } else {
           // === ONLINE REGISTRATION (via Railway) ===
-          res = await fetch(`${API_BASE}/api/register/online`, {
+          res = await fetch(`${API_BASE}/api/register`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
