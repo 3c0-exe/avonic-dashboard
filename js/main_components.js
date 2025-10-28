@@ -1111,3 +1111,12 @@ document.addEventListener('DOMContentLoaded', () => {
     claimForm.addEventListener('submit', handleClaimSubmit);
   }
 });
+document.addEventListener('DOMContentLoaded', function() {
+  // Use delegation since form might not exist yet
+  document.body.addEventListener('submit', function(e) {
+    if (e.target.id === 'claimDeviceForm') {
+      e.preventDefault();
+      handleClaimSubmit(e);
+    }
+  });
+});
