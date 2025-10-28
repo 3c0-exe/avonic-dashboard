@@ -815,3 +815,299 @@ function showClaimAlert(message, type) {
 }
 
 console.log('✅ Claim device functionality loaded');
+
+// ====== ADD TO main_components.js ======
+
+// Function to load and render dashboard dynamically
+async function loadDashboard() {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    router.navigateTo('/');
+    return;
+  }
+
+  try {
+    // Fetch user's devices
+    const response = await fetch('https://avonic-backend-production.up.railway.app/api/devices', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch devices');
+
+    const data = await response.json();
+    const devices = data.devices || [];
+
+    // Get the container where we'll render devices
+    const quickInsightsContainer = document.querySelector('.quick_insights_card_container');
+    const binFluctuationsSection = document.querySelector('.bin-fluctuations');
+
+    if (!quickInsightsContainer || !binFluctuationsSection) return;
+
+    // Clear existing content
+    quickInsightsContainer.innerHTML = '';
+    binFluctuationsSection.innerHTML = '';
+
+    // Handle empty state
+    if (devices.length === 0) {
+      quickInsightsContainer.innerHTML = `
+        <div class="empty-state">
+          <h3>No Devices Claimed</h3>
+          <p>Claim your first device to start monitoring your compost bins!</p>
+          <button onclick="router.navigateTo('/claim-device')" class="btn-primary">
+            ➕ Claim Device
+          </button>
+        </div>
+      `;
+      binFluctuationsSection.style.display = 'none';
+      return;
+    }
+
+    // Render Quick Insights for all devices
+    devices.forEach(device => {
+      const espID = device.espID;
+      const nickname = device.nickname || 'Unclaimed Device';
+
+      // Create two bin cards per device
+      quickInsightsContainer.innerHTML += `
+        <qinsights-bin
+          ic_name="${nickname} - Bin 1"
+          ic_status="Stable"
+          ic_moremsg=""
+          is_clickable="true"
+          data-device-id="${espID}"
+          data-bin="1">
+        </qinsights-bin>
+
+        <qinsights-bin
+          ic_name="${nickname} - Bin 2"
+          ic_status="Stable"
+          ic_moremsg=""
+          is_clickable="true"
+          data-device-id="${espID}"
+          data-bin="2">
+        </qinsights-bin>
+      `;
+    });
+
+    // Render Bin Fluctuations section for the first device (default view)
+    if (devices.length > 0) {
+      renderBinFluctuations(devices[0], devices);
+    }
+
+  } catch (error) {
+    console.error('❌ Dashboard load error:', error);
+    showNotification('Failed to load devices', 'error');
+  }
+}
+
+// Render the bin fluctuations section for a specific device
+function renderBinFluctuations(device, allDevices) {
+  const binFluctuationsSection = document.querySelector('.bin-fluctuations');
+  const espID = device.espID;
+  const nickname = device.nickname || 'Unclaimed Device';
+
+  binFluctuationsSection.innerHTML = `
+    <div class="bin-fluctuations-nav">
+      <div class="device-selection">
+        <label for="device-select">Device:</label>
+        <select id="device-select" class="device-selector">
+          ${allDevices.map(d => `
+            <option value="${d.espID}" ${d.espID === espID ? 'selected' : ''}>
+              ${d.nickname || d.espID}
+            </option>
+          `).join('')}
+        </select>
+      </div>
+
+      <div class="bin-selection">
+        <img class="arrow left" src="img/indicators/Arrow.svg" alt="">
+        <div class="bin" id="current-bin">Bin 1</div>
+        <img class="arrow right" src="img/indicators/Arrow.svg" alt="">
+      </div>
+
+      <div class="bf-content">
+        <div class="title">Bin Fluctuation</div>
+        <div class="fluctuationDisplayDate">
+          <p>July 12, 2025 - July 21, 2025</p>
+        </div>
+      </div>
+
+      <div class="select-date">
+        <img src="img/calendarIcon.svg" alt="" class="calendar-icon">
+        <p class="selection">Select Date</p>
+      </div>
+    </div>
+
+    <section-sensor-fluctuation
+      sensor_name="Soil Moisture"
+      sensor_unit="%"
+      sensor_icon="SoilMoistureIcon"
+      data-device-id="${espID}"
+      data-bin="1">
+    </section-sensor-fluctuation>
+    <hr>
+    
+    <section-sensor-fluctuation
+      sensor_name="Temperature"
+      sensor_unit="°C"
+      sensor_icon="TempIcon"
+      data-device-id="${espID}"
+      data-bin="1">
+    </section-sensor-fluctuation>
+    <hr>
+    
+    <section-sensor-fluctuation
+      sensor_name="Humidity"
+      sensor_unit="%"
+      sensor_icon="HumidityIcon"
+      data-device-id="${espID}"
+      data-bin="1">
+    </section-sensor-fluctuation>
+    <hr>
+    
+    <section-sensor-fluctuation
+      sensor_name="Gas Levels"
+      sensor_unit="ppm"
+      sensor_icon="GasIcon"
+      data-device-id="${espID}"
+      data-bin="1">
+    </section-sensor-fluctuation>
+    <hr>
+    
+    <section-sensor-fluctuation
+      sensor_name="DS18B20 Temp"
+      sensor_unit="°C"
+      sensor_icon="TempIcon"
+      data-device-id="${espID}"
+      data-bin="1">
+    </section-sensor-fluctuation>
+  `;
+
+  // Add event listener for device selector
+  const deviceSelect = document.getElementById('device-select');
+  if (deviceSelect) {
+    deviceSelect.addEventListener('change', (e) => {
+      const selectedDevice = allDevices.find(d => d.espID === e.target.value);
+      if (selectedDevice) {
+        renderBinFluctuations(selectedDevice, allDevices);
+      }
+    });
+  }
+
+  // Add bin switching logic
+  let currentBin = 1;
+  const binDisplay = document.getElementById('current-bin');
+  const leftArrow = binFluctuationsSection.querySelector('.arrow.left');
+  const rightArrow = binFluctuationsSection.querySelector('.arrow.right');
+
+  leftArrow.addEventListener('click', () => {
+    if (currentBin > 1) {
+      currentBin--;
+      binDisplay.textContent = `Bin ${currentBin}`;
+      updateSensorBin(currentBin);
+    }
+  });
+
+  rightArrow.addEventListener('click', () => {
+    if (currentBin < 2) {
+      currentBin++;
+      binDisplay.textContent = `Bin ${currentBin}`;
+      updateSensorBin(currentBin);
+    }
+  });
+}
+
+// Update all sensor sections to show data for the selected bin
+function updateSensorBin(binNumber) {
+  const sensorSections = document.querySelectorAll('section-sensor-fluctuation');
+  sensorSections.forEach(section => {
+    section.setAttribute('data-bin', binNumber);
+    // Trigger data reload here if needed
+  });
+}
+
+// ====== ROUTER SETUP ======
+// Add this to your router initialization or where routes are defined
+
+// Listen for route changes
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash;
+  if (hash === '#/dashboard' || hash === '') {
+    setTimeout(() => loadDashboard(), 100);
+  }
+});
+
+// Initial load
+if (window.location.hash === '#/dashboard' || window.location.hash === '') {
+  setTimeout(() => loadDashboard(), 100);
+}
+
+
+// ====== ENHANCED CLAIM DEVICE HANDLER ======
+// Update your existing handleClaimSubmit to redirect to dashboard after claiming
+
+async function handleClaimSubmit(event) {
+  event.preventDefault();
+  
+  const espIDInput = document.getElementById('esp-device-id');
+  const nicknameInput = document.getElementById('device-nickname');
+  const submitButton = event.target.querySelector('button[type="submit"]');
+  const errorMessage = document.querySelector('.claim-error-message');
+
+  const espID = espIDInput.value.trim().toUpperCase();
+  const nickname = nicknameInput.value.trim() || 'My Compost Bin';
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    router.navigateTo('/');
+    return;
+  }
+
+  // Disable form
+  submitButton.disabled = true;
+  submitButton.textContent = 'Claiming...';
+  errorMessage.style.display = 'none';
+
+  try {
+    const response = await fetch('https://avonic-backend-production.up.railway.app/api/devices/claim', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ espID, nickname })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to claim device');
+    }
+
+    // Success! Show message and redirect
+    showNotification(`✅ Device "${nickname}" claimed successfully!`, 'success');
+    
+    setTimeout(() => {
+      router.navigateTo('/dashboard');
+      loadDashboard(); // Refresh dashboard
+    }, 1500);
+
+  } catch (error) {
+    console.error('❌ Claim error:', error);
+    errorMessage.textContent = error.message;
+    errorMessage.style.display = 'block';
+    submitButton.disabled = false;
+    submitButton.textContent = 'Claim Device';
+  }
+}
+
+// Make sure to attach this handler to your claim form
+document.addEventListener('DOMContentLoaded', () => {
+  const claimForm = document.querySelector('.claim-device-form');
+  if (claimForm) {
+    claimForm.addEventListener('submit', handleClaimSubmit);
+  }
+});

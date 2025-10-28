@@ -2118,3 +2118,81 @@ h1.page-header.help-sec {
 .btn.claim-device-nav:hover {
   transform: translateY(-2px);
 }
+/* ====== EMPTY STATE ====== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.btn-primary {
+  background: #F8B84E;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background: #e5a73d;
+  transform: translateY(-2px);
+}
+
+/* ====== DEVICE SELECTOR ====== */
+.device-selection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+
+.device-selection label {
+  font-weight: 600;
+  color: #333;
+}
+
+.device-selector {
+  padding: 8px 12px;
+  border: 2px solid #F8B84E;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.device-selector:focus {
+  outline: none;
+  border-color: #e5a73d;
+}
+
+/* ====== CLAIM ERROR MESSAGE ====== */
+.claim-error-message {
+  display: none;
+  background: #ff4444;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+  text-align: center;
+}
