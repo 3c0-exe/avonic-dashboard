@@ -720,3 +720,98 @@ sections.forEach(sec => observer.observe(sec));
 
 
  
+// ========== CLAIM DEVICE FUNCTIONALITY ==========
+
+// Auto-format ESP-ID input
+document.addEventListener('DOMContentLoaded', () => {
+  const espIDInput = document.getElementById('espID');
+  if (espIDInput) {
+    espIDInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
+    });
+  }
+});
+
+// Handle claim form submission
+document.addEventListener('DOMContentLoaded', () => {
+  const claimForm = document.getElementById('claimForm');
+  if (claimForm) {
+    claimForm.addEventListener('submit', handleClaimSubmit);
+  }
+});
+
+async function handleClaimSubmit(event) {
+  event.preventDefault();
+  
+  const espID = document.getElementById('espID').value.trim();
+  const alertBox = document.getElementById('claimAlertBox');
+  const claimBtn = document.getElementById('claimBtn');
+  const loadingSpinner = document.getElementById('claimLoadingSpinner');
+  const deviceInfo = document.getElementById('claimDeviceInfo');
+
+  // Validate ESP-ID format
+  if (!espID.startsWith('AVONIC-') || espID.length < 17) {
+    showClaimAlert('Please enter a valid ESP-ID (format: AVONIC-XXXXXXXXXXXX)', 'error');
+    return;
+  }
+
+  // Hide previous alerts
+  alertBox.style.display = 'none';
+  deviceInfo.style.display = 'none';
+
+  // Show loading
+  claimBtn.disabled = true;
+  loadingSpinner.style.display = 'block';
+
+  try {
+    const token = localStorage.getItem('avonic_token');
+    const API_BASE = window.location.origin;
+    
+    const response = await fetch(`${API_BASE}/api/devices/claim`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ espID })
+    });
+
+    const data = await response.json();
+    loadingSpinner.style.display = 'none';
+
+    if (response.ok) {
+      // Show success
+      document.getElementById('claimedESPID').textContent = data.device.espID;
+      document.getElementById('claimedNickname').textContent = data.device.nickname;
+      deviceInfo.style.display = 'block';
+
+      console.log('✅ Device claimed:', data.device);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.navigateTo('/dashboard');
+      }, 2000);
+
+    } else {
+      showClaimAlert(data.error || 'Failed to claim device', 'error');
+      claimBtn.disabled = false;
+    }
+
+  } catch (error) {
+    console.error('❌ Claim error:', error);
+    loadingSpinner.style.display = 'none';
+    showClaimAlert('Network error. Please check your connection.', 'error');
+    claimBtn.disabled = false;
+  }
+}
+
+function showClaimAlert(message, type) {
+  const alertBox = document.getElementById('claimAlertBox');
+  if (alertBox) {
+    alertBox.textContent = message;
+    alertBox.className = `alert ${type}`;
+    alertBox.style.display = 'block';
+  }
+}
+
+console.log('✅ Claim device functionality loaded');

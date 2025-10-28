@@ -5,6 +5,7 @@
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
+        '/claim-device': '.content.claim-device',  // ✅ ADD THIS
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
