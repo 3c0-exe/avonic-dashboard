@@ -1067,26 +1067,43 @@ async function fetchSensorData() {
 }
 
 // Update a card with sensor reading
+// Update cards with sensor reading
 function updateCardWithReading(reading) {
+  if (!reading || !reading.bin1 || !reading.bin2) return;
+  
   const cards = document.querySelectorAll('.card_stats');
   
   cards.forEach(card => {
     const dataType = card.dataset.type;
+    const binId = card.getAttribute('binId'); // Get which bin this card is for
     
     if (dataType === 'Sensors') {
-      const label = card.querySelector('.status_label').textContent;
+      const label = card.querySelector('.status_label')?.textContent || '';
       
-      if (label.includes('Soil Moisture') && reading.soilMoisture) {
-        setCardValue(card, reading.soilMoisture);
-      } else if (label.includes('Temperature') && reading.temperature) {
-        setCardValue(card, reading.temperature);
-      } else if (label.includes('Humidity') && reading.humidity) {
-        setCardValue(card, reading.humidity);
-      } else if (label.includes('Gas') && reading.gasLevel) {
-        setCardValue(card, reading.gasLevel);
+      // Determine which bin's data to use
+      const binData = binId === '2' ? reading.bin2 : reading.bin1;
+      
+      // Match sensor type and update
+      if (label.includes('Soil Moisture') && binData.soil !== undefined) {
+        setCardValue(card, binData.soil);
+      } else if (label.includes('Temperature') && binData.temp !== undefined) {
+        setCardValue(card, binData.temp);
+      } else if (label.includes('Humidity') && binData.humidity !== undefined) {
+        setCardValue(card, binData.humidity);
+      } else if (label.includes('Gas') && binData.gas !== undefined) {
+        setCardValue(card, binData.gas);
+      } else if (label.includes('DS18B20') && binData.ds18b20 !== undefined) {
+        setCardValue(card, binData.ds18b20);
       }
     }
+    
+    // Update water tank if present
+    if (dataType === 'water-tank' && reading.bin2?.water_level !== undefined) {
+      setCardValue(card, reading.bin2.water_level);
+    }
   });
+  
+  console.log('✅ Cards updated with latest readings');
 }
 
 // Auto-refresh every 5 seconds
@@ -1094,3 +1111,8 @@ setInterval(fetchSensorData, 5000);
 
 // Load on page load
 document.addEventListener('DOMContentLoaded', fetchSensorData);
+
+// Start fetching sensor data
+console.log('🔄 Starting sensor data polling...');
+fetchSensorData(); // Load immediately
+setInterval(fetchSensorData, 5000); // Then every 5 seconds
