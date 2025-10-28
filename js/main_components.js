@@ -1040,3 +1040,57 @@ document.body.addEventListener('click', function(e) {
 });
 
 console.log('✅ Claim device functionality loaded');
+
+// Fetch and display sensor data
+async function fetchSensorData() {
+  const token = localStorage.getItem('avonic_token');
+  if (!token) return;
+  
+  try {
+    const response = await fetch('https://avonic-main-hub-production.up.railway.app/api/sensors/latest', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (!response.ok) throw new Error('Failed to fetch');
+    
+    const data = await response.json();
+    
+    // Update each card with the latest reading
+    data.readings.forEach(reading => {
+      updateCardWithReading(reading);
+    });
+    
+    console.log('✅ Sensor data loaded:', data.readings.length, 'readings');
+  } catch (error) {
+    console.error('❌ Fetch sensor error:', error);
+  }
+}
+
+// Update a card with sensor reading
+function updateCardWithReading(reading) {
+  const cards = document.querySelectorAll('.card_stats');
+  
+  cards.forEach(card => {
+    const dataType = card.dataset.type;
+    
+    if (dataType === 'Sensors') {
+      const label = card.querySelector('.status_label').textContent;
+      
+      if (label.includes('Soil Moisture') && reading.soilMoisture) {
+        setCardValue(card, reading.soilMoisture);
+      } else if (label.includes('Temperature') && reading.temperature) {
+        setCardValue(card, reading.temperature);
+      } else if (label.includes('Humidity') && reading.humidity) {
+        setCardValue(card, reading.humidity);
+      } else if (label.includes('Gas') && reading.gasLevel) {
+        setCardValue(card, reading.gasLevel);
+      }
+    }
+  });
+}
+
+// Auto-refresh every 5 seconds
+setInterval(fetchSensorData, 5000);
+
+// Load on page load
+document.addEventListener('DOMContentLoaded', fetchSensorData);
