@@ -720,101 +720,6 @@ sections.forEach(sec => observer.observe(sec));
 
 
  
-// ========== CLAIM DEVICE FUNCTIONALITY ==========
-
-// Auto-format ESP-ID input
-document.addEventListener('DOMContentLoaded', () => {
-  const espIDInput = document.getElementById('espID');
-  if (espIDInput) {
-    espIDInput.addEventListener('input', (e) => {
-      e.target.value = e.target.value.toUpperCase();
-    });
-  }
-});
-
-// Handle claim form submission
-document.addEventListener('DOMContentLoaded', () => {
-  const claimForm = document.getElementById('claimForm');
-  if (claimForm) {
-    claimForm.addEventListener('submit', handleClaimSubmit);
-  }
-});
-
-async function handleClaimSubmit(event) {
-  event.preventDefault();
-  
-  const espID = document.getElementById('espID').value.trim();
-  const alertBox = document.getElementById('claimAlertBox');
-  const claimBtn = document.getElementById('claimBtn');
-  const loadingSpinner = document.getElementById('claimLoadingSpinner');
-  const deviceInfo = document.getElementById('claimDeviceInfo');
-
-  // Validate ESP-ID format
-  if (!espID.startsWith('AVONIC-') || espID.length < 17) {
-    showClaimAlert('Please enter a valid ESP-ID (format: AVONIC-XXXXXXXXXXXX)', 'error');
-    return;
-  }
-
-  // Hide previous alerts
-  alertBox.style.display = 'none';
-  deviceInfo.style.display = 'none';
-
-  // Show loading
-  claimBtn.disabled = true;
-  loadingSpinner.style.display = 'block';
-
-  try {
-    const token = localStorage.getItem('avonic_token');
-  const API_BASE = "https://avonic-main-hub-production.up.railway.app";
-    
-    const response = await fetch(`${API_BASE}/api/devices/claim`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ espID })
-    });
-
-    const data = await response.json();
-    loadingSpinner.style.display = 'none';
-
-    if (response.ok) {
-      // Show success
-      document.getElementById('claimedESPID').textContent = data.device.espID;
-      document.getElementById('claimedNickname').textContent = data.device.nickname;
-      deviceInfo.style.display = 'block';
-
-      console.log('✅ Device claimed:', data.device);
-
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        router.navigateTo('/dashboard');
-      }, 2000);
-
-    } else {
-      showClaimAlert(data.error || 'Failed to claim device', 'error');
-      claimBtn.disabled = false;
-    }
-
-  } catch (error) {
-    console.error('❌ Claim error:', error);
-    loadingSpinner.style.display = 'none';
-    showClaimAlert('Network error. Please check your connection.', 'error');
-    claimBtn.disabled = false;
-  }
-}
-
-function showClaimAlert(message, type) {
-  const alertBox = document.getElementById('claimAlertBox');
-  if (alertBox) {
-    alertBox.textContent = message;
-    alertBox.className = `alert ${type}`;
-    alertBox.style.display = 'block';
-  }
-}
-
-console.log('✅ Claim device functionality loaded');
 
 // ====== ADD TO main_components.js ======
 
@@ -849,6 +754,93 @@ async function loadDashboard() {
     // Clear existing content
     quickInsightsContainer.innerHTML = '';
     binFluctuationsSection.innerHTML = '';
+
+    // ====== CLAIM DEVICE HANDLER ======
+async function handleClaimSubmit(event) {
+  event.preventDefault();
+  console.log('🎯 Claim form submitted!'); // Debug log
+  
+  const espID = document.getElementById('espID').value.trim();
+  const alertBox = document.getElementById('claimAlertBox');
+  const claimBtn = document.getElementById('claimBtn');
+  const loadingSpinner = document.getElementById('claimLoadingSpinner');
+  const deviceInfo = document.getElementById('claimDeviceInfo');
+
+  // Validate ESP-ID format
+  if (!espID.startsWith('AVONIC-') || espID.length < 17) {
+    showClaimAlert('Please enter a valid ESP-ID (format: AVONIC-XXXXXXXXXXXX)', 'error');
+    return;
+  }
+
+  // Hide previous alerts
+  alertBox.style.display = 'none';
+  deviceInfo.style.display = 'none';
+
+  // Show loading
+  claimBtn.disabled = true;
+  loadingSpinner.style.display = 'block';
+
+  try {
+    const token = localStorage.getItem('avonic_token');
+    const API_BASE = "https://avonic-main-hub-production.up.railway.app";
+    
+    const response = await fetch(`${API_BASE}/api/devices/claim`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ espID })
+    });
+
+    const data = await response.json();
+    loadingSpinner.style.display = 'none';
+
+    if (response.ok) {
+      // Show success
+      document.getElementById('claimedESPID').textContent = data.device.espID;
+      document.getElementById('claimedNickname').textContent = data.device.nickname || 'My Compost Bin';
+      deviceInfo.style.display = 'block';
+
+      console.log('✅ Device claimed:', data.device);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.navigateTo('/dashboard');
+      }, 2000);
+
+    } else {
+      showClaimAlert(data.error || 'Failed to claim device', 'error');
+      claimBtn.disabled = false;
+    }
+
+  } catch (error) {
+    console.error('❌ Claim error:', error);
+    loadingSpinner.style.display = 'none';
+    showClaimAlert('Network error. Please check your connection.', 'error');
+    claimBtn.disabled = false;
+  }
+}
+
+function showClaimAlert(message, type) {
+  const alertBox = document.getElementById('claimAlertBox');
+  if (alertBox) {
+    alertBox.textContent = message;
+    alertBox.className = `alert ${type}`;
+    alertBox.style.display = 'block';
+  }
+}
+
+// ====== ATTACH EVENT LISTENER USING DELEGATION ======
+// This works because document.body is always present
+document.body.addEventListener('submit', function(e) {
+  if (e.target.id === 'claimForm') {
+    console.log('📋 Claim form detected via delegation');
+    handleClaimSubmit(e);
+  }
+});
+
+console.log('✅ Claim device functionality loaded');
 
     // Handle empty state
     if (devices.length === 0) {
@@ -1045,78 +1037,3 @@ if (window.location.hash === '#/dashboard' || window.location.hash === '') {
   setTimeout(() => loadDashboard(), 100);
 }
 
-
-// ====== ENHANCED CLAIM DEVICE HANDLER ======
-// Update your existing handleClaimSubmit to redirect to dashboard after claiming
-
-async function handleClaimSubmit(event) {
-  event.preventDefault();
-  
-  const espIDInput = document.getElementById('esp-device-id');
-  const nicknameInput = document.getElementById('device-nickname');
-  const submitButton = event.target.querySelector('button[type="submit"]');
-  const errorMessage = document.querySelector('.claim-error-message');
-
-  const espID = espIDInput.value.trim().toUpperCase();
-  const nickname = nicknameInput.value.trim() || 'My Compost Bin';
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    router.navigateTo('/');
-    return;
-  }
-
-  // Disable form
-  submitButton.disabled = true;
-  submitButton.textContent = 'Claiming...';
-  errorMessage.style.display = 'none';
-
-  try {
-    const response = await fetch('https://avonic-backend-production.up.railway.app/api/devices/claim', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ espID, nickname })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to claim device');
-    }
-
-    // Success! Show message and redirect
-    showNotification(`✅ Device "${nickname}" claimed successfully!`, 'success');
-    
-    setTimeout(() => {
-      router.navigateTo('/dashboard');
-      loadDashboard(); // Refresh dashboard
-    }, 1500);
-
-  } catch (error) {
-    console.error('❌ Claim error:', error);
-    errorMessage.textContent = error.message;
-    errorMessage.style.display = 'block';
-    submitButton.disabled = false;
-    submitButton.textContent = 'Claim Device';
-  }
-}
-
-// Make sure to attach this handler to your claim form
-document.addEventListener('DOMContentLoaded', () => {
-  const claimForm = document.querySelector('.claim-device-form');
-  if (claimForm) {
-    claimForm.addEventListener('submit', handleClaimSubmit);
-  }
-});
-document.addEventListener('DOMContentLoaded', function() {
-  // Use delegation since form might not exist yet
-  document.body.addEventListener('submit', function(e) {
-    if (e.target.id === 'claimDeviceForm') {
-      e.preventDefault();
-      handleClaimSubmit(e);
-    }
-  });
-});
