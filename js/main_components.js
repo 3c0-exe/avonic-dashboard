@@ -765,7 +765,7 @@ async function handleClaimSubmit(event) {
 
   try {
     const token = localStorage.getItem('avonic_token');
-    const API_BASE = window.location.origin;
+  const API_BASE = "https://avonic-main-hub-production.up.railway.app";
     
     const response = await fetch(`${API_BASE}/api/devices/claim`, {
       method: 'POST',
