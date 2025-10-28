@@ -756,8 +756,13 @@ async function loadDashboard() {
     binFluctuationsSection.innerHTML = '';
 
     // ====== CLAIM DEVICE HANDLER ======
+// ====== CLAIM DEVICE HANDLER ======
 async function handleClaimSubmit(event) {
-  event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
   console.log('🎯 Claim form submitted!'); // Debug log
   
   const espID = document.getElementById('espID').value.trim();

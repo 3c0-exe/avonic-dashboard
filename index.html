@@ -422,28 +422,27 @@
 
       <div id="claimAlertBox" class="alert" style="display:none;"></div>
 
-      <form id="claimForm">
-        <div class="form-group">
-          <label for="espID">ESP Device ID</label>
-          <input 
-            type="text" 
-            id="espID" 
-            name="espID" 
-            placeholder="e.g., AVONIC-A1B2C3D4E5F6"
-            maxlength="22"
-            required
-            autocomplete="off"
-          >
-        </div>
+ <form id="claimForm">
+  <div class="form-group">
+    <label for="espID">ESP Device ID</label>
+    <input 
+      type="text" 
+      id="espID" 
+      placeholder="e.g., AVONIC-A1B2C3D4E5F6"
+      maxlength="22"
+      required
+      autocomplete="off"
+    >
+  </div>
 
-        <button type="submit" class="btn claim" id="claimBtn">
-          🎯 Claim This Device
-        </button>
+  <button type="button" class="btn claim" id="claimBtn" onclick="handleClaimSubmit(event)">
+    🎯 Claim This Device
+  </button>
 
-        <button type="button" class="btn skip" onclick="router.navigateTo('/dashboard')">
-          Skip for now - I'll claim later
-        </button>
-      </form>
+  <button type="button" class="btn skip" onclick="router.navigateTo('/dashboard')">
+    Skip for now - I'll claim later
+  </button>
+</form>
 
       <div class="loading-spinner" id="claimLoadingSpinner" style="display:none;">
         <div class="spinner"></div>
