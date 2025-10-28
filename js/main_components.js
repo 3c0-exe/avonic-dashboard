@@ -951,15 +951,14 @@ if (window.location.hash === '#/dashboard' || window.location.hash === '') {
   setTimeout(() => loadDashboard(), 100);
 }
 
-  // ====== CLAIM DEVICE HANDLER ======
-// ====== CLAIM DEVICE HANDLER ======
+ // ====== CLAIM DEVICE HANDLER ======
 async function handleClaimSubmit(event) {
   if (event) {
     event.preventDefault();
     event.stopPropagation();
   }
   
-  console.log('🎯 Claim form submitted!'); // Debug log
+  console.log('🎯 Claim button clicked!');
   
   const espID = document.getElementById('espID').value.trim();
   const alertBox = document.getElementById('claimAlertBox');
@@ -974,16 +973,18 @@ async function handleClaimSubmit(event) {
   }
 
   // Hide previous alerts
-  alertBox.style.display = 'none';
-  deviceInfo.style.display = 'none';
+  if (alertBox) alertBox.style.display = 'none';
+  if (deviceInfo) deviceInfo.style.display = 'none';
 
   // Show loading
   claimBtn.disabled = true;
-  loadingSpinner.style.display = 'block';
+  if (loadingSpinner) loadingSpinner.style.display = 'block';
 
   try {
     const token = localStorage.getItem('avonic_token');
     const API_BASE = "https://avonic-main-hub-production.up.railway.app";
+    
+    console.log('📡 Sending claim request for:', espID);
     
     const response = await fetch(`${API_BASE}/api/devices/claim`, {
       method: 'POST',
@@ -995,19 +996,17 @@ async function handleClaimSubmit(event) {
     });
 
     const data = await response.json();
-    loadingSpinner.style.display = 'none';
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
 
     if (response.ok) {
-      // Show success
       document.getElementById('claimedESPID').textContent = data.device.espID;
       document.getElementById('claimedNickname').textContent = data.device.nickname || 'My Compost Bin';
-      deviceInfo.style.display = 'block';
+      if (deviceInfo) deviceInfo.style.display = 'block';
 
       console.log('✅ Device claimed:', data.device);
 
-      // Redirect after 2 seconds
       setTimeout(() => {
-        router.navigateTo('/dashboard');
+        window.location.hash = '#/dashboard';
       }, 2000);
 
     } else {
@@ -1017,7 +1016,7 @@ async function handleClaimSubmit(event) {
 
   } catch (error) {
     console.error('❌ Claim error:', error);
-    loadingSpinner.style.display = 'none';
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
     showClaimAlert('Network error. Please check your connection.', 'error');
     claimBtn.disabled = false;
   }
@@ -1032,11 +1031,10 @@ function showClaimAlert(message, type) {
   }
 }
 
-// ====== ATTACH EVENT LISTENER USING DELEGATION ======
-// This works because document.body is always present
-document.body.addEventListener('submit', function(e) {
-  if (e.target.id === 'claimForm') {
-    console.log('📋 Claim form detected via delegation');
+// ====== BUTTON CLICK LISTENER (not form submit) ======
+document.body.addEventListener('click', function(e) {
+  if (e.target.id === 'claimBtn') {
+    console.log('🔘 Claim button clicked via delegation!');
     handleClaimSubmit(e);
   }
 });
