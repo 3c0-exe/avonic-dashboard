@@ -755,97 +755,6 @@ async function loadDashboard() {
     quickInsightsContainer.innerHTML = '';
     binFluctuationsSection.innerHTML = '';
 
-    // ====== CLAIM DEVICE HANDLER ======
-// ====== CLAIM DEVICE HANDLER ======
-async function handleClaimSubmit(event) {
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
-  console.log('🎯 Claim form submitted!'); // Debug log
-  
-  const espID = document.getElementById('espID').value.trim();
-  const alertBox = document.getElementById('claimAlertBox');
-  const claimBtn = document.getElementById('claimBtn');
-  const loadingSpinner = document.getElementById('claimLoadingSpinner');
-  const deviceInfo = document.getElementById('claimDeviceInfo');
-
-  // Validate ESP-ID format
-  if (!espID.startsWith('AVONIC-') || espID.length < 17) {
-    showClaimAlert('Please enter a valid ESP-ID (format: AVONIC-XXXXXXXXXXXX)', 'error');
-    return;
-  }
-
-  // Hide previous alerts
-  alertBox.style.display = 'none';
-  deviceInfo.style.display = 'none';
-
-  // Show loading
-  claimBtn.disabled = true;
-  loadingSpinner.style.display = 'block';
-
-  try {
-    const token = localStorage.getItem('avonic_token');
-    const API_BASE = "https://avonic-main-hub-production.up.railway.app";
-    
-    const response = await fetch(`${API_BASE}/api/devices/claim`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ espID })
-    });
-
-    const data = await response.json();
-    loadingSpinner.style.display = 'none';
-
-    if (response.ok) {
-      // Show success
-      document.getElementById('claimedESPID').textContent = data.device.espID;
-      document.getElementById('claimedNickname').textContent = data.device.nickname || 'My Compost Bin';
-      deviceInfo.style.display = 'block';
-
-      console.log('✅ Device claimed:', data.device);
-
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        router.navigateTo('/dashboard');
-      }, 2000);
-
-    } else {
-      showClaimAlert(data.error || 'Failed to claim device', 'error');
-      claimBtn.disabled = false;
-    }
-
-  } catch (error) {
-    console.error('❌ Claim error:', error);
-    loadingSpinner.style.display = 'none';
-    showClaimAlert('Network error. Please check your connection.', 'error');
-    claimBtn.disabled = false;
-  }
-}
-
-function showClaimAlert(message, type) {
-  const alertBox = document.getElementById('claimAlertBox');
-  if (alertBox) {
-    alertBox.textContent = message;
-    alertBox.className = `alert ${type}`;
-    alertBox.style.display = 'block';
-  }
-}
-
-// ====== ATTACH EVENT LISTENER USING DELEGATION ======
-// This works because document.body is always present
-document.body.addEventListener('submit', function(e) {
-  if (e.target.id === 'claimForm') {
-    console.log('📋 Claim form detected via delegation');
-    handleClaimSubmit(e);
-  }
-});
-
-console.log('✅ Claim device functionality loaded');
 
     // Handle empty state
     if (devices.length === 0) {
@@ -1042,3 +951,94 @@ if (window.location.hash === '#/dashboard' || window.location.hash === '') {
   setTimeout(() => loadDashboard(), 100);
 }
 
+  // ====== CLAIM DEVICE HANDLER ======
+// ====== CLAIM DEVICE HANDLER ======
+async function handleClaimSubmit(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  console.log('🎯 Claim form submitted!'); // Debug log
+  
+  const espID = document.getElementById('espID').value.trim();
+  const alertBox = document.getElementById('claimAlertBox');
+  const claimBtn = document.getElementById('claimBtn');
+  const loadingSpinner = document.getElementById('claimLoadingSpinner');
+  const deviceInfo = document.getElementById('claimDeviceInfo');
+
+  // Validate ESP-ID format
+  if (!espID.startsWith('AVONIC-') || espID.length < 17) {
+    showClaimAlert('Please enter a valid ESP-ID (format: AVONIC-XXXXXXXXXXXX)', 'error');
+    return;
+  }
+
+  // Hide previous alerts
+  alertBox.style.display = 'none';
+  deviceInfo.style.display = 'none';
+
+  // Show loading
+  claimBtn.disabled = true;
+  loadingSpinner.style.display = 'block';
+
+  try {
+    const token = localStorage.getItem('avonic_token');
+    const API_BASE = "https://avonic-main-hub-production.up.railway.app";
+    
+    const response = await fetch(`${API_BASE}/api/devices/claim`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ espID })
+    });
+
+    const data = await response.json();
+    loadingSpinner.style.display = 'none';
+
+    if (response.ok) {
+      // Show success
+      document.getElementById('claimedESPID').textContent = data.device.espID;
+      document.getElementById('claimedNickname').textContent = data.device.nickname || 'My Compost Bin';
+      deviceInfo.style.display = 'block';
+
+      console.log('✅ Device claimed:', data.device);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.navigateTo('/dashboard');
+      }, 2000);
+
+    } else {
+      showClaimAlert(data.error || 'Failed to claim device', 'error');
+      claimBtn.disabled = false;
+    }
+
+  } catch (error) {
+    console.error('❌ Claim error:', error);
+    loadingSpinner.style.display = 'none';
+    showClaimAlert('Network error. Please check your connection.', 'error');
+    claimBtn.disabled = false;
+  }
+}
+
+function showClaimAlert(message, type) {
+  const alertBox = document.getElementById('claimAlertBox');
+  if (alertBox) {
+    alertBox.textContent = message;
+    alertBox.className = `alert ${type}`;
+    alertBox.style.display = 'block';
+  }
+}
+
+// ====== ATTACH EVENT LISTENER USING DELEGATION ======
+// This works because document.body is always present
+document.body.addEventListener('submit', function(e) {
+  if (e.target.id === 'claimForm') {
+    console.log('📋 Claim form detected via delegation');
+    handleClaimSubmit(e);
+  }
+});
+
+console.log('✅ Claim device functionality loaded');
