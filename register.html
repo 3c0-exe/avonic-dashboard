@@ -11,11 +11,6 @@
     <!-- LEFT SIDE - Illustration -->
     <div class="illustration-side">
       <div class="illustration-placeholder">
-        <!-- STANDBY CODE FOR ILLUSTRATION -->
-        <!-- TO ADD YOUR ILLUSTRATION:
-             Replace this div with:
-             <img src="/path/to/illustration.svg" alt="AVONIC" class="illustration-img">
-        -->
         🌱 Add your illustration here
       </div>
       <div class="brand-tagline">
@@ -36,15 +31,6 @@
         <div id="message"></div>
         
         <form id="registerForm">
-          <!-- Device ID Field (changes based on environment) -->
-          <div class="form-group" id="deviceIdGroup">
-            <label>ESP Device ID</label>
-            <input type="text" name="deviceId" id="deviceIdInput" required 
-                   placeholder="Loading..." 
-                   style="font-family: 'Courier New', monospace; text-transform: uppercase;">
-            <small id="deviceIdHelp">Loading device information...</small>
-          </div>
-          
           <div class="form-group">
             <label>Username</label>
             <input type="text" name="username" required minlength="3" maxlength="20" 
@@ -76,49 +62,8 @@
   </div>
   
   <script>
-    // === ENVIRONMENT DETECTION ===
-    const isESP32 = window.location.hostname.match(/192\.168\.|\.local/) || 
-                    window.location.port === '80' ||
-                    window.location.protocol === 'http:';
+    const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
     
-    const API_BASE = isESP32 ? '' : 'https://avonic-main-hub-production.up.railway.app';
-    
-    console.log('🌍 Environment:', isESP32 ? 'ESP32 (Offline)' : 'GitHub Pages (Online)');
-    console.log('🔗 API Base:', API_BASE || 'Local ESP32');
-    
-    // === DEVICE ID SETUP ===
-    const deviceIdInput = document.getElementById('deviceIdInput');
-    const deviceIdHelp = document.getElementById('deviceIdHelp');
-    
-    if (isESP32) {
-      // ESP32: Auto-fetch device ID and make it read-only
-      fetch('/api/device-id')
-        .then(r => r.json())
-        .then(d => {
-          deviceIdInput.value = d.device_id;
-          deviceIdInput.readOnly = true;
-          deviceIdInput.style.backgroundColor = '#f5f5f5';
-          deviceIdInput.style.cursor = 'not-allowed';
-          deviceIdHelp.textContent = '✅ Your device ID (auto-detected)';
-        })
-        .catch(() => {
-          deviceIdInput.value = 'UNKNOWN';
-          deviceIdInput.readOnly = true;
-          deviceIdHelp.textContent = '⚠️ Could not detect device ID';
-        });
-    } else {
-      // Online: Manual input with instructions
-      deviceIdInput.placeholder = 'e.g., AA:BB:CC:DD:EE:FF';
-      deviceIdInput.readOnly = false;
-      deviceIdHelp.innerHTML = '🔍 Find this on your ESP32 device label or serial monitor';
-      
-      // Auto-format as user types
-      deviceIdInput.addEventListener('input', (e) => {
-        e.target.value = e.target.value.toUpperCase();
-      });
-    }
-    
-    // === FORM SUBMISSION ===
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.btn');
@@ -130,77 +75,40 @@
       
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
-      data.deviceId = data.deviceId.trim().toUpperCase();
       
-      console.log('📤 Registering:', isESP32 ? 'Local ESP32' : 'Online', '→ User:', data.username);
+      console.log('📤 Registering user:', data.username);
       
       try {
-        let res, json;
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            username: data.username,
+            email: data.email,
+            password: data.password
+          })
+        });
         
-        if (isESP32) {
-          // === ESP32 LOCAL REGISTRATION ===
-          res = await fetch('/register', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({
-              username: data.username,
-              email: data.email,
-              password: data.password
-            })
-          });
-          json = await res.json();
-          
-        } else {
-          // === ONLINE REGISTRATION (via Railway) ===
-          res = await fetch(`${API_BASE}/api/register`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              deviceId: data.deviceId,
-              username: data.username,
-              email: data.email,
-              password: data.password
-            })
-          });
-          json = await res.json();
-        }
-        
+        const json = await res.json();
         console.log('📦 Response:', json);
         
-        if (res.ok && (json.success || json.message)) {
-          if (isESP32) {
-            // ESP32: Show success and redirect to login
-            msg.innerHTML = '<div class="success">✅ ' + (json.message || 'Registration successful!') + '</div>';
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 1500);
-          } else {
-            // Online: Store token and show detailed success message
-            msg.innerHTML = `
-              <div class="success">
-                ✅ <strong>Registration Successful!</strong><br><br>
-                <strong>📱 Device ID:</strong> ${data.deviceId}<br>
-                <strong>👤 Username:</strong> ${data.username}<br><br>
-                <strong>Next Steps:</strong><br>
-                1️⃣ Make sure your ESP32 (${data.deviceId}) is connected to WiFi<br>
-                2️⃣ Wait 1-2 minutes for automatic sync<br>
-                3️⃣ You can now login both online and on your ESP32!<br><br>
-                Redirecting to dashboard...
-              </div>
-            `;
-            
-            if (json.token) {
-              localStorage.setItem('avonic_token', json.token);
-              localStorage.setItem('avonic_user', JSON.stringify(json.user));
-              setTimeout(() => {
-                window.location.href = 'index.html#/claim-device';
-              }, 5000);
-            } else {
-              setTimeout(() => {
-                window.location.href = 'login.html';
-              }, 5000);
-            }
-          }
+        if (res.ok && json.token) {
+          msg.innerHTML = `
+            <div class="success">
+              ✅ <strong>Account Created!</strong><br><br>
+              Welcome, ${data.username}! 🎉<br><br>
+              Redirecting to claim your device...
+            </div>
+          `;
+          
+          // Store token and redirect to claim page
+          localStorage.setItem('avonic_token', json.token);
+          localStorage.setItem('avonic_user', JSON.stringify(json.user));
+          
+          setTimeout(() => {
+            window.location.href = 'index.html#/claim-device';
+          }, 2000);
+          
         } else {
           msg.innerHTML = '<div class="error">❌ ' + (json.error || 'Registration failed') + '</div>';
           btn.disabled = false;
@@ -208,7 +116,7 @@
         }
       } catch (err) {
         console.error('❌ Registration error:', err);
-        msg.innerHTML = '<div class="error">❌ Connection error: ' + err.message + '<br>Please check your connection.</div>';
+        msg.innerHTML = '<div class="error">❌ Connection error. Please try again.</div>';
         btn.disabled = false;
         btn.textContent = 'Register';
       }
@@ -218,6 +126,3 @@
   </script>
 </body>
 </html>
-
-
-
