@@ -422,7 +422,6 @@
 
       <div id="claimAlertBox" class="alert" style="display:none;"></div>
 
-      <!-- NO FORM TAG - Just input and buttons -->
       <div class="claim-form-wrapper">
         <div class="form-group">
           <label for="espID">ESP Device ID</label>
@@ -435,11 +434,66 @@
           >
         </div>
 
-        <button type="button" class="btn claim" id="claimBtn">
+        <button type="button" class="btn claim" id="claimBtn" onclick="
+          (async function() {
+            const espID = document.getElementById('espID').value.trim();
+            const claimBtn = document.getElementById('claimBtn');
+            const loadingSpinner = document.getElementById('claimLoadingSpinner');
+            const alertBox = document.getElementById('claimAlertBox');
+            
+            console.log('🎯 Inline claim clicked for:', espID);
+            
+            if (!espID.startsWith('AVONIC-') || espID.length < 17) {
+              alertBox.textContent = 'Please enter a valid ESP-ID';
+              alertBox.className = 'alert error';
+              alertBox.style.display = 'block';
+              return;
+            }
+            
+            claimBtn.disabled = true;
+            loadingSpinner.style.display = 'block';
+            alertBox.style.display = 'none';
+            
+            try {
+              const token = localStorage.getItem('avonic_token');
+              const response = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claim', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ espID })
+              });
+              
+              const data = await response.json();
+              loadingSpinner.style.display = 'none';
+              
+              if (response.ok) {
+                document.getElementById('claimedESPID').textContent = data.device.espID;
+                document.getElementById('claimedNickname').textContent = data.device.nickname || 'My Compost Bin';
+                document.getElementById('claimDeviceInfo').style.display = 'block';
+                console.log('✅ Device claimed!');
+                setTimeout(() => { window.location.hash = '#/dashboard'; }, 2000);
+              } else {
+                alertBox.textContent = data.error || 'Failed to claim device';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                claimBtn.disabled = false;
+              }
+            } catch (error) {
+              console.error('❌ Error:', error);
+              loadingSpinner.style.display = 'none';
+              alertBox.textContent = 'Network error. Please try again.';
+              alertBox.className = 'alert error';
+              alertBox.style.display = 'block';
+              claimBtn.disabled = false;
+            }
+          })();
+        ">
           🎯 Claim This Device
         </button>
 
-        <button type="button" class="btn skip" onclick="router.navigateTo('/dashboard')">
+        <button type="button" class="btn skip" onclick="window.location.hash = '#/dashboard'">
           Skip for now - I'll claim later
         </button>
       </div>
@@ -467,7 +521,6 @@
     </div>
   </div>
 </div>
-
     <!-- HELP PAGE -->
   <div class="content help">
          
