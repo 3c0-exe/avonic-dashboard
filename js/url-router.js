@@ -57,13 +57,16 @@ function initRouter() {
 }
 
 // Handle route changes
+// Handle route changes
 function handleRouteChange() {
     let hash = window.location.hash.slice(1); // Remove the #
     
-    // ✅ Default to home if authenticated
+    // ✅ Default to DASHBOARD (not home) if authenticated
     if (!hash || hash === '') {
-        hash = '/';
+        hash = '/dashboard';  // ✅ Changed from '/'
     }
+    
+    // ... rest stays the same
     
     // Strip query parameters for route matching
     const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
