@@ -39,6 +39,12 @@ function initRouter() {
     if (!requireAuth()) {
         return; // Stop here if not authenticated
     }
+
+        // ✅ ADD THIS: Remove active class from home on load
+    const homePage = document.querySelector('.content.home');
+    if (homePage) {
+        homePage.classList.remove('active');
+    }
     
     if (document.readyState === 'loading') {
         console.log('⏳ DOM still loading, waiting...');
@@ -57,16 +63,13 @@ function initRouter() {
 }
 
 // Handle route changes
-// Handle route changes
 function handleRouteChange() {
-    let hash = window.location.hash.slice(1); // Remove the #
+    let hash = window.location.hash.slice(1);
     
     // ✅ Default to DASHBOARD (not home) if authenticated
     if (!hash || hash === '') {
-        hash = '/dashboard';  // ✅ Changed from '/'
+        hash = '/dashboard';  // ✅ This line is correct
     }
-    
-    // ... rest stays the same
     
     // Strip query parameters for route matching
     const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
@@ -86,26 +89,20 @@ function handleRouteChange() {
 function showPage(selector, route) {
     console.log(`📄 Navigating to: ${route}`);
     
-    // Hide all pages first
-    Object.values(routes).forEach(pageSelector => {
-        const page = document.querySelector(pageSelector);
-        if (page) {
-            page.style.display = 'none';
-        }
+    // Remove active from all pages
+    document.querySelectorAll('.content').forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none';
     });
     
-    // Show the requested page
+    // Show target page
     const targetPage = document.querySelector(selector);
     if (targetPage) {
+        targetPage.classList.add('active');
         targetPage.style.display = 'block';
         currentPage = route;
-        
-        // Update active navigation state
         updateActiveNav(route);
-        
-        // Scroll to top of page
         window.scrollTo(0, 0);
-        
         console.log(`✅ Page displayed: ${route}`);
     } else {
         console.error(`❌ Page element not found: ${selector}`);
