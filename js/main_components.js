@@ -941,13 +941,13 @@ function updateSensorBin(binNumber) {
 // Listen for route changes
 window.addEventListener('hashchange', () => {
   const hash = window.location.hash;
-  if (hash === '#/dashboard' || hash === '') {
+  if (hash === '#/dashboard') {
     setTimeout(() => loadDashboard(), 100);
   }
 });
 
-// Initial load
-if (window.location.hash === '#/dashboard' || window.location.hash === '') {
+// Initial load - ONLY if explicitly on dashboard
+if (window.location.hash === '#/dashboard') {
   setTimeout(() => loadDashboard(), 100);
 }
 
