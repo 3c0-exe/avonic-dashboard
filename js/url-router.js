@@ -61,22 +61,33 @@ function initRouter() {
     }
 }
 
+// Prevent infinite loop
+let isNavigating = false;
+
 // Handle route changes
 function handleRouteChange() {
+    // Prevent re-entry while already navigating
+    if (isNavigating) {
+        console.log('⏭️ Already navigating, skipping...');
+        return;
+    }
+    
+    isNavigating = true;
+    
     let hash = window.location.hash.slice(1);
     
     // ✅ Default to DASHBOARD (not home) if authenticated
     if (!hash || hash === '' || hash === '/') {
-        // Prevent infinite loop by checking if we're already trying to go to dashboard
+        hash = '/dashboard';
         if (window.location.hash !== '#/dashboard') {
             window.location.hash = '#/dashboard';
-            return; // Let the hashchange event handle the rest
+            isNavigating = false;
+            return;
         }
-        hash = '/dashboard';
     }
     
     // Strip query parameters for route matching
-    const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
+    const route = hash.split('?')[0];
     
     // Find matching route
     const pageSelector = routes[route];
@@ -87,6 +98,11 @@ function handleRouteChange() {
         console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
         window.location.hash = '#/dashboard';
     }
+    
+    // Reset navigation flag after a short delay
+    setTimeout(() => {
+        isNavigating = false;
+    }, 100);
 }
 
 // Show specific page and hide all others
