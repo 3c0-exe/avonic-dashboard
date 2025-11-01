@@ -5,10 +5,11 @@
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
-    '/claim-device': '.content.claim-device',
+        '/claim-device': '.content.claim-device',  // ✅ ADD THIS
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
+    // ✅ No login/register routes - those are separate HTML files
 };
 
 // Current active page
@@ -24,7 +25,7 @@ function isAuthenticated() {
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'login.html';
+        window.location.href = 'login.html';  // ✅ Redirect to login.html
         return false;
     }
     return true;
@@ -39,11 +40,11 @@ function initRouter() {
         return; // Stop here if not authenticated
     }
 
-    // ✅ Hide ALL pages initially to prevent flickering
-    document.querySelectorAll('.content').forEach(page => {
-        page.classList.remove('active');
-        page.style.display = 'none';
-    });
+        // ✅ ADD THIS: Remove active class from home on load
+    const homePage = document.querySelector('.content.home');
+    if (homePage) {
+        homePage.classList.remove('active');
+    }
     
     if (document.readyState === 'loading') {
         console.log('⏳ DOM still loading, waiting...');
@@ -65,11 +66,9 @@ function initRouter() {
 function handleRouteChange() {
     let hash = window.location.hash.slice(1);
     
-    // ✅ Default to DASHBOARD if no hash AND authenticated
-    if (!hash || hash === '' || hash === '/') {
-        console.log('📍 No hash detected, defaulting to dashboard');
-        hash = '/dashboard';
-        window.location.hash = '#/dashboard'; // Set the hash explicitly
+    // ✅ Default to DASHBOARD (not home) if authenticated
+    if (!hash || hash === '') {
+        hash = '/dashboard';  // ✅ This line is correct
     }
     
     // Strip query parameters for route matching
@@ -81,8 +80,8 @@ function handleRouteChange() {
     if (pageSelector) {
         showPage(pageSelector, route);
     } else {
-        console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
-        window.location.hash = '#/dashboard';
+        console.warn(`⚠️ Route not found: ${route}, redirecting to home`);
+        window.location.hash = '#/';
     }
 }
 
@@ -146,7 +145,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.href = 'login.html';
+    window.location.href = 'login.html';  // ✅ Redirect to login.html
 }
 
 // Initialize router
