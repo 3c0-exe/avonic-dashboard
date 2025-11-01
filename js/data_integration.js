@@ -371,11 +371,6 @@ async function initializeDashboardCharts() {
 let refreshInterval;
 
 function startAutoRefresh() {
-  // Clear any existing interval first
-  if (refreshInterval) {
-    clearInterval(refreshInterval);
-  }
-  
   // Refresh sensor data every 5 seconds
   refreshInterval = setInterval(() => {
     fetchLatestSensorData();
@@ -387,7 +382,6 @@ function startAutoRefresh() {
 function stopAutoRefresh() {
   if (refreshInterval) {
     clearInterval(refreshInterval);
-    refreshInterval = null;
     console.log('⏸️ Auto-refresh stopped');
   }
 }
@@ -420,20 +414,11 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// 🔥 FIX: Prevent infinite loop by tracking last hash
-let lastDashboardHash = '';
-
+// Reload charts when navigating to dashboard
 window.addEventListener('hashchange', () => {
-  const currentHash = window.location.hash;
-  
-  // Only initialize charts if we're navigating TO dashboard (not already there)
-  if (currentHash === '#/dashboard' && lastDashboardHash !== '#/dashboard') {
-    console.log('📊 Navigating to dashboard - loading charts');
+  if (window.location.hash === '#/dashboard') {
     setTimeout(initializeDashboardCharts, 500);
   }
-  
-  // Update last hash
-  lastDashboardHash = currentHash;
 });
 
 // Export functions for global use
