@@ -1,4 +1,4 @@
-// dashboardPage
+// dashboard_components.js - FIXED VERSION (No dummy data)
 
 class BinQInsightscard extends HTMLElement {
   
@@ -158,48 +158,28 @@ class BinQInsightscard extends HTMLElement {
           `,
           helpContent: `
             <p>This section gives more insight about <b>${ic_name}</b>.</p>
-            <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
           `,
-          syncValues: {}, // not needed here unless you want live syncing
+          syncValues: {},
           card: cardElement
         });
       });
     }
 
     }
-
-
-    
 }
 
 customElements.define("qinsights-bin", BinQInsightscard)
 
 
+// ✅ FIXED: Chart component WITHOUT dummy data
 class sensorFluctuationSection extends HTMLElement {
   connectedCallback() {
     const sensor_name = this.getAttribute("sensor_name");
     const sensor_unit = this.getAttribute("sensor_unit");
     const sensor_icon = this.getAttribute("sensor_icon");
 
-    // unique canvas ID per component
+    // Unique canvas ID per component
     const chartId = `chart-${sensor_name.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).slice(2,7)}`;
 
     this.innerHTML = `
@@ -252,66 +232,14 @@ class sensorFluctuationSection extends HTMLElement {
       </section> 
     `;
 
-    // Example dataset (later: pass dynamically)
-    const data = [12, 19, 3, 5, 2, 3, 5];
+    // ✅ REMOVED: No more dummy data initialization
+    // ✅ REMOVED: No chart.js rendering here
+    // The chart will be populated by data_integration.js
 
-    // compute stats
-    const minVal = Math.min(...data);
-    const maxVal = Math.max(...data);
-    const aveVal = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
-
-    // update summary values
-    this.querySelector(`#${chartId}-min`).textContent = minVal;
-    this.querySelector(`#${chartId}-ave`).textContent = aveVal;
-    this.querySelector(`#${chartId}-max`).textContent = maxVal;
-
-    // render Chart
-    const ctx = this.querySelector(`#${chartId}`);
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['7/11','7/12','7/13','7/14','7/15','7/16','7/17'],
-        datasets: [{
-          label: `average per day`,
-          data: data,
-          backgroundColor: '#F8B84E',
-          borderColor: '#00000080', // subtle border
-          borderWidth: 1.2,
-          borderRadius: 8,
-          barThickness: 35,
-        }]
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            anchor: 'end',
-            align: 'end',
-            color: 'black',
-            
-            font: { size: 12, weight: 'bold' },
-            formatter: (value) => `${value} ${sensor_unit}`
-          }
-        },
-        scales: {
-          x: {
-            ticks: { font: { size: 10, weight: 'bold', family: 'Arial' }, color: 'black' }
-          },
-          y: {
-            min: 0, max: 20,
-            ticks: { display: false },
-            grid: { display: false, drawBorder: false }
-          }
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      },
-       elements: {
-      bar: {
-        borderSkipped: false // ensures rounded corners on all sides
-      }
-    },
-      plugins: [ChartDataLabels]
-    });
+    // Store metadata for later use
+    this.chartId = chartId;
+    this.sensorName = sensor_name;
+    this.sensorUnit = sensor_unit;
   }
 }
 
