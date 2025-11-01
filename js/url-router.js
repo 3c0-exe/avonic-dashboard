@@ -5,10 +5,11 @@
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
-    '/claim-device': '.content.claim-device',
+        '/claim-device': '.content.claim-device',  // ✅ ADD THIS
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
+    // ✅ No login/register routes - those are separate HTML files
 };
 
 // Current active page
@@ -24,7 +25,7 @@ function isAuthenticated() {
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'login.html';
+        window.location.href = 'login.html';  // ✅ Redirect to login.html
         return false;
     }
     return true;
@@ -39,7 +40,7 @@ function initRouter() {
         return; // Stop here if not authenticated
     }
 
-    // ✅ Remove active class from home on load
+        // ✅ ADD THIS: Remove active class from home on load
     const homePage = document.querySelector('.content.home');
     if (homePage) {
         homePage.classList.remove('active');
@@ -61,33 +62,17 @@ function initRouter() {
     }
 }
 
-// Prevent infinite loop
-let isNavigating = false;
-
 // Handle route changes
 function handleRouteChange() {
-    // Prevent re-entry while already navigating
-    if (isNavigating) {
-        console.log('⏭️ Already navigating, skipping...');
-        return;
-    }
-    
-    isNavigating = true;
-    
     let hash = window.location.hash.slice(1);
     
     // ✅ Default to DASHBOARD (not home) if authenticated
-    if (!hash || hash === '' || hash === '/') {
-        hash = '/dashboard';
-        if (window.location.hash !== '#/dashboard') {
-            window.location.hash = '#/dashboard';
-            isNavigating = false;
-            return;
-        }
+    if (!hash || hash === '') {
+        hash = '/dashboard';  // ✅ This line is correct
     }
     
     // Strip query parameters for route matching
-    const route = hash.split('?')[0];
+    const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
     
     // Find matching route
     const pageSelector = routes[route];
@@ -95,14 +80,9 @@ function handleRouteChange() {
     if (pageSelector) {
         showPage(pageSelector, route);
     } else {
-        console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
-        window.location.hash = '#/dashboard';
+        console.warn(`⚠️ Route not found: ${route}, redirecting to home`);
+        window.location.hash = '#/';
     }
-    
-    // Reset navigation flag after a short delay
-    setTimeout(() => {
-        isNavigating = false;
-    }, 100);
 }
 
 // Show specific page and hide all others
@@ -165,7 +145,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.href = 'login.html';
+    window.location.href = 'login.html';  // ✅ Redirect to login.html
 }
 
 // Initialize router
