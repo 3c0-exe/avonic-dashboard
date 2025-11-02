@@ -96,38 +96,60 @@ document.addEventListener('click', async (e) => {
 async function reloadChartsForBin(binNumber) {
     console.log(`🔄 Reloading charts for Bin ${binNumber}...`);
     
-    // Get the device ID from first chart section
-    const firstSection = document.querySelector('section-sensor-fluctuation');
-    if (!firstSection) {
-        console.warn('⚠️ No chart sections found');
+    // Get device ID from API (use first claimed device)
+    const token = localStorage.getItem('avonic_token');
+    if (!token) {
+        console.warn('⚠️ No auth token');
         return;
     }
     
-    const deviceId = firstSection.getAttribute('data-device-id');
-    if (!deviceId) {
-        console.warn('⚠️ No device ID found');
-        return;
-    }
-    
-    // Find all chart sections and update them
-    const chartSections = document.querySelectorAll('section-sensor-fluctuation');
-    
-    for (const section of chartSections) {
-        const sensorName = section.getAttribute('sensor_name');
-        const canvas = section.querySelector('canvas');
+    try {
+        const response = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        if (canvas && sensorName) {
-            // Update the bin attribute
-            section.setAttribute('data-bin', binNumber);
+        if (!response.ok) {
+            console.error('❌ Failed to fetch devices');
+            return;
+        }
+        
+        const data = await response.json();
+        
+        if (!data.devices || data.devices.length === 0) {
+            console.warn('⚠️ No devices claimed');
+            return;
+        }
+        
+        const deviceId = data.devices[0].espID; // Use first device
+        console.log(`📱 Using device: ${deviceId}`);
+        
+        // Find all chart sections and update them
+        const chartSections = document.querySelectorAll('section-sensor-fluctuation');
+        
+        for (const section of chartSections) {
+            const sensorName = section.getAttribute('sensor_name');
+            const canvas = section.querySelector('canvas');
             
-            // Reload the chart if updateChart function exists
-            if (typeof updateChart === 'function') {
-                await updateChart(canvas, deviceId, binNumber, sensorName);
+            if (canvas && sensorName) {
+                // Update the bin attribute
+                section.setAttribute('data-bin', binNumber);
+                section.setAttribute('data-device-id', deviceId);
+                
+                // Reload the chart if updateChart function exists
+                if (typeof updateChart === 'function') {
+                    await updateChart(canvas, deviceId, binNumber, sensorName);
+                }
             }
         }
+        
+        console.log(`✅ Charts reloaded for Bin ${binNumber}`);
+        
+    } catch (error) {
+        console.error('❌ Error reloading charts:', error);
     }
-    
-    console.log(`✅ Charts reloaded for Bin ${binNumber}`);
 }
 
 // ✅ EXPORT: Make current bin accessible globally
