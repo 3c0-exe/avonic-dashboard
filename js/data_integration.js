@@ -111,7 +111,7 @@ function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
   cards.forEach(card => {
-    const binId = card.getAttribute('binId');
+    const binId = card.getAttribute('data-bin-id'); // ✅ CHANGE THIS LINE
     const label = card.querySelector('.status_label')?.textContent || '';
     
     // Select correct bin data
