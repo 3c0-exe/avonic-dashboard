@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVONIC</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings.css">
     
 </head>
 <body>
       <!-- sidebar -->
 <nav>
-    <img class="main logo" src="/img/Avonic Logo.svg" alt="">
+    <img class="main logo" src="img/Avonic Logo.svg" alt="">
     <img class="secondary logo" src="img/icons/navIcons/Sample Logo Icon.svg" alt="">
     <ul>
         <li>
@@ -31,16 +32,17 @@
                 <span class="navName">Help</span>
             </a>
         </li>
+        <!-- ✅ ADD SETTINGS LINK -->
         <li>
-    <a href="#" onclick="logout(); return false;">
-        <img class="navIcon" src="img/icons/navIcons/LogoutIcon.svg" alt="">
-        <span class="navName">Logout</span>
-    </a>
-</li>
+            <a class="horizontal orientation" href="#/settings">
+                <img class="navIcon" src="img/icons/navIcons/SettingsIcon.svg" alt="">
+                <span class="navName">Settings</span>
+            </a>
+        </li>
     </ul>
-    <button class="btn claim-device-nav" onclick="router.navigateTo('/claim-device')">
-  ➕ Claim New Device
-</button>
+    <button class="btn claim-device-nav" onclick="window.location.hash = '#/claim-device'">
+        ➕ Claim New Device
+    </button>
 </nav>
 
 
@@ -579,6 +581,7 @@
     <script src="js/other_widgets.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="js/mqtt_integration.js"></script>
+    <script src="js/settings.js"></script>
 
     <script>
 // Debug: Check router initialization
@@ -591,6 +594,151 @@ setTimeout(() => {
 }, 1000);
 </script>
 
+<!-- SETTINGS PAGE -->
+<div class="content settings">
+    <div class="settings-wrapper">
+        <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
+        <div class="page-header">Settings</div>
+
+        <!-- Account Section -->
+        <section class="settings-section account-section">
+            <h2 class="section-title">Account</h2>
+            
+            <div class="settings-grid">
+                <!-- Username Card (Read-only) -->
+                <div class="settings-card">
+                    <label class="card-label">Username</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username-display" 
+                            class="settings-input" 
+                            value="Loading..." 
+                            readonly
+                        >
+                    </div>
+                </div>
+
+                <!-- Email Card (Editable) -->
+                <div class="settings-card">
+                    <label class="card-label">Email</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="email" 
+                            id="email-input" 
+                            class="settings-input" 
+                            value="Loading..."
+                        >
+                        <button class="icon-btn save-btn" onclick="updateEmail()" title="Save email">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password Change Card -->
+            <div class="settings-card password-card">
+                <div class="card-header">
+                    <div>
+                        <label class="card-label">Password</label>
+                        <p class="card-subtitle">Modify your current password</p>
+                    </div>
+                    <button class="btn-save" onclick="updatePassword()">Save</button>
+                </div>
+                
+                <div class="password-inputs">
+                    <div class="input-group">
+                        <label>Current Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="current-password" 
+                                class="settings-input password-input"
+                                placeholder="Enter current password"
+                            >
+                            <button class="password-toggle" onclick="togglePasswordVisibility('current-password')">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>New Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="new-password" 
+                                class="settings-input password-input"
+                                placeholder="Enter new password"
+                            >
+                            <button class="password-toggle" onclick="togglePasswordVisibility('new-password')">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="password-message" class="settings-message"></div>
+            </div>
+        </section>
+
+        <!-- Claimed Bins Section -->
+        <section class="settings-section bins-section">
+            <div class="section-header">
+                <h2 class="section-title">Claimed Bins</h2>
+                <button class="btn-add-device" onclick="window.location.hash = '#/claim-device'">
+                    ➕ Add New Device
+                </button>
+            </div>
+
+            <div id="claimed-bins-container" class="bins-grid">
+                <!-- Bins will be loaded here dynamically -->
+                <div class="loading-bins">
+                    <div class="spinner"></div>
+                    <p>Loading your devices...</p>
+                </div>
+            </div>
+
+            <div id="bins-message" class="settings-message"></div>
+        </section>
+
+        <!-- Logout Section -->
+        <section class="settings-section logout-section">
+            <button class="btn-logout" onclick="handleLogout()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </section>
+
+    </div>
+</div>
+
+<!-- Unclaim Confirmation Modal -->
+<div id="unclaim-modal" class="modal">
+    <div class="modal-content">
+        <h3>⚠️ Unclaim Device</h3>
+        <p>Are you sure you want to unclaim <strong id="unclaim-device-name"></strong>?</p>
+        <p class="modal-warning">This device will no longer sync data to your account.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeUnclaimModal()">Cancel</button>
+            <button class="btn-confirm-unclaim" onclick="confirmUnclaim()">Yes, Unclaim</button>
+        </div>
+    </div>
+</div>
 </body>
 </body>
 </html>

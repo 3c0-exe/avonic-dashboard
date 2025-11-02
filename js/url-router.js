@@ -6,6 +6,7 @@ const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
         '/claim-device': '.content.claim-device',  // ✅ ADD THIS
+            '/settings': 'settings',  // ✅ ADD THIS
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
@@ -99,6 +100,9 @@ function showPage(selector, route) {
     const targetPage = document.querySelector(selector);
     if (targetPage) {
         targetPage.classList.add('active');
+                // ✅ Load settings data when navigating to settings
+        if (pageClass === 'settings') {
+            loadUserSettings();
         targetPage.style.display = 'block';
         currentPage = route;
         updateActiveNav(route);
@@ -161,3 +165,4 @@ window.router = {
 };
 
 console.log('📦 url-router.js loaded');
+}
