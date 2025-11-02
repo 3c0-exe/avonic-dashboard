@@ -36,7 +36,7 @@ class Statuscard extends HTMLElement {
     const isClickable = this.getAttribute("isClickable") === "true"; // normalize boolean
     const showWaterPressure = this.getAttribute("showWaterPressure") === "true";
     const showFanRPM = this.getAttribute("showFanRPM") === "true";
-    const binId = this.getAttribute("binId"); // ✅ ADD THIS LINE
+    const binId = this.getAttribute("data-bin-id"); // ✅ CORRECT
 
     // ✅ Grab template content if present
     const helpTemplate = this.querySelector("template.help");
