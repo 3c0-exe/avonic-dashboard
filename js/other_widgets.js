@@ -1,6 +1,3 @@
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const scrollBackWidget = document.querySelector(".scroll-back-widget");
   if (!scrollBackWidget) return;
@@ -75,7 +72,7 @@ document.addEventListener('click', (e) => {
 // ===== 2. DASHBOARD BIN SWITCHER (LEFT/RIGHT ARROWS) =====
 let currentDashboardBin = 1;
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
     const arrow = e.target.closest('.arrow');
     if (!arrow) return;
     
@@ -90,7 +87,51 @@ document.addEventListener('click', (e) => {
     
     binDisplay.textContent = `Bin ${currentDashboardBin}`;
     console.log('📊 Switched to Bin', currentDashboardBin);
+    
+    // ✅ UPDATE: Reload charts with new bin data
+    await reloadChartsForBin(currentDashboardBin);
 });
+
+// ✅ NEW FUNCTION: Reload all charts for specific bin
+async function reloadChartsForBin(binNumber) {
+    console.log(`🔄 Reloading charts for Bin ${binNumber}...`);
+    
+    // Get the device ID from first chart section
+    const firstSection = document.querySelector('section-sensor-fluctuation');
+    if (!firstSection) {
+        console.warn('⚠️ No chart sections found');
+        return;
+    }
+    
+    const deviceId = firstSection.getAttribute('data-device-id');
+    if (!deviceId) {
+        console.warn('⚠️ No device ID found');
+        return;
+    }
+    
+    // Find all chart sections and update them
+    const chartSections = document.querySelectorAll('section-sensor-fluctuation');
+    
+    for (const section of chartSections) {
+        const sensorName = section.getAttribute('sensor_name');
+        const canvas = section.querySelector('canvas');
+        
+        if (canvas && sensorName) {
+            // Update the bin attribute
+            section.setAttribute('data-bin', binNumber);
+            
+            // Reload the chart if updateChart function exists
+            if (typeof updateChart === 'function') {
+                await updateChart(canvas, deviceId, binNumber, sensorName);
+            }
+        }
+    }
+    
+    console.log(`✅ Charts reloaded for Bin ${binNumber}`);
+}
+
+// ✅ EXPORT: Make current bin accessible globally
+window.getCurrentDashboardBin = () => currentDashboardBin;
 
 // ===== 3. CALENDAR DATE PICKER (Select Date button) =====
 document.addEventListener('click', (e) => {
@@ -271,4 +312,3 @@ document.addEventListener('click', (e) => {
 });
 
 console.log('✅ other_widgets.js loaded with all handlers');
-
