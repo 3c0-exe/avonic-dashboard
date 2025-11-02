@@ -104,18 +104,27 @@ function showPage(selector, route) {
         updateActiveNav(route);
         window.scrollTo(0, 0);
         
-        // ✅ FIXED: Load data for specific pages
-        if (route === '/settings' && typeof loadUserSettings === 'function') {
-            console.log('📥 Loading settings data...');
-            loadUserSettings();
-        }
-        
-        if (route === '/dashboard' && typeof loadDashboard === 'function') {
-            console.log('📥 Loading dashboard data...');
-            loadDashboard();
-        }
-        
         console.log(`✅ Page displayed: ${route}`);
+        
+        // ✅ Load data after a tiny delay to ensure functions are available
+        setTimeout(() => {
+            if (route === '/settings') {
+                console.log('⚙️ Loading settings...');
+                if (typeof window.loadUserSettings === 'function') {
+                    window.loadUserSettings();
+                } else {
+                    console.error('❌ loadUserSettings not found on window object');
+                }
+            }
+            
+            if (route === '/dashboard') {
+                console.log('📊 Loading dashboard...');
+                if (typeof window.loadDashboard === 'function') {
+                    window.loadDashboard();
+                }
+            }
+        }, 100); // Small delay ensures settings.js has loaded
+        
     } else {
         console.error(`❌ Page element not found: ${selector}`);
         console.log('Available .content elements:', 
@@ -123,56 +132,3 @@ function showPage(selector, route) {
         );
     }
 }
-
-// Update active state in navigation
-function updateActiveNav(route) {
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    const activeLink = document.querySelector(`nav a[href="#${route}"]`);
-    if (activeLink) {
-        activeLink.classList.add('active');
-    }
-}
-
-// Setup navigation click handlers
-function setupNavigation() {
-    const navLinks = document.querySelectorAll('nav a');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            console.log(`🔗 Nav clicked: ${link.getAttribute('href')}`);
-        });
-    });
-    
-    console.log('✅ Navigation handlers setup');
-}
-
-// Programmatic navigation helper
-function navigateTo(route) {
-    window.location.hash = '#' + route;
-}
-
-// ✅ Logout function
-function logout() {
-    localStorage.removeItem('avonic_token');
-    localStorage.removeItem('avonic_user');
-    console.log('👋 Logged out');
-    window.location.href = 'login.html';
-}
-
-// Initialize router
-initRouter();
-
-// Export for use in other scripts
-window.router = {
-    navigateTo,
-    logout,
-    getCurrentPage: () => currentPage,
-    isAuthenticated,
-    routes
-};
-
-console.log('📦 url-router.js loaded');
