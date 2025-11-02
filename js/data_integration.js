@@ -110,14 +110,21 @@ async function fetchLatestSensorData() {
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
+  console.log('🔍 Total sensor cards found:', cards.length);
+  
   cards.forEach(card => {
     const binId = card.getAttribute('binId');
     const label = card.querySelector('.status_label')?.textContent || '';
     
+    console.log('📍 Card:', label, '| binId:', binId, '| Will use:', binId === '2' ? 'BIN 2' : 'BIN 1');
+    
     // Select correct bin data
     const binData = binId === '2' ? reading.bin2 : reading.bin1;
     
-    if (!binData) return;
+    if (!binData) {
+      console.warn('⚠️ No data for bin:', binId);
+      return;
+    }
     
     // Match sensor type and update
     let value = null;
@@ -135,30 +142,10 @@ function updateSensorCards(reading) {
     }
     
     if (value !== null) {
+      console.log('✅ Updating', label, 'to', value);
       setCardValue(card, value);
     }
   });
-  
-  // Update water tank and battery (from system data)
-  if (reading.system) {
-    const batteryCard = document.querySelector('.card_stats[data-type="battery"]');
-    if (batteryCard && reading.system.battery_level !== undefined) {
-      setCardValue(batteryCard, reading.system.battery_level);
-    }
-  }
-  
-  if (reading.bin2) {
-    const waterCard = document.querySelector('.card_stats[data-type="water-tank"]');
-    if (waterCard && reading.bin2.water_level !== undefined) {
-      setCardValue(waterCard, reading.bin2.water_level);
-    }
-    
-    const waterTempCard = document.querySelector('.card_stats[data-type="water-temp"]');
-    if (waterTempCard && reading.bin2.temp !== undefined) {
-      setCardValue(waterTempCard, reading.bin2.temp);
-    }
-  }
-}
 
 // ====== Fetch Historical Data for Charts ======
 
