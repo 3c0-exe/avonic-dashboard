@@ -725,7 +725,7 @@ sections.forEach(sec => observer.observe(sec));
 
 // Function to load and render dashboard dynamically
 async function loadDashboard() {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('avonic_token');
   
   if (!token) {
     router.navigateTo('/');
