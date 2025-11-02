@@ -736,7 +736,7 @@ async function loadDashboard() {
 
   try {
     // Fetch user's devices
-    const response = await fetch('https://avonic-backend-production.up.railway.app/api/devices', {
+    const response = await fetch(`${API_BASE}/api/devices`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
