@@ -2,15 +2,7 @@
 
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app/api';
 
-// Make functions globally available IMMEDIATELY
-window.loadUserSettings = loadUserSettings;
-window.updateEmail = updateEmail;
-window.updatePassword = updatePassword;
-window.togglePasswordVisibility = togglePasswordVisibility;
-window.openUnclaimModal = openUnclaimModal;
-window.closeUnclaimModal = closeUnclaimModal;
-window.confirmUnclaim = confirmUnclaim;
-window.handleLogout = handleLogout;
+console.log('🔧 settings.js loading...');
 
 // Load user data on settings page load
 async function loadUserSettings() {
@@ -286,18 +278,28 @@ function showMessage(elementId, message, type) {
     }, 5000);
 }
 
+// ✅ EXPOSE FUNCTIONS TO WINDOW - AFTER ALL DECLARATIONS
+window.loadUserSettings = loadUserSettings;
+window.updateEmail = updateEmail;
+window.updatePassword = updatePassword;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.openUnclaimModal = openUnclaimModal;
+window.closeUnclaimModal = closeUnclaimModal;
+window.confirmUnclaim = confirmUnclaim;
+window.handleLogout = handleLogout;
+
+console.log('✅ settings.js loaded and functions exposed to window');
+
 // Initialize on page load
 if (window.location.hash === '#/settings') {
     console.log('⚙️ Settings page detected on load');
-    loadUserSettings();
+    setTimeout(() => loadUserSettings(), 100);
 }
 
 // Also listen for hash changes
 window.addEventListener('hashchange', () => {
     if (window.location.hash === '#/settings') {
         console.log('⚙️ Navigated to settings page');
-        loadUserSettings();
+        setTimeout(() => loadUserSettings(), 100);
     }
 });
-
-console.log('✅ settings.js loaded and functions exposed to window');
