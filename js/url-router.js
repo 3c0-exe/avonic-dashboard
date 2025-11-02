@@ -1,16 +1,15 @@
 // AVONIC URL Router with Authentication
 // Handles page navigation using URL hash routing
 
-// Define all pages with their routes and CSS selectors
+// ✅ FIXED: All routes now have consistent .content prefix
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
-        '/claim-device': '.content.claim-device',  // ✅ ADD THIS
-            '/settings': 'settings',  // ✅ ADD THIS
+    '/claim-device': '.content.claim-device',
+    '/settings': '.content.settings',  // ✅ FIXED: Added .content prefix
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
-    // ✅ No login/register routes - those are separate HTML files
 };
 
 // Current active page
@@ -19,14 +18,14 @@ let currentPage = null;
 // ✅ Check if user is authenticated
 function isAuthenticated() {
     const token = localStorage.getItem('avonic_token');
-    return !!token; // Returns true if token exists
+    return !!token;
 }
 
 // ✅ Redirect to login.html if not authenticated
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'login.html';  // ✅ Redirect to login.html
+        window.location.href = 'login.html';
         return false;
     }
     return true;
@@ -36,12 +35,12 @@ function requireAuth() {
 function initRouter() {
     console.log('🚀 Router initialized');
     
-    // ✅ Check auth FIRST before doing anything
+    // ✅ Check auth FIRST
     if (!requireAuth()) {
-        return; // Stop here if not authenticated
+        return;
     }
 
-        // ✅ ADD THIS: Remove active class from home on load
+    // ✅ Remove active class from home on load
     const homePage = document.querySelector('.content.home');
     if (homePage) {
         homePage.classList.remove('active');
@@ -67,13 +66,13 @@ function initRouter() {
 function handleRouteChange() {
     let hash = window.location.hash.slice(1);
     
-    // ✅ Default to DASHBOARD (not home) if authenticated
+    // ✅ Default to DASHBOARD if authenticated
     if (!hash || hash === '') {
-        hash = '/dashboard';  // ✅ This line is correct
+        hash = '/dashboard';
     }
     
     // Strip query parameters for route matching
-    const route = hash.split('?')[0]; // Get "/bin" from "/bin?id=1"
+    const route = hash.split('?')[0];
     
     // Find matching route
     const pageSelector = routes[route];
@@ -81,8 +80,8 @@ function handleRouteChange() {
     if (pageSelector) {
         showPage(pageSelector, route);
     } else {
-        console.warn(`⚠️ Route not found: ${route}, redirecting to home`);
-        window.location.hash = '#/';
+        console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
+        window.location.hash = '#/dashboard';
     }
 }
 
@@ -100,16 +99,28 @@ function showPage(selector, route) {
     const targetPage = document.querySelector(selector);
     if (targetPage) {
         targetPage.classList.add('active');
-                // ✅ Load settings data when navigating to settings
-        if (pageClass === 'settings') {
-            loadUserSettings();
         targetPage.style.display = 'block';
         currentPage = route;
         updateActiveNav(route);
         window.scrollTo(0, 0);
+        
+        // ✅ FIXED: Load data for specific pages
+        if (route === '/settings' && typeof loadUserSettings === 'function') {
+            console.log('📥 Loading settings data...');
+            loadUserSettings();
+        }
+        
+        if (route === '/dashboard' && typeof loadDashboard === 'function') {
+            console.log('📥 Loading dashboard data...');
+            loadDashboard();
+        }
+        
         console.log(`✅ Page displayed: ${route}`);
     } else {
         console.error(`❌ Page element not found: ${selector}`);
+        console.log('Available .content elements:', 
+            Array.from(document.querySelectorAll('.content')).map(el => el.className)
+        );
     }
 }
 
@@ -149,7 +160,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.href = 'login.html';  // ✅ Redirect to login.html
+    window.location.href = 'login.html';
 }
 
 // Initialize router
@@ -165,4 +176,3 @@ window.router = {
 };
 
 console.log('📦 url-router.js loaded');
-}
