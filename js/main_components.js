@@ -1106,13 +1106,13 @@ function updateCardWithReading(reading) {
   console.log('✅ Cards updated with latest readings');
 }
 
-// Auto-refresh every 5 seconds
-setInterval(fetchSensorData, 5000);
+// // Auto-refresh every 5 seconds
+// setInterval(fetchSensorData, 5000);
 
-// Load on page load
-document.addEventListener('DOMContentLoaded', fetchSensorData);
+// // Load on page load
+// document.addEventListener('DOMContentLoaded', fetchSensorData);
 
-// Start fetching sensor data
-console.log('🔄 Starting sensor data polling...');
-fetchSensorData(); // Load immediately
-setInterval(fetchSensorData, 5000); // Then every 5 seconds
+// // Start fetching sensor data
+// console.log('🔄 Starting sensor data polling...');
+// fetchSensorData(); // Load immediately
+// setInterval(fetchSensorData, 5000); // Then every 5 seconds
