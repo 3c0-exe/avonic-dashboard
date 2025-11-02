@@ -1,5 +1,5 @@
 // ====== SETTINGS PAGE FUNCTIONALITY ======
-
+console.log('🚨 SETTINGS.JS IS LOADING!!! 🚨');
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app/api';
 
 console.log('🔧 settings.js loading...');
