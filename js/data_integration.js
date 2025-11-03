@@ -119,12 +119,14 @@ async function fetchLatestSensorData() {
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
-  // ✅ Get current device ESP-ID from the active bin page
-  const activeBinPage = document.querySelector('.content.bin.active, .content.bin2.active');
-  const currentEspId = activeBinPage?.dataset?.currentEspId;
+  // ✅ Get ESP-ID from URL hash (e.g., #/bin?espID=AVONIC-123)
+  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+  const currentEspId = urlParams.get('espID');
   
   // ✅ CRITICAL: Only update if we're viewing this device OR on home page
-  if (currentEspId && reading.espID !== currentEspId) {
+  const isOnBinPage = window.location.hash.includes('/bin');
+  
+  if (isOnBinPage && currentEspId && reading.espID !== currentEspId) {
     console.log(`⏭️ Skipping update - viewing ${currentEspId}, got data for ${reading.espID}`);
     return; // Skip this reading - it's not for the current device
   }
@@ -160,7 +162,9 @@ function updateSensorCards(reading) {
   });
   
   // ✅ Update system cards (battery, water) - ONLY if on HOME page
-  const isOnHomePage = document.querySelector('.content.home.active');
+  const isOnHomePage = window.location.hash === '#/home' || 
+                       window.location.hash === '#/' || 
+                       window.location.hash === '';
   
   if (isOnHomePage) {
     // Update battery (from system data)

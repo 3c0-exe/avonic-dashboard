@@ -1230,6 +1230,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('✅ Dynamic bin card loader initialized');
 
+console.log('✅ Dynamic bin card loader initialized');
+
+// ====== DISPLAY ESP-ID ON BIN PAGES ======
+// ✅ ADD THIS SECTION HERE (at the very end of the file)
+
+window.addEventListener('hashchange', displayCurrentDevice);
+document.addEventListener('DOMContentLoaded', displayCurrentDevice);
+
+function displayCurrentDevice() {
+  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+  const espID = urlParams.get('espID');
+  
+  const espDisplay = document.querySelector('.esp-id-display');
+  if (espDisplay && espID) {
+    espDisplay.textContent = `Device: ${espID}`;
+  }
+}
+
+console.log('✅ ESP-ID display handler loaded');
+
 // // Auto-refresh every 5 seconds
 // setInterval(fetchSensorData, 5000);
 
