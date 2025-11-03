@@ -1,6 +1,6 @@
 // ====== SETTINGS PAGE FUNCTIONALITY ======
 
-const API_BASE = 'https://avonic-main-hub-production.up.railway.app/api';
+const SETTINGS_API_BASE = 'https://avonic-main-hub-production.up.railway.app/api';
 
 console.log('✅ Settings.js loaded - defining functions...');
 
@@ -15,7 +15,7 @@ async function loadUserSettings() {
     }
 
     try {
-        const userRes = await fetch(`${API_BASE}/user/profile`, {
+        const userRes = await fetch(`${SETTINGS_API_BASE}/user/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -47,7 +47,7 @@ async function loadClaimedBins() {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/devices/claimed`, {
+        const res = await fetch(`${SETTINGS_API_BASE}/devices/claimed`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -102,7 +102,7 @@ async function updateEmail() {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/user/email`, {
+        const res = await fetch(`${SETTINGS_API_BASE}/user/email`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ async function updatePassword() {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/user/password`, {
+        const res = await fetch(`${SETTINGS_API_BASE}/user/password`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -204,7 +204,7 @@ async function confirmUnclaim() {
     const token = localStorage.getItem('avonic_token');
 
     try {
-        const res = await fetch(`${API_BASE}/devices/${deviceToUnclaim}/unclaim`, {
+        const res = await fetch(`${SETTINGS_API_BASE}/devices/${deviceToUnclaim}/unclaim`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -235,7 +235,7 @@ async function handleLogout() {
     const token = localStorage.getItem('avonic_token');
 
     try {
-        const res = await fetch(`${API_BASE}/logout`, {
+        const res = await fetch(`${SETTINGS_API_BASE}/logout`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
         });
