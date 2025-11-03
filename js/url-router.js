@@ -81,7 +81,8 @@ function handleRouteChange() {
     }
 }
 
-// Handle bin page navigation with ESP-ID parameter
+// ✅ ADD THIS FUNCTION to url-router.js (after handleRouteChange function)
+// ✅ NEW: Handle bin page navigation with ESP-ID parameter
 function handleBinPageLoad(route) {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash.split('?')[1]);
@@ -106,9 +107,9 @@ function handleBinPageLoad(route) {
         
         console.log(`✅ Loaded Bin ${binNumber} for device: ${espID}`);
         
-        // ✅ REMOVED: Don't call fetchLatestSensorData here
-        // Let the data integration's auto-refresh handle it
-        // The cached data will be used if available
+        if (typeof fetchLatestSensorData === 'function') {
+            fetchLatestSensorData();
+        }
     }
 }
 
@@ -142,12 +143,12 @@ function showPage(selector, route) {
             loadDashboard();
         }
         
-        // Handle bin pages with ESP-ID parameter
+        // ✅ NEW: Handle bin pages with ESP-ID parameter
         if (route === '/bin' || route === '/bin2') {
             handleBinPageLoad(route);
         }
         
-        // Load bin cards on home page
+        // ✅ NEW: Load bin cards on home page
         if (route === '/' && typeof loadBinCards === 'function') {
             console.log('📥 Loading bin cards...');
             setTimeout(() => loadBinCards(), 100);
