@@ -81,6 +81,7 @@ function handleRouteChange() {
     }
 }
 
+// ✅ ADD THIS FUNCTION to url-router.js (after handleRouteChange function)
 // ✅ NEW: Handle bin page navigation with ESP-ID parameter
 function handleBinPageLoad(route) {
     const hash = window.location.hash.slice(1);

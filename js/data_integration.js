@@ -58,6 +58,8 @@ function groupByDate(readings, sensorPath) {
 
 // ====== Fetch Latest Sensor Data (Real-time Cards) ======
 
+// ✅ UPDATE this function in data_integration.js
+
 async function fetchLatestSensorData() {
   const token = getAuthToken();
   if (!token) {
@@ -81,8 +83,12 @@ async function fetchLatestSensorData() {
       return;
     }
 
+    console.log(`📊 Received data for ${data.readings.length} device(s):`, 
+                data.readings.map(r => r.espID));
+
     // Update all sensor cards with latest data
     data.readings.forEach(reading => {
+      console.log(`🔄 Processing reading for: ${reading.espID}`);
       updateSensorCards(reading);
     });
 
@@ -92,7 +98,7 @@ async function fetchLatestSensorData() {
       timeElem.textContent = 'Updated just now';
     }
 
-    console.log('✅ Sensor data updated:', data.readings.length, 'devices');
+    console.log('✅ Sensor data update complete');
     
   } catch (error) {
     console.error('❌ Fetch sensor error:', error);
@@ -108,26 +114,31 @@ async function fetchLatestSensorData() {
 // ====== Update Sensor Cards with Real Data ======
 
 // Update this function in data_integration.js
+// ✅ REPLACE this function in data_integration.js
+
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
-  // Get current device ESP-ID from the page (if on bin page)
+  // ✅ Get current device ESP-ID from the active bin page
   const activeBinPage = document.querySelector('.content.bin.active, .content.bin2.active');
   const currentEspId = activeBinPage?.dataset?.currentEspId;
   
-  // Only update if we're viewing this device
+  // ✅ CRITICAL: Only update if we're viewing this device OR on home page
   if (currentEspId && reading.espID !== currentEspId) {
-    return; // Skip this reading
+    console.log(`⏭️ Skipping update - viewing ${currentEspId}, got data for ${reading.espID}`);
+    return; // Skip this reading - it's not for the current device
   }
   
   cards.forEach(card => {
     const binId = card.getAttribute('data-bin-id');
     const label = card.querySelector('.status_label')?.textContent || '';
     
+    // Select correct bin data
     const binData = binId === '2' ? reading.bin2 : reading.bin1;
     
     if (!binData) return;
     
+    // Match sensor type and update
     let value = null;
     
     if (label.includes('Soil Moisture') && binData.soil !== undefined) {
@@ -144,26 +155,36 @@ function updateSensorCards(reading) {
     
     if (value !== null) {
       setCardValue(card, value);
+      console.log(`✅ Updated ${label} for ${reading.espID} Bin ${binId}: ${value}`);
     }
   });
   
-  // Update system cards (battery, water) on HOME page only
-  if (!activeBinPage && reading.system) {
-    const batteryCard = document.querySelector('.card_stats[data-type="battery"]');
-    if (batteryCard && reading.system.battery_level !== undefined) {
-      setCardValue(batteryCard, reading.system.battery_level);
-    }
-  }
+  // ✅ Update system cards (battery, water) - ONLY if on HOME page
+  const isOnHomePage = document.querySelector('.content.home.active');
   
-  if (!activeBinPage && reading.bin2) {
-    const waterCard = document.querySelector('.card_stats[data-type="water-tank"]');
-    if (waterCard && reading.bin2.water_level !== undefined) {
-      setCardValue(waterCard, reading.bin2.water_level);
+  if (isOnHomePage) {
+    // Update battery (from system data)
+    if (reading.system?.battery_level !== undefined) {
+      const batteryCard = document.querySelector('.card_stats[data-type="battery"]');
+      if (batteryCard) {
+        setCardValue(batteryCard, reading.system.battery_level);
+        console.log(`✅ Updated battery: ${reading.system.battery_level}%`);
+      }
     }
     
-    const waterTempCard = document.querySelector('.card_stats[data-type="water-temp"]');
-    if (waterTempCard && reading.bin2.temp !== undefined) {
-      setCardValue(waterTempCard, reading.bin2.temp);
+    // Update water tank and temp (from bin2 data)
+    if (reading.bin2) {
+      const waterCard = document.querySelector('.card_stats[data-type="water-tank"]');
+      if (waterCard && reading.bin2.water_level !== undefined) {
+        setCardValue(waterCard, reading.bin2.water_level);
+        console.log(`✅ Updated water level: ${reading.bin2.water_level}%`);
+      }
+      
+      const waterTempCard = document.querySelector('.card_stats[data-type="water-temp"]');
+      if (waterTempCard && reading.bin2.temp !== undefined) {
+        setCardValue(waterTempCard, reading.bin2.temp);
+        console.log(`✅ Updated water temp: ${reading.bin2.temp}°C`);
+      }
     }
   }
 }
