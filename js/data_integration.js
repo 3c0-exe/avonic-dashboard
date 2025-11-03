@@ -86,6 +86,20 @@ async function fetchLatestSensorData() {
     console.log(`📊 Received data for ${data.readings.length} device(s):`, 
                 data.readings.map(r => r.espID));
 
+    // ✅ Check if current page device has data
+    const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+    const currentEspId = urlParams.get('espID');
+    const isOnBinPage = window.location.hash.includes('/bin');
+    
+    if (isOnBinPage && currentEspId) {
+      const hasDataForCurrentDevice = data.readings.some(r => r.espID === currentEspId);
+      
+      if (!hasDataForCurrentDevice) {
+        console.warn(`⚠️ No data received for ${currentEspId} - showing NULL values`);
+        showNullDataForDevice(currentEspId);
+      }
+    }
+
     // Update all sensor cards with latest data
     data.readings.forEach(reading => {
       console.log(`🔄 Processing reading for: ${reading.espID}`);
@@ -111,6 +125,36 @@ async function fetchLatestSensorData() {
   }
 }
 
+// ====== Show NULL for devices with no data ======
+
+function showNullDataForDevice(espID) {
+  const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
+  
+  cards.forEach(card => {
+    const valueElem = card.querySelector('.card_value');
+    const unitElem = card.querySelector('.card_unit');
+    const circle = card.querySelector('.card_progress');
+    const subLabel = card.querySelector('.sub_status_label');
+    
+    if (valueElem) valueElem.textContent = '--';
+    if (unitElem) unitElem.textContent = '';
+    
+    // Reset progress circle
+    if (circle) {
+      circle.style.strokeDashoffset = circumference;
+      circle.style.stroke = '#ddd';
+    }
+    
+    // Show "No Data" message
+    if (subLabel) {
+      subLabel.textContent = 'No Data Received';
+      subLabel.style.color = '#999';
+    }
+  });
+  
+  console.log(`🔴 Displayed NULL values for ${espID}`);
+}
+
 // ====== Update Sensor Cards with Real Data ======
 
 // Update this function in data_integration.js
@@ -119,7 +163,7 @@ async function fetchLatestSensorData() {
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
-  // ✅ Get ESP-ID from URL hash (e.g., #/bin?espID=AVONIC-123)
+  // ✅ Get ESP-ID from URL hash
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
   const currentEspId = urlParams.get('espID');
   
