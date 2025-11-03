@@ -107,19 +107,27 @@ async function fetchLatestSensorData() {
 
 // ====== Update Sensor Cards with Real Data ======
 
+// Update this function in data_integration.js
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
+  // Get current device ESP-ID from the page (if on bin page)
+  const activeBinPage = document.querySelector('.content.bin.active, .content.bin2.active');
+  const currentEspId = activeBinPage?.dataset?.currentEspId;
+  
+  // Only update if we're viewing this device
+  if (currentEspId && reading.espID !== currentEspId) {
+    return; // Skip this reading
+  }
+  
   cards.forEach(card => {
-    const binId = card.getAttribute('data-bin-id'); // ✅ CHANGE THIS LINE
+    const binId = card.getAttribute('data-bin-id');
     const label = card.querySelector('.status_label')?.textContent || '';
     
-    // Select correct bin data
     const binData = binId === '2' ? reading.bin2 : reading.bin1;
     
     if (!binData) return;
     
-    // Match sensor type and update
     let value = null;
     
     if (label.includes('Soil Moisture') && binData.soil !== undefined) {
@@ -139,15 +147,15 @@ function updateSensorCards(reading) {
     }
   });
   
-  // Update water tank and battery (from system data)
-  if (reading.system) {
+  // Update system cards (battery, water) on HOME page only
+  if (!activeBinPage && reading.system) {
     const batteryCard = document.querySelector('.card_stats[data-type="battery"]');
     if (batteryCard && reading.system.battery_level !== undefined) {
       setCardValue(batteryCard, reading.system.battery_level);
     }
   }
   
-  if (reading.bin2) {
+  if (!activeBinPage && reading.bin2) {
     const waterCard = document.querySelector('.card_stats[data-type="water-tank"]');
     if (waterCard && reading.bin2.water_level !== undefined) {
       setCardValue(waterCard, reading.bin2.water_level);

@@ -1,27 +1,25 @@
 // AVONIC URL Router with Authentication
 // Handles page navigation using URL hash routing
 
-// ✅ FIXED: All routes now have consistent .content prefix
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
     '/claim-device': '.content.claim-device',
-    '/settings': '.content.settings',  // ✅ FIXED: Added .content prefix
+    '/settings': '.content.settings',
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
 };
 
-// Current active page
 let currentPage = null;
 
-// ✅ Check if user is authenticated
+// Check if user is authenticated
 function isAuthenticated() {
     const token = localStorage.getItem('avonic_token');
     return !!token;
 }
 
-// ✅ Redirect to login.html if not authenticated
+// Redirect to login.html if not authenticated
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
@@ -35,12 +33,10 @@ function requireAuth() {
 function initRouter() {
     console.log('🚀 Router initialized');
     
-    // ✅ Check auth FIRST
     if (!requireAuth()) {
         return;
     }
 
-    // ✅ Remove active class from home on load
     const homePage = document.querySelector('.content.home');
     if (homePage) {
         homePage.classList.remove('active');
@@ -66,7 +62,7 @@ function initRouter() {
 function handleRouteChange() {
     let hash = window.location.hash.slice(1);
     
-    // ✅ Default to DASHBOARD if authenticated
+    // Default to DASHBOARD if authenticated
     if (!hash || hash === '') {
         hash = '/dashboard';
     }
@@ -82,6 +78,37 @@ function handleRouteChange() {
     } else {
         console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
         window.location.hash = '#/dashboard';
+    }
+}
+
+// ✅ NEW: Handle bin page navigation with ESP-ID parameter
+function handleBinPageLoad(route) {
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash.split('?')[1]);
+    const espID = params.get('espID');
+    
+    if (!espID) {
+        console.warn('⚠️ No espID provided, redirecting to home');
+        window.location.hash = '#/';
+        return;
+    }
+    
+    const binNumber = route === '/bin2' ? 2 : 1;
+    const binPage = document.querySelector(route === '/bin2' ? '.content.bin2' : '.content.bin');
+    
+    if (binPage) {
+        binPage.dataset.currentEspId = espID;
+        
+        const binNameElem = binPage.querySelector('.bin_name');
+        if (binNameElem) {
+            binNameElem.textContent = `Bin ${binNumber}`;
+        }
+        
+        console.log(`✅ Loaded Bin ${binNumber} for device: ${espID}`);
+        
+        if (typeof fetchLatestSensorData === 'function') {
+            fetchLatestSensorData();
+        }
     }
 }
 
@@ -104,7 +131,7 @@ function showPage(selector, route) {
         updateActiveNav(route);
         window.scrollTo(0, 0);
         
-        // ✅ FIXED: Load data for specific pages
+        // Load page-specific data
         if (route === '/settings' && typeof loadUserSettings === 'function') {
             console.log('📥 Loading settings data...');
             loadUserSettings();
@@ -115,12 +142,20 @@ function showPage(selector, route) {
             loadDashboard();
         }
         
+        // ✅ NEW: Handle bin pages with ESP-ID parameter
+        if (route === '/bin' || route === '/bin2') {
+            handleBinPageLoad(route);
+        }
+        
+        // ✅ NEW: Load bin cards on home page
+        if (route === '/' && typeof loadBinCards === 'function') {
+            console.log('📥 Loading bin cards...');
+            setTimeout(() => loadBinCards(), 100);
+        }
+        
         console.log(`✅ Page displayed: ${route}`);
     } else {
         console.error(`❌ Page element not found: ${selector}`);
-        console.log('Available .content elements:', 
-            Array.from(document.querySelectorAll('.content')).map(el => el.className)
-        );
     }
 }
 
@@ -155,7 +190,7 @@ function navigateTo(route) {
     window.location.hash = '#' + route;
 }
 
-// ✅ Logout function
+// Logout function
 function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');

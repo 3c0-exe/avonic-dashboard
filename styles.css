@@ -2196,3 +2196,67 @@ h1.page-header.help-sec {
   margin-top: 12px;
   text-align: center;
 }
+
+/* Empty State Styling */
+.empty-state-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 300px;
+    padding: 40px;
+    background: #f8f8f8;
+    border: 2.12102px dashed #00000050;
+    border-radius: 21.2102px;
+    text-align: center;
+}
+
+.empty-state-card h3 {
+    font-size: 24px;
+    font-weight: var(--fw-bold);
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.empty-state-card p {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.empty-state-card .btn-primary {
+    padding: 12px 32px;
+    background: var(--primary-clr);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: var(--fw-bold);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.empty-state-card .btn-primary:hover {
+    transform: scale(1.05);
+}
+
+/* Loading State */
+.bin_container.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Bin Card Grid - Responsive */
+.bin_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .bin_container {
+        grid-template-columns: 1fr;
+    }
+}

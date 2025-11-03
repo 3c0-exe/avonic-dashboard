@@ -1108,6 +1108,128 @@ function updateCardWithReading(reading) {
   console.log('✅ Cards updated with latest readings');
 }
 
+// ====== DYNAMIC BIN CARD RENDERING ======
+
+async function loadBinCards() {
+  const token = localStorage.getItem('avonic_token');
+  const container = document.getElementById('binCardsContainer');
+  
+  if (!container) {
+    console.warn('⚠️ Bin container not found');
+    return;
+  }
+
+  if (!token) {
+    console.warn('⚠️ No auth token - user not logged in');
+    showEmptyState(container, 'Please log in to view your devices');
+    return;
+  }
+
+  // Show loading state
+  container.innerHTML = '<div class="loading-spinner">Loading your bins...</div>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/devices/claimed`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const devices = data.devices || [];
+
+    console.log(`✅ Fetched ${devices.length} devices`);
+
+    // Clear container
+    container.innerHTML = '';
+
+    // Handle empty state
+    if (devices.length === 0) {
+      showEmptyState(container);
+      return;
+    }
+
+    // Render bin cards for each device
+    devices.forEach(device => {
+      const espID = device.espID;
+      const nickname = device.nickname || espID;
+      
+      // Create Bin 1
+      const bin1Card = createBinCardElement(espID, nickname, 1);
+      container.appendChild(bin1Card);
+      
+      // Create Bin 2
+      const bin2Card = createBinCardElement(espID, nickname, 2);
+      container.appendChild(bin2Card);
+    });
+
+    console.log(`✅ Rendered ${devices.length * 2} bin cards`);
+
+  } catch (error) {
+    console.error('❌ Failed to load bin cards:', error);
+    showEmptyState(container, 'Failed to load devices. Please refresh.');
+  }
+}
+
+// Create a bin card element
+function createBinCardElement(espID, nickname, binNumber) {
+  const binCard = document.createElement('bin-card');
+  
+  // Determine mode indicator (you can fetch this from backend later)
+  const isAutoMode = binNumber === 1; // Example: Bin 1 = Auto, Bin 2 = Manual
+  const modeIndicator = isAutoMode 
+    ? 'img/indicators/color coded mode indicator - auto.png'
+    : 'img/indicators/color coded mode indicator - manual.png';
+  const modeText = isAutoMode ? 'Auto-Mode' : 'Manual-Mode';
+  
+  // Set attributes
+  binCard.setAttribute('bin_name', `${nickname} - Bin ${binNumber}`);
+  binCard.setAttribute('indicator', modeIndicator);
+  binCard.setAttribute('mode', modeText);
+  binCard.setAttribute('navigateTo', `#/bin${binNumber === 2 ? '2' : ''}?espID=${espID}`);
+  binCard.setAttribute('data-esp-id', espID);
+  binCard.setAttribute('data-bin-number', binNumber);
+  
+  return binCard;
+}
+
+// Show empty state when no devices claimed
+function showEmptyState(container, message = null) {
+  container.innerHTML = `
+    <div class="empty-state-card">
+      <h3>No Devices Claimed</h3>
+      <p>${message || 'Claim your first device to start monitoring your compost bins!'}</p>
+      <button class="btn-primary" onclick="window.location.hash='#/claim-device'">
+        ➕ Claim Device
+      </button>
+    </div>
+  `;
+}
+
+// ====== INITIALIZE ON PAGE LOAD ======
+
+// Load bin cards when navigating to home
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#/home' || window.location.hash === '' || window.location.hash === '#/') {
+    setTimeout(() => loadBinCards(), 100);
+  }
+});
+
+// Initial load on page refresh
+document.addEventListener('DOMContentLoaded', () => {
+  const currentHash = window.location.hash;
+  if (currentHash === '#/home' || currentHash === '' || currentHash === '#/') {
+    setTimeout(() => loadBinCards(), 100);
+  }
+});
+
+console.log('✅ Dynamic bin card loader initialized');
+
 // // Auto-refresh every 5 seconds
 // setInterval(fetchSensorData, 5000);
 

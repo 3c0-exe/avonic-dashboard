@@ -49,84 +49,54 @@
 
     <!-- end of sidebar -->
 
-    <!-- HOME-->
+<!-- HOME -->
+<div class="content home active"> 
+    <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
+    <div class="page-header">Home</div>
 
-    <div class="content home active"> 
-
-        <img class = "main logo mobile" src="img/Avonic Logo.svg" alt="">
-        <div class="page-header">Home</div>
-
-                <div class="machine_status">
-                    
-                        <div class="title-container">
-                            <h1>Machine Status</h1>
-                            <div class="refresh-sensors"><img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
-                        </div>
-                </div>
-                
-                        <div class="machine_status_container">
-                           
-                            <status-card
-                            dataType="battery"
-                            dataLabel="Battery"
-                            subDataLabel=" "
-                            dataUnit="%"
-                            icon="img/icons/tankIcons/BatteryIcon.svg"
-                            ></status-card>
-
-                            <status-card
-                            dataType="water-tank"
-                            dataLabel="Water"
-                            subDataLabel=" "
-                            dataUnit="%"
-                            icon="img/icons/tankIcons/WaterTankIcon.svg"
-                            ></status-card>
-
-                            <status-card
-                            dataType="water-temp"
-                            dataLabel="Water Temp"
-                            subDataLabel=""
-                            dataUnit="°C"
-                            icon="img/icons/tankIcons/WaterTankIcon.svg"
-                            ></status-card>
-
-                             
-                             
-                        </div>
-
-                </div>
-
-
-                <div class="machine_status">
-                    <h1>Vermicompost Bins</h1>
-                    <div class="bin_container">
-<bin-card
-    bin_name="Bin 1"
-    indicator="img/indicators/color coded mode indicator - auto.png"
-    mode="Auto-Mode"
-    navigateTo="#/bin?id=1">
-</bin-card>
-
-<bin-card
-    bin_name="Bin 2"
-    indicator="img/indicators/color coded mode indicator - manual.png"
-    mode="Manual-Mode"
-    navigateTo="#/bin2">
-</bin-card>
-
-                    </div>
-                    
-                </div>
-
-        
-
-           
-
+    <div class="machine_status">
+        <div class="title-container">
+            <h1>Machine Status</h1>
+            <div class="refresh-sensors">
+                <img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
+            </div>
         </div>
+        
+        <div class="machine_status_container">
+            <status-card
+                dataType="battery"
+                dataLabel="Battery"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="img/icons/tankIcons/BatteryIcon.svg">
+            </status-card>
 
+            <status-card
+                dataType="water-tank"
+                dataLabel="Water"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="img/icons/tankIcons/WaterTankIcon.svg">
+            </status-card>
 
+            <status-card
+                dataType="water-temp"
+                dataLabel="Water Temp"
+                subDataLabel=""
+                dataUnit="°C"
+                icon="img/icons/tankIcons/WaterTankIcon.svg">
+            </status-card>
+        </div>
+    </div>
 
-    </div> 
+    <div class="machine_status">
+        <h1>Vermicompost Bins</h1>
+        <!-- ✅ EMPTY CONTAINER - Will be populated dynamically -->
+        <div class="bin_container" id="binCardsContainer">
+            <!-- Bin cards will be injected here -->
+        </div>
+    </div>
+</div>
 
     
 <!-- inside-bins -->
