@@ -1108,152 +1108,9 @@ function updateCardWithReading(reading) {
   console.log('✅ Cards updated with latest readings');
 }
 
-// ====== DYNAMIC BIN CARD RENDERING ======
-
-async function loadBinCards() {
-  const token = localStorage.getItem('avonic_token');
-  const container = document.getElementById('binCardsContainer');
-  
-  if (!container) {
-    console.warn('⚠️ Bin container not found');
-    return;
-  }
-
-  if (!token) {
-    console.warn('⚠️ No auth token - user not logged in');
-    showEmptyState(container, 'Please log in to view your devices');
-    return;
-  }
-
-  // Show loading state
-  container.innerHTML = '<div class="loading-spinner">Loading your bins...</div>';
-
-  try {
-    const response = await fetch(`${API_BASE}/api/devices/claimed`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    const devices = data.devices || [];
-
-    console.log(`✅ Fetched ${devices.length} devices`);
-
-    // Clear container
-    container.innerHTML = '';
-
-    // Handle empty state
-    if (devices.length === 0) {
-      showEmptyState(container);
-      return;
-    }
-
-    // Render bin cards for each device
-    devices.forEach(device => {
-      const espID = device.espID;
-      const nickname = device.nickname || espID;
-      
-      // Create Bin 1
-      const bin1Card = createBinCardElement(espID, nickname, 1);
-      container.appendChild(bin1Card);
-      
-      // Create Bin 2
-      const bin2Card = createBinCardElement(espID, nickname, 2);
-      container.appendChild(bin2Card);
-    });
-
-    console.log(`✅ Rendered ${devices.length * 2} bin cards`);
-
-  } catch (error) {
-    console.error('❌ Failed to load bin cards:', error);
-    showEmptyState(container, 'Failed to load devices. Please refresh.');
-  }
-}
-
-// Create a bin card element
-function createBinCardElement(espID, nickname, binNumber) {
-  const binCard = document.createElement('bin-card');
-  
-  // Determine mode indicator (you can fetch this from backend later)
-  const isAutoMode = binNumber === 1; // Example: Bin 1 = Auto, Bin 2 = Manual
-  const modeIndicator = isAutoMode 
-    ? 'img/indicators/color coded mode indicator - auto.png'
-    : 'img/indicators/color coded mode indicator - manual.png';
-  const modeText = isAutoMode ? 'Auto-Mode' : 'Manual-Mode';
-  
-  // Set attributes
-  binCard.setAttribute('bin_name', `${nickname} - Bin ${binNumber}`);
-  binCard.setAttribute('indicator', modeIndicator);
-  binCard.setAttribute('mode', modeText);
-  binCard.setAttribute('navigateTo', `#/bin${binNumber === 2 ? '2' : ''}?espID=${espID}`);
-  binCard.setAttribute('data-esp-id', espID);
-  binCard.setAttribute('data-bin-number', binNumber);
-  
-  return binCard;
-}
-
-// Show empty state when no devices claimed
-function showEmptyState(container, message = null) {
-  container.innerHTML = `
-    <div class="empty-state-card">
-      <h3>No Devices Claimed</h3>
-      <p>${message || 'Claim your first device to start monitoring your compost bins!'}</p>
-      <button class="btn-primary" onclick="window.location.hash='#/claim-device'">
-        ➕ Claim Device
-      </button>
-    </div>
-  `;
-}
-
-// ====== INITIALIZE ON PAGE LOAD ======
-
-// Load bin cards when navigating to home
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#/home' || window.location.hash === '' || window.location.hash === '#/') {
-    setTimeout(() => loadBinCards(), 100);
-  }
-});
-
-// Initial load on page refresh
-document.addEventListener('DOMContentLoaded', () => {
-  const currentHash = window.location.hash;
-  if (currentHash === '#/home' || currentHash === '' || currentHash === '#/') {
-    setTimeout(() => loadBinCards(), 100);
-  }
-});
-
-console.log('✅ Dynamic bin card loader initialized');
-
-console.log('✅ Dynamic bin card loader initialized');
-
-// ====== DISPLAY ESP-ID ON BIN PAGES ======
-// ✅ ADD THIS SECTION HERE (at the very end of the file)
-
-window.addEventListener('hashchange', displayCurrentDevice);
-document.addEventListener('DOMContentLoaded', displayCurrentDevice);
-
-function displayCurrentDevice() {
-  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-  const espID = urlParams.get('espID');
-  
-  const espDisplay = document.querySelector('.esp-id-display');
-  if (espDisplay && espID) {
-    espDisplay.textContent = `Device: ${espID}`;
-  }
-}
-
-console.log('✅ ESP-ID display handler loaded');
-
 async function loadBinCards() {
   const token = localStorage.getItem('avonic_token');
   const binContainer = document.getElementById('binCardsContainer');
-  const machineStatusSection = document.querySelector('.machine_status');
   
   if (!binContainer) {
     console.warn('⚠️ Bin container not found');
@@ -1269,9 +1126,11 @@ async function loadBinCards() {
   // Show loading state
   binContainer.innerHTML = '<div class="loading-spinner">Loading your bins...</div>';
   
-  // Clear existing machine status cards (we'll recreate them)
-  const existingStatusContainers = document.querySelectorAll('.machine_status_container');
-  existingStatusContainers.forEach(container => container.remove());
+  // ✅ CRITICAL: Remove ALL existing Machine Status sections (not just containers)
+  const existingStatusSections = document.querySelectorAll('.machine_status:not(:has(#binCardsContainer))');
+  existingStatusSections.forEach(section => section.remove());
+  
+  console.log(`🗑️ Removed ${existingStatusSections.length} old Machine Status sections`);
 
   try {
     const response = await fetch(`${API_BASE}/api/devices/claimed`, {
@@ -1300,36 +1159,32 @@ async function loadBinCards() {
     }
 
     // ✅ CREATE MACHINE STATUS CARDS + BIN CARDS FOR EACH DEVICE
-    devices.forEach((device, index) => {
+    devices.forEach((device) => {
       const espID = device.espID;
       const nickname = device.nickname || espID;
       
-      // ✅ Create Machine Status section for this device
-      if (index === 0) {
-        // First device - use existing section
-        createMachineStatusCards(machineStatusSection, espID, nickname);
-      } else {
-        // Additional devices - create new sections
-        const newStatusSection = document.createElement('div');
-        newStatusSection.className = 'machine_status';
-        
-        const titleContainer = document.createElement('div');
-        titleContainer.className = 'title-container';
-        titleContainer.innerHTML = `
-          <h1>Machine Status - ${nickname}</h1>
-          <div class="refresh-sensors">
-            <img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
-          </div>
-        `;
-        
-        newStatusSection.appendChild(titleContainer);
-        
-        // Insert before bin section
-        const binSection = document.querySelector('.machine_status:has(#binCardsContainer)');
-        binSection.parentNode.insertBefore(newStatusSection, binSection);
-        
-        createMachineStatusCards(newStatusSection, espID, nickname);
-      }
+      // ✅ Create NEW Machine Status section for EVERY device
+      const newStatusSection = document.createElement('div');
+      newStatusSection.className = 'machine_status';
+      newStatusSection.setAttribute('data-esp-id', espID);
+      
+      const titleContainer = document.createElement('div');
+      titleContainer.className = 'title-container';
+      titleContainer.innerHTML = `
+        <h1>Machine Status - ${nickname}</h1>
+        <div class="refresh-sensors">
+          <img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
+        </div>
+      `;
+      
+      newStatusSection.appendChild(titleContainer);
+      
+      // ✅ Insert before the "Vermicompost Bins" section
+      const binSection = document.querySelector('.machine_status:has(#binCardsContainer)');
+      binSection.parentNode.insertBefore(newStatusSection, binSection);
+      
+      // Create the status cards for this device
+      createMachineStatusCards(newStatusSection, espID, nickname);
       
       // Create Bin 1
       const bin1Card = createBinCardElement(espID, nickname, 1);
