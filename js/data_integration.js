@@ -1,6 +1,13 @@
-// js/data_integration.js - AVONIC Real Data Integration
+// js/data_integration.js - AVONIC Real Data Integration with Rate Limit Protection
 
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
+
+// ====== Request Management ======
+let pendingRequest = null; // Prevent duplicate requests
+let lastFetchTime = 0; // Track last fetch timestamp
+let cachedSensorData = null; // Cache latest data
+const MIN_FETCH_INTERVAL = 3000; // Minimum 3 seconds between requests
+let isInitialized = false; // Prevent multiple initializations
 
 // ====== Helper Functions ======
 
@@ -37,7 +44,6 @@ function groupByDate(readings, sensorPath) {
       day: 'numeric'
     });
     
-    // Extract value from nested path (e.g., "bin1.temp")
     const value = sensorPath.split('.').reduce((obj, key) => obj?.[key], reading);
     
     if (value != null && !isNaN(value)) {
@@ -46,7 +52,6 @@ function groupByDate(readings, sensorPath) {
     }
   });
   
-  // Calculate daily averages
   const dailyAverages = {};
   Object.keys(grouped).forEach(date => {
     const stats = calculateStats(grouped[date]);
@@ -56,64 +61,48 @@ function groupByDate(readings, sensorPath) {
   return dailyAverages;
 }
 
-// ====== Fetch Latest Sensor Data (Real-time Cards) ======
+// ====== Fetch Latest Sensor Data with Deduplication ======
 
-// ✅ UPDATE this function in data_integration.js
-
-async function fetchLatestSensorData() {
+async function fetchLatestSensorData(forceRefresh = false) {
   const token = getAuthToken();
   if (!token) {
     console.warn('⚠️ No auth token - skipping sensor fetch');
-    return;
+    return null;
   }
 
+  const now = Date.now();
+  const timeSinceLastFetch = now - lastFetchTime;
+
+  // Return cached data if recent fetch and not forced
+  if (!forceRefresh && cachedSensorData && timeSinceLastFetch < MIN_FETCH_INTERVAL) {
+    console.log(`📦 Using cached data (${Math.round(timeSinceLastFetch/1000)}s old)`);
+    processSensorData(cachedSensorData);
+    return cachedSensorData;
+  }
+
+  // If there's already a pending request, wait for it
+  if (pendingRequest) {
+    console.log('⏳ Request already in flight, waiting...');
+    try {
+      const data = await pendingRequest;
+      processSensorData(data);
+      return data;
+    } catch (error) {
+      console.error('❌ Pending request failed:', error);
+      return null;
+    }
+  }
+
+  // Create new request
+  console.log('🌐 Fetching fresh sensor data...');
+  pendingRequest = fetchSensorDataFromAPI();
+
   try {
-    const response = await fetch(`${API_BASE}/api/sensors/latest`, {
-      headers: getAuthHeaders()
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    if (!data.readings || data.readings.length === 0) {
-      console.log('ℹ️ No sensor readings available yet');
-      return;
-    }
-
-    console.log(`📊 Received data for ${data.readings.length} device(s):`, 
-                data.readings.map(r => r.espID));
-
-    // ✅ Check if current page device has data
-    const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    const currentEspId = urlParams.get('espID');
-    const isOnBinPage = window.location.hash.includes('/bin');
-    
-    if (isOnBinPage && currentEspId) {
-      const hasDataForCurrentDevice = data.readings.some(r => r.espID === currentEspId);
-      
-      if (!hasDataForCurrentDevice) {
-        console.warn(`⚠️ No data received for ${currentEspId} - showing NULL values`);
-        showNullDataForDevice(currentEspId);
-      }
-    }
-
-    // Update all sensor cards with latest data
-    data.readings.forEach(reading => {
-      console.log(`🔄 Processing reading for: ${reading.espID}`);
-      updateSensorCards(reading);
-    });
-
-    // Update timestamp
-    const timeElem = document.querySelector('.time-updated');
-    if (timeElem) {
-      timeElem.textContent = 'Updated just now';
-    }
-
-    console.log('✅ Sensor data update complete');
-    
+    const data = await pendingRequest;
+    lastFetchTime = Date.now();
+    cachedSensorData = data;
+    processSensorData(data);
+    return data;
   } catch (error) {
     console.error('❌ Fetch sensor error:', error);
     
@@ -122,7 +111,69 @@ async function fetchLatestSensorData() {
       timeElem.textContent = 'Update failed';
       timeElem.style.color = '#df5e45ff';
     }
+    
+    return null;
+  } finally {
+    pendingRequest = null;
   }
+}
+
+// Actual API fetch (separated for cleaner code)
+async function fetchSensorDataFromAPI() {
+  const response = await fetch(`${API_BASE}/api/sensors/latest`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  
+  if (!data.readings || data.readings.length === 0) {
+    console.log('ℹ️ No sensor readings available yet');
+    return null;
+  }
+
+  console.log(`📊 Received data for ${data.readings.length} device(s):`, 
+              data.readings.map(r => r.espID));
+  
+  return data;
+}
+
+// Process sensor data (update UI)
+function processSensorData(data) {
+  if (!data || !data.readings) return;
+
+  // Check if current page device has data
+  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+  const currentEspId = urlParams.get('espID');
+  const isOnBinPage = window.location.hash.includes('/bin');
+  
+  if (isOnBinPage && currentEspId) {
+    const hasDataForCurrentDevice = data.readings.some(r => r.espID === currentEspId);
+    
+    if (!hasDataForCurrentDevice) {
+      console.warn(`⚠️ No data received for ${currentEspId} - showing NULL values`);
+      showNullDataForDevice(currentEspId);
+      return; // Don't update cards with wrong device data
+    }
+  }
+
+  // Update all sensor cards with latest data
+  data.readings.forEach(reading => {
+    console.log(`🔄 Processing reading for: ${reading.espID}`);
+    updateSensorCards(reading);
+  });
+
+  // Update timestamp
+  const timeElem = document.querySelector('.time-updated');
+  if (timeElem) {
+    timeElem.textContent = 'Updated just now';
+    timeElem.style.color = '';
+  }
+
+  console.log('✅ Sensor data update complete');
 }
 
 // ====== Show NULL for devices with no data ======
@@ -139,13 +190,12 @@ function showNullDataForDevice(espID) {
     if (valueElem) valueElem.textContent = '--';
     if (unitElem) unitElem.textContent = '';
     
-    // Reset progress circle
     if (circle) {
+      const circumference = 2 * Math.PI * 45;
       circle.style.strokeDashoffset = circumference;
       circle.style.stroke = '#ddd';
     }
     
-    // Show "No Data" message
     if (subLabel) {
       subLabel.textContent = 'No Data Received';
       subLabel.style.color = '#999';
@@ -157,34 +207,27 @@ function showNullDataForDevice(espID) {
 
 // ====== Update Sensor Cards with Real Data ======
 
-// Update this function in data_integration.js
-// ✅ REPLACE this function in data_integration.js
-
 function updateSensorCards(reading) {
   const cards = document.querySelectorAll('.card_stats[data-type="Sensors"]');
   
-  // ✅ Get ESP-ID from URL hash
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
   const currentEspId = urlParams.get('espID');
   
-  // ✅ CRITICAL: Only update if we're viewing this device OR on home page
   const isOnBinPage = window.location.hash.includes('/bin');
   
   if (isOnBinPage && currentEspId && reading.espID !== currentEspId) {
     console.log(`⏭️ Skipping update - viewing ${currentEspId}, got data for ${reading.espID}`);
-    return; // Skip this reading - it's not for the current device
+    return;
   }
   
   cards.forEach(card => {
     const binId = card.getAttribute('data-bin-id');
     const label = card.querySelector('.status_label')?.textContent || '';
     
-    // Select correct bin data
     const binData = binId === '2' ? reading.bin2 : reading.bin1;
     
     if (!binData) return;
     
-    // Match sensor type and update
     let value = null;
     
     if (label.includes('Soil Moisture') && binData.soil !== undefined) {
@@ -205,13 +248,11 @@ function updateSensorCards(reading) {
     }
   });
   
-  // ✅ Update system cards (battery, water) - ONLY if on HOME page
   const isOnHomePage = window.location.hash === '#/home' || 
                        window.location.hash === '#/' || 
                        window.location.hash === '';
   
   if (isOnHomePage) {
-    // Update battery (from system data)
     if (reading.system?.battery_level !== undefined) {
       const batteryCard = document.querySelector('.card_stats[data-type="battery"]');
       if (batteryCard) {
@@ -220,7 +261,6 @@ function updateSensorCards(reading) {
       }
     }
     
-    // Update water tank and temp (from bin2 data)
     if (reading.bin2) {
       const waterCard = document.querySelector('.card_stats[data-type="water-tank"]');
       if (waterCard && reading.bin2.water_level !== undefined) {
@@ -244,7 +284,6 @@ async function fetchChartData(espID, binNumber, days = 7) {
   if (!token) return null;
 
   try {
-    // Calculate date range
     const end = new Date();
     const start = new Date();
     start.setDate(start.getDate() - days);
@@ -279,7 +318,6 @@ async function updateChart(chartElement, espID, binNumber, sensorName) {
     return;
   }
 
-  // Determine sensor path based on name
   const sensorMap = {
     'Soil Moisture': `bin${binNumber}.soil`,
     'Temperature': `bin${binNumber}.temp`,
@@ -291,10 +329,8 @@ async function updateChart(chartElement, espID, binNumber, sensorName) {
   const sensorPath = sensorMap[sensorName];
   if (!sensorPath) return;
 
-  // Group by date and get daily averages
   const dailyData = groupByDate(readings, sensorPath);
   
-  // Sort dates chronologically
   const sortedDates = Object.keys(dailyData).sort((a, b) => {
     return new Date(a) - new Date(b);
   });
@@ -306,10 +342,8 @@ async function updateChart(chartElement, espID, binNumber, sensorName) {
   
   const values = sortedDates.map(date => dailyData[date]);
 
-  // Calculate summary stats
   const stats = calculateStats(values);
   
-  // Update summary cards
   const chartId = chartElement.id;
   const minElem = document.getElementById(`${chartId}-min`);
   const aveElem = document.getElementById(`${chartId}-ave`);
@@ -319,12 +353,10 @@ async function updateChart(chartElement, espID, binNumber, sensorName) {
   if (aveElem) aveElem.textContent = stats.avg;
   if (maxElem) maxElem.textContent = stats.max.toFixed(1);
 
-  // Destroy existing chart if exists
   if (chartElement._chartInstance) {
     chartElement._chartInstance.destroy();
   }
 
-  // Create new chart
   const ctx = chartElement.getContext('2d');
   const unit = getSensorUnit(sensorName);
   
@@ -399,7 +431,6 @@ function getSensorUnit(sensorName) {
 // ====== Initialize All Charts on Dashboard ======
 
 async function initializeDashboardCharts() {
-  // Get user's first device (or selected device)
   const token = getAuthToken();
   if (!token) return;
 
@@ -417,16 +448,13 @@ async function initializeDashboardCharts() {
       return;
     }
 
-    // Use first device by default
     const device = data.devices[0];
     const espID = device.espID;
     
-    // Get current bin selection (default to 1)
     const binDisplay = document.getElementById('current-bin');
     const currentBin = binDisplay ? 
       parseInt(binDisplay.textContent.replace('Bin ', '')) : 1;
 
-    // Find all chart canvases
     const chartSections = document.querySelectorAll('section-sensor-fluctuation');
     
     for (const section of chartSections) {
@@ -448,6 +476,11 @@ async function initializeDashboardCharts() {
 let refreshInterval;
 
 function startAutoRefresh() {
+  if (refreshInterval) {
+    console.log('⚠️ Auto-refresh already running');
+    return;
+  }
+  
   // Refresh sensor data every 5 seconds
   refreshInterval = setInterval(() => {
     fetchLatestSensorData();
@@ -459,29 +492,46 @@ function startAutoRefresh() {
 function stopAutoRefresh() {
   if (refreshInterval) {
     clearInterval(refreshInterval);
+    refreshInterval = null;
     console.log('⏸️ Auto-refresh stopped');
   }
 }
 
+// ====== Initialization ======
+
+function initializeDataIntegration() {
+  if (isInitialized) {
+    console.log('⚠️ Data integration already initialized');
+    return;
+  }
+  
+  isInitialized = true;
+  console.log('🚀 Initializing data integration...');
+  
+  // Initial load with slight delay to let page settle
+  setTimeout(() => {
+    fetchLatestSensorData(true); // Force refresh on init
+    startAutoRefresh();
+    
+    // Load dashboard charts if on dashboard page
+    if (window.location.hash === '#/dashboard') {
+      setTimeout(initializeDashboardCharts, 500);
+    }
+  }, 100);
+}
+
 // ====== Event Listeners ======
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Initial load
-  fetchLatestSensorData();
-  
-  // Start auto-refresh
-  startAutoRefresh();
-  
-  // Load dashboard charts if on dashboard page
-  if (window.location.hash === '#/dashboard') {
-    setTimeout(initializeDashboardCharts, 500);
-  }
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeDataIntegration);
+} else {
+  initializeDataIntegration();
+}
 
 // Refresh on manual button click
 document.addEventListener('click', (e) => {
   if (e.target.closest('.refresh-sensors') || e.target.closest('.insightsRefresh')) {
-    fetchLatestSensorData();
+    fetchLatestSensorData(true); // Force refresh
     
     const timeElem = document.querySelector('.time-updated');
     if (timeElem) {
