@@ -1250,6 +1250,216 @@ function displayCurrentDevice() {
 
 console.log('✅ ESP-ID display handler loaded');
 
+async function loadBinCards() {
+  const token = localStorage.getItem('avonic_token');
+  const binContainer = document.getElementById('binCardsContainer');
+  const machineStatusSection = document.querySelector('.machine_status');
+  
+  if (!binContainer) {
+    console.warn('⚠️ Bin container not found');
+    return;
+  }
+
+  if (!token) {
+    console.warn('⚠️ No auth token - user not logged in');
+    showEmptyState(binContainer, 'Please log in to view your devices');
+    return;
+  }
+
+  // Show loading state
+  binContainer.innerHTML = '<div class="loading-spinner">Loading your bins...</div>';
+  
+  // Clear existing machine status cards (we'll recreate them)
+  const existingStatusContainers = document.querySelectorAll('.machine_status_container');
+  existingStatusContainers.forEach(container => container.remove());
+
+  try {
+    const response = await fetch(`${API_BASE}/api/devices/claimed`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const devices = data.devices || [];
+
+    console.log(`✅ Fetched ${devices.length} devices`);
+
+    // Clear container
+    binContainer.innerHTML = '';
+
+    // Handle empty state
+    if (devices.length === 0) {
+      showEmptyState(binContainer);
+      return;
+    }
+
+    // ✅ CREATE MACHINE STATUS CARDS + BIN CARDS FOR EACH DEVICE
+    devices.forEach((device, index) => {
+      const espID = device.espID;
+      const nickname = device.nickname || espID;
+      
+      // ✅ Create Machine Status section for this device
+      if (index === 0) {
+        // First device - use existing section
+        createMachineStatusCards(machineStatusSection, espID, nickname);
+      } else {
+        // Additional devices - create new sections
+        const newStatusSection = document.createElement('div');
+        newStatusSection.className = 'machine_status';
+        
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'title-container';
+        titleContainer.innerHTML = `
+          <h1>Machine Status - ${nickname}</h1>
+          <div class="refresh-sensors">
+            <img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
+          </div>
+        `;
+        
+        newStatusSection.appendChild(titleContainer);
+        
+        // Insert before bin section
+        const binSection = document.querySelector('.machine_status:has(#binCardsContainer)');
+        binSection.parentNode.insertBefore(newStatusSection, binSection);
+        
+        createMachineStatusCards(newStatusSection, espID, nickname);
+      }
+      
+      // Create Bin 1
+      const bin1Card = createBinCardElement(espID, nickname, 1);
+      binContainer.appendChild(bin1Card);
+      
+      // Create Bin 2
+      const bin2Card = createBinCardElement(espID, nickname, 2);
+      binContainer.appendChild(bin2Card);
+    });
+
+    console.log(`✅ Rendered ${devices.length} machine status sets and ${devices.length * 2} bin cards`);
+
+  } catch (error) {
+    console.error('❌ Failed to load bin cards:', error);
+    showEmptyState(binContainer, 'Failed to load devices. Please refresh.');
+  }
+}
+
+// ✅ NEW: Create machine status cards for a device
+function createMachineStatusCards(parentSection, espID, nickname) {
+  const statusContainer = document.createElement('div');
+  statusContainer.className = 'machine_status_container';
+  statusContainer.setAttribute('data-esp-id', espID);
+  
+  // Battery card
+  const batteryCard = document.createElement('status-card');
+  batteryCard.setAttribute('dataType', 'battery');
+  batteryCard.setAttribute('dataLabel', 'Battery');
+  batteryCard.setAttribute('subDataLabel', ' ');
+  batteryCard.setAttribute('dataUnit', '%');
+  batteryCard.setAttribute('icon', 'img/icons/tankIcons/BatteryIcon.svg');
+  batteryCard.setAttribute('data-esp-id', espID);
+  
+  // Water card
+  const waterCard = document.createElement('status-card');
+  waterCard.setAttribute('dataType', 'water-tank');
+  waterCard.setAttribute('dataLabel', 'Water');
+  waterCard.setAttribute('subDataLabel', ' ');
+  waterCard.setAttribute('dataUnit', '%');
+  waterCard.setAttribute('icon', 'img/icons/tankIcons/WaterTankIcon.svg');
+  waterCard.setAttribute('data-esp-id', espID);
+  
+  // Water temp card
+  const waterTempCard = document.createElement('status-card');
+  waterTempCard.setAttribute('dataType', 'water-temp');
+  waterTempCard.setAttribute('dataLabel', 'Water Temp');
+  waterTempCard.setAttribute('subDataLabel', '');
+  waterTempCard.setAttribute('dataUnit', '°C');
+  waterTempCard.setAttribute('icon', 'img/icons/tankIcons/WaterTankIcon.svg');
+  waterTempCard.setAttribute('data-esp-id', espID);
+  
+  statusContainer.appendChild(batteryCard);
+  statusContainer.appendChild(waterCard);
+  statusContainer.appendChild(waterTempCard);
+  
+  parentSection.appendChild(statusContainer);
+  
+  console.log(`✅ Created machine status cards for ${espID}`);
+}
+
+// Create a bin card element
+function createBinCardElement(espID, nickname, binNumber) {
+  const binCard = document.createElement('bin-card');
+  
+  // Determine mode indicator (you can fetch this from backend later)
+  const isAutoMode = binNumber === 1; // Example: Bin 1 = Auto, Bin 2 = Manual
+  const modeIndicator = isAutoMode 
+    ? 'img/indicators/color coded mode indicator - auto.png'
+    : 'img/indicators/color coded mode indicator - manual.png';
+  const modeText = isAutoMode ? 'Auto-Mode' : 'Manual-Mode';
+  
+  // Set attributes
+  binCard.setAttribute('bin_name', `${nickname} - Bin ${binNumber}`);
+  binCard.setAttribute('indicator', modeIndicator);
+  binCard.setAttribute('mode', modeText);
+  binCard.setAttribute('navigateTo', `#/bin${binNumber === 2 ? '2' : ''}?espID=${espID}`);
+  binCard.setAttribute('data-esp-id', espID);
+  binCard.setAttribute('data-bin-number', binNumber);
+  
+  return binCard;
+}
+
+// Show empty state when no devices claimed
+function showEmptyState(container, message = null) {
+  container.innerHTML = `
+    <div class="empty-state-card">
+      <h3>No Devices Claimed</h3>
+      <p>${message || 'Claim your first device to start monitoring your compost bins!'}</p>
+      <button class="btn-primary" onclick="window.location.hash='#/claim-device'">
+        ➕ Claim Device
+      </button>
+    </div>
+  `;
+}
+
+// ====== INITIALIZE ON PAGE LOAD ======
+
+// Load bin cards when navigating to home
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#/home' || window.location.hash === '' || window.location.hash === '#/') {
+    setTimeout(() => loadBinCards(), 100);
+  }
+});
+
+// Initial load on page refresh
+document.addEventListener('DOMContentLoaded', () => {
+  const currentHash = window.location.hash;
+  if (currentHash === '#/home' || currentHash === '' || currentHash === '#/') {
+    setTimeout(() => loadBinCards(), 100);
+  }
+});
+
+console.log('✅ Dynamic bin card loader initialized');
+
+// ====== DISPLAY ESP-ID ON BIN PAGES ======
+window.addEventListener('hashchange', displayCurrentDevice);
+document.addEventListener('DOMContentLoaded', displayCurrentDevice);
+
+function displayCurrentDevice() {
+  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+  const espID = urlParams.get('espID');
+  
+  const espDisplay = document.querySelector('.esp-id-display');
+  if (espDisplay && espID) {
+    espDisplay.textContent = `Device: ${espID}`;
+  }
+}
+
+console.log('✅ ESP-ID display handler loaded');
+
 // // Auto-refresh every 5 seconds
 // setInterval(fetchSensorData, 5000);
 

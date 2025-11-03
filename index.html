@@ -62,32 +62,15 @@
             </div>
         </div>
         
-        <div class="machine_status_container">
-            <status-card
-                dataType="battery"
-                dataLabel="Battery"
-                subDataLabel=" "
-                dataUnit="%"
-                icon="img/icons/tankIcons/BatteryIcon.svg">
-            </status-card>
-
-            <status-card
-                dataType="water-tank"
-                dataLabel="Water"
-                subDataLabel=" "
-                dataUnit="%"
-                icon="img/icons/tankIcons/WaterTankIcon.svg">
-            </status-card>
-
-            <status-card
-                dataType="water-temp"
-                dataLabel="Water Temp"
-                subDataLabel=""
-                dataUnit="°C"
-                icon="img/icons/tankIcons/WaterTankIcon.svg">
-            </status-card>
+<div class="machine_status">
+    <div class="title-container">
+        <h1>Machine Status</h1>
+        <div class="refresh-sensors">
+            <img class="refresh_icon" src="img/icons/refresh_icon.svg" alt="">
         </div>
     </div>
+    <!-- ✅ Container will be added dynamically -->
+</div>
 
     <div class="machine_status">
         <h1>Vermicompost Bins</h1>
