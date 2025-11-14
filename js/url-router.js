@@ -1,14 +1,20 @@
-// AVONIC URL Router with Authentication
+// AVONIC URL Router with Authentication & External Pages
 // Handles page navigation using URL hash routing
 
 const routes = {
     '/': '.content.home',
+    '/landing': '.content.landing',
     '/dashboard': '.content.dashboard',
     '/claim-device': '.content.claim-device',
     '/settings': '.content.settings',
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
+};
+
+// External HTML pages configuration
+const externalPages = {
+    '/landing': 'landing-page.html'
 };
 
 let currentPage = null;
@@ -29,11 +35,50 @@ function requireAuth() {
     return true;
 }
 
+// Load external HTML file
+async function loadExternalPage(route) {
+    const filePath = externalPages[route];
+    
+    if (!filePath) {
+        return false;
+    }
+    
+    try {
+        console.log(`📥 Loading external page: ${filePath}`);
+        const response = await fetch(filePath);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        
+        let container = document.querySelector('.content.landing');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'content landing';
+            document.body.appendChild(container);
+        }
+        
+        container.innerHTML = html;
+        console.log(`✅ External page loaded: ${route}`);
+        return true;
+        
+    } catch (error) {
+        console.error(`❌ Failed to load external page ${filePath}:`, error);
+        return false;
+    }
+}
+
 // Initialize router
 function initRouter() {
     console.log('🚀 Router initialized');
     
-    if (!requireAuth()) {
+    // Don't require auth for landing page
+    const currentHash = window.location.hash.slice(1) || '';
+    const route = currentHash.split('?')[0];
+    
+    if (route !== '/landing' && !requireAuth()) {
         return;
     }
 
@@ -59,21 +104,24 @@ function initRouter() {
 }
 
 // Handle route changes
-function handleRouteChange() {
+async function handleRouteChange() {
     let hash = window.location.hash.slice(1);
     
-    // Default to DASHBOARD if authenticated
+    // Default routing based on auth status
     if (!hash || hash === '') {
-        hash = '/dashboard';
+        hash = isAuthenticated() ? '/dashboard' : '/landing';
+        window.location.hash = '#' + hash;
+        return;
     }
     
-    // Strip query parameters for route matching
     const route = hash.split('?')[0];
     
-    // Find matching route
+    // Try loading external page first
+    const isExternal = await loadExternalPage(route);
+    
     const pageSelector = routes[route];
     
-    if (pageSelector) {
+    if (pageSelector || isExternal) {
         showPage(pageSelector, route);
     } else {
         console.warn(`⚠️ Route not found: ${route}, redirecting to dashboard`);
@@ -81,8 +129,7 @@ function handleRouteChange() {
     }
 }
 
-// ✅ ADD THIS FUNCTION to url-router.js (after handleRouteChange function)
-// ✅ NEW: Handle bin page navigation with ESP-ID parameter
+// Handle bin page navigation with ESP-ID parameter
 function handleBinPageLoad(route) {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash.split('?')[1]);
@@ -143,12 +190,10 @@ function showPage(selector, route) {
             loadDashboard();
         }
         
-        // ✅ NEW: Handle bin pages with ESP-ID parameter
         if (route === '/bin' || route === '/bin2') {
             handleBinPageLoad(route);
         }
         
-        // ✅ NEW: Load bin cards on home page
         if (route === '/' && typeof loadBinCards === 'function') {
             console.log('📥 Loading bin cards...');
             setTimeout(() => loadBinCards(), 100);
