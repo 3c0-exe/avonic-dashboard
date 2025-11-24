@@ -366,8 +366,8 @@
     to { transform: rotate(360deg); }
 }
 
-/* Modal */
-.modal {
+/* ✅ UNCLAIM MODAL - RENAMED TO AVOID CONFLICTS */
+#unclaim-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -380,11 +380,11 @@
     justify-content: center;
 }
 
-.modal.active {
+#unclaim-modal.active {
     display: flex;
 }
 
-.modal-content {
+#unclaim-modal .modal-content {
     background: var(--bg-light);
     border: 3px solid var(--text);
     border-radius: 16px;
@@ -393,7 +393,7 @@
     width: 90%;
 }
 
-.modal-content h3 {
+#unclaim-modal .modal-content h3 {
     font-size: var(--fs-w-header);
     margin-bottom: var(--space-3);
 }
