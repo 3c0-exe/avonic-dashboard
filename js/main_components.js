@@ -26,6 +26,10 @@ class Bincard extends HTMLElement {
 customElements.define("bin-card", Bincard)
 
 
+// 📝 COPY THIS CODE INTO YOUR ONLINE main_components.js
+
+// ✅ REPLACE THE openModal CONTENT GENERATION IN Statuscard CLASS
+
 class Statuscard extends HTMLElement {
   connectedCallback() {
     const dataType = this.getAttribute("dataType");
@@ -34,15 +38,13 @@ class Statuscard extends HTMLElement {
     const dataLabel = this.getAttribute("dataLabel");
     const subDataLabel = this.getAttribute("subDataLabel");
     const icon = this.getAttribute("icon");
-    const isClickable = this.getAttribute("isClickable") === "true"; // normalize boolean
+    const isClickable = this.getAttribute("isClickable") === "true";
     const showWaterPressure = this.getAttribute("showWaterPressure") === "true";
     const showFanRPM = this.getAttribute("showFanRPM") === "true";
-    const binId = this.getAttribute("data-bin-id"); // ✅ CORRECT
+    const binId = this.getAttribute("data-bin-id"); // ✅ Get bin ID
 
-    // ✅ Grab template content if present
     const helpTemplate = this.querySelector("template.help");
     const helpContent = helpTemplate ? helpTemplate.innerHTML : "";
-
 
     this.innerHTML = `
       <div class="card_stats ${isClickable ? "clickable" : ""}" 
@@ -73,120 +75,98 @@ class Statuscard extends HTMLElement {
             </div>
           </div>
         </div>
-
-        <!--
-        <div class="refresh_btn">
-          <img src="img/icons/refresh_icon.svg" alt="">
-        </div> -->
-
       </div>
-
-      
       <p class="status-message"></p>
     `;
-    let manualControls = "";
-    if (showWaterPressure) {
-  manualControls += `
-   <div class="manual waterPressure">
-                <p class="actuatorName">Water Pressure</p>
-                <div class="slideContainer">
-                  <input class="slider" type="range" min="0" max="100" value="0" step="10">
-                </div>
-                <div class="labels">
-                  <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-                </div>
-      </div>
-  `;
-}
 
-if (showFanRPM) {
-  manualControls += `
+    // ✅ Build modal controls HTML based on sensor type
+    let modalControls = "";
     
-              <div class="manual fanRPM">
-                <p class="actuatorName">Fan RPM</p>
-                <div class="slideContainer">
-                  <input class="slider" type="range" min="0" max="100" value="0" step="10">
-                </div>
-                <div class="labels">
-                  <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-                </div>
-             </div>
-  `;
-}
-    // ✅ Only this one block handles modal clicks
+    if (showWaterPressure && binId) {
+      // Show PUMP controls for sensors with water (Soil Moisture, Humidity)
+      modalControls += `
+        <div class="modal-control-section">
+          <h3 class="modal-control-title">💧 Water Pump Control</h3>
+          <div class="modal-control-buttons">
+            <button class="control-btn btn-on" onclick="controlDeviceFromModal(${binId}, 'pump', true)">
+              🟢 Turn ON
+            </button>
+            <button class="control-btn btn-off" onclick="controlDeviceFromModal(${binId}, 'pump', false)">
+              🔴 Turn OFF
+            </button>
+          </div>
+          <div class="modal-device-status" id="modal-bin${binId}-pump-status">
+            Status: Loading...
+          </div>
+        </div>
+      `;
+    }
+    
+    if (showFanRPM && binId) {
+      // Show FAN controls for sensors with air (Temperature, Gas Level, Humidity)
+      modalControls += `
+        <div class="modal-control-section">
+          <h3 class="modal-control-title">🌬️ Fan Control</h3>
+          <div class="modal-control-buttons">
+            <button class="control-btn btn-on" onclick="controlDeviceFromModal(${binId}, 'fan', true)">
+              🟢 Turn ON
+            </button>
+            <button class="control-btn btn-off" onclick="controlDeviceFromModal(${binId}, 'fan', false)">
+              🔴 Turn OFF
+            </button>
+          </div>
+          <div class="modal-device-status" id="modal-bin${binId}-fan-status">
+            Status: Loading...
+          </div>
+        </div>
+      `;
+    }
+
+    // ✅ Only attach click handler if clickable
     if (isClickable) {
-  const cardElement = this.querySelector(".card_stats"); // capture this card
-  cardElement.addEventListener("click", () => {
-    openModal({
-      title: this.getAttribute("dataLabel"),
-      defaultContent:`
-     <div class="reading-modal-wrapper"> 
-          <div class="refresh_btn modal" id="refreshBtn">
-                  <img src="img/icons/refresh_icon.svg" alt="">
+      const cardElement = this.querySelector(".card_stats");
+      cardElement.addEventListener("click", () => {
+        openModal({
+          title: this.getAttribute("dataLabel"),
+          defaultContent:`
+            <div class="reading-modal-wrapper"> 
+              <div class="refresh_btn modal" id="refreshBtn">
+                <img src="img/icons/refresh_icon.svg" alt="">
+              </div>
+
+              <div class="modalWrapper">
+                <div class="readings">
+                  <img class="card-worm-icon" src="img/more dummies/Placeholder icon.png" alt="">
+                  <div class="reading-text">
+                    <div class="modalSubTitle">Current Reading</div>
+                    <div class="readingValue">
+                      <span class="card_value_v2"></span>
+                      <span class="card_unit_v2"></span>
+                    </div>
+                    <div class="sensorStatus">Optimal</div>
+                  </div>
                 </div>
 
-                <div class="modalWrapper">
-                  <div class="readings">
-                    <img class="card-worm-icon" src="img/more dummies/Placeholder icon.png" alt="">
-                    <div class="reading-text">
-                        <div class="modalSubTitle">Current Reading</div>
-                        <div class="readingValue">
-                        <span class="card_value_v2"></span>
-                        <span class="card_unit_v2"></span>
-                        </div>
-                        <div class="sensorStatus">Optimal</div>
-                    </div>
-                    
-                  </div>
-
-                  <div class="manualControl">
-                    <div class="tertiaryCardName">Manual</div>
-                    
-                ${showWaterPressure ? `
-                  <div class="manualModule">
-                    <div class="tertiaryCardName sub">Water Pressure</div>
-                    <div class="slideContainer">
-                      <input class="slider" type="range" min="0" max="100" value="0" step="10">
-                    </div>
-                    <div class="labels">
-                      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-                    </div>
-                  </div>
-         
-                  
-                ` : ""}
-
-                ${showFanRPM ? `
-                  <div class="manualModule">
-                    <div class="tertiaryCardName sub">Fan RPM</div>
-                    <div class="slideContainer">
-                      <input class="slider" type="range" min="0" max="100" value="0" step="10">
-                    </div>
-                    <div class="labels">
-                      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-                    </div>
-                  </div>
-              
-           
-          ` : ""}
-            
-               </div>
-
-              
-`,
-      helpContent,
-
-      syncValues: {
-        valueElem: this.querySelector(".card_value"),
-        unitElem: this.querySelector(".card_unit"),
-      },
-      card: cardElement // ✅ pass card reference
-    });
-  });
-}
-
+                <div class="manualControl">
+                  <div class="tertiaryCardName">Controls</div>
+                  ${modalControls}
+                </div>
+              </div>
+            </div>
+          `,
+          helpContent,
+          syncValues: {
+            valueElem: this.querySelector(".card_value"),
+            unitElem: this.querySelector(".card_unit"),
+          },
+          card: cardElement,
+          binId: binId
+        });
+      });
+    }
   }
 }
+
 
 customElements.define("status-card", Statuscard);
 
@@ -1837,6 +1817,62 @@ function displayCurrentDevice() {
 }
 
 console.log('✅ ESP-ID display handler loaded');
+
+// ✅ ADD THIS GLOBAL FUNCTION (place at bottom of main_components.js)
+
+window.controlDeviceFromModal = async function(binId, device, state) {
+  // Check if manual mode is enabled
+  if (!isManualMode) {
+    showToast("⚠️ Switch to Manual Mode to control devices", "warning");
+    return;
+  }
+  
+  const statusId = `modal-bin${binId}-${device}-status`;
+  const statusElement = document.getElementById(statusId);
+  
+  // Disable buttons temporarily
+  const modal = document.querySelector('.status_modal');
+  if (modal) {
+    const buttons = modal.querySelectorAll('.control-btn');
+    buttons.forEach(btn => btn.disabled = true);
+  }
+  
+  // Show loading state
+  if (statusElement) {
+    statusElement.textContent = '⏳ Sending command...';
+    statusElement.style.color = '#FFA500';
+  }
+  
+  try {
+    // 🔥 PLACEHOLDER - You'll replace this with MQTT publishing later
+    console.log(`📡 Would send: bin${binId}/${device} = ${state ? 'ON' : 'OFF'}`);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Update status
+    if (statusElement) {
+      statusElement.textContent = state ? '🟢 ON' : '⚪ OFF';
+      statusElement.style.color = state ? '#4CAF50' : '#757575';
+    }
+    
+    showToast(`✅ ${device.toUpperCase()} turned ${state ? 'ON' : 'OFF'}`, 'success');
+    
+  } catch (error) {
+    console.error('Control error:', error);
+    if (statusElement) {
+      statusElement.textContent = '❌ Control failed';
+      statusElement.style.color = '#f44336';
+    }
+    showToast('❌ ' + error.message, 'error');
+  } finally {
+    // Re-enable buttons
+    if (modal) {
+      const buttons = modal.querySelectorAll('.control-btn');
+      buttons.forEach(btn => btn.disabled = false);
+    }
+  }
+}
 
 // // Auto-refresh every 5 seconds
 // setInterval(fetchSensorData, 5000);
