@@ -1,5 +1,5 @@
 // auth.js - Complete Authentication Handler for forms.html
-// Handles login, register, password reset, and form switching
+// Handles login, register, forgot password, and reset password
 
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
 
@@ -9,9 +9,7 @@ const formSections = {
   login: 0,
   register: 1,
   forgot: 2,
-  reset: 3,
-  claim: 4,
-  wifi: 5
+  reset: 3
 };
 
 let currentForm = 'login';
@@ -83,7 +81,6 @@ function setupFormNavigation() {
 // ====== MESSAGE DISPLAY ======
 
 function showMessage(message, type = 'error') {
-  // Create message element if it doesn't exist
   let msgDiv = document.getElementById('form-message');
   
   if (!msgDiv) {
@@ -121,7 +118,6 @@ function showMessage(message, type = 'error') {
   msgDiv.textContent = message;
   msgDiv.style.display = 'block';
   
-  // Auto-hide after 5 seconds
   setTimeout(() => {
     msgDiv.style.display = 'none';
   }, 5000);
@@ -143,7 +139,6 @@ async function handleLogin(event) {
     return;
   }
   
-  // Disable button
   const originalText = submitBtn.innerHTML;
   submitBtn.disabled = true;
   submitBtn.innerHTML = 'Logging in...';
@@ -161,14 +156,12 @@ async function handleLogin(event) {
     console.log('📦 Login response:', data);
     
     if (response.ok && data.success) {
-      // Store token and user info
       localStorage.setItem('avonic_token', data.token);
       localStorage.setItem('avonic_user', JSON.stringify(data.user));
       
       console.log('✅ Login successful');
       showMessage('Login successful! Redirecting...', 'success');
       
-      // Redirect to dashboard
       setTimeout(() => {
         window.location.href = 'index.html#/dashboard';
       }, 1000);
@@ -231,7 +224,6 @@ async function handleRegister(event) {
     return;
   }
   
-  // Disable button
   const originalText = submitBtn.innerHTML;
   submitBtn.disabled = true;
   submitBtn.innerHTML = 'Creating account...';
@@ -249,14 +241,12 @@ async function handleRegister(event) {
     console.log('📦 Register response:', data);
     
     if (response.ok && data.success) {
-      // Store token and user info
       localStorage.setItem('avonic_token', data.token);
       localStorage.setItem('avonic_user', JSON.stringify(data.user));
       
       console.log('✅ Registration successful');
       showMessage('Account created! Redirecting...', 'success');
       
-      // Redirect to dashboard
       setTimeout(() => {
         window.location.href = 'index.html#/dashboard';
       }, 1500);
@@ -281,7 +271,7 @@ async function handleForgotPassword(event) {
   event.preventDefault();
   
   const form = event.target;
-  const emailInput = form.querySelector('input[type="text"]');
+  const emailInput = form.querySelector('input[type="email"]');
   const email = emailInput.value.trim();
   const submitBtn = form.querySelector('button[type="submit"]');
   
@@ -310,10 +300,8 @@ async function handleForgotPassword(event) {
       console.log('✅ Reset code sent');
       showMessage('Reset code sent to your email!', 'success');
       
-      // Show reset password form
       setTimeout(() => {
         showForm('reset');
-        // Pre-fill email in reset message
         const emailDisplay = document.querySelector('.core-msg b');
         if (emailDisplay) {
           emailDisplay.textContent = email;
@@ -384,10 +372,8 @@ async function handleResetPassword(event) {
       console.log('✅ Password reset successful');
       showMessage('Password reset successful! Redirecting to login...', 'success');
       
-      // Redirect to login
       setTimeout(() => {
         showForm('login');
-        // Clear form
         codeInputs.forEach(input => input.value = '');
         passwordInputs.forEach(input => input.value = '');
       }, 2000);
