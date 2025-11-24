@@ -1,8 +1,5 @@
 // bin cards
 
-// ====== GLOBAL CONFIG ======
-const API_BASE = "https://avonic-main-hub-production.up.railway.app";
-
 class Bincard extends HTMLElement {
     connectedCallback() {
         const bin_name = this.getAttribute("bin_name");
