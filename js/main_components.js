@@ -984,7 +984,6 @@ async function handleClaimSubmit(event) {
 
   try {
     const token = localStorage.getItem('avonic_token');
-    const API_BASE = "https://avonic-main-hub-production.up.railway.app";
     
     console.log('📡 Sending claim request for:', espID);
     
