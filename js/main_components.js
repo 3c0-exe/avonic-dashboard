@@ -1160,13 +1160,19 @@ async function loadBinCards() {
       return;
     }
 
-    // ✅ CREATE DEVICE SELECTOR (only if multiple devices)
+// ✅ CREATE DEVICE SELECTOR (only if multiple devices)
     if (devices.length > 1) {
       createDeviceSelector(devices);
     }
 
-    // ✅ Show first device by default
-    renderDeviceData(devices[0], devices);
+    // ✅ Get remembered device or use first device
+    const rememberedESPID = localStorage.getItem('selected_espID');
+    const deviceToShow = rememberedESPID 
+      ? devices.find(d => d.espID === rememberedESPID) || devices[0]
+      : devices[0];
+    
+    console.log(`📱 Showing device: ${deviceToShow.espID} ${rememberedESPID ? '(remembered)' : '(default)'}`);
+    renderDeviceData(deviceToShow, devices);
 
   } catch (error) {
     console.error('❌ Failed to load bin cards:', error);
@@ -1186,6 +1192,23 @@ function createDeviceSelector(devices) {
     return;
   }
 
+  // ✅ Get remembered ESP-ID from localStorage
+  const rememberedESPID = localStorage.getItem('selected_espID');
+  
+  // ✅ Determine which device should be selected
+  let selectedESPID = devices[0]?.espID; // Default to first device
+  
+  if (rememberedESPID) {
+    // Check if the remembered device still exists in the user's devices
+    const rememberedDevice = devices.find(d => d.espID === rememberedESPID);
+    if (rememberedDevice) {
+      selectedESPID = rememberedESPID;
+      console.log(`✅ Restored remembered device: ${selectedESPID}`);
+    } else {
+      console.log(`⚠️ Remembered device ${rememberedESPID} not found, using first device`);
+    }
+  }
+
   // Create selector wrapper
   const selectorWrapper = document.createElement('div');
   selectorWrapper.className = 'device-selector-wrapper';
@@ -1200,9 +1223,9 @@ function createDeviceSelector(devices) {
       </svg>
       <span>Viewing Device:</span>
     </div>
-    <select class="device-selector" id="home-device-selector">
-      ${devices.map((device, index) => `
-        <option value="${device.espID}" ${index === 0 ? 'selected' : ''}>
+<select class="device-selector" id="home-device-selector">
+      ${devices.map((device) => `
+        <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
           ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
         </option>
       `).join('')}
@@ -1212,12 +1235,17 @@ function createDeviceSelector(devices) {
   // Insert after page header
   pageHeader.insertAdjacentElement('afterend', selectorWrapper);
 
-  // ✅ Add change event listener
+// ✅ Add change event listener with memory
   const selector = document.getElementById('home-device-selector');
   selector.addEventListener('change', (e) => {
     const selectedDevice = devices.find(d => d.espID === e.target.value);
     if (selectedDevice) {
       console.log(`🔄 Switching to device: ${selectedDevice.espID}`);
+      
+      // ✅ Save the selected ESP-ID to localStorage
+      localStorage.setItem('selected_espID', selectedDevice.espID);
+      console.log(`💾 Saved device selection: ${selectedDevice.espID}`);
+      
       renderDeviceData(selectedDevice, devices);
     }
   });
