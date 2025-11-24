@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVONIC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings.css">
+    
+</head>
+<body>
+    <script>
+  // Redirect to landing page if not authenticated
+  if (!localStorage.getItem('avonic_token')) {
+    window.location.href = 'index.html';
+  }
+</script>
+      <!-- sidebar -->
+<nav>
+    <img class="main logo" src="img/Avonic Logo.svg" alt="">
+    <img class="secondary logo" src="img/icons/navIcons/Sample Logo Icon.svg" alt="">
+    <ul>
+        <li>
+            <a class="horizontal orientation" href="#/">
+                <img class="navIcon" src="img/icons/navIcons/HomeIcon.svg" alt="">
+                <span class="navName">Home</span>
+            </a>
+        </li>
+        <li>
+            <a class="horizontal orientation" href="#/dashboard">
+                <img class="navIcon" src="img/icons/navIcons/DashboardIcon.svg" alt="">
+                <span class="navName">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a class="horizontal orientation" href="#/help">
+                <img class="navIcon" src="img/icons/navIcons/HelpIcon.svg" alt="">
+                <span class="navName">Help</span>
+            </a>
+        </li>
+        <!-- ✅ ADD SETTINGS LINK -->
+        <li>
+            <a class="horizontal orientation" href="#/settings">
+                <img class="navIcon" src="img/icons/navIcons/SettingsIcon.svg" alt="">
+                <span class="navName">Settings</span>
+            </a>
+        </li>
+    </ul>
+    <button class="btn claim-device-nav" onclick="window.location.hash = '#/claim-device'">
+        ➕ Claim New Device
+    </button>
+</nav>
+
+
+
+    <!-- end of sidebar -->
+
+<!-- HOME -->
+<div class="content home active"> 
+    <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
+    <div class="page-header">Home</div>
+
+    
+
+    <div class="machine_status">
+        <h1>Vermicompost Bins</h1>
+        <!-- ✅ EMPTY CONTAINER - Will be populated dynamically -->
+        <div class="bin_container" id="binCardsContainer">
+            <!-- Bin cards will be injected here -->
+        </div>
+    </div>
+</div>
+
+    
+<!-- inside-bins -->
+
+    <div class="content bin">
+
+    
+        <div class="wrapper">
+                     <img class = "main logo mobile inside-bins" src="img/Avonic Logo.svg" alt="">
+                    <div class="bin_header_wrapper">
+                        
+                    <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
+                
+
+
+                    <h1 class="page-header bin">Monitoring</h1> 
+
+                 <mode-switcher>
+                 
+            </div>
+
+            <div class="bin_monitoring_indicator_card">
+            <div class="bin_name">Bin 1</div>
+                <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+            <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
+
+            </div>
+
+        <div class="bin_header_wrapper">
+             <div class="time-updated">Updated 10s Ago</div>
+             <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt=""></div>
+        </div>
+       
+
+   <div class="sensor-readings container">
+            <status-card
+                    class="sensor-reading"
+                    dataType="Sensors"
+                    dataLabel="Soil Moisture"
+                    subDataLabel=" "
+                    dataUnit="%"
+                    icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
+                    isClickable="true"
+                    showWaterPressure="true"
+                    showFanRPM="true"
+                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
+                    ><template class="help">
+                    </template>
+                </status-card>
+             <status-card
+                     class="sensor-reading"
+                     dataType="Sensors"
+                     dataLabel="Temperature"
+                     subDataLabel=" "
+                     dataUnit="°C"
+                     icon="img/icons/sensorIcons/TempIcon.svg"
+                     isClickable="true"
+                     showWaterPressure=""
+                     showFanRPM="true"
+                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
+                    ></status-card>
+               <status-card
+                     class="sensor-reading"
+                     dataType="Sensors"
+                     dataLabel="Humidity"
+                     subDataLabel=" "
+                     dataUnit="%"
+                     icon="img/icons/sensorIcons/HumidityIcon.svg"
+                     isClickable="true"
+                     showWaterPressure="true"
+                     showFanRPM="true"
+                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
+                    ></status-card>
+<status-card
+                        class="sensor-reading"
+                        dataType="Sensors"
+                        dataLabel="Gas Level"
+                        subDataLabel=" "
+                        dataUnit="%"
+                        icon="img/icons/sensorIcons/GasIcon.svg"
+                        isClickable="true"
+                        showWaterPressure=""
+                        showFanRPM="true"
+                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
+                        ></status-card>
+
+        </div> <!-- Close sensor-readings container -->
+                        
+    </div> <!-- Close wrapper -->
+</div> <!-- Close content.bin -->
+
+<!-- BIN 2 PAGE -->
+<div class="content bin2">
+    <div class="wrapper">
+        <img class="main logo mobile inside-bins" src="img/Avonic Logo.svg" alt="">
+        <div class="bin_header_wrapper">
+            <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
+            <h1 class="page-header bin">Monitoring</h1> 
+            <mode-switcher></mode-switcher>
+        </div>
+
+        <div class="bin_monitoring_indicator_card">
+            <div class="bin_name">Bin 2</div>
+                <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+            <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
+        </div>
+
+        <div class="bin_header_wrapper">
+            <div class="time-updated">Updated 10s Ago</div>
+            <div class="refresh-sensors"><img class="refresh_icon" src="img/icons/refresh_icon.svg" alt=""></div>
+        </div>
+
+        <div class="sensor-readings container">
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Soil Moisture"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
+                isClickable="true"
+                showWaterPressure="true"
+                showFanRPM="true"
+                data-bin-id="2">  <!-- ✅ CHANGE THIS -->
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Temperature"
+                subDataLabel=" "
+                dataUnit="°C"
+                icon="img/icons/sensorIcons/TempIcon.svg"
+                isClickable="true"
+                showWaterPressure=""
+                showFanRPM="true"
+     data-bin-id="2">  <!-- ✅ CHANGE THIS -->
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Humidity"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="img/icons/sensorIcons/HumidityIcon.svg"
+                isClickable="true"
+                showWaterPressure="true"
+                showFanRPM="true"
+    data-bin-id="2">  <!-- ✅ CHANGE THIS -->
+            </status-card>
+            
+            <status-card
+                class="sensor-reading"
+                dataType="Sensors"
+                dataLabel="Gas Level"
+                subDataLabel=" "
+                dataUnit="%"
+                icon="img/icons/sensorIcons/GasIcon.svg"
+                isClickable="true"
+                showWaterPressure=""
+                showFanRPM="true"
+    data-bin-id="2">  <!-- ✅ CHANGE THIS -->
+            </status-card>
+        </div> <!-- Close sensor-readings container -->
+    </div> <!-- Close wrapper -->
+</div> <!-- Close content.bin2 -->
+
+
+       <!-- end of inside-bins -->
+
+
+
+<!-- DASHBOARD PAGE -->
+ <div class="content dashboard">
+
+    <div class="upper-section">
+        <img class = "main logo mobile" src="img/Avonic Logo.svg" alt="">
+     <div class="scroll-back-widget">
+            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
+        </div>
+                  <div class="page-header">Dashboard</div>
+                    <div class="qi-title">
+                        <h1>Quick Insights</h1>
+                    <div class="insightsRefresh"><img src="img/icons/refresh_icon.svg" class="refresh_icon" alt=""><span class="refresh-text">Refresh</span>
+                    </div>
+                </div>
+                
+
+                <div class="quick_insights_card_container">
+                    
+                    
+                       <qinsights-bin
+                        ic_name="Bin 1"
+                        ic_status="Stable"
+                        ic_moremsg=""
+                        is_clickable="true"
+                        >
+                        </qinsights-bin>
+
+                        <qinsights-bin
+                        ic_name="Bin 2"
+                        ic_status="Stable"
+                        ic_moremsg=""
+                        is_clickable="true"
+                        >
+                        </qinsights-bin>
+
+
+                </div>
+    </div>
+    
+
+                <section class="bin-fluctuations">
+                    <div class="bin-fluctuations-nav">
+
+                        <div class="bin-selection">
+                            <img class="arrow left" src="img/indicators/Arrow.svg" alt="">
+                            <div class="bin">Bin 1</div>
+                            <img class="arrow right" src="img/indicators/Arrow.svg" alt="">
+                        </div>
+
+                        <div class="bf-content">
+                             <div class="title">
+                                Bin Fluctuation
+                            </div>
+                            <div class="fluctuationDisplayDate">
+                                
+                                <p>July 12, 2025 - July 21, 2025</p>
+                            </div>
+                        </div>
+
+                        <div class="select-date">
+                            <img src="img/calendarIcon.svg" alt="" class="calendar-icon">
+                            <p class="selection">Select Date</p>
+                        </div>
+                    
+                        
+                   
+                    
+                </div>
+                <section-sensor-fluctuation
+                sensor_name="Soil Moisture"
+                sensor_unit="%"
+                sensor_icon="SoilMoistureIcon">
+
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Temperature"
+                sensor_unit="°C"
+                sensor_icon="TempIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Humidity"
+                sensor_unit="%"
+                sensor_icon="HumidityIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                 
+                <section-sensor-fluctuation
+                sensor_name="Gas Levels"
+                sensor_unit="ppm"
+                sensor_icon="GasIcon">
+                    
+                </section-sensor-fluctuation>
+                <hr>
+                <section-sensor-fluctuation
+                sensor_name="Temperature"
+                sensor_unit="°C"
+                sensor_icon="TempIcon">
+                    
+                </section-sensor-fluctuation>
+                 
+                
+                </section>
+                
+           <div class="mobile-nav-spacer"></div>
+          
+    </div>
+
+    </div>
+
+    <!-- END OF DASHBOARD PAGE -->
+
+<!-- Claim Device Page -->
+<div class="content claim-device" style="display:none;">
+  <div class="claim-wrapper">
+    <div class="claim-container">
+      <div class="claim-header">
+        <h1>🔗 Claim Your Device</h1>
+        <p>Enter your ESP32 device ID to link it to your account</p>
+      </div>
+
+      <div id="claimAlertBox" class="alert" style="display:none;"></div>
+
+      <div class="claim-form-wrapper">
+        <div class="form-group">
+          <label for="espID">ESP Device ID</label>
+          <input 
+            type="text" 
+            id="espID" 
+            placeholder="e.g., AVONIC-A1B2C3D4E5F6"
+            maxlength="22"
+            autocomplete="off"
+          >
+        </div>
+
+<button type="button" class="btn claim" id="claimBtn">
+  🎯 Claim This Device
+</button>
+
+        <button type="button" class="btn skip" onclick="window.location.hash = '#/dashboard'">
+          Skip for now - I'll claim later
+        </button>
+      </div>
+
+      <div class="loading-spinner" id="claimLoadingSpinner" style="display:none;">
+        <div class="spinner"></div>
+        <p>Claiming device...</p>
+      </div>
+
+      <div class="device-info" id="claimDeviceInfo" style="display:none;">
+        <h3>✅ Device Claimed Successfully!</h3>
+        <p><strong>Device ID:</strong> <span id="claimedESPID"></span></p>
+        <p><strong>Nickname:</strong> <span id="claimedNickname"></span></p>
+        <p style="margin-top: 15px; color: #2e7d32;">
+          Redirecting to dashboard...
+        </p>
+      </div>
+
+      <div class="help-text">
+        <strong>Where to find your ESP-ID:</strong><br>
+        • Check the LCD screen on your device<br>
+        • Look for "ESP-ID: AVONIC-XXXXXXXXXXXX"<br>
+        • Or connect to your device's WiFi AP and visit the setup page
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- HELP PAGE -->
+  <div class="content help">
+         
+        <div class="scroll-back-widget">
+            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
+        </div>
+       <h1 id="page-header" class="page-header help-sec">Help Page</h1>
+        <div class="section help ">
+         
+        <section class="section get-to-know">
+            <div class="display-msg-help">
+                <span>Get to know</span>
+                <img class="logo-for-gtk" src="img/Avonic Logo.svg" alt="">
+                <span class="sub-text-help">know the system’s objectives and purpose</span>
+            </div>
+            
+            <div class="btn">Get Started</div>
+        </section>
+
+           <section class="section user-manual">
+            <div class="display-msg-help">
+                
+                <span class="help-header">User Manual</span>
+                <span class="sub-text-help">How to use AVONIC Vermicompost System</span>
+            </div>
+            
+            <div class="btn">Get Started</div>
+        </section>
+
+         <section class="section troubleshoot">
+            <div class="display-msg-help">
+                <span class="help-header">Troubleshoot</span>
+                 
+                <span class="sub-text-help">How to fix basic system troubles</span>
+            </div>
+            
+            <div class="btn ts">Get Started</div>
+        </section>
+
+
+    
+     </div> 
+    
+ <!-- END OF HELP PAGE -->
+
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="js/data_integration.js"></script> <!-- ✅ ADD THIS -->
+    <script src="js/auth.js"></script>
+    <script src="js/url-router.js"></script>
+    <script src="js/main_components.js"></script>
+    <script src="js/dashboard_components.js"></script>
+    <script src="js/other_widgets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script src="js/mqtt_integration.js"></script>
+    <script src="js/settings.js"></script>
+
+    <script>
+// Debug: Check router initialization
+setTimeout(() => {
+    console.log('=== ROUTER DEBUG ===');
+    console.log('Router exists:', typeof window.router !== 'undefined');
+    console.log('Current hash:', window.location.hash);
+    console.log('Active pages:', document.querySelectorAll('.content.active').length);
+    console.log('===================');
+}, 1000);
+</script>
+
+<!-- SETTINGS PAGE -->
+<div class="content settings">
+    <div class="settings-wrapper">
+        <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
+        <div class="page-header">Settings</div>
+
+        <!-- Account Section -->
+        <section class="settings-section account-section">
+            <h2 class="section-title">Account</h2>
+            
+            <div class="settings-grid">
+                <!-- Username Card (Read-only) -->
+                <div class="settings-card">
+                    <label class="card-label">Username</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username-display" 
+                            class="settings-input" 
+                            value="Loading..." 
+                            readonly
+                        >
+                    </div>
+                </div>
+
+                <!-- Email Card (Editable) -->
+                <div class="settings-card">
+                    <label class="card-label">Email</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="email" 
+                            id="email-input" 
+                            class="settings-input" 
+                            value="Loading..."
+                        >
+                        <button class="icon-btn save-btn" onclick="updateEmail()" title="Save email">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password Change Card -->
+            <div class="settings-card password-card">
+                <div class="card-header">
+                    <div>
+                        <label class="card-label">Password</label>
+                        <p class="card-subtitle">Modify your current password</p>
+                    </div>
+                    <button class="btn-save" onclick="updatePassword()">Save</button>
+                </div>
+                
+                <div class="password-inputs">
+                    <div class="input-group">
+                        <label>Current Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="current-password" 
+                                class="settings-input password-input"
+                                placeholder="Enter current password"
+                            >
+                            <button class="password-toggle" onclick="togglePasswordVisibility('current-password')">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>New Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="new-password" 
+                                class="settings-input password-input"
+                                placeholder="Enter new password"
+                            >
+                            <button class="password-toggle" onclick="togglePasswordVisibility('new-password')">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="password-message" class="settings-message"></div>
+            </div>
+        </section>
+
+        <!-- Claimed Bins Section -->
+        <section class="settings-section bins-section">
+            <div class="section-header">
+                <h2 class="section-title">Claimed Bins</h2>
+                <button class="btn-add-device" onclick="window.location.hash = '#/claim-device'">
+                    ➕ Add New Device
+                </button>
+            </div>
+
+            <div id="claimed-bins-container" class="bins-grid">
+                <!-- Bins will be loaded here dynamically -->
+                <div class="loading-bins">
+                    <div class="spinner"></div>
+                    <p>Loading your devices...</p>
+                </div>
+            </div>
+
+            <div id="bins-message" class="settings-message"></div>
+        </section>
+
+        <!-- Logout Section -->
+        <section class="settings-section logout-section">
+            <button class="btn-logout" onclick="handleLogout()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </section>
+
+    </div>
+</div>
+
+<!-- Unclaim Confirmation Modal -->
+<div id="unclaim-modal" class="modal">
+    <div class="modal-content">
+        <h3>⚠️ Unclaim Device</h3>
+        <p>Are you sure you want to unclaim <strong id="unclaim-device-name"></strong>?</p>
+        <p class="modal-warning">This device will no longer sync data to your account.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeUnclaimModal()">Cancel</button>
+            <button class="btn-confirm-unclaim" onclick="confirmUnclaim()">Yes, Unclaim</button>
+        </div>
+    </div>
+</div>
+</body>
+</body>
+</html>
+
+
+
+
+
+
+

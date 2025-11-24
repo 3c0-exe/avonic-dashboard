@@ -23,7 +23,7 @@ function isAuthenticated() {
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'forms.html'; // ✅ CHANGED from login.html
+        window.location.href = 'app.html';
         return false;
     }
     return true;
@@ -195,7 +195,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.href = 'forms.html'; // ✅ CHANGED from login.html
+    window.location.href = 'app.html';
 }
 
 // Initialize router

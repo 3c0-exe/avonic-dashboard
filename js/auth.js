@@ -163,7 +163,7 @@ async function handleLogin(event) {
       showMessage('Login successful! Redirecting...', 'success');
       
       setTimeout(() => {
-        window.location.href = 'index.html#/dashboard';
+        window.location.href = 'app.html#/dashboard';
       }, 1000);
     } else {
       const errorMsg = data.error || 'Login failed';
@@ -248,7 +248,7 @@ async function handleRegister(event) {
       showMessage('Account created! Redirecting...', 'success');
       
       setTimeout(() => {
-        window.location.href = 'index.html#/dashboard';
+        window.location.href = 'app.html#/dashboard';
       }, 1500);
     } else {
       const errorMsg = data.error || 'Registration failed';
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if already logged in
   if (isAuthenticated()) {
     console.log('ℹ️ User already logged in, redirecting to dashboard');
-    window.location.href = 'index.html#/dashboard';
+    window.location.href = 'app.html#/dashboard';
     return;
   }
   

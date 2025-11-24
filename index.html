@@ -3,634 +3,979 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img/cliparts/favicon.png">
     <title>AVONIC</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="settings.css">
-    
+    <link rel="stylesheet" href="landing-page.css">
 </head>
 <body>
-      <!-- sidebar -->
-<nav>
-    <img class="main logo" src="img/Avonic Logo.svg" alt="">
-    <img class="secondary logo" src="img/icons/navIcons/Sample Logo Icon.svg" alt="">
-    <ul>
-        <li>
-            <a class="horizontal orientation" href="#/">
-                <img class="navIcon" src="img/icons/navIcons/HomeIcon.svg" alt="">
-                <span class="navName">Home</span>
-            </a>
-        </li>
-        <li>
-            <a class="horizontal orientation" href="#/dashboard">
-                <img class="navIcon" src="img/icons/navIcons/DashboardIcon.svg" alt="">
-                <span class="navName">Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a class="horizontal orientation" href="#/help">
-                <img class="navIcon" src="img/icons/navIcons/HelpIcon.svg" alt="">
-                <span class="navName">Help</span>
-            </a>
-        </li>
-        <!-- ✅ ADD SETTINGS LINK -->
-        <li>
-            <a class="horizontal orientation" href="#/settings">
-                <img class="navIcon" src="img/icons/navIcons/SettingsIcon.svg" alt="">
-                <span class="navName">Settings</span>
-            </a>
-        </li>
-    </ul>
-    <button class="btn claim-device-nav" onclick="window.location.hash = '#/claim-device'">
-        ➕ Claim New Device
-    </button>
-</nav>
+    <header>
+        <div class="bg-placeholder hero">
+            <div class="wrapper">
+            <nav class="scrolled">
+                <div class="logo"><img src="img/AVONIC LOGO.svg" alt=""><span class="logo-text">AVONIC</span></div>
+                <a href="forms.html" class="btn grn">LOGIN</a>
+            </nav>
+            <div class="hero-section">
+                <div class="left">
+                    <h1 class="hero-title">Automated <br> Vermicomposting</h1>
+                    <p class="hero-subtitle">Cultivate Smarter, Not Harder</p>
+                    <a href="forms.html" class="btn orng pri">GET STARTED</a>
+                </div>
+                <div class="right"><img src="img/cliparts/Bin(Hero-sec).png
+                    " alt="" class="bin-clipart"></div>
 
+                    <div class="btn-modded-order">
+                          <a href="forms.html" class="btn orng sec">GET STARTED</a>
+                    </div>
+                    
+            </div>
 
+          
+        </div>
+        
+        </div>
+        <div class="curvy-div-shape hero">
+            <img src="img/Curvy-dividers/green-curve.svg" alt="">
+        </div>
 
-    <!-- end of sidebar -->
+    </header>
 
-<!-- HOME -->
-<div class="content home active"> 
-    <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
-    <div class="page-header">Home</div>
-
-    
-
-    <div class="machine_status">
-        <h1>Vermicompost Bins</h1>
-        <!-- ✅ EMPTY CONTAINER - Will be populated dynamically -->
-        <div class="bin_container" id="binCardsContainer">
-            <!-- Bin cards will be injected here -->
+    <div class="bg-placeholder dctn"> 
+         <div class="wrapper">
+        <section class="dedication">
+            <div class="left">
+                <img class="farmer-clipart pri" src="img/cliparts/Farmer(Dedication-sec).png" alt="">
+            </div>
+            <div class="right">
+                <p>Dedicated to our very own HARDWORKING</p>
+                <img class="farmer-clipart sec" src="img/cliparts/Farmer(Dedication-sec).png" alt="">
+                <h1 class="catch highlight1">Filipino Farmers</h1>
+                <p>because they deserve the <br>absolute <span>BEST!</span></p>
+            </div>
+        </section>
+        </div>
+         <div class="curvy-div-shape dctn">
+            <img src="img/Curvy-dividers/wf-white-curve.svg" alt="">
         </div>
     </div>
-</div>
-
     
-<!-- inside-bins -->
 
-    <div class="content bin">
+     <div class="bg-placeholder wf">
+            <div class="wrapper">
+        <section class="worm-fact">
+            <div class="left">
+                <p class="sub-header">Traditional vermicompost method is</p>
+                <h1 class="catch two">KILLING YOUR WORMS</h1>
 
-    
-        <div class="wrapper">
-                     <img class = "main logo mobile inside-bins" src="img/Avonic Logo.svg" alt="">
-                    <div class="bin_header_wrapper">
-                        
-                    <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
-                
+                <div class="vermibed secondary">
+                    <img src="img/cliparts/icon-placeholder.svg" alt="">
+                </div>
+
+                <p class="p1">while there are studies that says <br> "vermicompost is effective"</p>
 
 
-                    <h1 class="page-header bin">Monitoring</h1> 
 
-                 <mode-switcher>
-                 
+                <p class="p2">Traditional vermicompost kills 90% of your worms</p>
+                <a href="#" class="btn orng">READ MORE</a>
             </div>
 
-            <div class="bin_monitoring_indicator_card">
-            <div class="bin_name">Bin 1</div>
-                <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
-            <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
-
+            <div class="right">
+                <img class="vermibed" src="img/cliparts/vermicompost-bed.png" alt="">
             </div>
-
-        <div class="bin_header_wrapper">
-             <div class="time-updated">Updated 10s Ago</div>
-             <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt=""></div>
+            
+        </section>
+         </div>
+         <div class="curvy-div-shape wf">
+            <img src="img/Curvy-dividers/wf-green-curve.svg" alt="">
         </div>
+      </div>
+      
+
+      <div class="bg-placeholder regtut">
+        <div class="wrapper">
+        <section class="how-to-get-started">
+            <h1 class="title htgs">How to get started</h1>
+
+            <div class="step-by-step">
+                    <div class="info-card-container register">
+                    <div class="info-card">
+                            <div class="num-sec">
+                                <div class="number">1</div>
+                                <img class="element" src="img/cliparts/yellow-bar-element.png" alt="">
+                            </div>
+                            <div class="text-container">
+                                <p class="small-info-header">Register your AVONIC <br>account</p>
+                                <p class="small-info-paragraph">Create your AVONIC account to start<br>your automated vermicomposting<br>journey.</p>
+                            </div>
+                    </div>
+                    <div class="info-card">
+                            <div class="num-sec">
+                                <div class="number">1</div>
+                                <img class="element" src="img/cliparts/yellow-bar-element.png" alt="">
+                            </div>
+                            <div class="text-container">
+                                <p class="small-info-header">Register your AVONIC <br>account</p>
+                                <p class="small-info-paragraph">Create your AVONIC account to start<br>your automated vermicomposting<br>journey.</p>
+                            </div>
+                    </div>
+                    <div class="info-card">
+                            <div class="num-sec">
+                                <div class="number">1</div>
+                                <img class="element" src="img/cliparts/yellow-bar-element.png" alt="">
+                            </div>
+                            <div class="text-container">
+                                <p class="small-info-header">Register your AVONIC <br>account</p>
+                                <p class="small-info-paragraph">Create your AVONIC account to start<br>your automated vermicomposting<br>journey.</p>
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <a href="forms.html" class="btn orng">Get Started</a>
+        </section>
+       </div>
+    </div>
+       
+       <div class="bg-placeholder vidtut">
+            <div class="wrapper">
+        <section class="tutorial-videos">
+
+            <div class="upper-section">
+                <h1 class="title htgs">Browse our tutorials</h1>
+                <a href="#" class="btn black">More Videos</a>
+            </div>
+            
+            <div class="carousel-container">
+                    <div class="carousel-wrapper">
+                        <div class="tut-card-container" id="tutCardContainer">
+                            <div class="tutorial-card">
+                                <div class="card-image">
+                                    <img class="video-placeholder" src="img/cliparts/placeholder logo.svg" alt="Tutorial thumbnail">
+                                </div>
+                                <div class="card-content">
+                                    <div class="platform">Youtube</div>
+                                    <div class="card-title">AVONIC 101: How to start?</div>
+                                    <span class="tag">Basics</span>
+                                </div>
+                            </div>
+
+                            <div class="tutorial-card">
+                                <div class="card-image">
+                                    <img class="video-placeholder" src="img/cliparts/placeholder logo.svg" alt="Tutorial thumbnail">
+                                </div>
+                                <div class="card-content">
+                                    <div class="platform">Youtube</div>
+                                    <div class="card-title">AVONIC 101: What is AVONIC?</div>
+                                    <span class="tag">Basics</span>
+                                </div>
+                            </div>
+
+                            <div class="tutorial-card">
+                                <div class="card-image">
+                                    <img class="video-placeholder" src="img/cliparts/placeholder logo.svg">
+                                </div>
+                                <div class="card-content">
+                                    <div class="platform">Youtube</div>
+                                    <div class="card-title">AVONIC 101: Basic Maintenance</div>
+                                    <span class="tag">Basics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dots" id="dots"></div>
+                </div>
+
+           </section>
+       </div>
+       </div>
        
 
-   <div class="sensor-readings container">
-            <status-card
-                    class="sensor-reading"
-                    dataType="Sensors"
-                    dataLabel="Soil Moisture"
-                    subDataLabel=" "
-                    dataUnit="%"
-                    icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
-                    isClickable="true"
-                    showWaterPressure="true"
-                    showFanRPM="true"
-                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                    ><template class="help">
-                    </template>
-                </status-card>
-             <status-card
-                     class="sensor-reading"
-                     dataType="Sensors"
-                     dataLabel="Temperature"
-                     subDataLabel=" "
-                     dataUnit="°C"
-                     icon="img/icons/sensorIcons/TempIcon.svg"
-                     isClickable="true"
-                     showWaterPressure=""
-                     showFanRPM="true"
-                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                    ></status-card>
-               <status-card
-                     class="sensor-reading"
-                     dataType="Sensors"
-                     dataLabel="Humidity"
-                     subDataLabel=" "
-                     dataUnit="%"
-                     icon="img/icons/sensorIcons/HumidityIcon.svg"
-                     isClickable="true"
-                     showWaterPressure="true"
-                     showFanRPM="true"
-                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                    ></status-card>
-<status-card
-                        class="sensor-reading"
-                        dataType="Sensors"
-                        dataLabel="Gas Level"
-                        subDataLabel=" "
-                        dataUnit="%"
-                        icon="img/icons/sensorIcons/GasIcon.svg"
-                        isClickable="true"
-                        showWaterPressure=""
-                        showFanRPM="true"
-                   data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                        ></status-card>
-
-        </div> <!-- Close sensor-readings container -->
+       <div class="bg-placeholder sc">
+                <div class="wrapper">
+                    <section class="still-curious">
                         
-    </div> <!-- Close wrapper -->
-</div> <!-- Close content.bin -->
+                            <div class="apw">
+                                <div class="left">
+                                    <div class="title htgs">Still Curious?</div>
+                                    <img src="img/cliparts/still-curious-img.png" alt="" class="clipart-sc">
 
-<!-- BIN 2 PAGE -->
-<div class="content bin2">
-    <div class="wrapper">
-        <img class="main logo mobile inside-bins" src="img/Avonic Logo.svg" alt="">
-        <div class="bin_header_wrapper">
-            <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
-            <h1 class="page-header bin">Monitoring</h1> 
-            <mode-switcher></mode-switcher>
-        </div>
+                                    <div class="apw p">
+                                        <p class="comparison-paragraph">We’ve compared over 5 plants over <br> the course of our capstone journey.</p>
+                                        <p>These plants were planted under the <br> same conditions, and under <br> the rainy weather of PH.</p>
+                                    </div>
+                                </div>
 
-        <div class="bin_monitoring_indicator_card">
-            <div class="bin_name">Bin 2</div>
-                <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
-            <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
-        </div>
-
-        <div class="bin_header_wrapper">
-            <div class="time-updated">Updated 10s Ago</div>
-            <div class="refresh-sensors"><img class="refresh_icon" src="img/icons/refresh_icon.svg" alt=""></div>
-        </div>
-
-        <div class="sensor-readings container">
-            <status-card
-                class="sensor-reading"
-                dataType="Sensors"
-                dataLabel="Soil Moisture"
-                subDataLabel=" "
-                dataUnit="%"
-                icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
-                isClickable="true"
-                showWaterPressure="true"
-                showFanRPM="true"
-                data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-            </status-card>
+                                <div class="right">
+                                    <div class="yield-text">Here’s our own data about vermicast yields <br> compared to chemical counterparts.</div>
+                                     
+                                <!-- <div class="sc-container"> -->
+        <div class="sc-carousel-wrapper">
+            <button class="sc-nav-button" id="scPrevBtn">‹</button>
             
-            <status-card
-                class="sensor-reading"
-                dataType="Sensors"
-                dataLabel="Temperature"
-                subDataLabel=" "
-                dataUnit="°C"
-                icon="img/icons/sensorIcons/TempIcon.svg"
-                isClickable="true"
-                showWaterPressure=""
-                showFanRPM="true"
-     data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-            </status-card>
-            
-            <status-card
-                class="sensor-reading"
-                dataType="Sensors"
-                dataLabel="Humidity"
-                subDataLabel=" "
-                dataUnit="%"
-                icon="img/icons/sensorIcons/HumidityIcon.svg"
-                isClickable="true"
-                showWaterPressure="true"
-                showFanRPM="true"
-    data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-            </status-card>
-            
-            <status-card
-                class="sensor-reading"
-                dataType="Sensors"
-                dataLabel="Gas Level"
-                subDataLabel=" "
-                dataUnit="%"
-                icon="img/icons/sensorIcons/GasIcon.svg"
-                isClickable="true"
-                showWaterPressure=""
-                showFanRPM="true"
-    data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-            </status-card>
-        </div> <!-- Close sensor-readings container -->
-    </div> <!-- Close wrapper -->
-</div> <!-- Close content.bin2 -->
+            <div class="sc-carousel-container">
+                <div class="sc-carousel" id="scCarousel">
+                    <div class="sc-comparison-pair">
+                        <div class="sc-card">
+                            <div class="sc-card-header chemical">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Kang kong</h3>
+                                    <p>Chemical ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">2.8kg</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 70%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Fast (45 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Good</div>
+                                    <span class="sc-badge vigor">Moderate Vigor</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Color</div>
+                                    <div class="sc-metric-value">Deep Green</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Suitable for vegetable crops; low salinity and balanced nutrient content</div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="sc-card">
+                            <div class="sc-card-header vermicast">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Kang kong</h3>
+                                    <p>Vermicast ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">3.5 kg (+25%)</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 88%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Steady (48 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Excellent</div>
+                                    <span class="sc-badge steady">Steady (48 days)</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Color</div>
+                                    <div class="sc-metric-value">Deep Green</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Suitable for vegetable crops; low salinity and balanced nutrient content</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-       <!-- end of inside-bins -->
+                    <div class="sc-comparison-pair">
+                        <div class="sc-card">
+                            <div class="sc-card-header chemical">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Tomato</h3>
+                                    <p>Chemical ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">4.2kg</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 65%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Moderate (75 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Average</div>
+                                    <span class="sc-badge vigor">Prone to Pests</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Fruit Quality</div>
+                                    <div class="sc-metric-value">Standard</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Requires frequent chemical intervention; moderate disease resistance</div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="sc-card">
+                            <div class="sc-card-header vermicast">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Tomato</h3>
+                                    <p>Vermicast ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">5.6 kg (+33%)</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 92%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Consistent (73 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Superior</div>
+                                    <span class="sc-badge steady">Pest Resistant</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Fruit Quality</div>
+                                    <div class="sc-metric-value">Premium</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Enhanced disease resistance; improved soil structure and water retention</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="sc-comparison-pair">
+                        <div class="sc-card">
+                            <div class="sc-card-header chemical">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Lettuce</h3>
+                                    <p>Chemical ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">1.9kg</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 60%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Fast (35 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Fair</div>
+                                    <span class="sc-badge vigor">Brittle Leaves</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Texture</div>
+                                    <div class="sc-metric-value">Thin</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Quick growth but shorter shelf life; sensitive to nutrient burn</div>
+                                </div>
+                            </div>
+                        </div>
 
-<!-- DASHBOARD PAGE -->
- <div class="content dashboard">
+                        <div class="sc-card">
+                            <div class="sc-card-header vermicast">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Lettuce</h3>
+                                    <p>Vermicast ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">2.7 kg (+42%)</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 95%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Steady (37 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Excellent</div>
+                                    <span class="sc-badge steady">Crisp & Robust</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Texture</div>
+                                    <div class="sc-metric-value">Thick & Crispy</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Extended shelf life; superior taste and texture with better nutrient density</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="upper-section">
-        <img class = "main logo mobile" src="img/Avonic Logo.svg" alt="">
-     <div class="scroll-back-widget">
-            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
-        </div>
-                  <div class="page-header">Dashboard</div>
-                    <div class="qi-title">
-                        <h1>Quick Insights</h1>
-                    <div class="insightsRefresh"><img src="img/icons/refresh_icon.svg" class="refresh_icon" alt=""><span class="refresh-text">Refresh</span>
+                    <div class="sc-comparison-pair">
+                        <div class="sc-card">
+                            <div class="sc-card-header chemical">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Eggplant</h3>
+                                    <p>Chemical ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">5.1kg</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 68%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Moderate (85 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Acceptable</div>
+                                    <span class="sc-badge vigor">Yellow Leaves</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Fruit Size</div>
+                                    <div class="sc-metric-value">Medium</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Some nutrient deficiency signs; requires regular fertilizer application</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sc-card">
+                            <div class="sc-card-header vermicast">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Eggplant</h3>
+                                    <p>Vermicast ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">6.8 kg (+33%)</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 90%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Consistent (82 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Outstanding</div>
+                                    <span class="sc-badge steady">Dark Green Foliage</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Fruit Size</div>
+                                    <div class="sc-metric-value">Large</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Improved nutrient uptake; healthier root system and better drought tolerance</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sc-comparison-pair">
+                        <div class="sc-card">
+                            <div class="sc-card-header chemical">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Pechay</h3>
+                                    <p>Chemical ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">2.3kg</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 64%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Fast (40 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Good</div>
+                                    <span class="sc-badge vigor">Standard Growth</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Quality</div>
+                                    <div class="sc-metric-value">Normal</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Decent yield but soil quality decreases over time; needs replenishment</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sc-card">
+                            <div class="sc-card-header vermicast">
+                                <div class="sc-icon-placeholder">IMG</div>
+                                <div class="sc-header-text">
+                                    <h3>Pechay</h3>
+                                    <p>Vermicast ver.</p>
+                                </div>
+                            </div>
+                            <div class="sc-card-body">
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Total Yield</div>
+                                    <div class="sc-metric-value">3.4 kg (+48%)</div>
+                                    <div class="sc-progress-bar">
+                                        <div class="sc-progress-fill" style="width: 94%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Growth Rate</div>
+                                    <div class="sc-metric-value">Vigorous (38 days)</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Plant Health</div>
+                                    <div class="sc-metric-value">Exceptional</div>
+                                    <span class="sc-badge steady">Dense Growth</span>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Leaf Quality</div>
+                                    <div class="sc-metric-value">Premium</div>
+                                </div>
+                                <div class="sc-metric">
+                                    <div class="sc-metric-label">Remarks</div>
+                                    <div class="sc-remarks">Soil structure improves with continued use; rich in beneficial microorganisms</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
+            </div>
 
-                <div class="quick_insights_card_container">
-                    
-                    
-                       <qinsights-bin
-                        ic_name="Bin 1"
-                        ic_status="Stable"
-                        ic_moremsg=""
-                        is_clickable="true"
-                        >
-                        </qinsights-bin>
-
-                        <qinsights-bin
-                        ic_name="Bin 2"
-                        ic_status="Stable"
-                        ic_moremsg=""
-                        is_clickable="true"
-                        >
-                        </qinsights-bin>
-
-
-                </div>
-    </div>
-    
-
-                <section class="bin-fluctuations">
-                    <div class="bin-fluctuations-nav">
-
-                        <div class="bin-selection">
-                            <img class="arrow left" src="img/indicators/Arrow.svg" alt="">
-                            <div class="bin">Bin 1</div>
-                            <img class="arrow right" src="img/indicators/Arrow.svg" alt="">
-                        </div>
-
-                        <div class="bf-content">
-                             <div class="title">
-                                Bin Fluctuation
-                            </div>
-                            <div class="fluctuationDisplayDate">
-                                
-                                <p>July 12, 2025 - July 21, 2025</p>
-                            </div>
-                        </div>
-
-                        <div class="select-date">
-                            <img src="img/calendarIcon.svg" alt="" class="calendar-icon">
-                            <p class="selection">Select Date</p>
-                        </div>
-                    
-                        
-                   
-                    
-                </div>
-                <section-sensor-fluctuation
-                sensor_name="Soil Moisture"
-                sensor_unit="%"
-                sensor_icon="SoilMoistureIcon">
-
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Temperature"
-                sensor_unit="°C"
-                sensor_icon="TempIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Humidity"
-                sensor_unit="%"
-                sensor_icon="HumidityIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                 
-                <section-sensor-fluctuation
-                sensor_name="Gas Levels"
-                sensor_unit="ppm"
-                sensor_icon="GasIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Temperature"
-                sensor_unit="°C"
-                sensor_icon="TempIcon">
-                    
-                </section-sensor-fluctuation>
-                 
-                
-                </section>
-                
-           <div class="mobile-nav-spacer"></div>
-          
-    </div>
-
-    </div>
-
-    <!-- END OF DASHBOARD PAGE -->
-
-<!-- Claim Device Page -->
-<div class="content claim-device" style="display:none;">
-  <div class="claim-wrapper">
-    <div class="claim-container">
-      <div class="claim-header">
-        <h1>🔗 Claim Your Device</h1>
-        <p>Enter your ESP32 device ID to link it to your account</p>
-      </div>
-
-      <div id="claimAlertBox" class="alert" style="display:none;"></div>
-
-      <div class="claim-form-wrapper">
-        <div class="form-group">
-          <label for="espID">ESP Device ID</label>
-          <input 
-            type="text" 
-            id="espID" 
-            placeholder="e.g., AVONIC-A1B2C3D4E5F6"
-            maxlength="22"
-            autocomplete="off"
-          >
+                <button class="sc-nav-button" id="scNextBtn">></button>
+            </div>
         </div>
 
-<button type="button" class="btn claim" id="claimBtn">
-  🎯 Claim This Device
-</button>
+        <div class="sc-dots" id="scDots"></div>
+    </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="btn orng">READ MORE</a>
+                </section>
+            </div>
+       </div>
 
-        <button type="button" class="btn skip" onclick="window.location.hash = '#/dashboard'">
-          Skip for now - I'll claim later
-        </button>
-      </div>
+       
 
-      <div class="loading-spinner" id="claimLoadingSpinner" style="display:none;">
-        <div class="spinner"></div>
-        <p>Claiming device...</p>
-      </div>
+        <div class="bg-placeholder sdg">
+    <div class="wrapper">
+        <section class="sdg-sec">
+            <div class="title htgs">
+                This project contributes to
+            </div> 
+                        <div class="sdg-container">
+                 <div class="sdg II">
 
-      <div class="device-info" id="claimDeviceInfo" style="display:none;">
-        <h3>✅ Device Claimed Successfully!</h3>
-        <p><strong>Device ID:</strong> <span id="claimedESPID"></span></p>
-        <p><strong>Nickname:</strong> <span id="claimedNickname"></span></p>
-        <p style="margin-top: 15px; color: #2e7d32;">
-          Redirecting to dashboard...
-        </p>
-      </div>
+                    <div class="sdg-logo-container zh">
+                        <img src="img/cliparts/Zero Hunger text.png" alt="" class="arc-text zh">
+                        <img src="img/cliparts/Zero Hunger logo.png" alt="" class="sdg-logo zh">
+                    </div>
+                    
 
-      <div class="help-text">
-        <strong>Where to find your ESP-ID:</strong><br>
-        • Check the LCD screen on your device<br>
-        • Look for "ESP-ID: AVONIC-XXXXXXXXXXXX"<br>
-        • Or connect to your device's WiFi AP and visit the setup page
+                    <div class="sdg-info-container zh">
+                        <div class="sdg-info-title">SDG 2: Zero Hunger</div>
+                        <div class="sdg-info-paragraph">
+                            AVONIC supports sustainable agriculture <br> by improving compost quality and plant <br> health, helping local farmers grow more <br> nutritious crops with fewer resources.
+                        </div>
+                    </div>
+                 </div>
+
+                 <div class="sdg XII">
+                    
+                     <div class="sdg-logo-container rcp">
+                        <img src="img/cliparts/RCP text.png" alt="" class="arc-text rcp">
+                        <img src="img/cliparts/RCP logo.png" alt="" class="sdg-logo rcp">
+                    </div>
+                    
+
+                    <div class="sdg-info-container rcp">
+                        <div class="sdg-info-title">SDG 12: Responsible Consumption and Production</div>
+                        <div class="sdg-info-paragraph">
+                            By recycling organic waste through vermicomposting, <br> AVONIC promotes responsible production and consumption, reducing br landfill waste and closing the nutrient loop in farming.
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            </section>
+    </div>
+</div>
+
+<div class="bg-placeholder faq">
+    <div class="wrapper">
+        <section class="FAQ-section">
+            <div class="apw">
+                <div class="faq-title">FREQUENTLY ASKED QUESTIONS</div>
+            </div>
+            
+
+            <div class="faq-accordion">
+                    <div class="faq-item">
+                        <button class="faq-question">
+                        What is AVONIC?
+                        <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                        <p>
+                            AVONIC is a localized vermicomposting system that automates environmental
+                            control using sensors and an ESP32-powered dashboard for small-scale farms.
+                        </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                        How does AVONIC work?
+                        <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                        <p>
+                            It monitors soil moisture, gas, and temperature, and automatically adjusts
+                            humidity while displaying live data on a web dashboard.
+                        </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                        Q3
+                        <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                        <p>Your answer for Q3 goes here.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                        Q4
+                        <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                        <p>Your answer for Q4 goes here.</p>
+                        </div>
+                    </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-wrapper">
+    <div class="footer-col logo-col">
+      <div class="footer-logo">
+        <img src="img/AVONIC LOGO (white).svg" alt="Avonic Logo">
+        <span>AVONIC</span>
       </div>
+    </div>
+
+    <div class="footer-col links-col">
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Meet the Team</a></li>
+        <li><a href="#">Sources</a></li>
+        <li><a href="#">Our work</a></li>
+        <li><a href="#">Github</a></li>
+        <li><a href="#">Research</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col socials-col">
+      <h4>Follow us on:</h4>
+      <ul>
+        <li><img src="img/socials/ic_baseline-facebook.svg" alt=""> Facebook</li>
+        <li><img src="img//socials/mdi_youtube.svg" alt=""> Youtube</li>
+        <li><img src="img/socials/ri_instagram-fill.svg" alt=""> Instagram</li>
+        <li><img src="img/socials/ic_baseline-tiktok.svg" alt=""> Tiktok</li>
+      </ul>
     </div>
   </div>
-</div>
-    <!-- HELP PAGE -->
-  <div class="content help">
-         
-        <div class="scroll-back-widget">
-            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
-        </div>
-       <h1 id="page-header" class="page-header help-sec">Help Page</h1>
-        <div class="section help ">
-         
-        <section class="section get-to-know">
-            <div class="display-msg-help">
-                <span>Get to know</span>
-                <img class="logo-for-gtk" src="img/Avonic Logo.svg" alt="">
-                <span class="sub-text-help">know the system’s objectives and purpose</span>
-            </div>
-            
-            <div class="btn">Get Started</div>
-        </section>
-
-           <section class="section user-manual">
-            <div class="display-msg-help">
-                
-                <span class="help-header">User Manual</span>
-                <span class="sub-text-help">How to use AVONIC Vermicompost System</span>
-            </div>
-            
-            <div class="btn">Get Started</div>
-        </section>
-
-         <section class="section troubleshoot">
-            <div class="display-msg-help">
-                <span class="help-header">Troubleshoot</span>
-                 
-                <span class="sub-text-help">How to fix basic system troubles</span>
-            </div>
-            
-            <div class="btn ts">Get Started</div>
-        </section>
+</footer>
 
 
+
+<script>
+
+    window.addEventListener('scroll', function() {
+    const nav = document.querySelector('nav');
     
-     </div> 
-    
- <!-- END OF HELP PAGE -->
+    if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+    } else {
+        nav.classList.remove('scrolled');
+    }
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
+
+    window.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  });
+});
+
+  const faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      item.classList.toggle('active');
+    });
+  });
+
+  const tutContainer = document.getElementById('tutCardContainer');
+  const tutDotsContainer = document.getElementById('dots');
+  const tutCards = document.querySelectorAll('.tutorial-card');
+  const tutTotalSlides = tutCards.length;
+  let tutCurrentIndex = 0;
+  let tutAutoSlideInterval;
+
+  function isMobileView() {
+    return window.innerWidth <= 900;
+  }
+
+  function tutNextSlide() {
+      if (!isMobileView()) return;
+
+      tutCurrentIndex = (tutCurrentIndex + 1) % tutTotalSlides;
+      goToSlide(tutCurrentIndex);
+  }
+
+  function tutStartAutoSlide() {
+      if (!isMobileView()) return;
+      clearInterval(tutAutoSlideInterval); 
+      tutAutoSlideInterval = setInterval(tutNextSlide, 3000); 
+  }
+
+  function tutStopAutoSlide() {
+      clearInterval(tutAutoSlideInterval);
+  }
+  
+  if (isMobileView()) {
+      tutCards.forEach((_, index) => {
+          const dot = document.createElement('div');
+          dot.classList.add('dot');
+          if (index === 0) dot.classList.add('active');
+          dot.addEventListener('click', () => {
+              tutStopAutoSlide();
+              goToSlide(index);
+              tutStartAutoSlide();
+          });
+          tutDotsContainer.appendChild(dot);
+      });
+  }
+  
+  const tutDots = document.querySelectorAll('.dot');
+  
+  function updateTutDots() {
+      tutDots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === tutCurrentIndex);
+      });
+  }
+  
+  function goToSlide(index) {
+      if (isMobileView()) {
+          tutCurrentIndex = index;
+
+          const card = tutCards[0];
+          const style = window.getComputedStyle(card.parentElement);
+          const gap = 30;
+          const cardWidth = card.offsetWidth;
+  
+          tutContainer.style.transform = `translateX(-${tutCurrentIndex * (cardWidth + gap)}px)`;
+          updateTutDots();
+      }
+  }
+  
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  tutContainer.addEventListener('touchstart', (e) => {
+      if (!isMobileView()) return;
+      tutStopAutoSlide();
+      touchStartX = e.changedTouches[0].screenX;
+  });
+  
+  tutContainer.addEventListener('touchend', (e) => {
+      if (!isMobileView()) return;
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      tutStartAutoSlide();
+  });
+  
+  function handleSwipe() {
+      if (!isMobileView()) return;
+  
+      if (touchStartX - touchEndX > 50) {
+          if (tutCurrentIndex < tutCards.length - 1) {
+              goToSlide(tutCurrentIndex + 1);
+          }
+      } 
+      else if (touchEndX - touchStartX > 50) {
+          if (tutCurrentIndex > 0) {
+              goToSlide(tutCurrentIndex - 1);
+          }
+      }
+  }
+  
+  window.addEventListener('resize', () => {
+      if (!isMobileView()) {
+          tutContainer.style.transform = 'translateX(0)';
+          tutStopAutoSlide();
+      } else {
+          goToSlide(tutCurrentIndex);
+          tutStartAutoSlide();
+      }
+  });
+  
+  if (isMobileView()) {
+    goToSlide(tutCurrentIndex);
+    tutStartAutoSlide(); 
+  }
+
+  const scCarousel = document.getElementById('scCarousel');
+  const scPrevBtn = document.getElementById('scPrevBtn');
+  const scNextBtn = document.getElementById('scNextBtn');
+  const scDotsContainer = document.getElementById('scDots');
+  
+  let scCurrentIndex = 0;
+  const scTotalSlides = 5;
+  let scAutoSlideInterval; 
+
+  for (let i = 0; i < scTotalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('sc-dot');
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => {
+          scStopAutoSlide();
+          scGoToSlide(i);
+          scStartAutoSlide();
+      });
+      scDotsContainer.appendChild(dot);
+  }
+
+  const scDots = document.querySelectorAll('.sc-dot');
+
+  function scUpdateCarousel() {
+      scCarousel.style.transform = `translateX(-${scCurrentIndex * 100}%)`;
+      
+
+      scDots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === scCurrentIndex);
+      });
 
 
-    </div>
+      scPrevBtn.disabled = scCurrentIndex === 0;
+      scNextBtn.disabled = scCurrentIndex === scTotalSlides - 1;
 
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="js/data_integration.js"></script> <!-- ✅ ADD THIS -->
-    <script src="js/auth.js"></script>
-    <script src="js/url-router.js"></script>
-    <script src="js/main_components.js"></script>
-    <script src="js/dashboard_components.js"></script>
-    <script src="js/other_widgets.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <script src="js/mqtt_integration.js"></script>
-    <script src="js/settings.js"></script>
+      const currentPair = scCarousel.children[scCurrentIndex];
+      const progressBars = currentPair.querySelectorAll('.sc-progress-fill');
+      progressBars.forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => {
+              bar.style.width = width;
+          }, 100);
+      });
+  }
 
-    <script>
-// Debug: Check router initialization
-setTimeout(() => {
-    console.log('=== ROUTER DEBUG ===');
-    console.log('Router exists:', typeof window.router !== 'undefined');
-    console.log('Current hash:', window.location.hash);
-    console.log('Active pages:', document.querySelectorAll('.content.active').length);
-    console.log('===================');
-}, 1000);
+  function scGoToSlide(index) {
+      scCurrentIndex = index;
+      scUpdateCarousel();
+  }
+  
+  function scNextSlide() {
+
+      scCurrentIndex = (scCurrentIndex + 1) % scTotalSlides;
+      scUpdateCarousel();
+  }
+
+  function scStartAutoSlide() {
+
+      clearInterval(scAutoSlideInterval); 
+
+      scAutoSlideInterval = setInterval(scNextSlide, 3000); 
+  }
+
+  function scStopAutoSlide() {
+      clearInterval(scAutoSlideInterval);
+  }
+
+  scPrevBtn.addEventListener('click', () => {
+      scStopAutoSlide();
+      if (scCurrentIndex > 0) {
+          scCurrentIndex--;
+          scUpdateCarousel();
+      }
+      scStartAutoSlide();
+  });
+
+  scNextBtn.addEventListener('click', () => {
+      scStopAutoSlide();
+      if (scCurrentIndex < scTotalSlides - 1) {
+          scCurrentIndex++;
+          scUpdateCarousel();
+      }
+      scStartAutoSlide();
+  });
+
+
+  scUpdateCarousel();
+  scStartAutoSlide();
 </script>
 
-<!-- SETTINGS PAGE -->
-<div class="content settings">
-    <div class="settings-wrapper">
-        <img class="main logo mobile" src="img/Avonic Logo.svg" alt="">
-        <div class="page-header">Settings</div>
-
-        <!-- Account Section -->
-        <section class="settings-section account-section">
-            <h2 class="section-title">Account</h2>
-            
-            <div class="settings-grid">
-                <!-- Username Card (Read-only) -->
-                <div class="settings-card">
-                    <label class="card-label">Username</label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="text" 
-                            id="username-display" 
-                            class="settings-input" 
-                            value="Loading..." 
-                            readonly
-                        >
-                    </div>
-                </div>
-
-                <!-- Email Card (Editable) -->
-                <div class="settings-card">
-                    <label class="card-label">Email</label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="email" 
-                            id="email-input" 
-                            class="settings-input" 
-                            value="Loading..."
-                        >
-                        <button class="icon-btn save-btn" onclick="updateEmail()" title="Save email">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                                <polyline points="17 21 17 13 7 13 7 21"/>
-                                <polyline points="7 3 7 8 15 8"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Password Change Card -->
-            <div class="settings-card password-card">
-                <div class="card-header">
-                    <div>
-                        <label class="card-label">Password</label>
-                        <p class="card-subtitle">Modify your current password</p>
-                    </div>
-                    <button class="btn-save" onclick="updatePassword()">Save</button>
-                </div>
-                
-                <div class="password-inputs">
-                    <div class="input-group">
-                        <label>Current Password</label>
-                        <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="current-password" 
-                                class="settings-input password-input"
-                                placeholder="Enter current password"
-                            >
-                            <button class="password-toggle" onclick="togglePasswordVisibility('current-password')">
-                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                    <circle cx="12" cy="12" r="3"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>New Password</label>
-                        <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="new-password" 
-                                class="settings-input password-input"
-                                placeholder="Enter new password"
-                            >
-                            <button class="password-toggle" onclick="togglePasswordVisibility('new-password')">
-                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                    <circle cx="12" cy="12" r="3"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="password-message" class="settings-message"></div>
-            </div>
-        </section>
-
-        <!-- Claimed Bins Section -->
-        <section class="settings-section bins-section">
-            <div class="section-header">
-                <h2 class="section-title">Claimed Bins</h2>
-                <button class="btn-add-device" onclick="window.location.hash = '#/claim-device'">
-                    ➕ Add New Device
-                </button>
-            </div>
-
-            <div id="claimed-bins-container" class="bins-grid">
-                <!-- Bins will be loaded here dynamically -->
-                <div class="loading-bins">
-                    <div class="spinner"></div>
-                    <p>Loading your devices...</p>
-                </div>
-            </div>
-
-            <div id="bins-message" class="settings-message"></div>
-        </section>
-
-        <!-- Logout Section -->
-        <section class="settings-section logout-section">
-            <button class="btn-logout" onclick="handleLogout()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Logout
-            </button>
-        </section>
-
-    </div>
-</div>
-
-<!-- Unclaim Confirmation Modal -->
-<div id="unclaim-modal" class="modal">
-    <div class="modal-content">
-        <h3>⚠️ Unclaim Device</h3>
-        <p>Are you sure you want to unclaim <strong id="unclaim-device-name"></strong>?</p>
-        <p class="modal-warning">This device will no longer sync data to your account.</p>
-        <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeUnclaimModal()">Cancel</button>
-            <button class="btn-confirm-unclaim" onclick="confirmUnclaim()">Yes, Unclaim</button>
-        </div>
-    </div>
-</div>
-</body>
 </body>
 </html>
-
-
-
-
-
-
-
