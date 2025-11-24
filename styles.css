@@ -2516,3 +2516,7 @@ h1.page-header.help-sec {
   background: #f8d7da;
   color: #721c24;
 }
+
+.status_modal .modal {
+  z-index: 1001;
+}
