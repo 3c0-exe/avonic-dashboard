@@ -1181,6 +1181,11 @@ function createDeviceSelector(devices) {
   
   if (!pageHeader) return;
 
+    if (document.querySelector('.device-selector-wrapper')) {
+    console.log('⚠️ Selector already exists, skipping...');
+    return;
+  }
+
   // Create selector wrapper
   const selectorWrapper = document.createElement('div');
   selectorWrapper.className = 'device-selector-wrapper';
