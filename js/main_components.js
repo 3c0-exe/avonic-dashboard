@@ -1043,6 +1043,193 @@ document.body.addEventListener('click', function(e) {
 
 console.log('✅ Claim device functionality loaded');
 
+// ====== NICKNAME MANAGEMENT ======
+
+// Open nickname edit modal
+function openNicknameModal(espID, currentNickname) {
+  const modal = document.createElement('div');
+  modal.className = 'status_modal nickname-modal';
+  
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modalHeader">
+        <h1>Edit Device Nickname</h1>
+        <div class="close_btn">
+          <img src="img/icons/navIcons/closeIcon.svg" alt="">
+        </div>
+      </div>
+      
+      <div class="modalCard">
+        <div class="modalContent defaultContent active">
+          <div class="nickname-form">
+            <div class="form-group">
+              <label for="nicknameInput">Device ID:</label>
+              <input type="text" value="${espID}" disabled class="disabled-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="nicknameInput">Nickname:</label>
+              <input 
+                type="text" 
+                id="nicknameInput" 
+                value="${currentNickname || ''}" 
+                placeholder="Enter device nickname"
+                maxlength="50"
+              >
+            </div>
+            
+            <div class="nickname-alert" style="display:none;"></div>
+            
+            <div class="manualControl">
+              <div class="btn modalConfirm" id="saveNicknameBtn">Save</div>
+              <div class="btn modalCancel">Cancel</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Focus input
+  const input = modal.querySelector('#nicknameInput');
+  input.focus();
+  input.select();
+  
+  // Close button
+  modal.querySelector('.close_btn').addEventListener('click', () => modal.remove());
+  modal.querySelector('.modalCancel').addEventListener('click', () => modal.remove());
+  
+  // Save button
+  modal.querySelector('#saveNicknameBtn').addEventListener('click', () => {
+    saveNickname(espID, input.value.trim(), modal);
+  });
+  
+  // Enter key to save
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      saveNickname(espID, input.value.trim(), modal);
+    }
+  });
+}
+
+// Save nickname to backend
+async function saveNickname(espID, newNickname, modal) {
+  const token = localStorage.getItem('avonic_token');
+  const alertBox = modal.querySelector('.nickname-alert');
+  const saveBtn = modal.querySelector('#saveNicknameBtn');
+  
+  if (!newNickname) {
+    showNicknameAlert(alertBox, 'Please enter a nickname', 'error');
+    return;
+  }
+  
+  // Show loading
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving...';
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/devices/${espID}/nickname`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ nickname: newNickname })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      showNicknameAlert(alertBox, '✅ Nickname saved!', 'success');
+      
+      // Update UI elements with new nickname
+      updateNicknameInUI(espID, newNickname);
+      
+      setTimeout(() => modal.remove(), 1000);
+      
+    } else {
+      showNicknameAlert(alertBox, data.error || 'Failed to save nickname', 'error');
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save';
+    }
+    
+  } catch (error) {
+    console.error('❌ Save nickname error:', error);
+    showNicknameAlert(alertBox, 'Network error. Please try again.', 'error');
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
+  }
+}
+
+// Show alert in nickname modal
+function showNicknameAlert(alertBox, message, type) {
+  alertBox.textContent = message;
+  alertBox.className = `nickname-alert ${type}`;
+  alertBox.style.display = 'block';
+  
+  if (type === 'success') {
+    setTimeout(() => {
+      alertBox.style.display = 'none';
+    }, 2000);
+  }
+}
+
+// Update nickname throughout the UI
+function updateNicknameInUI(espID, newNickname) {
+  // Update device selector
+  const selector = document.getElementById('home-device-selector');
+  if (selector) {
+    const option = selector.querySelector(`option[value="${espID}"]`);
+    if (option) {
+      option.textContent = `${newNickname} (${espID.slice(-6)})`;
+    }
+  }
+  
+  // Update bin cards
+  const binCards = document.querySelectorAll(`bin-card[data-esp-id="${espID}"]`);
+  binCards.forEach(card => {
+    const binNumber = card.getAttribute('data-bin-number');
+    card.setAttribute('bin_name', `${newNickname} - Bin ${binNumber}`);
+    const nameElement = card.querySelector('.bin_name');
+    if (nameElement) {
+      nameElement.textContent = `${newNickname} - Bin ${binNumber}`;
+    }
+  });
+  
+  // Update machine status title
+  const statusSection = document.querySelector(`.machine_status[data-esp-id="${espID}"]`);
+  if (statusSection) {
+    const title = statusSection.querySelector('h1');
+    if (title) {
+      title.textContent = `Machine Status - ${newNickname}`;
+    }
+  }
+  
+  // Update edit button
+  const editBtn = document.querySelector('.edit-nickname-btn');
+  if (editBtn) {
+    editBtn.dataset.nickname = newNickname;
+  }
+  
+  console.log(`✅ Updated nickname in UI: ${espID} -> ${newNickname}`);
+}
+
+// Add edit button click listener
+document.body.addEventListener('click', function(e) {
+  if (e.target.closest('.edit-nickname-btn')) {
+    const btn = e.target.closest('.edit-nickname-btn');
+    const espID = btn.dataset.espId;
+    const currentNickname = btn.dataset.nickname;
+    
+    console.log('✏️ Edit nickname clicked:', espID);
+    openNicknameModal(espID, currentNickname);
+  }
+});
+
+console.log('✅ Nickname management loaded');
+
 // Fetch and display sensor data
 async function fetchSensorData() {
   const token = localStorage.getItem('avonic_token');
@@ -1213,7 +1400,7 @@ function createDeviceSelector(devices) {
   const selectorWrapper = document.createElement('div');
   selectorWrapper.className = 'device-selector-wrapper';
   
-  selectorWrapper.innerHTML = `
+selectorWrapper.innerHTML = `
     <div class="device-selector-label">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
@@ -1223,13 +1410,19 @@ function createDeviceSelector(devices) {
       </svg>
       <span>Viewing Device:</span>
     </div>
-<select class="device-selector" id="home-device-selector">
+    <select class="device-selector" id="home-device-selector">
       ${devices.map((device) => `
         <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
           ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
         </option>
       `).join('')}
     </select>
+    <button class="edit-nickname-btn" data-esp-id="${selectedESPID}" data-nickname="${devices.find(d => d.espID === selectedESPID)?.nickname || ''}" title="Edit nickname">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </svg>
+    </button>
   `;
 
   // Insert after page header
@@ -1237,7 +1430,7 @@ function createDeviceSelector(devices) {
 
 // ✅ Add change event listener with memory
   const selector = document.getElementById('home-device-selector');
-  selector.addEventListener('change', (e) => {
+selector.addEventListener('change', (e) => {
     const selectedDevice = devices.find(d => d.espID === e.target.value);
     if (selectedDevice) {
       console.log(`🔄 Switching to device: ${selectedDevice.espID}`);
@@ -1246,9 +1439,17 @@ function createDeviceSelector(devices) {
       localStorage.setItem('selected_espID', selectedDevice.espID);
       console.log(`💾 Saved device selection: ${selectedDevice.espID}`);
       
+      // ✅ Update edit button attributes
+      const editBtn = selectorWrapper.querySelector('.edit-nickname-btn');
+      if (editBtn) {
+        editBtn.dataset.espId = selectedDevice.espID;
+        editBtn.dataset.nickname = selectedDevice.nickname || '';
+      }
+      
       renderDeviceData(selectedDevice, devices);
     }
   });
+  
 
   console.log('✅ Device selector created with', devices.length, 'devices');
 }

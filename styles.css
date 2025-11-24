@@ -2433,3 +2433,86 @@ h1.page-header.help-sec {
         padding-right: var(--space-5);
     }
 }
+
+/* Device selector with edit button */
+.device-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 15px;
+  background: var(--card-bg);
+  border-radius: 12px;
+}
+
+.edit-nickname-btn {
+  background: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.edit-nickname-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+.edit-nickname-btn svg {
+  color: white;
+}
+
+/* Nickname modal */
+.nickname-form {
+  padding: 20px;
+}
+
+.nickname-form .form-group {
+  margin-bottom: 20px;
+}
+
+.nickname-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.nickname-form input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.nickname-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.nickname-form input.disabled-input {
+  background: #f5f5f5;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.nickname-alert {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.nickname-alert.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.nickname-alert.error {
+  background: #f8d7da;
+  color: #721c24;
+}
