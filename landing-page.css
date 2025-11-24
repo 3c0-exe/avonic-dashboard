@@ -1,0 +1,1136 @@
+/* ========================================
+   SCOPED LANDING PAGE CSS
+   All styles wrapped under .content.landing
+   ======================================== */
+
+.content.landing * {
+    margin: 0px;
+    font-family: 'Hoss round', sans-serif;
+}
+
+.content.landing {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+.content.landing section {
+    scroll-snap-align: start;
+}
+
+.content.landing .wrapper {
+    max-width: 1234px;
+    margin: 0 auto;
+}
+
+.content.landing header {
+    height: 100vh;
+    width: 100%;
+    background: #ccedf7;
+    background-image: url(img/BG/hero-bg-curved.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.content.landing .btn {
+    cursor: pointer;
+    padding: 0 36px;
+    display: flex;
+    height: 40px;
+    width: fit-content;
+    align-items: center;
+    border-radius: 30px;
+    border: 2px solid black;
+    text-decoration: none;
+    color: black;
+}
+
+.content.landing .btn.grn {
+    font-weight: lighter;
+    color: white;
+    background: #2A4633;
+}
+
+.content.landing .btn.orng {
+    background: #EC8701;
+}
+
+.content.landing .btn.black {
+    background: #464646;
+    color: white;
+}
+
+.content.landing .btn-modded-order {
+    display: none;
+}
+
+.content.landing .logo {
+    display: flex;
+    gap: 10px;
+}
+
+.content.landing .logo-text {
+    font-size: 37px;
+    font-weight: bold;
+    color: #2A4633;
+}
+
+.content.landing nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    margin: 10px 0;
+    border-radius: 50px;
+    position: fixed;
+    max-width: 1134px;
+    width: calc(100% - 80px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+}
+
+.content.landing nav.scrolled {
+    background: #FFFFFF;
+    border: 2px solid;
+    box-shadow: 0px 7.01545px 0px #000000;
+}
+
+.content.landing .bg-placeholder {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 50px 0;
+}
+
+.content.landing .bg-placeholder.hero {
+    padding-top: 0;
+}
+
+.content.landing .hero-section {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 50px;
+}
+
+.content.landing .hero-title {
+    color: white;
+    font-size: 78px;
+    padding-bottom: 26px;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+}
+
+.content.landing .hero-subtitle {
+    padding-bottom: 56px;
+}
+
+.content.landing .bin-clipart {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+}
+
+.content.landing .hero-section .left,
+.content.landing .hero-section .right {
+    padding: 0 25px;
+}
+
+.content.landing .curvy-div-shape {
+    position: absolute;
+    top: 99.9vh;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.content.landing .curvy-div-shape img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.content.landing .bg-placeholder.dctn {
+    background-color: #FFF9E8;
+}
+
+.content.landing .dedication {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 55vh;
+    width: 100%;
+    position: relative;
+}
+
+.content.landing .farmer-clipart.pri {
+    display: block;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+}
+
+.content.landing .farmer-clipart.sec {
+    display: none;
+}
+
+.content.landing .right p,
+.content.landing .catch.highlight1 {
+    color: black;
+    width: 438px;
+    text-align: end;
+}
+
+.content.landing .catch.highlight1 {
+    font-size: 54px;
+    padding-bottom: 22px;
+}
+
+.content.landing .curvy-div-shape.dctn {
+    top: 166vh;
+    transform: rotate(180deg);
+}
+
+.content.landing .bg-placeholder.wf {
+    background: #52B788;
+}
+
+.content.landing .worm-fact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 4rem 2rem;
+    gap: 2rem;
+}
+
+.content.landing .worm-fact .right {
+    order: 1;
+    flex: 1 1 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.content.landing .worm-fact .left {
+    order: 0;
+    flex: 1 1 400px;
+    max-width: 450px;
+}
+
+.content.landing .worm-fact.left.sub-header {
+    font-size: 28px;
+}
+
+.content.landing .catch.two {
+    font-size: 58px;
+    padding-bottom: 28px;
+}
+
+.content.landing .p1 {
+    padding-bottom: 50px;
+}
+
+.content.landing .p2 {
+    padding-bottom: 44px;
+}
+
+.content.landing .worm-fact .vermibed {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+}
+
+.content.landing .vermibed.secondary {
+    display: none;
+}
+
+.content.landing .curvy-div-shape.wf {
+    top: 241vh;
+    transform: rotate(180deg);
+}
+
+.content.landing .bg-placeholder.regtut {
+    background: linear-gradient(180deg, #827453 0%, #6C6148 100%);
+}
+
+.content.landing .how-to-get-started {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-around;
+    height: 100vh;
+    width: 100%;
+}
+
+.content.landing .title.htgs {
+    font-size: 46px;
+    font-weight: 400;
+}
+
+.content.landing .step-by-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+}
+
+.content.landing .sbs-icon {
+    width: 922px;
+    height: 46px;
+}
+
+.content.landing .info-card-container.register {
+    display: flex;
+    gap: 50px;
+}
+
+.content.landing .info-card {
+    display: flex;
+    background: white;
+    width: 316px;
+    gap: 14px;
+    padding: 22px;
+    border-radius: 18px;
+    border: 2px solid black;
+    box-shadow: 0px 7.01545px 0px #000000;
+}
+
+.content.landing .num-sec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.content.landing .number {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 1px solid black;
+    background: #EC8701;
+}
+
+.content.landing .element {
+    width: 16px;
+    height: 114px;
+}
+
+.content.landing .small-info-header {
+    font-size: 22px;
+    padding-bottom: 20px;
+}
+
+.content.landing .bg-placeholder.vidtut {
+    background: #F1E1C7;
+}
+
+.content.landing .tutorial-videos {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.content.landing .upper-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.content.landing .carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.content.landing .carousel-wrapper::before,
+.content.landing .carousel-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    z-index: 10;
+    pointer-events: none;
+    display: none;
+}
+
+.content.landing .carousel-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.content.landing .carousel-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.content.landing .tut-card-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.content.landing .tutorial-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 3px solid #000;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    width: 100%;
+}
+
+.content.landing .card-image {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    padding: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content.landing .video-placeholder {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.content.landing .card-content {
+    background: #d4d4d4;
+    padding: 24px;
+    flex-grow: 1;
+}
+
+.content.landing .platform {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.content.landing .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.content.landing .tag {
+    display: inline-block;
+    background: #f0ead6;
+    padding: 6px 16px;
+    border-radius: 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+.content.landing .dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.content.landing .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d4d4d4;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.content.landing .dot.active {
+    background: #000;
+}
+
+.content.landing .bg-placeholder.sc {
+    background: #FFFFFF;
+}
+
+.content.landing .still-curious .apw {
+    display: flex;
+}
+
+.content.landing .sc-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.content.landing .sc-carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.content.landing .sc-carousel-container {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.content.landing .sc-carousel {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 650px;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.content.landing .sc-comparison-pair {
+    min-width: 650px;
+    width: 650px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.content.landing .sc-card {
+    flex: 0 0 auto;
+    width: 278px;
+    min-width: 278px;
+    max-width: 278px;
+    background: #f5f5f5;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.content.landing .sc-card-header {
+    padding: 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content.landing .sc-card-header.chemical {
+    background: #4a4a4a;
+}
+
+.content.landing .sc-card-header.vermicast {
+    background: #3a3a3a;
+}
+
+.content.landing .sc-icon-placeholder {
+    width: 48px;
+    height: 48px;
+    background: #666;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+}
+
+.content.landing .sc-header-text h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.content.landing .sc-header-text p {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.content.landing .sc-card-body {
+    padding: 24px;
+}
+
+.content.landing .sc-metric {
+    margin-bottom: 24px;
+}
+
+.content.landing .sc-metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.content.landing .sc-metric-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2a2a;
+    margin-bottom: 8px;
+}
+
+.content.landing .sc-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.content.landing .sc-progress-fill {
+    height: 100%;
+    background: #5fa777;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left;
+}
+
+.content.landing .sc-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.content.landing .sc-badge.vigor {
+    background: #ffeaa7;
+    color: #d63031;
+}
+
+.content.landing .sc-badge.steady {
+    background: #dfe6e9;
+    color: #2d3436;
+}
+
+.content.landing .sc-remarks {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.content.landing .sc-nav-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.content.landing .sc-nav-button:hover {
+    background: #f5f5f5;
+    transform: scale(1.1);
+}
+
+.content.landing .sc-nav-button:active {
+    transform: scale(0.95);
+}
+
+.content.landing .sc-nav-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.content.landing .sc-nav-button:disabled:hover {
+    transform: scale(1);
+}
+
+.content.landing .sc-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.content.landing .sc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.content.landing .sc-dot.active {
+    background: white;
+    width: 24px;
+    border-radius: 5px;
+}
+
+.content.landing .bg-placeholder.sdg {
+    background: white;
+}
+
+.content.landing .sdg-sec {
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.content.landing .sdg {
+    display: flex;
+    align-items: center;
+}
+
+.content.landing .sdg-container {
+    display: flex;
+    gap: 20px;
+}
+
+.content.landing .sdg-logo-container {
+    padding-right: 14px;
+}
+
+.content.landing .sdg-logo-container.zh {
+    width: 156px;
+    height: auto;
+    position: relative;
+}
+
+.content.landing .sdg-logo.zh {
+    width: 82px;
+    height: 78px;
+    position: absolute;
+    left: 38px;
+    bottom: 44px;
+}
+
+.content.landing .sdg-logo-container.rcp {
+    width: 156px;
+    height: auto;
+    position: relative;
+}
+
+.content.landing .sdg-logo.rcp {
+    width: 102px;
+    height: 52px;
+    position: absolute;
+    left: 28px;
+    bottom: 54px;
+}
+
+.content.landing .sdg.II {
+    width: 480px;
+}
+
+.content.landing .sdg.XII {
+    width: 632px;
+}
+
+.content.landing .sdg-info-title {
+    font-size: 22px;
+    padding-bottom: 30px;
+}
+
+.content.landing .arc-text {
+    height: 156px;
+    width: auto;
+    animation: spin-landing 10s linear infinite;
+    transform-origin: center center;
+}
+
+.content.landing .bg-placeholder.faq {
+    background: #D9D9D9;
+}
+
+.content.landing .FAQ-section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.content.landing .faq-title {
+    font-size: 58px;
+    width: 405px;
+}
+
+.content.landing .faq-accordion {
+    background: #d9d9d9;
+    padding: 30px 40px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    font-family: 'Hoss Round', sans-serif;
+}
+
+.content.landing .faq-item {
+    border-bottom: 1px solid #555;
+}
+
+.content.landing .faq-question {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 18px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.content.landing .faq-question:hover {
+    color: #2b5a40;
+}
+
+.content.landing .faq-icon {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.content.landing .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.content.landing .faq-answer p {
+    margin: 0;
+    padding: 0 0 16px;
+    color: #222;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.content.landing .faq-item.active .faq-answer {
+    max-height: 200px;
+    padding-top: 4px;
+}
+
+.content.landing .faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+.content.landing footer.footer {
+    background: #2B2B2B;
+    color: #fff;
+    padding: 60px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.content.landing .footer-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0 40px;
+}
+
+.content.landing .footer-col {
+    flex: 1;
+    min-width: 220px;
+    margin: 10px 0;
+}
+
+.content.landing .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content.landing .footer-logo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.content.landing .footer-logo span {
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.content.landing .links-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.content.landing .links-col ul li {
+    margin-bottom: 14px;
+}
+
+.content.landing .links-col ul li a {
+    text-decoration: none;
+    color: #fff;
+    transition: 0.3s;
+}
+
+.content.landing .links-col ul li a:hover {
+    color: #F9B23D;
+}
+
+.content.landing .socials-col h4 {
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.content.landing .socials-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.content.landing .socials-col ul li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.content.landing .socials-col ul li img {
+    width: 18px;
+    height: 18px;
+}
+
+/* Keyframes */
+@keyframes spin-landing {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+
+@media (max-width: 900px) {
+    .content.landing .hero-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    .content.landing .hero-title {
+        font-size: 50px;
+        text-align: center;
+    }
+
+    .content.landing .btn.orng.pri {
+        display: none;
+    }
+
+    .content.landing .btn-modded-order {
+        display: block;
+    }
+
+    .content.landing .hero-subtitle {
+        text-align: center;
+        padding-bottom: 0;
+    }
+
+    .content.landing .dedication {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .content.landing .dedication .right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content.landing .farmer-clipart {
+        width: 212px;
+        position: static;
+    }
+
+    .content.landing .catch.highlight1 {
+        padding-bottom: 6px;
+    }
+
+    .content.landing .right p,
+    .content.landing .catch.highlight1 {
+        text-align: center;
+    }
+
+    .content.landing .farmer-clipart.pri {
+        display: none;
+    }
+
+    .content.landing .farmer-clipart.sec {
+        display: block;
+    }
+
+    .content.landing .worm-fact {
+        justify-content: center;
+    }
+
+    .content.landing .worm-fact .left {
+        order: 2;
+        text-align: center;
+        justify-items: center;
+    }
+
+    .content.landing .worm-fact .right {
+        display: none;
+    }
+
+    .content.landing .vermibed.secondary {
+        display: block;
+    }
+
+    .content.landing .info-card-container.register {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content.landing .tut-card-container {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0 20px;
+    }
+
+    .content.landing .tutorial-card {
+        width: calc(100vw - 40px);
+        max-width: 500px;
+        min-width: 280px;
+    }
+
+    .content.landing .title.htgs {
+        font-size: 32px;
+    }
+
+    .content.landing .upper-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .content.landing .carousel-wrapper {
+        padding: 0;
+    }
+
+    .content.landing .carousel-wrapper::before,
+    .content.landing .carousel-wrapper::after {
+        display: block;
+    }
+
+    .content.landing .tutorial-card {
+        height: 308px;
+    }
+
+    .content.landing .card-image {
+        height: 400px;
+    }
+
+    .content.landing .dots {
+        display: flex;
+    }
+
+    .content.landing .still-curious .apw {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content.landing .FAQ-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+    }
+
+    .content.landing .footer-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .content.landing .footer-col {
+        margin: 20px 0;
+    }
+
+    .content.landing .socials-col ul li {
+        justify-content: center;
+    }
+
+    .content.landing .sc-carousel {
+        display: flex;
+        transition: transform 0.5s ease;
+        animation: autoSwipe 5s infinite;
+    }
+
+    .content.landing .sc-carousel-wrapper {
+        display: center;
+        gap: 0;
+        padding: 0 5px;
+    }
+
+    .content.landing .sc-carousel-container {
+        width: calc(100% - 80px);
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .content.landing .sc-carousel {
+        width: 100%;
+    }
+
+    .content.landing .sc-comparison-pair {
+        min-width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        padding: 0;
+    }
+
+    .content.landing .sc-card {
+        width: 95%;
+        max-width: 500px;
+        margin: 10px auto;
+        box-sizing: border-box;
+    }
+
+    .content.landing .sc-nav-button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .content.landing .faq-title {
+        padding-left: 60px;
+        font-size: 50px;
+        width: 405px;
+    }
+}
