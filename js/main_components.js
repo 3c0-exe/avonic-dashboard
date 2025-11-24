@@ -1,4 +1,8 @@
 // bin cards
+
+// ====== GLOBAL CONFIG ======
+const API_BASE = "https://avonic-main-hub-production.up.railway.app";
+
 class Bincard extends HTMLElement {
     connectedCallback() {
         const bin_name = this.getAttribute("bin_name");
@@ -1109,8 +1113,6 @@ function updateCardWithReading(reading) {
 
 
 // ====== DYNAMIC HOME PAGE WITH DEVICE SELECTOR ======
-
-const API_BASE = "https://avonic-main-hub-production.up.railway.app";
 
 async function loadBinCards() {
   const token = localStorage.getItem('avonic_token');
