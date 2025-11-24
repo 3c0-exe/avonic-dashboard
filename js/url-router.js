@@ -19,11 +19,11 @@ function isAuthenticated() {
     return !!token;
 }
 
-// Redirect to login.html if not authenticated
+// Redirect to forms.html if not authenticated
 function requireAuth() {
     if (!isAuthenticated()) {
         console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'login.html';
+        window.location.href = 'forms.html'; // ✅ CHANGED from login.html
         return false;
     }
     return true;
@@ -81,8 +81,7 @@ function handleRouteChange() {
     }
 }
 
-// ✅ ADD THIS FUNCTION to url-router.js (after handleRouteChange function)
-// ✅ NEW: Handle bin page navigation with ESP-ID parameter
+// Handle bin page navigation with ESP-ID parameter
 function handleBinPageLoad(route) {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash.split('?')[1]);
@@ -143,12 +142,12 @@ function showPage(selector, route) {
             loadDashboard();
         }
         
-        // ✅ NEW: Handle bin pages with ESP-ID parameter
+        // Handle bin pages with ESP-ID parameter
         if (route === '/bin' || route === '/bin2') {
             handleBinPageLoad(route);
         }
         
-        // ✅ NEW: Load bin cards on home page
+        // Load bin cards on home page
         if (route === '/' && typeof loadBinCards === 'function') {
             console.log('📥 Loading bin cards...');
             setTimeout(() => loadBinCards(), 100);
@@ -196,7 +195,7 @@ function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
     console.log('👋 Logged out');
-    window.location.href = 'login.html';
+    window.location.href = 'forms.html'; // ✅ CHANGED from login.html
 }
 
 // Initialize router
