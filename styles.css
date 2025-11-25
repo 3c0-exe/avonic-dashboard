@@ -2522,3 +2522,236 @@ h1.page-header.help-sec {
 .status_modal .modal {
   z-index: 1001;
 }
+
+/* ============================================
+   MODAL CONTROL BUTTONS STYLING
+   ============================================ */
+
+/* Control Section in Modal */
+.modal-control-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.modal-control-section:hover {
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.modal-control-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Control Buttons Container */
+.modal-control-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Modal Control Buttons */
+.modal-control-buttons .control-btn {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-family: 'Hoss Round', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.modal-control-buttons .control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.modal-control-buttons .control-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.modal-control-buttons .btn-on {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.modal-control-buttons .btn-on:hover:not(:disabled) {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+.modal-control-buttons .btn-off {
+    background: linear-gradient(135deg, #757575, #616161);
+    color: white;
+}
+
+.modal-control-buttons .btn-off:hover:not(:disabled) {
+    background: linear-gradient(135deg, #616161, #424242);
+    box-shadow: 0 4px 12px rgba(117, 117, 117, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Device Status Display */
+.modal-device-status {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+/* Manual Mode Disabled State */
+.manualControl.disabled .modal-control-buttons .control-btn {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.manualControl.disabled .modal-control-section {
+    position: relative;
+}
+
+.manualControl.disabled .modal-control-section::after {
+    content: '🔒 Manual Mode Required';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(179, 5, 5, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.manualControl.disabled .modal-control-section:hover::after {
+    opacity: 1;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+    .modal-control-section {
+        padding: 12px;
+    }
+    
+    .modal-control-title {
+        font-size: 14px;
+    }
+    
+    .modal-control-buttons .control-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .modal-device-status {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .modal-control-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-control-section {
+        padding: 10px;
+    }
+}
+
+/* Loading Animation for Buttons */
+.modal-control-buttons .control-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.modal-control-buttons .control-btn.loading::after {
+    content: "⏳";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Success/Error States */
+.modal-device-status.success {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.modal-device-status.error {
+    background: rgba(244, 67, 54, 0.15);
+    color: #c62828;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.modal-device-status.loading {
+    background: rgba(255, 152, 0, 0.15);
+    color: #f57c00;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+/* Ensure manualControl container allows proper layout */
+.modalWrapper .manualControl {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 15px;
+    width: auto;
+    min-width: 280px;
+    max-width: 100%;
+}
+
+.modalWrapper .manualControl .tertiaryCardName {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text);
+}
+
+/* Adjust modal wrapper for better control display */
+@media screen and (max-width: 768px) {
+    .modalWrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .modalWrapper .manualControl {
+        min-width: 100%;
+        width: 100%;
+    }
+}
