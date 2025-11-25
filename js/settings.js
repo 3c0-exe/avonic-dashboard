@@ -97,7 +97,7 @@ async function updateEmail() {
     const token = localStorage.getItem('avonic_token');
     
     if (!newEmail || !newEmail.includes('@')) {
-        showMessage('password-message', 'Please enter a valid email', 'error');
+        showMessage('email-message', 'Please enter a valid email', 'error');  // ← CHANGED
         return;
     }
 
@@ -115,14 +115,14 @@ async function updateEmail() {
 
         if (res.ok) {
             console.log('✅ Email updated');
-            showMessage('password-message', '✅ Email updated successfully!', 'success');
+            showMessage('email-message', '✅ Email updated successfully!', 'success');  // ← CHANGED
         } else {
             console.error('❌ Email update failed:', data);
-            showMessage('password-message', '❌ ' + (data.error || 'Failed to update email'), 'error');
+            showMessage('email-message', '❌ ' + (data.error || 'Failed to update email'), 'error');  // ← CHANGED
         }
     } catch (error) {
         console.error('❌ Email update error:', error);
-        showMessage('password-message', '❌ Network error. Please try again.', 'error');
+        showMessage('email-message', '❌ Network error. Please try again.', 'error');  // ← CHANGED
     }
 }
 
