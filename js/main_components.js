@@ -1827,6 +1827,7 @@ window.controlDeviceFromModal = async function(binId, device, state) {
     return;
   }
   
+  const endpoint = `${API_BASE}/api/bin${binId}/${device}`;
   const statusId = `modal-bin${binId}-${device}-status`;
   const statusElement = document.getElementById(statusId);
   
@@ -1844,24 +1845,40 @@ window.controlDeviceFromModal = async function(binId, device, state) {
   }
   
   try {
-    // 🔥 PLACEHOLDER - You'll replace this with MQTT publishing later
-    console.log(`📡 Would send: bin${binId}/${device} = ${state ? 'ON' : 'OFF'}`);
+    const token = localStorage.getItem('avonic_token');
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Update status
-    if (statusElement) {
-      statusElement.textContent = state ? '🟢 ON' : '⚪ OFF';
-      statusElement.style.color = state ? '#4CAF50' : '#757575';
+    if (!token) {
+      throw new Error('Not logged in');
     }
     
-    showToast(`✅ ${device.toUpperCase()} turned ${state ? 'ON' : 'OFF'}`, 'success');
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ state: state ? 'on' : 'off' })
+    });
     
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Update modal status
+      if (statusElement) {
+        statusElement.textContent = state ? '🟢 ON' : '⚪ OFF';
+        statusElement.style.color = state ? '#4CAF50' : '#757575';
+      }
+      
+      showToast(`✅ ${device.toUpperCase()} turned ${state ? 'ON' : 'OFF'}`, 'success');
+      
+      console.log('✅ Control successful:', data);
+    } else {
+      throw new Error(data.error || 'Control failed');
+    }
   } catch (error) {
-    console.error('Control error:', error);
+    console.error('❌ Control error:', error);
     if (statusElement) {
-      statusElement.textContent = '❌ Control failed';
+      statusElement.textContent = '❌ Failed';
       statusElement.style.color = '#f44336';
     }
     showToast('❌ ' + error.message, 'error');
