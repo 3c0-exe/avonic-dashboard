@@ -244,3 +244,98 @@ class sensorFluctuationSection extends HTMLElement {
 }
 
 customElements.define("section-sensor-fluctuation", sensorFluctuationSection);
+
+// ====== AUTO-LOAD CHARTS ON DASHBOARD ======
+
+window.addEventListener('hashchange', loadBinFluctuationCharts);
+document.addEventListener('DOMContentLoaded', loadBinFluctuationCharts);
+
+async function loadBinFluctuationCharts() {
+  // Only run on dashboard page
+  if (window.location.hash !== '#/dashboard') return;
+  
+  console.log('📊 Loading bin fluctuation charts...');
+  
+  // Wait for components to render
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const token = getAuthToken();
+  if (!token) {
+    console.warn('⚠️ No token, skipping charts');
+    return;
+  }
+  
+  try {
+    // Get user's devices
+    const response = await fetch(`${API_BASE}/api/devices/claimed`, {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) throw new Error('Failed to fetch devices');
+    
+    const data = await response.json();
+    if (!data.devices || data.devices.length === 0) {
+      console.log('ℹ️ No devices found');
+      return;
+    }
+    
+    // Use first device (or get from selector)
+    const device = data.devices[0];
+    const espID = device.espID;
+    
+    // Get current bin number from UI
+    const binDisplay = document.getElementById('current-bin');
+    const currentBin = binDisplay ? 
+      parseInt(binDisplay.textContent.replace('Bin ', '')) : 1;
+    
+    console.log(`📈 Loading charts for ${espID} - Bin ${currentBin}`);
+    
+    // Find all chart sections
+    const chartSections = document.querySelectorAll('section-sensor-fluctuation');
+    
+    if (chartSections.length === 0) {
+      console.warn('⚠️ No chart sections found on page');
+      return;
+    }
+    
+    // Update each chart
+    for (const section of chartSections) {
+      const sensorName = section.getAttribute('sensor_name');
+      const canvas = section.querySelector('canvas');
+      
+      if (canvas && sensorName) {
+        console.log(`🔄 Rendering: ${sensorName}`);
+        await updateChart(canvas, espID, currentBin, sensorName);
+      }
+    }
+    
+    console.log('✅ All charts rendered successfully!');
+    
+  } catch (error) {
+    console.error('❌ Chart loading error:', error);
+  }
+}
+
+// ====== LISTEN FOR BIN SWITCHING ======
+
+// When user clicks left/right arrows to switch bins
+document.addEventListener('click', (e) => {
+  const arrow = e.target.closest('.arrow');
+  if (!arrow) return;
+  
+  // Wait for bin number to update in UI
+  setTimeout(() => {
+    console.log('🔄 Bin switched, reloading charts...');
+    loadBinFluctuationCharts();
+  }, 100);
+});
+
+// ====== LISTEN FOR DEVICE SWITCHING ======
+
+// When user changes device in dropdown
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'device-select') {
+    console.log('🔄 Device switched, reloading charts...');
+    setTimeout(() => loadBinFluctuationCharts(), 200);
+  }
+});
