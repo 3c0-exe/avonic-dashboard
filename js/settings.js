@@ -4,15 +4,16 @@ const SETTINGS_API_BASE = 'https://avonic-main-hub-production.up.railway.app/api
 console.log('✅ Integrated Settings.js loaded');
 
 // ====== SETTINGS HUB NAVIGATION ======
+// ====== SETTINGS HUB NAVIGATION ======
 window.settingsNav = {
     navigateToAccount: () => {
         window.location.hash = '#/settings/account';
     },
-    navigateToWiFi: () => {
-        window.location.hash = '#/settings/wifi';
+    // CHANGED: WiFi -> Claim
+    navigateToClaim: () => {
+        window.location.hash = '#/settings/claim';
     },
     navigateToUserManual: () => {
-        // Could open a PDF or external link
         window.open('/user-manual.pdf', '_blank');
     },
     handleLogout: () => {
@@ -29,6 +30,65 @@ window.settingsNav = {
         localStorage.removeItem('avonic_user');
         console.log('👋 Logged out');
         window.location.href = 'forms.html';
+    },
+    // ADDED: Handle the Claim Form Submit
+    handleClaimSubmit: async (event) => {
+        event.preventDefault();
+        
+        const espInput = document.getElementById('settings-esp-id');
+        const alertBox = document.getElementById('settings-claim-alert');
+        const loading = document.getElementById('settings-claim-loading');
+        const successBox = document.getElementById('settings-claim-success');
+        const btn = event.target.querySelector('button');
+        
+        // Reset UI
+        alertBox.style.display = 'none';
+        successBox.style.display = 'none';
+        btn.disabled = true;
+        loading.style.display = 'block';
+
+        try {
+            const token = localStorage.getItem('avonic_token');
+            const espID = espInput.value.trim().toUpperCase();
+
+            const response = await fetch(`${SETTINGS_API_BASE}/devices/claim`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ espID })
+            });
+
+            const data = await response.json();
+
+            loading.style.display = 'none';
+            btn.disabled = false;
+
+            if (response.ok) {
+                successBox.style.display = 'block';
+                espInput.value = ''; // Clear input
+                
+                // Refresh the account list so the new bin shows up there immediately
+                if(typeof loadAccountSettings === 'function') {
+                   // We don't call loadAccountSettings() directly to avoid page jump, 
+                   // but we can refresh the bin list if needed next time.
+                }
+            } else {
+                alertBox.textContent = data.error || 'Failed to claim device';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                alertBox.style.color = 'red';
+                alertBox.style.marginBottom = '10px';
+            }
+        } catch (error) {
+            console.error(error);
+            loading.style.display = 'none';
+            btn.disabled = false;
+            alertBox.textContent = 'Network error. Please try again.';
+            alertBox.style.display = 'block';
+            alertBox.style.color = 'red';
+        }
     }
 };
 
@@ -372,25 +432,7 @@ async function confirmUnclaim() {
     }
 }
 
-// ====== WIFI SETTINGS ======
-async function loadWiFiSettings() {
-    console.log('📡 Loading WiFi settings...');
-    // This would fetch WiFi status from your ESP devices
-    // For now, we'll show connection status
-}
 
-async function connectWiFi() {
-    const ssid = document.getElementById('wifi-ssid').value;
-    const password = document.getElementById('wifi-password').value;
-    
-    if (!ssid) {
-        showModalMessage('Please enter WiFi network name', 'error');
-        return;
-    }
-    
-    console.log('📡 Connecting to WiFi:', ssid);
-    showModalMessage('WiFi connection feature coming soon!', 'info');
-}
 
 // ====== MESSAGE DISPLAY ======
 function showModalMessage(message, type = 'error') {

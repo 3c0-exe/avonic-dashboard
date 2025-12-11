@@ -2,10 +2,10 @@
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
-    '/claim-device': '.content.claim-device',
+    '/claim-device': '.content.claim-device', // Old standalone claim page (optional to keep)
     '/settings': '.content.settings',
     '/settings/account': '.content.settings-account',
-    '/settings/wifi': '.content.settings-wifi',
+    '/settings/claim': '.content.settings-claim', // NEW ROUTE
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
@@ -129,9 +129,16 @@ function showPage(selector, route) {
             loadAccountSettings();
         }
         
-        if (route === '/settings/wifi' && typeof loadWiFiSettings === 'function') {
-            console.log('📡 Loading WiFi settings...');
-            loadWiFiSettings();
+// CHANGED: Removed WiFi check, added optional logging for Claim
+        if (route === '/settings/claim') {
+            console.log('🔗 Loading claim settings...');
+            // Reset form UI if needed
+            const alertBox = document.getElementById('settings-claim-alert');
+            const successBox = document.getElementById('settings-claim-success');
+            const input = document.getElementById('settings-esp-id');
+            if(alertBox) alertBox.style.display = 'none';
+            if(successBox) successBox.style.display = 'none';
+            if(input) input.value = '';
         }
         
         if (route === '/dashboard' && typeof loadDashboard === 'function') {

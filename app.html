@@ -805,11 +805,11 @@ setTimeout(() => {
             </div>
 
             <!-- WiFi Settings Card -->
-            <div class="settings-nav-card" onclick="window.settingsNav.navigateToWiFi()">
+            <div class="settings-nav-card" onclick="window.settingsNav.navigateToClaim()">
                 <div class="icon">
-                    <img src="/settings-content/settings-img/wifi-settings.png" alt="WiFi">
+                    <span style="font-size: 24px;">🔗</span> 
                 </div>
-                <div class="title">WiFi Settings</div>
+                <div class="title">Claim Device</div>
             </div>
 
             <!-- Logout Card -->
@@ -907,49 +907,59 @@ setTimeout(() => {
     </div>
 </div>
 
-<!-- ====== WIFI SETTINGS PAGE ====== -->
-<div class="content settings-wifi">
-    <div class="wifi-settings-page">
-        <!-- Page Title with Back Button -->
-        <div class="page-title">
+
+<!-- ====== CLAIM DEVICE PAGE ====== -->
+<div class="content settings-claim">
+    <div class="account-settings-page"> <div class="page-title">
             <button class="back-btn" onclick="window.location.hash='#/settings'">
                 <img src="/settings-content/settings-img/back-button.svg" alt="Back" class="back-icon">
             </button>
             <div class="title-text">
                 <p class="settings-label">Settings</p>
-                <h1>WiFi Connection</h1>
+                <h1>Claim Device</h1>
             </div>
         </div>
 
-        <div class="wifi-card">
-            <div class="wifi-status">
-                <div class="status-dot"></div>
-                <span>Currently connected to your network</span>
+        <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="claim-header" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="font-size: 20px; color: #2c3e50;">Link New Device</h2>
+                <p style="color: #7f8c8d; font-size: 14px;">Enter your ESP32 device ID</p>
             </div>
 
-            <h2 style="margin-bottom: 16px; font-size: 20px;">Connect to WiFi</h2>
-            <p style="color: #808080; margin-bottom: 24px; font-size: 14px;">
-                Configure WiFi settings for your ESP32 devices
-            </p>
+            <div id="settings-claim-alert" class="alert" style="display:none;"></div>
 
-            <div class="wifi-form">
-                <div class="form-group">
-                    <label>Network Name (SSID)</label>
-                    <input type="text" id="wifi-ssid" class="input-field" placeholder="Enter network name">
+            <form id="settings-claim-form" onsubmit="window.settingsNav.handleClaimSubmit(event)">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">ESP Device ID</label>
+                    <input 
+                        type="text" 
+                        id="settings-esp-id" 
+                        class="input-field" 
+                        placeholder="e.g. AVONIC-A1B2C3" 
+                        maxlength="22" 
+                        style="text-transform: uppercase; font-family: monospace;"
+                        required
+                    >
                 </div>
 
-                <div class="form-group">
-                    <label>Password</label>
-                    <div class="password-input-group">
-                        <input type="password" id="wifi-password" class="input-field password-input" 
-                               placeholder="Enter password" style="padding-right: 44px;">
-                        <button class="toggle-password" onclick="togglePasswordVisibility(this)">
-                            <img src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show" class="eye-icon">
-                        </button>
-                    </div>
-                </div>
+                <button type="submit" class="connect-btn" style="width: 100%; margin-top: 10px;">
+                    🎯 Claim Device
+                </button>
+            </form>
 
-                <button class="connect-btn" onclick="connectWiFi()">Connect</button>
+            <div id="settings-claim-loading" style="display:none; text-align: center; margin-top: 20px;">
+                <div class="spinner"></div>
+                <p>Verifying device...</p>
+            </div>
+
+            <div id="settings-claim-success" style="display:none; background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <h3 style="color: #2e7d32; margin: 0;">✅ Success!</h3>
+                <p style="color: #1b5e20; margin: 5px 0 0 0;">Device linked successfully.</p>
+            </div>
+
+            <div class="help-text" style="margin-top: 25px; background: #fff3cd; padding: 15px; border-radius: 4px; font-size: 13px; color: #856404;">
+                <strong>Where to find your ID:</strong><br>
+                Check the LCD screen on your device for "ESP-ID".
             </div>
         </div>
     </div>
