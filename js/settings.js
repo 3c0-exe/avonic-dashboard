@@ -3,7 +3,7 @@ const SETTINGS_API_BASE = 'https://avonic-main-hub-production.up.railway.app/api
 
 console.log('✅ Integrated Settings.js loaded');
 
-// ====== SETTINGS HUB NAVIGATION ======
+// ====== 1. NAVIGATION ======
 window.settingsNav = {
     navigateToAccount: () => {
         window.location.hash = '#/settings/account';
@@ -15,23 +15,13 @@ window.settingsNav = {
         window.open('/user-manual.pdf', '_blank');
     },
     handleLogout: () => {
-        if (!confirm('Are you sure you want to logout?')) return;
-        
-        const token = localStorage.getItem('avonic_token');
-        
-        fetch(`${SETTINGS_API_BASE}/logout`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(err => console.error('⚠️ Logout request failed:', err));
-        
-        localStorage.removeItem('avonic_token');
-        localStorage.removeItem('avonic_user');
-        console.log('👋 Logged out');
-        window.location.href = 'forms.html';
+        // Confirmation before logging out
+        openSaveChangesModal(() => {
+            performLogout();
+        }, "Are you sure you want to log out?");
     },
     handleClaimSubmit: async (event) => {
         event.preventDefault();
-        
         const espInput = document.getElementById('settings-esp-id');
         const alertBox = document.getElementById('settings-claim-alert');
         const loading = document.getElementById('settings-claim-loading');
@@ -57,22 +47,18 @@ window.settingsNav = {
             });
 
             const data = await response.json();
-
             loading.style.display = 'none';
             btn.disabled = false;
 
             if (response.ok) {
                 successBox.style.display = 'block';
                 espInput.value = '';
-                if(typeof loadAccountSettings === 'function') {
-                   // Optional: refresh logic
-                }
+                if(typeof loadAccountSettings === 'function') loadClaimedBinsAccount();
             } else {
                 alertBox.textContent = data.error || 'Failed to claim device';
                 alertBox.className = 'alert error';
                 alertBox.style.display = 'block';
                 alertBox.style.color = 'red';
-                alertBox.style.marginBottom = '10px';
             }
         } catch (error) {
             console.error(error);
@@ -85,13 +71,22 @@ window.settingsNav = {
     }
 };
 
-// ====== ACCOUNT SETTINGS PAGE ======
-async function loadAccountSettings() {
-    console.log('📄 Loading account settings...');
+function performLogout() {
     const token = localStorage.getItem('avonic_token');
-    
+    fetch(`${SETTINGS_API_BASE}/logout`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+    }).finally(() => {
+        localStorage.removeItem('avonic_token');
+        localStorage.removeItem('avonic_user');
+        window.location.href = 'forms.html';
+    });
+}
+
+// ====== 2. DATA LOADING ======
+async function loadAccountSettings() {
+    const token = localStorage.getItem('avonic_token');
     if (!token) {
-        console.error('❌ No token found');
         window.location.href = 'forms.html';
         return;
     }
@@ -110,23 +105,20 @@ async function loadAccountSettings() {
             if (emailEl) emailEl.value = userData.email;
         }
     } catch (error) {
-        console.error('❌ Failed to load user data:', error);
+        console.error('Failed to load profile:', error);
     }
-
     loadClaimedBinsAccount();
 }
 
 async function loadClaimedBinsAccount() {
     const container = document.getElementById('account-bins-list');
     const token = localStorage.getItem('avonic_token');
-
     if (!container) return;
 
     try {
         const res = await fetch(`${SETTINGS_API_BASE}/devices/claimed`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-
         const data = await res.json();
 
         if (res.ok && data.devices && data.devices.length > 0) {
@@ -135,79 +127,91 @@ async function loadClaimedBinsAccount() {
                 <div class="bin-item">
                     <img src="/settings-content/settings-img/Account/bin-icon.svg" alt="Bin" class="bin-icon">
                     <div class="bin-info">
-                        <h3>${device.nickname || 'My Bin'} - ${device.espID.substring(7, 11)} ${device.espID.substring(11, 15)}</h3>
-                        <p>${device.status === 'active' ? 'Active bin' : 'Offline'}</p>
+                        <h3>${device.nickname || 'My Bin'} - ${device.espID.substring(7, 11)}...</h3>
+                        <p>${device.status === 'active' ? 'Online' : 'Offline'}</p>
                     </div>
                     <button class="remove-bin" onclick="openUnclaimModal('${device.espID}', '${device.nickname || device.espID}')">
                         <img src="/settings-content/settings-img/Account/remove.svg" alt="Remove" class="close-icon">
                     </button>
                 </div>
             `).join('');
-
+            
             const viewMoreBtn = document.querySelector('.view-more-btn');
-            if (viewMoreBtn && data.devices.length > 2) {
-                viewMoreBtn.style.display = 'block';
-                viewMoreBtn.onclick = () => {
-                    alert(`You have ${data.devices.length} total devices. View them in Dashboard.`);
-                };
+            if (viewMoreBtn) {
+                viewMoreBtn.style.display = data.devices.length > 2 ? 'block' : 'none';
             }
         } else {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #808080;">
-                    <p>No devices claimed yet</p>
-                    <button onclick="window.location.hash='#/claim-device'" 
-                            style="margin-top: 16px; padding: 12px 24px; background: #E8F5B3; 
-                                   border: 1px solid #000; border-radius: 20px; cursor: pointer;">
-                        ➕ Claim Your First Device
-                    </button>
-                </div>
-            `;
+            container.innerHTML = `<div style="text-align:center; color:#888; padding:20px;">No devices yet</div>`;
         }
     } catch (error) {
-        console.error('❌ Failed to load devices:', error);
-        container.innerHTML = '<p style="color: #FF0000; text-align: center;">Failed to load devices</p>';
+        container.innerHTML = '<p style="color:red; text-align:center">Error loading devices</p>';
     }
 }
 
-// ====== MODAL SYSTEM (NEW) ======
-let pendingAction = null; // Stores the function to run if "Save" is clicked
+// ====== 3. MODAL SYSTEM (CORRECTED FLOW) ======
+let pendingModalAction = null;
 
-function openSaveChangesModal(actionCallback) {
+// Opens "Save Changes?" Modal
+function openSaveChangesModal(actionCallback, customMessage) {
     const modal = document.getElementById('save-changes-modal');
-    if (modal) {
-        modal.style.display = 'flex'; // Uses flex to center with your new CSS
-        pendingAction = actionCallback;
-        
-        // Setup buttons (Clone to remove old listeners to prevent multiple clicks)
-        const saveBtn = modal.querySelector('.modal-btn.btn-primary');
-        const cancelBtn = modal.querySelector('.modal-btn.btn-secondary');
-        
-        // Create clean clones
-        const newSave = saveBtn.cloneNode(true);
-        const newCancel = cancelBtn.cloneNode(true);
-        
-        saveBtn.parentNode.replaceChild(newSave, saveBtn);
-        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-        
-        // Add new listeners
-        newSave.addEventListener('click', () => {
-            if (pendingAction) pendingAction();
-            closeSaveChangesModal();
-        });
-        
-        newCancel.addEventListener('click', closeSaveChangesModal);
-    }
+    if (!modal) return;
+
+    // Optional: Update text if provided
+    const desc = modal.querySelector('.modal-description');
+    if (desc && customMessage) desc.textContent = customMessage;
+    else if (desc) desc.textContent = "Your changes will be saved";
+
+    modal.style.display = 'flex';
+    pendingModalAction = actionCallback;
+
+    // Set up one-time listener for the SAVE button inside the modal
+    const saveBtn = modal.querySelector('.btn-primary');
+    const cancelBtn = modal.querySelector('.btn-secondary');
+
+    // Clone to remove old listeners
+    const newSave = saveBtn.cloneNode(true);
+    const newCancel = cancelBtn.cloneNode(true);
+    saveBtn.parentNode.replaceChild(newSave, saveBtn);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+    newSave.addEventListener('click', () => {
+        if (pendingModalAction) pendingModalAction();
+        closeSaveChangesModal();
+    });
+
+    newCancel.addEventListener('click', closeSaveChangesModal);
 }
 
 function closeSaveChangesModal() {
     const modal = document.getElementById('save-changes-modal');
+    if (modal) modal.style.display = 'none';
+    pendingModalAction = null;
+}
+
+// Opens "Current Password" Modal
+function showCurrentPasswordModal() {
+    const modal = document.getElementById('current-password-modal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    
+    // Auto-focus the input
+    setTimeout(() => {
+        const input = modal.querySelector('.input-field');
+        if(input) input.focus();
+    }, 100);
+}
+
+function closeCurrentPasswordModal() {
+    const modal = document.getElementById('current-password-modal');
     if (modal) {
         modal.style.display = 'none';
-        pendingAction = null;
+        const input = modal.querySelector('.input-field');
+        if (input) input.value = '';
     }
 }
 
-// ====== EMAIL UPDATE (UPDATED FOR MODAL) ======
+// ====== 4. EMAIL LOGIC (WITH SAVE MODAL) ======
 let isEditingEmail = false;
 
 function toggleEmailEdit() {
@@ -215,35 +219,32 @@ function toggleEmailEdit() {
     const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
     
     if (!isEditingEmail) {
-        // VIEW -> EDIT
+        // Step 1: Click Edit -> Become Editable
         input.removeAttribute('readonly');
         input.focus();
         btn.textContent = 'Save';
         btn.style.background = '#B8D989';
         isEditingEmail = true;
     } else {
-        // EDIT -> SAVE (TRIGGER MODAL)
+        // Step 2: Click Save -> Validate -> Open Modal
         if (!input.value || !input.value.includes('@')) {
             showModalMessage('Please enter a valid email', 'error');
             return;
         }
         
-        // Use the modal before updating
+        // Triggers the "Save Changes?" modal
         openSaveChangesModal(() => {
-            updateEmail();
+            performEmailUpdate(input.value, btn, input);
         });
     }
 }
 
-async function updateEmail() {
-    console.log('📧 Updating email...');
-    const input = document.getElementById('account-email');
-    const newEmail = input.value;
+async function performEmailUpdate(newEmail, btn, input) {
     const token = localStorage.getItem('avonic_token');
-    const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
-
-    btn.disabled = true;
+    
+    // UI Loading state (button inside modal is already closed, so we update the page button)
     btn.textContent = 'Saving...';
+    btn.disabled = true;
 
     try {
         const res = await fetch(`${SETTINGS_API_BASE}/user/email`, {
@@ -259,23 +260,24 @@ async function updateEmail() {
 
         if (res.ok) {
             showModalMessage('Email updated successfully!', 'success');
+            // Reset UI to "View" mode
             input.setAttribute('readonly', 'readonly');
             btn.textContent = 'Edit';
-            btn.style.background = '#E8F5B3';
+            btn.style.background = '';
             isEditingEmail = false;
         } else {
             showModalMessage(data.error || 'Failed to update email', 'error');
-            btn.textContent = 'Save';
+            btn.textContent = 'Save'; // Revert button if failed
         }
     } catch (error) {
-        showModalMessage('Network error. Please try again.', 'error');
+        showModalMessage('Network error', 'error');
         btn.textContent = 'Save';
     } finally {
         btn.disabled = false;
     }
 }
 
-// ====== PASSWORD UPDATE ======
+// ====== 5. PASSWORD LOGIC (WITH CURRENT PASSWORD MODAL) ======
 let isEditingPassword = false;
 
 function togglePasswordEdit() {
@@ -284,64 +286,44 @@ function togglePasswordEdit() {
     const btn = card.querySelector('.edit-btn');
     
     if (!isEditingPassword) {
+        // Step 1: Click Edit -> Become Editable
         inputs.forEach(input => input.removeAttribute('readonly'));
+        inputs[0].focus();
         btn.textContent = 'Save';
         btn.style.background = '#B8D989';
         isEditingPassword = true;
     } else {
-        updatePassword();
+        // Step 2: Click Save -> Validate -> Open "Current Password" Modal
+        const newPass = inputs[0].value;
+        const confirmPass = inputs[1].value;
+
+        if (!newPass || !confirmPass) {
+            showModalMessage('Please fill in both fields', 'error');
+            return;
+        }
+        if (newPass !== confirmPass) {
+            showModalMessage('Passwords do not match', 'error');
+            return;
+        }
+        if (newPass.length < 6) {
+            showModalMessage('Password must be at least 6 characters', 'error');
+            return;
+        }
+
+        // Open the modal to ask for old password
+        showCurrentPasswordModal();
     }
 }
 
-async function updatePassword() {
-    const inputs = document.querySelectorAll('.password-card .password-input');
-    const newPassword = inputs[0].value;
-    const confirmPassword = inputs[1].value;
-
-    if (!newPassword || !confirmPassword) {
-        showModalMessage('Please fill in both password fields', 'error');
-        return;
-    }
-
-    if (newPassword.length < 6) {
-        showModalMessage('Password must be at least 6 characters', 'error');
-        return;
-    }
-
-    if (newPassword !== confirmPassword) {
-        showModalMessage('Passwords do not match', 'error');
-        return;
-    }
-
-    // Show current password modal first
-    showCurrentPasswordModal(newPassword);
-}
-
-// ====== PASSWORD MODAL SYSTEM ======
-function showCurrentPasswordModal(newPassword) {
-    const modal = document.getElementById('current-password-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        modal.dataset.newPassword = newPassword;
-        // Auto-focus input
-        const input = modal.querySelector('.input-field');
-        if(input) setTimeout(() => input.focus(), 100);
-    }
-}
-
-function closeCurrentPasswordModal() {
-    const modal = document.getElementById('current-password-modal');
-    if (modal) {
-        modal.style.display = 'none';
-        const input = modal.querySelector('.input-field');
-        if (input) input.value = '';
-    }
-}
-
+// Called by the "Enter" button inside the Current Password Modal
 async function submitCurrentPassword() {
     const modal = document.getElementById('current-password-modal');
-    const currentPassword = modal.querySelector('.input-field').value;
-    const newPassword = modal.dataset.newPassword;
+    const currentPasswordInput = modal.querySelector('.input-field');
+    const currentPassword = currentPasswordInput.value;
+    
+    // Get new password from the page inputs
+    const inputs = document.querySelectorAll('.password-card .password-input');
+    const newPassword = inputs[0].value;
     const token = localStorage.getItem('avonic_token');
 
     if (!currentPassword) {
@@ -368,21 +350,24 @@ async function submitCurrentPassword() {
             closeCurrentPasswordModal();
             showModalMessage('Password updated successfully!', 'success');
             
-            const inputs = document.querySelectorAll('.password-card .password-input');
-            inputs.forEach(input => {
-                input.value = '';
-                input.setAttribute('readonly', 'readonly');
+            // Reset Page UI
+            inputs.forEach(i => {
+                i.value = '';
+                i.setAttribute('readonly', 'readonly');
             });
-            
             const btn = document.querySelector('.password-card .edit-btn');
             btn.textContent = 'Edit';
-            btn.style.background = '#E8F5B3';
+            btn.style.background = '';
             isEditingPassword = false;
         } else {
+            // Show error but keep modal open so they can retry
             showModalMessage(data.error || 'Incorrect current password', 'error');
+            currentPasswordInput.value = '';
+            currentPasswordInput.focus();
         }
     } catch (error) {
-        showModalMessage('Network error. Please try again.', 'error');
+        showModalMessage('Network error', 'error');
+        closeCurrentPasswordModal();
     }
 }
 
@@ -393,7 +378,6 @@ function openUnclaimModal(espID, deviceName) {
     deviceToUnclaim = espID;
     const modal = document.getElementById('unclaim-modal');
     const nameEl = document.getElementById('unclaim-device-name');
-    
     if (nameEl) nameEl.textContent = deviceName;
     if (modal) modal.style.display = 'flex';
 }
@@ -419,19 +403,17 @@ async function confirmUnclaim() {
             closeUnclaimModal();
             loadClaimedBinsAccount();
         } else {
-            const data = await res.json();
-            showModalMessage(data.error || 'Failed to unclaim device', 'error');
+            showModalMessage('Failed to unclaim', 'error');
         }
     } catch (error) {
-        showModalMessage('Failed to unclaim device', 'error');
+        showModalMessage('Network error', 'error');
     }
 }
 
-// ====== HELPER FUNCTIONS ======
+// ====== UTILS ======
 function togglePasswordVisibility(button) {
     const input = button.previousElementSibling;
     const eyeIcon = button.querySelector('.eye-icon');
-    
     if (input.type === 'password') {
         input.type = 'text';
         eyeIcon.src = '/settings-content/settings-img/Account/open-eyes.svg';
@@ -443,45 +425,27 @@ function togglePasswordVisibility(button) {
 
 function showModalMessage(message, type = 'error') {
     let msgDiv = document.getElementById('modal-message');
-    
     if (!msgDiv) {
         msgDiv = document.createElement('div');
         msgDiv.id = 'modal-message';
         msgDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            z-index: 10000;
-            border: 2px solid #000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed; top: 20px; right: 20px; padding: 16px 24px;
+            border-radius: 12px; font-size: 15px; font-weight: 600; z-index: 10000;
+            border: 2px solid #000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         `;
         document.body.appendChild(msgDiv);
     }
-    
     if (type === 'error') {
-        msgDiv.style.background = '#FFE8E8';
-        msgDiv.style.color = '#D32F2F';
-    } else if (type === 'success') {
-        msgDiv.style.background = '#E8F5B3';
-        msgDiv.style.color = '#2A4633';
+        msgDiv.style.background = '#FFE8E8'; msgDiv.style.color = '#D32F2F';
     } else {
-        msgDiv.style.background = '#E3F2FD';
-        msgDiv.style.color = '#1565C0';
+        msgDiv.style.background = '#E8F5B3'; msgDiv.style.color = '#2A4633';
     }
-    
     msgDiv.textContent = message;
     msgDiv.style.display = 'block';
-    
-    setTimeout(() => {
-        msgDiv.style.display = 'none';
-    }, 4000);
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
 }
 
-// ====== EXPOSE FUNCTIONS ======
+// ====== EXPORTS ======
 window.loadAccountSettings = loadAccountSettings;
 window.toggleEmailEdit = toggleEmailEdit;
 window.togglePasswordEdit = togglePasswordEdit;
@@ -492,7 +456,6 @@ window.submitCurrentPassword = submitCurrentPassword;
 window.openUnclaimModal = openUnclaimModal;
 window.closeUnclaimModal = closeUnclaimModal;
 window.confirmUnclaim = confirmUnclaim;
-// New exports for modals
 window.openSaveChangesModal = openSaveChangesModal;
 window.closeSaveChangesModal = closeSaveChangesModal;
 
