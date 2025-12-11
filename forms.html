@@ -5,241 +5,212 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avonic Authentication</title>
   <link rel="stylesheet" href="forms.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="form-container">
-  <div class="login-card">
-    <div class="logo-section">
-      <img src="/img/AVONIC LOGO.svg" alt="Logo" class="logo-img">
-      <h1 class="brand-name">avonic</h1>
-    </div>
-
-    <h2 class="thin-header">Log in to your Account</h2>
-    <p class="subtext">Welcome back, please enter your details</p>
-
-    <div class="illustration">
-      <img src="/img/cliparts/for Emailers/Log-in to you account 1.png" alt="Illustration">
-    </div>
-
-    <form>
-      <div class="input-group">
-        <img src="/img/form-icons/User.svg" alt="User Icon" class="icon">
-        <input type="text" placeholder="Username" required>
-      </div>
-
-      <div class="input-group">
-        <img src="/img/form-icons/Password.svg" alt="Lock Icon" class="icon">
-        <input type="password" class="password-input" placeholder="Password" required>
-        <img src="/img/form-icons/eye-close.svg" alt="Toggle Password" class="eye-icon toggle-password">
-      </div>
-
-      <div class="forgot">
-        <a href="#">Forgot password?</a>
-      </div>
-
-      <button type="submit" class="long-btn login-btn">
-        Login
-        <span class="arrow"><img src="/img/form-icons/right-arrow.svg" alt=""></span>
-      </button>
-    </form>
-
-    <p class="signup-text">
-      Don't have an account? <a href="#" class="signup-link">Sign up</a>
-    </p>
-  </div>
-</div>
-
-<!-- REGISTER -->
-<div class="form-container">
-  <div class="register-card">
-    <div class="logo-section">
-      <img src="/img/AVONIC LOGO.svg" alt="Logo" class="logo-img">
-      <h1 class="brand-name">avonic</h1>
-    </div>
+  <div class="split-layout">
     
-    <h2 class="thin-header">Sign Up</h2>
-    <p class="subtext">Create your account</p>
-
-    <form>
-      <div class="input-group">
-        <img src="/img/form-icons/User.svg" alt="User Icon" class="icon">
-        <input type="text" placeholder="Username" required>
-      </div>
-      <p class="subtext form">3 - 20 characters (alphanumeric only)</p>
-
-      <div class="input-group" style="margin-top: 4px;">
-        <img src="/img/form-icons/User.svg" alt="Email Icon" class="icon">
-        <input type="email" placeholder="Email" required>
-      </div>
-
-      <div class="input-group">
-        <img src="/img/form-icons/Password.svg" alt="Lock Icon" class="icon">
-        <input type="password" class="password-input" placeholder="Password" required>
-        <img src="/img/form-icons/eye-close.svg" alt="Toggle Password" class="eye-icon toggle-password">
-      </div>
-      <p class="subtext form">Min of 6 characters</p>
-
-      <div class="input-group" style="margin-top: 4px;">
-        <img src="/img/form-icons/Password.svg" alt="Lock Icon" class="icon">
-        <input type="password" class="password-input" placeholder="Repeat Password" required>
-        <img src="/img/form-icons/eye-close.svg" alt="Toggle Password" class="eye-icon toggle-password">
-      </div>
-
-      <button type="submit" class="long-btn login-btn">
-        Register
-        <span class="arrow"><img src="/img/form-icons/right-arrow.svg" alt=""></span>
-      </button>
-    </form>
-
-    <p class="signup-text">
-      Already have an account? <a href="#" class="signup-link">Sign up</a>
-    </p>
-  </div>
-</div>
-
-<!-- FORGOT PASSWORD -->
-<div class="form-container">
-  <div class="register-card">
-    <div class="logo-section">
-      <img src="/img/AVONIC LOGO.svg" alt="Logo" class="logo-img">
-      <h1 class="brand-name">avonic</h1>
-    </div>
-    
-    <h2 class="thin-header">Forgot Password</h2>
-
-    <form>
-      <div class="input-group">
-        <img src="/img/form-icons/User.svg" alt="Email Icon" class="icon">
-        <input type="email" placeholder="Email" required>
-      </div>
-      <p class="subtext form">We'll send a 6 digit code to your email</p>
-
-      <button type="submit" class="long-btn login-btn">
-        Send reset code
-        <span class="arrow"><img src="/img/form-icons/right-arrow.svg" alt=""></span>
-      </button>
-    </form>
-
-    <p class="signup-text">
-      Remember your password? <a href="#" class="signup-link">Sign up</a>
-    </p>
-  </div>
-</div>
-
-<!-- RESET PASSWORD -->
-<div class="form-container">
-  <div class="reset-password-card">
-    <div class="logo-section">
-      <img src="/img/AVONIC LOGO.svg" alt="Logo" class="logo-img">
-      <h1 class="brand-name">avonic</h1>
-    </div>
-    
-    <h2 class="thin-header">Reset Password</h2>
-    <p class="subtext">We'll send you a code to reset it</p>
-    
-    <div class="reset-message">
-      <div class="message-header">
-        <img src="/img/form-icons/success-icon.svg" alt="Success Icon" class="msg-icon">
-        <strong>Reset Code Sent!</strong>
-      </div>
-      <p class="core-msg">Check your email (<b>your-email@gmail.com</b>) for a 6-digit code</p>
-      <div class="msg-footer">
-        <img src="/img/form-icons/clock.svg" alt="Clock Icon" class="msg-icon">
-        <span>Code expires in 15 minutes</span>
-      </div>
+    <div class="splash-section">
+      <img src="img/splash-bg-log.png" alt="Avonic Splash" class="splash-img">
     </div>
 
-    <form>
-      <div class="reset-code-group">
-        <label for="resetCode">Reset Code</label>
-        <div class="code-inputs">
-          <input type="text" maxlength="1" inputmode="numeric">
-          <input type="text" maxlength="1" inputmode="numeric">
-          <input type="text" maxlength="1" inputmode="numeric">
-          <input type="text" maxlength="1" inputmode="numeric">
-          <input type="text" maxlength="1" inputmode="numeric">
-          <input type="text" maxlength="1" inputmode="numeric">
+    <div class="forms-section">
+      
+      <div class="form-container" id="login-container">
+        <div class="form-header">
+          <div class="logo-wrapper">
+            <img src="img/Avonic Logo.svg" alt="Avonic" class="logo-icon">
+            <span class="brand-name">avonic</span>
+          </div>
+          <h2>Log in to your Account</h2>
+          <p class="subtext">Welcome back, please enter your details</p>
         </div>
+
+        <div class="illustration-wrapper">
+          <img src="img\cliparts\for Emailers\Log-in to you account 1" alt="Login Illustration" class="keyhole-img">
+        </div>
+
+        <div id="form-message" style="display:none;"></div>
+
+        <form>
+          <div class="input-group">
+            <img src="img/form-icons/User.svg" alt="" class="field-icon">
+            <input type="text" placeholder="Username" required>
+          </div>
+
+          <div class="input-group">
+            <img src="img/form-icons/Password.svg" alt="" class="field-icon">
+            <input type="password" class="password-input" placeholder="Password" required>
+            <img src="img/form-icons/eye-close.svg" alt="" class="toggle-password">
+          </div>
+
+          <div class="forgot-row">
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="primary-btn">
+            Login <span class="arrow">→</span>
+          </button>
+        </form>
+
+        <p class="bottom-link">
+          Don't have an account? <a href="#" class="signup-link">Sign up</a>
+        </p>
       </div>
 
-      <div class="input-group">
-        <img src="/img/form-icons/Password.svg" alt="Lock Icon" class="icon">
-        <input type="password" class="password-input" placeholder="New Password" required>
-        <img src="/img/form-icons/eye-close.svg" alt="Toggle Password" class="eye-icon toggle-password">
+      <div class="form-container" id="register-container" style="display: none;">
+        <div class="form-header">
+          <div class="logo-wrapper">
+            <img src="img/Avonic Logo.svg" alt="Avonic" class="logo-icon">
+            <span class="brand-name">avonic</span>
+          </div>
+          <h2>Create Account</h2>
+          <p class="subtext">Join the Avonic community</p>
+        </div>
+
+        <form>
+          <div class="input-group">
+            <img src="img/form-icons/User.svg" alt="" class="field-icon">
+            <input type="text" placeholder="Username (3-20 chars)" required>
+          </div>
+          
+          <div class="input-group">
+            <img src="img/form-icons/User.svg" alt="" class="field-icon">
+            <input type="email" placeholder="Email Address" required>
+          </div>
+
+          <div class="input-group">
+            <img src="img/form-icons/Password.svg" alt="" class="field-icon">
+            <input type="password" class="password-input" placeholder="Password" required>
+            <img src="img/form-icons/eye-close.svg" alt="" class="toggle-password">
+          </div>
+
+          <div class="input-group">
+            <img src="img/form-icons/Password.svg" alt="" class="field-icon">
+            <input type="password" class="password-input" placeholder="Confirm Password" required>
+          </div>
+
+          <button type="submit" class="primary-btn">
+            Register <span class="arrow">→</span>
+          </button>
+        </form>
+
+        <p class="bottom-link">
+          Already have an account? <a href="#" class="signup-link">Log in</a>
+        </p>
       </div>
-      <p class="subtext form">Min of 6 characters</p>
 
-      <div class="input-group" style="margin-top: 4px;">
-        <img src="/img/form-icons/Password.svg" alt="Lock Icon" class="icon">
-        <input type="password" class="password-input" placeholder="Repeat Password" required>
-        <img src="/img/form-icons/eye-close.svg" alt="Toggle Password" class="eye-icon toggle-password">
+      <div class="form-container" id="forgot-container" style="display: none;">
+        <div class="form-header">
+          <div class="logo-wrapper">
+            <img src="img/Avonic Logo.svg" alt="Avonic" class="logo-icon">
+            <span class="brand-name">avonic</span>
+          </div>
+          <h2>Forgot Password</h2>
+          <p class="subtext">We'll send a code to your email</p>
+        </div>
+
+        <form>
+          <div class="input-group">
+            <img src="img/form-icons/User.svg" alt="" class="field-icon">
+            <input type="email" placeholder="Enter your email" required>
+          </div>
+
+          <button type="submit" class="primary-btn" style="margin-top: 20px;">
+            Send Code <span class="arrow">→</span>
+          </button>
+        </form>
+
+        <p class="bottom-link">
+          Remember it now? <a href="#" class="signup-link">Log in</a>
+        </p>
       </div>
 
-      <button type="submit" class="long-btn login-btn">
-        Reset Password
-        <span class="arrow"><img src="/img/form-icons/right-arrow.svg" alt=""></span>
-      </button>
-    </form>
+      <div class="form-container" id="reset-container" style="display: none;">
+        <div class="form-header">
+          <div class="logo-wrapper">
+            <img src="img/Avonic Logo.svg" alt="Avonic" class="logo-icon">
+            <span class="brand-name">avonic</span>
+          </div>
+          <h2>Reset Password</h2>
+          <p class="subtext">Enter the code sent to your email</p>
+        </div>
 
-    <p class="signup-text">
-      Remember your password? <a href="#" class="signup-link">Sign up</a>
-    </p>
+        <form>
+           <div class="code-inputs-wrapper">
+             <label style="font-size: 14px; font-weight: 600; color: #333; display: block; margin-bottom: 8px;">6-Digit Code</label>
+             <div class="code-inputs">
+                <input type="text" maxlength="1" inputmode="numeric">
+                <input type="text" maxlength="1" inputmode="numeric">
+                <input type="text" maxlength="1" inputmode="numeric">
+                <input type="text" maxlength="1" inputmode="numeric">
+                <input type="text" maxlength="1" inputmode="numeric">
+                <input type="text" maxlength="1" inputmode="numeric">
+             </div>
+           </div>
+
+          <div class="input-group">
+            <img src="img/form-icons/Password.svg" alt="" class="field-icon">
+            <input type="password" class="password-input" placeholder="New Password" required>
+          </div>
+          <div class="input-group">
+            <img src="img/form-icons/Password.svg" alt="" class="field-icon">
+            <input type="password" class="password-input" placeholder="Confirm Password" required>
+          </div>
+
+          <button type="submit" class="primary-btn">
+            Reset Password
+          </button>
+        </form>
+      </div>
+
+    </div> 
   </div>
-</div>
 
 <script src="js/auth.js"></script>
-
 <script>
-// Password toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
-  const toggleButtons = document.querySelectorAll('.toggle-password');
-  
-  toggleButtons.forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const inputGroup = toggle.closest('.input-group');
-      const passwordInput = inputGroup.querySelector('.password-input');
-      
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      toggle.src = isPassword ? '/img/form-icons/eye-open.svg' : '/img/form-icons/eye-close.svg';
+  // 1. Password Toggle Logic
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', (e) => {
+      const input = e.target.previousElementSibling;
+      if(input.type === "password") {
+        input.type = "text";
+        e.target.src = "img/form-icons/eye-open.svg"; 
+      } else {
+        input.type = "password";
+        e.target.src = "img/form-icons/eye-close.svg";
+      }
     });
   });
 
-  // Reset code input auto-advance
+  // 2. Auto-Advance for 6-Digit Code Input (Restored!)
   const codeInputs = document.querySelectorAll('.code-inputs input');
-
   codeInputs.forEach((input, index) => {
     input.addEventListener('input', (e) => {
       const value = e.target.value;
 
+      // Only allow numbers
       if (!/^[0-9]$/.test(value)) {
-        e.target.classList.add('invalid');
         e.target.value = '';
-        setTimeout(() => e.target.classList.remove('invalid'), 200);
         return;
       }
 
+      // Move to next input if filled
       if (value.length === 1 && index < codeInputs.length - 1) {
         codeInputs[index + 1].focus();
       }
-
-      const code = Array.from(codeInputs).map(i => i.value).join('');
-      if (code.length === 6) {
-        console.log('Entered Code:', code);
-      }
     });
 
+    // Handle Backspace
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Backspace' && input.value === '' && index > 0) {
         codeInputs[index - 1].focus();
-        codeInputs[index - 1].value = '';
       }
     });
   });
 });
 </script>
-
 </body>
 </html>
