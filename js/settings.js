@@ -4,12 +4,10 @@ const SETTINGS_API_BASE = 'https://avonic-main-hub-production.up.railway.app/api
 console.log('✅ Integrated Settings.js loaded');
 
 // ====== SETTINGS HUB NAVIGATION ======
-// ====== SETTINGS HUB NAVIGATION ======
 window.settingsNav = {
     navigateToAccount: () => {
         window.location.hash = '#/settings/account';
     },
-    // CHANGED: WiFi -> Claim
     navigateToClaim: () => {
         window.location.hash = '#/settings/claim';
     },
@@ -31,7 +29,6 @@ window.settingsNav = {
         console.log('👋 Logged out');
         window.location.href = 'forms.html';
     },
-    // ADDED: Handle the Claim Form Submit
     handleClaimSubmit: async (event) => {
         event.preventDefault();
         
@@ -41,7 +38,6 @@ window.settingsNav = {
         const successBox = document.getElementById('settings-claim-success');
         const btn = event.target.querySelector('button');
         
-        // Reset UI
         alertBox.style.display = 'none';
         successBox.style.display = 'none';
         btn.disabled = true;
@@ -67,12 +63,9 @@ window.settingsNav = {
 
             if (response.ok) {
                 successBox.style.display = 'block';
-                espInput.value = ''; // Clear input
-                
-                // Refresh the account list so the new bin shows up there immediately
+                espInput.value = '';
                 if(typeof loadAccountSettings === 'function') {
-                   // We don't call loadAccountSettings() directly to avoid page jump, 
-                   // but we can refresh the bin list if needed next time.
+                   // Optional: refresh logic
                 }
             } else {
                 alertBox.textContent = data.error || 'Failed to claim device';
@@ -110,15 +103,11 @@ async function loadAccountSettings() {
 
         if (userRes.ok) {
             const userData = await userRes.json();
-            console.log('✅ User data loaded:', userData);
-            
             const usernameEl = document.getElementById('account-username');
             const emailEl = document.getElementById('account-email');
             
             if (usernameEl) usernameEl.value = userData.username;
             if (emailEl) emailEl.value = userData.email;
-        } else {
-            console.error('❌ Failed to load user profile:', userRes.status);
         }
     } catch (error) {
         console.error('❌ Failed to load user data:', error);
@@ -128,14 +117,10 @@ async function loadAccountSettings() {
 }
 
 async function loadClaimedBinsAccount() {
-    console.log('🗑️ Loading claimed bins for account page...');
     const container = document.getElementById('account-bins-list');
     const token = localStorage.getItem('avonic_token');
 
-    if (!container) {
-        console.error('❌ account-bins-list not found');
-        return;
-    }
+    if (!container) return;
 
     try {
         const res = await fetch(`${SETTINGS_API_BASE}/devices/claimed`, {
@@ -143,14 +128,9 @@ async function loadClaimedBinsAccount() {
         });
 
         const data = await res.json();
-        console.log('📦 Devices response:', data);
 
         if (res.ok && data.devices && data.devices.length > 0) {
-            console.log(`✅ Found ${data.devices.length} devices`);
-            
-            // Show only first 2 bins on mobile, all on desktop
             const displayDevices = data.devices.slice(0, 2);
-            
             container.innerHTML = displayDevices.map(device => `
                 <div class="bin-item">
                     <img src="/settings-content/settings-img/Account/bin-icon.svg" alt="Bin" class="bin-icon">
@@ -164,17 +144,14 @@ async function loadClaimedBinsAccount() {
                 </div>
             `).join('');
 
-            // Show "View More" button if more than 2 devices
             const viewMoreBtn = document.querySelector('.view-more-btn');
             if (viewMoreBtn && data.devices.length > 2) {
                 viewMoreBtn.style.display = 'block';
                 viewMoreBtn.onclick = () => {
-                    // Could navigate to a full bins page or expand the list
                     alert(`You have ${data.devices.length} total devices. View them in Dashboard.`);
                 };
             }
         } else {
-            console.log('ℹ️ No devices claimed');
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #808080;">
                     <p>No devices claimed yet</p>
@@ -192,7 +169,45 @@ async function loadClaimedBinsAccount() {
     }
 }
 
-// ====== EMAIL UPDATE ======
+// ====== MODAL SYSTEM (NEW) ======
+let pendingAction = null; // Stores the function to run if "Save" is clicked
+
+function openSaveChangesModal(actionCallback) {
+    const modal = document.getElementById('save-changes-modal');
+    if (modal) {
+        modal.style.display = 'flex'; // Uses flex to center with your new CSS
+        pendingAction = actionCallback;
+        
+        // Setup buttons (Clone to remove old listeners to prevent multiple clicks)
+        const saveBtn = modal.querySelector('.modal-btn.btn-primary');
+        const cancelBtn = modal.querySelector('.modal-btn.btn-secondary');
+        
+        // Create clean clones
+        const newSave = saveBtn.cloneNode(true);
+        const newCancel = cancelBtn.cloneNode(true);
+        
+        saveBtn.parentNode.replaceChild(newSave, saveBtn);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+        
+        // Add new listeners
+        newSave.addEventListener('click', () => {
+            if (pendingAction) pendingAction();
+            closeSaveChangesModal();
+        });
+        
+        newCancel.addEventListener('click', closeSaveChangesModal);
+    }
+}
+
+function closeSaveChangesModal() {
+    const modal = document.getElementById('save-changes-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        pendingAction = null;
+    }
+}
+
+// ====== EMAIL UPDATE (UPDATED FOR MODAL) ======
 let isEditingEmail = false;
 
 function toggleEmailEdit() {
@@ -200,13 +215,23 @@ function toggleEmailEdit() {
     const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
     
     if (!isEditingEmail) {
+        // VIEW -> EDIT
         input.removeAttribute('readonly');
         input.focus();
         btn.textContent = 'Save';
         btn.style.background = '#B8D989';
         isEditingEmail = true;
     } else {
-        updateEmail();
+        // EDIT -> SAVE (TRIGGER MODAL)
+        if (!input.value || !input.value.includes('@')) {
+            showModalMessage('Please enter a valid email', 'error');
+            return;
+        }
+        
+        // Use the modal before updating
+        openSaveChangesModal(() => {
+            updateEmail();
+        });
     }
 }
 
@@ -216,11 +241,6 @@ async function updateEmail() {
     const newEmail = input.value;
     const token = localStorage.getItem('avonic_token');
     const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
-    
-    if (!newEmail || !newEmail.includes('@')) {
-        showModalMessage('Please enter a valid email', 'error');
-        return;
-    }
 
     btn.disabled = true;
     btn.textContent = 'Saving...';
@@ -238,19 +258,18 @@ async function updateEmail() {
         const data = await res.json();
 
         if (res.ok) {
-            console.log('✅ Email updated');
             showModalMessage('Email updated successfully!', 'success');
             input.setAttribute('readonly', 'readonly');
             btn.textContent = 'Edit';
             btn.style.background = '#E8F5B3';
             isEditingEmail = false;
         } else {
-            console.error('❌ Email update failed:', data);
             showModalMessage(data.error || 'Failed to update email', 'error');
+            btn.textContent = 'Save';
         }
     } catch (error) {
-        console.error('❌ Email update error:', error);
         showModalMessage('Network error. Please try again.', 'error');
+        btn.textContent = 'Save';
     } finally {
         btn.disabled = false;
     }
@@ -275,11 +294,9 @@ function togglePasswordEdit() {
 }
 
 async function updatePassword() {
-    console.log('🔐 Updating password...');
     const inputs = document.querySelectorAll('.password-card .password-input');
     const newPassword = inputs[0].value;
     const confirmPassword = inputs[1].value;
-    const btn = document.querySelector('.password-card .edit-btn');
 
     if (!newPassword || !confirmPassword) {
         showModalMessage('Please fill in both password fields', 'error');
@@ -300,26 +317,15 @@ async function updatePassword() {
     showCurrentPasswordModal(newPassword);
 }
 
-// ====== PASSWORD VISIBILITY TOGGLE ======
-function togglePasswordVisibility(button) {
-    const input = button.previousElementSibling;
-    const eyeIcon = button.querySelector('.eye-icon');
-    
-    if (input.type === 'password') {
-        input.type = 'text';
-        eyeIcon.src = '/settings-content/settings-img/Account/open-eyes.svg';
-    } else {
-        input.type = 'password';
-        eyeIcon.src = '/settings-content/settings-img/Account/close-eyes.svg';
-    }
-}
-
-// ====== MODAL SYSTEM ======
+// ====== PASSWORD MODAL SYSTEM ======
 function showCurrentPasswordModal(newPassword) {
     const modal = document.getElementById('current-password-modal');
     if (modal) {
         modal.style.display = 'flex';
         modal.dataset.newPassword = newPassword;
+        // Auto-focus input
+        const input = modal.querySelector('.input-field');
+        if(input) setTimeout(() => input.focus(), 100);
     }
 }
 
@@ -359,11 +365,9 @@ async function submitCurrentPassword() {
         const data = await res.json();
 
         if (res.ok) {
-            console.log('✅ Password updated');
             closeCurrentPasswordModal();
             showModalMessage('Password updated successfully!', 'success');
             
-            // Reset password inputs
             const inputs = document.querySelectorAll('.password-card .password-input');
             inputs.forEach(input => {
                 input.value = '';
@@ -375,11 +379,9 @@ async function submitCurrentPassword() {
             btn.style.background = '#E8F5B3';
             isEditingPassword = false;
         } else {
-            console.error('❌ Password update failed:', data);
             showModalMessage(data.error || 'Incorrect current password', 'error');
         }
     } catch (error) {
-        console.error('❌ Password update error:', error);
         showModalMessage('Network error. Please try again.', 'error');
     }
 }
@@ -388,7 +390,6 @@ async function submitCurrentPassword() {
 let deviceToUnclaim = null;
 
 function openUnclaimModal(espID, deviceName) {
-    console.log('🗑️ Opening unclaim modal for:', espID);
     deviceToUnclaim = espID;
     const modal = document.getElementById('unclaim-modal');
     const nameEl = document.getElementById('unclaim-device-name');
@@ -405,8 +406,6 @@ function closeUnclaimModal() {
 
 async function confirmUnclaim() {
     if (!deviceToUnclaim) return;
-
-    console.log('🗑️ Unclaiming device:', deviceToUnclaim);
     const token = localStorage.getItem('avonic_token');
 
     try {
@@ -415,28 +414,34 @@ async function confirmUnclaim() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        const data = await res.json();
-
         if (res.ok) {
-            console.log('✅ Device unclaimed');
             showModalMessage('Device unclaimed successfully', 'success');
             closeUnclaimModal();
             loadClaimedBinsAccount();
         } else {
-            console.error('❌ Unclaim failed:', data);
+            const data = await res.json();
             showModalMessage(data.error || 'Failed to unclaim device', 'error');
         }
     } catch (error) {
-        console.error('❌ Unclaim error:', error);
         showModalMessage('Failed to unclaim device', 'error');
     }
 }
 
+// ====== HELPER FUNCTIONS ======
+function togglePasswordVisibility(button) {
+    const input = button.previousElementSibling;
+    const eyeIcon = button.querySelector('.eye-icon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeIcon.src = '/settings-content/settings-img/Account/open-eyes.svg';
+    } else {
+        input.type = 'password';
+        eyeIcon.src = '/settings-content/settings-img/Account/close-eyes.svg';
+    }
+}
 
-
-// ====== MESSAGE DISPLAY ======
 function showModalMessage(message, type = 'error') {
-    // Create or get message element
     let msgDiv = document.getElementById('modal-message');
     
     if (!msgDiv) {
@@ -476,7 +481,7 @@ function showModalMessage(message, type = 'error') {
     }, 4000);
 }
 
-// ====== EXPOSE FUNCTIONS TO WINDOW ======
+// ====== EXPOSE FUNCTIONS ======
 window.loadAccountSettings = loadAccountSettings;
 window.toggleEmailEdit = toggleEmailEdit;
 window.togglePasswordEdit = togglePasswordEdit;
@@ -487,7 +492,8 @@ window.submitCurrentPassword = submitCurrentPassword;
 window.openUnclaimModal = openUnclaimModal;
 window.closeUnclaimModal = closeUnclaimModal;
 window.confirmUnclaim = confirmUnclaim;
-window.loadWiFiSettings = loadWiFiSettings;
-window.connectWiFi = connectWiFi;
+// New exports for modals
+window.openSaveChangesModal = openSaveChangesModal;
+window.closeSaveChangesModal = closeSaveChangesModal;
 
 console.log('✅ All integrated settings functions exposed');
