@@ -6,6 +6,7 @@
     <title>AVONIC</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="styles-update.css">
     
 </head>
 <body>
@@ -17,7 +18,11 @@
 </script>
       <!-- sidebar -->
 <nav>
-    <img class="main logo" src="img/Avonic Logo.svg" alt="">
+    <div class="main logo">
+        <img class="logo" src="img/AVONIC LOGO (surf green).svg" alt="">
+        <h1>avonic</h1>
+    </div>
+    
     <img class="secondary logo" src="img/icons/navIcons/Sample Logo Icon.svg" alt="">
     <ul>
         <li>
@@ -89,9 +94,12 @@
             </div>
 
             <div class="bin_monitoring_indicator_card">
-            <div class="bin_name">Bin 1</div>
-                <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
-            <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
+                <div class="bin-device">
+                    <div class="bin_name">Bin 1</div>
+                    <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+                </div>
+            
+            <img class="placeholder-icon" src="img/cliparts/open bin worm.png" alt="">
 
             </div>
 
@@ -169,8 +177,10 @@
         </div>
 
         <div class="bin_monitoring_indicator_card">
-            <div class="bin_name">Bin 2</div>
+            <div class="bin-device">
+                <div class="bin_name">Bin 2</div>
                 <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+            </div>
             <img class="placeholder-icon" src="img/more dummies/Placeholder icon.png" alt="">
         </div>
 
@@ -535,119 +545,6 @@
 </div>
 <!-- END OF DASHBOARD PAGE -->
 
- <!-- <div class="content dashboard">
-
-    <div class="upper-section">
-        <img class = "main logo mobile" src="img/Avonic Logo.svg" alt="">
-     <div class="scroll-back-widget">
-            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
-        </div>
-                  <div class="page-header">Dashboard</div>
-                    <div class="qi-title">
-                        <h1>Quick Insights</h1>
-                    <div class="insightsRefresh"><img src="img/icons/refresh_icon.svg" class="refresh_icon" alt=""><span class="refresh-text">Refresh</span>
-                    </div>
-                </div>
-                
-
-                <div class="quick_insights_card_container">
-                    
-                    
-                       <qinsights-bin
-                        ic_name="Bin 1"
-                        ic_status="Stable"
-                        ic_moremsg=""
-                        is_clickable="true"
-                        >
-                        </qinsights-bin>
-
-                        <qinsights-bin
-                        ic_name="Bin 2"
-                        ic_status="Stable"
-                        ic_moremsg=""
-                        is_clickable="true"
-                        >
-                        </qinsights-bin>
-
-
-                </div>
-    </div>
-    
-
-                <section class="bin-fluctuations">
-                    <div class="bin-fluctuations-nav">
-
-                        <div class="bin-selection">
-                            <img class="arrow left" src="img/indicators/Arrow.svg" alt="">
-                            <div class="bin">Bin 1</div>
-                            <img class="arrow right" src="img/indicators/Arrow.svg" alt="">
-                        </div>
-
-                        <div class="bf-content">
-                             <div class="title">
-                                Bin Fluctuation
-                            </div>
-                            <div class="fluctuationDisplayDate">
-                                
-                                <p>July 12, 2025 - July 21, 2025</p>
-                            </div>
-                        </div>
-
-                        <div class="select-date">
-                            <img src="img/calendarIcon.svg" alt="" class="calendar-icon">
-                            <p class="selection">Select Date</p>
-                        </div>
-                    
-                        
-                   
-                    
-                </div>
-                <section-sensor-fluctuation
-                sensor_name="Soil Moisture"
-                sensor_unit="%"
-                sensor_icon="SoilMoistureIcon">
-
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Temperature"
-                sensor_unit="°C"
-                sensor_icon="TempIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Humidity"
-                sensor_unit="%"
-                sensor_icon="HumidityIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                 
-                <section-sensor-fluctuation
-                sensor_name="Gas Levels"
-                sensor_unit="ppm"
-                sensor_icon="GasIcon">
-                    
-                </section-sensor-fluctuation>
-                <hr>
-                <section-sensor-fluctuation
-                sensor_name="Temperature"
-                sensor_unit="°C"
-                sensor_icon="TempIcon">
-                    
-                </section-sensor-fluctuation>
-                 
-                
-                </section>
-                
-           <div class="mobile-nav-spacer"></div>
-          
-    </div>
-
-    </div> -->
-
-    <!-- END OF DASHBOARD PAGE -->
     <!-- HELP PAGE -->
   <div class="content help">
          
@@ -661,7 +558,7 @@
             <div class="display-msg-help">
                 <span>Get to know</span>
                 <img class="logo-for-gtk" src="img/Avonic Logo.svg" alt="">
-                <span class="sub-text-help">know the system’s objectives and purpose</span>
+                <span class="sub-text-help">know the system's objectives and purpose</span>
             </div>
             
             <div class="btn">Get Started</div>
@@ -709,6 +606,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
 <script src="js/mqtt_integration.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/bin-fluctuations.js"></script>
 
     <script>
 // Debug: Check router initialization
@@ -975,25 +873,5 @@ setTimeout(() => {
     </div>
 </div>
 
-<!-- Unclaim Confirmation Modal -->
-<!-- <div id="unclaim-modal" class="modal">
-    <div class="modal-content">
-        <h3>⚠️ Unclaim Device</h3>
-        <p>Are you sure you want to unclaim <strong id="unclaim-device-name"></strong>?</p>
-        <p class="modal-warning">This device will no longer sync data to your account.</p>
-        <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeUnclaimModal()">Cancel</button>
-            <button class="btn-confirm-unclaim" onclick="confirmUnclaim()">Yes, Unclaim</button>
-        </div>
-    </div>
-</div> -->
-</body>
 </body>
 </html>
-
-
-
-
-
-
-

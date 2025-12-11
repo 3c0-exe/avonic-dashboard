@@ -16,7 +16,7 @@ class Bincard extends HTMLElement {
                         <span class="mode">${mode}</span>
                     </div>
                 </div>
-                <img class="mode-confirmation-dummy bin-card" src="img/more dummies/Placeholder icon.png" alt="">
+                <img class="mode-confirmation-dummy bin-card" src="img/cliparts/Bin(Hero-sec).png" alt="">
                 <a class="btn bin" href="${navigateTo}">Select bin</a>
             </div>
         `;
@@ -26,14 +26,310 @@ class Bincard extends HTMLElement {
 customElements.define("bin-card", Bincard)
 
 
-// 📝 COPY THIS CODE INTO YOUR ONLINE main_components.js
+// ========================================
+// 1. 🎨 STYLE DEFINITIONS (Matches your Screenshots)
+// ========================================
+const modalStyles = `
+/* Clean Modal Wrapper */
+.custom-modal-wrapper {
+    position: relative;
+    max-width: 440px;
+    width: 95%;
+    margin: 0 auto;
+    font-family: "Hoss Round", sans-serif;
+    color: #000;
+}
 
-// ✅ REPLACE THE openModal CONTENT GENERATION IN Statuscard CLASS
+/* Main Card Container */
+.custom-card-inner {
+    background: #F8F7F2;
+    border-radius: 32px;
+    padding: 24px;
+    border: 3px solid #000;
+    box-shadow: 8px 8px 0 #000; /* Brutalist Shadow */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
+/* Header (Title + Close) */
+.custom-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.custom-header-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+}
+.custom-close-btn {
+    background: #D4D4D4;
+    border: 2px solid #000;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.custom-close-btn:hover { background: #C4C4C4; }
+.custom-close-btn:active { transform: scale(0.95); }
+
+/* Reading Box (White Card) */
+.custom-reading-box {
+    background: #FFFFFF;
+    border: 2px solid #000;
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.reading-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.reading-label {
+    font-weight: 700;
+    font-size: 18px;
+}
+.custom-refresh-btn {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+}
+
+/* Data Display Row (Number + Worm) */
+.data-display-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data-left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.big-value-text {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+}
+.unit-text { font-size: 32px; }
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #555;
+}
+.status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+.status-dot.optimal { background: #4CAF50; } /* Green */
+.status-dot.warning { background: #FF9800; } /* Orange */
+.status-dot.critical { background: #F44336; } /* Red */
+
+.worm-img-display {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Manual Actions Box */
+.custom-manual-box {
+    background: #FFFFFF;
+    border: 2px solid #000;
+    border-radius: 24px;
+    padding: 24px;
+}
+.manual-title {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 16px;
+    display: block;
+}
+.manual-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 2px solid #F0F0F0;
+}
+.manual-row:last-child { border: none; padding-bottom: 0; }
+
+.manual-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* Toggle Switch */
+.custom-toggle {
+    width: 56px;
+    height: 32px;
+    background: #D4D4D4;
+    border: 2px solid #000;
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.custom-toggle.active { background: #4CAF50; } /* Green when active */
+.custom-toggle::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: #FFF;
+    border: 2px solid #000;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.custom-toggle.active::after { left: 26px; }
+`;
+
+// Inject Styles
+if (!document.getElementById('final-status-styles')) {
+    const s = document.createElement("style");
+    s.id = 'final-status-styles';
+    s.innerText = modalStyles;
+    document.head.appendChild(s);
+}
+
+// ========================================
+// 1. ⚙️ SENSOR & WORM CONFIGURATION
+// ========================================
+
+// Used for generating realistic random data limits
+const SENSOR_CONFIGS = {
+    temperature: { title: 'Temperature', unit: '°C', minValue: 15, maxValue: 40 },
+    soilMoisture: { title: 'Soil Moisture', unit: '%', minValue: 30, maxValue: 100 },
+    humidity: { title: 'Humidity', unit: '%', minValue: 30, maxValue: 100 },
+    gasLevels: { title: 'Gas Levels', unit: 'ppm', minValue: 0, maxValue: 250 }
+};
+
+// 🪱 AFRICAN NIGHTCRAWLER RANGES (Exact Match)
+const WORM_CONDITIONS = {
+    temperature: {
+        optimal_min: 22, optimal_max: 28,
+        critical_min: 15, critical_max: 35
+    },
+    soilMoisture: {
+        optimal_min: 60, optimal_max: 80,
+        critical_min: 40, critical_max: 90
+    },
+    humidity: {
+        optimal_min: 60, optimal_max: 80,
+        critical_min: 40, critical_max: 90
+    },
+    gasLevels: {
+        optimal_min: 0, optimal_max: 100,
+        critical_max: 200
+    }
+};
+
+// ========================================
+// 2. 🎨 EVALUATE CONDITION LOGIC
+// ========================================
+function evaluateCondition(sensorType, value) {
+    // Safety check: if sensor type doesn't exist, return default
+    if (!WORM_CONDITIONS[sensorType]) {
+        return { status: 'Unknown', statusClass: 'warning', wormImage: 'Normal.png' };
+    }
+
+    const ranges = WORM_CONDITIONS[sensorType];
+    let status = 'Optimal';
+    let statusClass = 'optimal'; // optimal (green), warning (orange), critical (red)
+    let wormImage = 'Normal.png';
+
+    switch(sensorType) {
+        // --- TEMPERATURE ---
+        case 'temperature':
+            if (value < ranges.critical_min) {
+                status = 'Critically Cold';
+                statusClass = 'critical';
+                wormImage = 'Too Dry.png'; // Using provided mapping for cold
+            } else if (value < ranges.optimal_min) {
+                status = 'Too Cold';
+                statusClass = 'warning';
+                wormImage = 'Too Dry.png';
+            } else if (value > ranges.critical_max) {
+                status = 'Critically Hot';
+                statusClass = 'critical';
+                wormImage = 'Too Hot.png';
+            } else if (value > ranges.optimal_max) {
+                status = 'Too Hot';
+                statusClass = 'warning';
+                wormImage = 'Too Hot.png';
+            }
+            break;
+
+        // --- SOIL MOISTURE & HUMIDITY ---
+        case 'soilMoisture':
+        case 'humidity':
+            if (value < ranges.critical_min) {
+                status = 'Critically Dry';
+                statusClass = 'critical';
+                wormImage = 'Too Dry.png';
+            } else if (value < ranges.optimal_min) {
+                status = 'Dry';
+                statusClass = 'warning';
+                wormImage = 'Too Dry.png';
+            } else if (value > ranges.critical_max) {
+                status = 'Critically Wet';
+                statusClass = 'critical';
+                wormImage = 'Too Wet.png';
+            } else if (value > ranges.optimal_max) {
+                status = 'Wet';
+                statusClass = 'warning';
+                wormImage = 'Too Wet.png';
+            }
+            break;
+
+        // --- GAS LEVELS ---
+        case 'gasLevels':
+            if (value > ranges.critical_max) {
+                status = 'Toxic Gas';
+                statusClass = 'critical';
+                wormImage = 'Gas Too High.png';
+            } else if (value > ranges.optimal_max) {
+                status = 'High Gas';
+                statusClass = 'warning';
+                wormImage = 'Gas Too High.png';
+            }
+            break;
+    }
+
+    // Default return (Optimal) if no conditions met
+    return { status, statusClass, wormImage };
+}
+
+// ========================================
+// 3. 🧩 STATUS CARD COMPONENT (Conditional Manual Controls)
+// ========================================
 class Statuscard extends HTMLElement {
   connectedCallback() {
+    // Get Attributes
     const dataType = this.getAttribute("dataType");
-    const maxValue = this.getAttribute("maxValue");
     const dataUnit = this.getAttribute("dataUnit");
     const dataLabel = this.getAttribute("dataLabel");
     const subDataLabel = this.getAttribute("subDataLabel");
@@ -41,14 +337,12 @@ class Statuscard extends HTMLElement {
     const isClickable = this.getAttribute("isClickable") === "true";
     const showWaterPressure = this.getAttribute("showWaterPressure") === "true";
     const showFanRPM = this.getAttribute("showFanRPM") === "true";
-    const binId = this.getAttribute("data-bin-id"); // ✅ Get bin ID
+    const binId = this.getAttribute("data-bin-id");
 
-    const helpTemplate = this.querySelector("template.help");
-    const helpContent = helpTemplate ? helpTemplate.innerHTML : "";
-
+    // Render Dashboard Mini-Card
     this.innerHTML = `
       <div class="card_stats ${isClickable ? "clickable" : ""}" 
-           data-max="${maxValue || 100}" 
+           data-max="100" 
            data-unit="${dataUnit}" 
            data-type="${dataType}"
            data-bin-id="${binId}">
@@ -57,7 +351,7 @@ class Statuscard extends HTMLElement {
         <div class="sub_status_label">${subDataLabel}</div>
         
         <div class="percentage">
-          <span class="card_value">0</span>
+          <span class="card_value">--</span>
           <span class="card_unit">${dataUnit}</span>
         </div>
         
@@ -70,91 +364,104 @@ class Statuscard extends HTMLElement {
                       stroke-linecap="round"
                       stroke-dasharray="119" stroke-dashoffset="119" />
             </svg>
-            <div class="circle-icon">
-              <img src="${icon}" alt="">
-            </div>
+            <div class="circle-icon"><img src="${icon}" alt=""></div>
           </div>
         </div>
       </div>
-      <p class="status-message"></p>
     `;
 
-    // ✅ Build modal controls HTML based on sensor type
-    let modalControls = "";
-    
-    if (showWaterPressure && binId) {
-      // Show PUMP controls for sensors with water (Soil Moisture, Humidity)
-      modalControls += `
-        <div class="modal-control-section">
-          <h3 class="modal-control-title">💧 Water Pump Control</h3>
-          <div class="modal-control-buttons">
-            <button class="control-btn btn-on" onclick="controlDeviceFromModal(${binId}, 'pump', true)">
-              🟢 Turn ON
-            </button>
-            <button class="control-btn btn-off" onclick="controlDeviceFromModal(${binId}, 'pump', false)">
-              🔴 Turn OFF
-            </button>
-          </div>
-          <div class="modal-device-status" id="modal-bin${binId}-pump-status">
-            Status: Loading...
-          </div>
-        </div>
-      `;
-    }
-    
-    if (showFanRPM && binId) {
-      // Show FAN controls for sensors with air (Temperature, Gas Level, Humidity)
-      modalControls += `
-        <div class="modal-control-section">
-          <h3 class="modal-control-title">🌬️ Fan Control</h3>
-          <div class="modal-control-buttons">
-            <button class="control-btn btn-on" onclick="controlDeviceFromModal(${binId}, 'fan', true)">
-              🟢 Turn ON
-            </button>
-            <button class="control-btn btn-off" onclick="controlDeviceFromModal(${binId}, 'fan', false)">
-              🔴 Turn OFF
-            </button>
-          </div>
-          <div class="modal-device-status" id="modal-bin${binId}-fan-status">
-            Status: Loading...
-          </div>
-        </div>
-      `;
-    }
-
-    // ✅ Only attach click handler if clickable
+    // Click Handler
     if (isClickable) {
       const cardElement = this.querySelector(".card_stats");
       cardElement.addEventListener("click", () => {
-        openModal({
-          title: this.getAttribute("dataLabel"),
-          defaultContent:`
-            <div class="reading-modal-wrapper"> 
-              <div class="refresh_btn modal" id="refreshBtn">
-                <img src="img/icons/refresh_icon.svg" alt="">
-              </div>
+        
+        // 1. Get Values
+        let currentVal = parseFloat(cardElement.querySelector(".card_value").innerText);
+        if (isNaN(currentVal)) currentVal = 0;
+        
+        // 2. Determine Sensor Key
+        let sensorKey = 'temperature'; 
+        if (dataLabel.includes('Moisture')) sensorKey = 'soilMoisture';
+        else if (dataLabel.includes('Humidity')) sensorKey = 'humidity';
+        else if (dataLabel.includes('Gas')) sensorKey = 'gasLevels';
 
-              <div class="modalWrapper">
-                <div class="readings">
-                  <img class="card-worm-icon" src="img/more dummies/Placeholder icon.png" alt="">
-                  <div class="reading-text">
-                    <div class="modalSubTitle">Current Reading</div>
-                    <div class="readingValue">
-                      <span class="card_value_v2"></span>
-                      <span class="card_unit_v2"></span>
+        // 3. Evaluate Status
+        const evaluation = evaluateCondition(sensorKey, currentVal);
+        
+        // 4. Check Global Manual Mode State
+        const isManual = (typeof isManualMode !== 'undefined') ? isManualMode : false;
+
+        // 5. Build Manual Controls (ONLY IF MANUAL MODE IS ON)
+        let manualHTML = '';
+        
+        if (isManual && (showWaterPressure || showFanRPM)) {
+            // ✅ Only enters here if Manual Mode is TRUE
+            manualHTML = `
+            <div class="custom-manual-box">
+                <span class="manual-title">Manual Actions</span>
+                ${showWaterPressure ? `
+                <div class="manual-row">
+                    <div class="manual-item-left">
+                        <img src="img/icons/water.svg" alt="Water" style="width: 24px; height: 24px;">
+                        <span>Water Pump</span>
                     </div>
-                    <div class="sensorStatus">Optimal</div>
-                  </div>
-                </div>
+                    <div class="custom-toggle" onclick="this.classList.toggle('active'); controlDeviceFromModal(${binId}, 'pump', this.classList.contains('active'))"></div>
+                </div>` : ''}
+                
+                ${showFanRPM ? `
+                <div class="manual-row">
+                    <div class="manual-item-left">
+                        <img src="img/icons/fan.svg" alt="Fan" style="width: 24px; height: 24px;">
+                        <span>Fan RPM</span>
+                    </div>
+                    <div class="custom-toggle" onclick="this.classList.toggle('active'); controlDeviceFromModal(${binId}, 'fan', this.classList.contains('active'))"></div>
+                </div>` : ''}
+            </div>`;
+        } 
+        // If isManual is false, manualHTML remains empty, so nothing renders.
 
-                <div class="manualControl">
-                  <div class="tertiaryCardName">Controls</div>
-                  ${modalControls}
+        // 6. Open Modal
+        const modal = openModal({
+          cleanMode: true, 
+          title: "", 
+          defaultContent: `
+            <div class="custom-modal-wrapper">
+                <div class="custom-card-inner">
+                    <div class="custom-header-row">
+                        <h1 class="custom-header-title">${dataLabel}</h1>
+                        <div class="custom-close-btn modalCancel">
+                             <img src="img/cliparts/closeIcon.svg" style="width:14px;" onerror="this.src='img/icons/navIcons/closeIcon.svg'">
+                        </div>
+                    </div>
+
+                    <div class="custom-reading-box">
+                        <div class="reading-top-row">
+                            <span class="reading-label">Current Reading</span>
+                            <img src="img/cliparts/refresh_icon.svg" class="custom-refresh-btn" id="modalRefreshBtn" style="width:20px;" onerror="this.src='img/icons/refresh_icon.svg'">
+                        </div>
+
+                        <div class="data-display-row">
+                            <div class="data-left-col">
+                                <div class="big-value-text">
+                                    <span id="modalVal">${currentVal}</span>
+                                    <span class="unit-text">${dataUnit}</span>
+                                </div>
+                                <div class="status-badge">
+                                    <div id="modalDot" class="status-dot ${evaluation.statusClass}"></div>
+                                    <span id="modalStatus">${evaluation.status}</span>
+                                </div>
+                            </div>
+                            <img id="modalWorm" class="worm-img-display" 
+                                 src="img/worm-conditions/${evaluation.wormImage}" 
+                                 alt="Worm Status"
+                                 onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                    ${manualHTML}
                 </div>
-              </div>
             </div>
           `,
-          helpContent,
           syncValues: {
             valueElem: this.querySelector(".card_value"),
             unitElem: this.querySelector(".card_unit"),
@@ -162,14 +469,52 @@ class Statuscard extends HTMLElement {
           card: cardElement,
           binId: binId
         });
+
+        // 7. Attach Events
+        const closeBtn = modal.querySelector('.modalCancel');
+        if(closeBtn) closeBtn.addEventListener('click', () => modal.remove());
+
+        // Refresh Simulation
+        const refreshBtn = modal.querySelector('#modalRefreshBtn');
+        if(refreshBtn) {
+            let rot = 0;
+            refreshBtn.addEventListener('click', () => {
+                rot += 360;
+                refreshBtn.style.transform = `rotate(${rot}deg)`;
+
+                // Generate Random Value
+                const config = SENSOR_CONFIGS[sensorKey] || { minValue: 0, maxValue: 100 };
+                const min = config.minValue - 5; 
+                const max = config.maxValue + 5;
+                const randomValue = (Math.random() * (max - min) + min).toFixed(1);
+                const newVal = parseFloat(randomValue);
+
+                // Re-Evaluate
+                const newEval = evaluateCondition(sensorKey, newVal);
+
+                // Update DOM
+                const valEl = modal.querySelector('#modalVal');
+                const statusEl = modal.querySelector('#modalStatus');
+                const dotEl = modal.querySelector('#modalDot');
+                const wormEl = modal.querySelector('#modalWorm');
+
+                if(valEl) valEl.textContent = newVal;
+                if(statusEl) statusEl.textContent = newEval.status;
+                if(dotEl) dotEl.className = `status-dot ${newEval.statusClass}`;
+                if(wormEl) {
+                    wormEl.src = `img/worm-conditions/${newEval.wormImage}`;
+                    wormEl.style.display = 'block';
+                }
+
+                console.log(`🔄 Simulated ${sensorKey}: ${newVal}${dataUnit} -> ${newEval.status}`);
+            });
+        }
       });
     }
   }
 }
 
-
 customElements.define("status-card", Statuscard);
-
 
 // dummydata and refresh sensor function
 
@@ -189,29 +534,60 @@ document.querySelector(".refresh-sensors").addEventListener("click", () => {
   }
 });
 
+// ---------------------------------------------------------
+// ✅ FIXED: Mode Switcher Component
+// ---------------------------------------------------------
 
+let isManualMode = JSON.parse(localStorage.getItem("isManualMode")) || false;
 
-// --------- Manual mode: clean single implementation (replace your old duplicated DOMContentLoaded block) ---------
+// 1. helper: update button label + color
+function updateManualButton(btn) {
+  if (!btn) return;
+  
+  // Update text
+  btn.textContent = isManualMode ? "Mode: Manual" : "Mode: Auto";
+  
+  // Update styling
+  btn.style.backgroundColor = isManualMode
+    ? "var(--manual-mode-clr, #FF5E5E)" // Fallback red if var missing
+    : "var(--auto-mode-clr, #4da6ff)";  // Fallback blue if var missing
+    
+  // Update accessibility state
+  btn.setAttribute("aria-pressed", isManualMode ? "true" : "false");
+}
 
+// 2. The Web Component
 class ModeSwitcher extends HTMLElement {
   connectedCallback() {
-    // 1. Grab and cache the help template
+    // Prevent duplicate rendering if connectedCallback runs twice
+    if (this.querySelector('.btn.control.manual')) return;
+
+    // Grab help content if it exists
     const helpTemplate = this.querySelector("template.help");
     this._helpContent = helpTemplate ? helpTemplate.innerHTML.trim() : "";
-
-    // 2. Clear only the template (so it won’t render visibly)
     if (helpTemplate) helpTemplate.remove();
 
-    // 3. Add button element without nuking the shadow
+    // Create the button
     const btn = document.createElement("div");
     btn.className = "btn control manual";
     btn.setAttribute("role", "button");
-    this.appendChild(btn);
+    // Force some basic styles to ensure visibility even if CSS fails
+    btn.style.cursor = "pointer"; 
+    btn.style.display = "flex";
+    btn.style.alignItems = "center";
+    btn.style.justifyContent = "center";
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "30px";
+    btn.style.color = "#FFF"; // Ensure text is white
+    btn.style.fontWeight = "bold";
 
+    this.appendChild(btn);
     this.button = btn;
+
+    // Set initial state immediately
     updateManualButton(this.button);
 
-    // 4. Always pass cached help
+    // Attach click event
     this.button.addEventListener("click", () => {
       confirmModeSwitch(this.button, this._helpContent);
     });
@@ -220,201 +596,156 @@ class ModeSwitcher extends HTMLElement {
 customElements.define("mode-switcher", ModeSwitcher);
 
 
+// 3. Global Mode Switch Logic (The Confirmation Modal)
 
-
-let isManualMode = JSON.parse(localStorage.getItem("isManualMode")) || false;
-
-// helper: update button label + color
-function updateManualButton(btn) {
-  if (!btn) return;
-  btn.textContent = isManualMode ? "Mode: Manual" : "Mode: Auto";
-  btn.style.backgroundColor = isManualMode
-    ? "var(--manual-mode-clr)"
-    : "var(--auto-mode-clr)";
-  btn.setAttribute("aria-pressed", isManualMode ? "true" : "false");
-}
-
-// 🔹 use openModal for confirmation
 function confirmModeSwitch(manualBtn, helpContent = "") {
-  const msg = isManualMode
-    ? "Switch to Auto Mode? <br> Manual controls will be disabled."
-    : "Switch to Manual Mode? <br> Controls will be enabled.";
+  
+  const targetMode = isManualMode ? "Auto" : "Manual";
 
-  // ✅ Add a special marker class to this modal
+  // Content Configuration
+  const contentConfig = {
+    Manual: {
+      title: "Activate Manual Mode?",
+      desc: "Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.",
+      img: "img/cliparts/manual-mode-illustration.png",
+      btnText: "Activate for this bin"
+    },
+    Auto: {
+      title: "Activate Auto Mode?",
+      desc: "Turning on auto-mode makes the system operate by itself.",
+      img: "img/cliparts/auto-mode-illustration.png",
+      btnText: "Activate for this bin"
+    }
+  };
+
+  const config = contentConfig[targetMode];
+
+  // 1. Open Modal with New HTML Structure
   const modal = openModal({
-    title: "Confirmation",
+    title: "Confirmation", // This will be hidden by CSS now
     defaultContent: `
-      <div class="card_body mode-switcher-modal">
-
-      <img class="mode-confirmation-dummy" src="img/more dummies/Placeholder icon.png" alt="">
-
-        <div class="mode-confirmation-msg" style="font-size:1.2rem;">
-          ${msg}
+      <div class="modal-card">
+        <div class="illustration">
+           <img src="${config.img}" alt="${targetMode} Mode" style="max-width:100%; height:auto;">
         </div>
-        <div class="manualControl" >
-          <div class="btn modalConfirm">Confirm</div>
-          <div class="btn modalCancel">Cancel</div>
+        
+        <h2 class="modal-title" style="margin-top:10px;">${config.title}</h2>
+        <p class="modal-description">${config.desc}</p>
+        
+        <div class="modal-buttons">
+           <button class="modal-btn modalConfirm">${config.btnText}</button>
+           <button class="modal-btn btn-cancel modalCancel">Cancel</button>
         </div>
       </div>
     `,
-    helpContent: helpContent ||"<p>No help available for this control.</p>"
+    // We pass empty help content or ignore it since CSS hides the button anyway
+    helpContent: "" 
   });
 
-  
-  // 🔹 Attach button logic after modal is created
+  // ✅ CRITICAL: This class triggers the CSS to hide the header and bg
+  modal.classList.add('clean-modal-override');
+
+  // 2. Attach Logic
   const confirmBtn = modal.querySelector(".modalConfirm");
   const cancelBtn  = modal.querySelector(".modalCancel");
 
+  // Activate Button Logic
   if (confirmBtn) {
     confirmBtn.addEventListener("click", () => {
-      // toggle mode
       isManualMode = !isManualMode;
       localStorage.setItem("isManualMode", JSON.stringify(isManualMode));
 
-      // update the main button
+      // Update the button that triggered this
       updateManualButton(manualBtn);
+      
+      // Sync all other manual buttons
+      document.querySelectorAll('mode-switcher .btn.control.manual').forEach(btn => {
+          updateManualButton(btn);
+      });
 
-      // apply state to all modals (color coding, etc.)
-      document.querySelectorAll(".status_modal").forEach(applyManualModeTo);
+      // Update UI components (sliders, inputs, etc.)
+      if (typeof applyManualModeTo === "function") {
+          document.querySelectorAll(".status_modal").forEach(applyManualModeTo);
+      }
 
-      // close the modal
-      modal.remove();
+      modal.remove(); // Close modal
+      console.log(`Switched to ${isManualMode ? 'Manual' : 'Auto'} Mode`);
     });
   }
 
+  // Cancel Button Logic (Acts as the close button now)
   if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => modal.remove());
+    cancelBtn.addEventListener("click", () => {
+        modal.remove(); // Simply remove the modal from DOM
+    });
   }
 }
 
-
-document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Initialize ALL mode switcher buttons, not just the first one
-  const manualBtns = document.querySelectorAll(".btn.control.manual");
-  
-  manualBtns.forEach(manualBtn => {
-    if (!manualBtn) return;
-
-    // restore saved state
-    updateManualButton(manualBtn);
-
-    // open confirmation modal on click
-    manualBtn.addEventListener("click", () => confirmModeSwitch(manualBtn));
-  });
-  
-  console.log(`✅ Initialized ${manualBtns.length} mode switcher buttons`);
-});
-
-
-
-
-
-//if card is clickable (reusable modal)
-function openModal({ title, defaultContent, helpContent,syncValues = {}, card}) {
+// ========================================
+// 1. 🛠️ UPDATED OPEN MODAL (The Fix for Double Backgrounds)
+// ========================================
+// Replaces your existing openModal function to allow "cleanMode"
+function openModal({ title, defaultContent, helpContent, syncValues = {}, card, cleanMode = false }) {
   const modal = document.createElement("div");
-  modal.classList.add("status_modal");
+  modal.classList.add("status_modal"); // Keeps the fixed overlay positioning
 
-  // Full modal HTML (your original one)
-  modal.innerHTML = `
-    <div class="modal">
-      <div class="modalHeader">
-        <div class="sensorName">
-          <h1>${title}</h1>
-        </div>
-        <div class="close_btn">
-          <img src="img/icons/navIcons/closeIcon.svg" alt="">
-        </div>
+  if (cleanMode) {
+    // 🟢 CLEAN MODE: Renders ONLY your content, no extra white boxes or headers
+    modal.innerHTML = `
+      <div class="modal-clean-wrapper" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+         ${defaultContent}
       </div>
-
-      <div class="modalCard">
-        <!-- Default Content -->
-        <div class="modalContent defaultContent active">
-          ${defaultContent}
-            </div>
-          </div>
-
-          <div class="QmarkIcon modal">
-            <img src="img/icons/navIcons/QmarkIcon.svg" alt="">
-          </div>
+    `;
+  } else {
+    // 🟠 LEGACY MODE: The standard white card (keeps existing logic for other parts of app)
+    modal.innerHTML = `
+      <div class="modal">
+        <div class="modalHeader">
+          <div class="sensorName"><h1>${title}</h1></div>
+          <div class="close_btn"><img src="img/icons/navIcons/closeIcon.svg" alt=""></div>
         </div>
-
-        <!-- Help Content -->
+        <div class="modalCard">
+          <div class="modalContent defaultContent active">${defaultContent}</div>
+          <div class="QmarkIcon modal"><img src="img/icons/navIcons/QmarkIcon.svg" alt=""></div>
+        </div>
         <div class="modalContent helpContent">
           <div class="helpHeader">
-             
-              <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
-            
+            <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
             <h2>Help Guide</h2>
           </div>
-             
-          <div class="helpBody" name="helpContent">
-          
-              ${helpContent}
-          
-          </div>
+          <div class="helpBody">${helpContent}</div>
         </div>
       </div>
-  
-  `;
+    `;
+
+    // Legacy listeners
+    modal.querySelector(".close_btn").addEventListener("click", () => modal.remove());
+    const qmark = modal.querySelector(".QmarkIcon");
+    const back = modal.querySelector(".back_btn");
+    const def = modal.querySelector(".defaultContent");
+    const help = modal.querySelector(".helpContent");
+    if(qmark) qmark.addEventListener("click", () => { def.classList.remove("active"); help.classList.add("active"); });
+    if(back) back.addEventListener("click", () => { help.classList.remove("active"); def.classList.add("active"); });
+  }
 
   document.body.appendChild(modal);
-  applyManualModeTo(modal);
+  
+  // Apply manual mode logic if function exists
+  if (typeof applyManualModeTo === 'function') applyManualModeTo(modal);
 
-
-  // 🔹 Close button
-  modal.querySelector(".close_btn").addEventListener("click", () => modal.remove());
-
-  // 🔹 Refresh button
-
- const modalRefreshBtn = modal.querySelector("#refreshBtn");
-  if (modalRefreshBtn && card) {
-    modalRefreshBtn.addEventListener("click", () => {
-      console.log("🔄 Modal refresh clicked for:", title);
-     const valueElem = card.querySelector(".card_value");
-  const unitElem = card.querySelector(".card_unit");
-  if (valueElem) valueElem.textContent = '--';
-  if (unitElem) unitElem.textContent = '';
-});
-  }
-    
-
-
-  // 🔹 Help toggle
-  const qmarkBtn = modal.querySelector(".QmarkIcon");
-  const backBtn = modal.querySelector(".back_btn");
-
- // inside openModal
-  const defaultContentDiv = modal.querySelector(".defaultContent");
-  const helpContentDiv = modal.querySelector(".helpContent");
-
-  qmarkBtn.addEventListener("click", () => {
-    defaultContentDiv.classList.remove("active");
-    helpContentDiv.classList.add("active");
-  });
-
-  backBtn.addEventListener("click", () => {
-    helpContentDiv.classList.remove("active");
-    defaultContentDiv.classList.add("active");
-  });
-
-
-  // 🔹 Sync values
+  // Sync Values Logic
   if (syncValues.valueElem && syncValues.unitElem) {
-  const currentValue = parseFloat(syncValues.valueElem.textContent) || 0;
-  const currentUnit = syncValues.unitElem.textContent || "";
-
-  modal.querySelector(".card_value_v2").textContent = currentValue;
-  modal.querySelector(".card_unit_v2").textContent = currentUnit;
-
-  // 🔥 Force full sync (colors + status + bg)
-  if (card) {
-    setCardValue(card, currentValue);
+    const val = parseFloat(syncValues.valueElem.textContent) || 0;
+    const unit = syncValues.unitElem.textContent || "";
+    const v2Val = modal.querySelector(".card_value_v2");
+    const v2Unit = modal.querySelector(".card_unit_v2");
+    if(v2Val) v2Val.textContent = val;
+    if(v2Unit) v2Unit.textContent = unit;
+    if (card && typeof setCardValue === 'function') setCardValue(card, val);
   }
-}
 
   return modal;
 }
-
 
 //MANUAL BUTTON UPDATES
 // helper: show small transient popup at x,y (keeps your original behaviour)
@@ -519,10 +850,6 @@ function applyManualModeTo(container) {
     
   }
 }
-
-
-
-
 
 
 //code for the circle visual
@@ -1890,14 +2217,3 @@ window.controlDeviceFromModal = async function(binId, device, state) {
     }
   }
 }
-
-// // Auto-refresh every 5 seconds
-// setInterval(fetchSensorData, 5000);
-
-// // Load on page load
-// document.addEventListener('DOMContentLoaded', fetchSensorData);
-
-// // Start fetching sensor data
-// console.log('🔄 Starting sensor data polling...');
-// fetchSensorData(); // Load immediately
-// setInterval(fetchSensorData, 5000); // Then every 5 seconds
