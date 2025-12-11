@@ -2,7 +2,6 @@
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
-    '/claim-device': '.content.claim-device', // Old standalone claim page (optional to keep)
     '/settings': '.content.settings',
     '/settings/account': '.content.settings-account',
     '/settings/claim': '.content.settings-claim', // NEW ROUTE
