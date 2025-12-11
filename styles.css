@@ -22,6 +22,7 @@ html, body{
     --bg-dark:#E4E4E4;
     --auto-mode-clr:#347900;
     --manual-mode-clr:#c5b507;
+    
     /* Text */
     --text:#0B0B0B;
     --text-muted:#484848;
@@ -37,6 +38,7 @@ html, body{
     --warning:#6A6443;
     --success:#4A6C59;
     --info:#536480;
+    
 
   /* FONT SIZES */
     /* web */
