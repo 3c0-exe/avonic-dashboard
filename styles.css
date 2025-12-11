@@ -1043,9 +1043,9 @@ body{
     height: 20px;
     cursor: pointer;
 }
-.left{
+/* .left{
     transform: scaleX(-1);
-}
+} */
 
 .fluctuationDisplayDate{
     font-weight: var(--fw-bold);
