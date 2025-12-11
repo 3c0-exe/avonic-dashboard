@@ -2771,7 +2771,7 @@ h1.page-header.help-sec {
 
 .bin-fluctuations-main-wrapper .container.main{
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1.5fr 1fr !important; /* Force 60/40 split */
     gap: 20px;
     align-items: start;
 }
