@@ -1,6 +1,4 @@
-// auth.js - Complete Authentication Handler for forms.html
-// Handles login, register, forgot password, and reset password
-
+// auth.js - Updated for New Split Layout Design
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
 
 // ====== FORM SWITCHING LOGIC ======
@@ -17,65 +15,79 @@ let currentForm = 'login';
 function showForm(formName) {
   const containers = document.querySelectorAll('.form-container');
   
-  containers.forEach((container, index) => {
-    if (index === formSections[formName]) {
-      container.style.display = 'flex';
-    } else {
-      container.style.display = 'none';
-    }
-  });
+  // Hide all containers first
+  containers.forEach(c => c.style.display = 'none');
+  
+  // Show the target container
+  const targetIndex = formSections[formName];
+  if (containers[targetIndex]) {
+    containers[targetIndex].style.display = 'flex';
+  }
   
   currentForm = formName;
   console.log(`📄 Showing form: ${formName}`);
 }
 
 function setupFormNavigation() {
-  // Login -> Register
-  const loginSignupLink = document.querySelectorAll('.signup-link')[0];
-  if (loginSignupLink) {
-    loginSignupLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showForm('register');
-    });
+  const containers = document.querySelectorAll('.form-container');
+  const loginContainer = containers[0];
+  const registerContainer = containers[1];
+  const forgotContainer = containers[2];
+  const resetContainer = containers[3];
+
+  // 1. LOGIN SCREEN NAV
+  if (loginContainer) {
+    // Login -> Register
+    const regLink = loginContainer.querySelector('.signup-link');
+    if (regLink) {
+      regLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm('register');
+      });
+    }
+
+    // Login -> Forgot Password (FIXED CLASS NAME HERE)
+    const forgotLink = loginContainer.querySelector('.forgot-link');
+    if (forgotLink) {
+      forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm('forgot');
+      });
+    }
   }
-  
-  // Login -> Forgot Password
-  const forgotLink = document.querySelector('.forgot a');
-  if (forgotLink) {
-    forgotLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showForm('forgot');
-    });
+
+  // 2. REGISTER SCREEN NAV
+  if (registerContainer) {
+    // Register -> Login
+    const loginLink = registerContainer.querySelector('.signup-link');
+    if (loginLink) {
+      loginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm('login');
+      });
+    }
   }
-  
-  // Register -> Login
-  const registerLoginLink = document.querySelectorAll('.signup-link')[1];
-  if (registerLoginLink) {
-    registerLoginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showForm('login');
-    });
+
+  // 3. FORGOT PASSWORD NAV
+  if (forgotContainer) {
+    // Forgot -> Login
+    const backLink = forgotContainer.querySelector('.signup-link');
+    if (backLink) {
+      backLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm('login');
+      });
+    }
   }
-  
-  // Forgot Password -> Login
-  const forgotLoginLink = document.querySelectorAll('.signup-link')[2];
-  if (forgotLoginLink) {
-    forgotLoginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showForm('login');
-    });
+
+  // 4. RESET PASSWORD NAV
+  // (Usually triggered automatically, but purely for navigation)
+  if (resetContainer) {
+    // Reset -> Login (if needed manually)
+    // Note: The reset form usually redirects automatically on success
   }
-  
-  // Reset Password -> Login
-  const resetLoginLink = document.querySelectorAll('.signup-link')[3];
-  if (resetLoginLink) {
-    resetLoginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showForm('login');
-    });
-  }
-  
-  console.log('✅ Form navigation setup complete');
+
+  console.log('✅ Form navigation setup complete (New Layout)');
 }
 
 // ====== MESSAGE DISPLAY ======
@@ -83,36 +95,41 @@ function setupFormNavigation() {
 function showMessage(message, type = 'error') {
   let msgDiv = document.getElementById('form-message');
   
+  // Find the active form to insert the message into
+  const activeContainer = document.querySelectorAll('.form-container')[formSections[currentForm]];
+  
   if (!msgDiv) {
     msgDiv = document.createElement('div');
     msgDiv.id = 'form-message';
     msgDiv.style.cssText = `
       padding: 12px 16px;
-      margin: 16px 0;
-      border-radius: 8px;
+      margin-bottom: 20px;
+      border-radius: 12px;
       font-size: 14px;
       text-align: center;
+      font-weight: 500;
     `;
-    
-    const activeContainer = document.querySelectorAll('.form-container')[formSections[currentForm]];
-    const form = activeContainer.querySelector('form');
-    if (form) {
-      form.insertBefore(msgDiv, form.firstChild);
+  }
+  
+  // Move message div to the active form, right before the <form> tag
+  if (activeContainer) {
+    const formEl = activeContainer.querySelector('form');
+    if (formEl) {
+      activeContainer.insertBefore(msgDiv, formEl);
     }
   }
   
   if (type === 'error') {
-    msgDiv.style.backgroundColor = '#ffebee';
-    msgDiv.style.color = '#c62828';
-    msgDiv.style.border = '1px solid #ef5350';
+    msgDiv.style.backgroundColor = '#FFE8E8';
+    msgDiv.style.color = '#D32F2F';
+    msgDiv.style.border = '1px solid #ffcdd2';
   } else if (type === 'success') {
-    msgDiv.style.backgroundColor = '#e8f5e9';
-    msgDiv.style.color = '#2e7d32';
-    msgDiv.style.border = '1px solid #66bb6a';
-  } else if (type === 'info') {
-    msgDiv.style.backgroundColor = '#e3f2fd';
-    msgDiv.style.color = '#1565c0';
-    msgDiv.style.border = '1px solid #42a5f5';
+    msgDiv.style.backgroundColor = '#E8F5B3';
+    msgDiv.style.color = '#2A4633';
+    msgDiv.style.border = '1px solid #C5E1A5';
+  } else {
+    msgDiv.style.backgroundColor = '#E3F2FD';
+    msgDiv.style.color = '#1565C0';
   }
   
   msgDiv.textContent = message;
@@ -201,11 +218,6 @@ async function handleRegister(event) {
   
   if (username.length < 3 || username.length > 20) {
     showMessage('Username must be 3-20 characters', 'error');
-    return;
-  }
-  
-  if (!/^[a-zA-Z0-9]+$/.test(username)) {
-    showMessage('Username must be alphanumeric only', 'error');
     return;
   }
   
@@ -302,10 +314,6 @@ async function handleForgotPassword(event) {
       
       setTimeout(() => {
         showForm('reset');
-        const emailDisplay = document.querySelector('.core-msg b');
-        if (emailDisplay) {
-          emailDisplay.textContent = email;
-        }
       }, 2000);
     } else {
       showMessage(data.error || 'Failed to send reset code', 'error');
@@ -431,26 +439,27 @@ document.addEventListener('DOMContentLoaded', () => {
   showForm('login');
   
   // Attach form handlers
-  const forms = document.querySelectorAll('form');
+  // We use querySelectorAll('.form-container form') to ensure we grab forms inside the new layout
+  const containers = document.querySelectorAll('.form-container');
   
-  if (forms[0]) {
-    forms[0].addEventListener('submit', handleLogin);
-    console.log('✅ Login form handler attached');
+  if (containers[0]) {
+    const loginForm = containers[0].querySelector('form');
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
   }
   
-  if (forms[1]) {
-    forms[1].addEventListener('submit', handleRegister);
-    console.log('✅ Register form handler attached');
+  if (containers[1]) {
+    const registerForm = containers[1].querySelector('form');
+    if (registerForm) registerForm.addEventListener('submit', handleRegister);
   }
   
-  if (forms[2]) {
-    forms[2].addEventListener('submit', handleForgotPassword);
-    console.log('✅ Forgot password handler attached');
+  if (containers[2]) {
+    const forgotForm = containers[2].querySelector('form');
+    if (forgotForm) forgotForm.addEventListener('submit', handleForgotPassword);
   }
   
-  if (forms[3]) {
-    forms[3].addEventListener('submit', handleResetPassword);
-    console.log('✅ Reset password handler attached');
+  if (containers[3]) {
+    const resetForm = containers[3].querySelector('form');
+    if (resetForm) resetForm.addEventListener('submit', handleResetPassword);
   }
   
   console.log('✅ auth.js loaded and ready');
@@ -463,5 +472,3 @@ window.auth = {
   getUser,
   isAuthenticated
 };
-
-console.log('📦 auth.js module loaded');
