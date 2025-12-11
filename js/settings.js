@@ -1,16 +1,45 @@
-// ====== SETTINGS PAGE FUNCTIONALITY ======
-
+// ====== INTEGRATED SETTINGS SYSTEM ======
 const SETTINGS_API_BASE = 'https://avonic-main-hub-production.up.railway.app/api';
 
-console.log('✅ Settings.js loaded - defining functions...');
+console.log('✅ Integrated Settings.js loaded');
 
-// All function declarations
-async function loadUserSettings() {
-    console.log('🔄 Loading user settings...');
+// ====== SETTINGS HUB NAVIGATION ======
+window.settingsNav = {
+    navigateToAccount: () => {
+        window.location.hash = '#/settings/account';
+    },
+    navigateToWiFi: () => {
+        window.location.hash = '#/settings/wifi';
+    },
+    navigateToUserManual: () => {
+        // Could open a PDF or external link
+        window.open('/user-manual.pdf', '_blank');
+    },
+    handleLogout: () => {
+        if (!confirm('Are you sure you want to logout?')) return;
+        
+        const token = localStorage.getItem('avonic_token');
+        
+        fetch(`${SETTINGS_API_BASE}/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(err => console.error('⚠️ Logout request failed:', err));
+        
+        localStorage.removeItem('avonic_token');
+        localStorage.removeItem('avonic_user');
+        console.log('👋 Logged out');
+        window.location.href = 'forms.html';
+    }
+};
+
+// ====== ACCOUNT SETTINGS PAGE ======
+async function loadAccountSettings() {
+    console.log('📄 Loading account settings...');
     const token = localStorage.getItem('avonic_token');
+    
     if (!token) {
         console.error('❌ No token found');
-        window.location.href = 'login.html';
+        window.location.href = 'forms.html';
         return;
     }
 
@@ -22,8 +51,10 @@ async function loadUserSettings() {
         if (userRes.ok) {
             const userData = await userRes.json();
             console.log('✅ User data loaded:', userData);
-            const usernameEl = document.getElementById('username-display');
-            const emailEl = document.getElementById('email-input');
+            
+            const usernameEl = document.getElementById('account-username');
+            const emailEl = document.getElementById('account-email');
+            
             if (usernameEl) usernameEl.value = userData.username;
             if (emailEl) emailEl.value = userData.email;
         } else {
@@ -33,16 +64,16 @@ async function loadUserSettings() {
         console.error('❌ Failed to load user data:', error);
     }
 
-    loadClaimedBins();
+    loadClaimedBinsAccount();
 }
 
-async function loadClaimedBins() {
-    console.log('🔄 Loading claimed bins...');
-    const container = document.getElementById('claimed-bins-container');
+async function loadClaimedBinsAccount() {
+    console.log('🗑️ Loading claimed bins for account page...');
+    const container = document.getElementById('account-bins-list');
     const token = localStorage.getItem('avonic_token');
 
     if (!container) {
-        console.error('❌ claimed-bins-container not found');
+        console.error('❌ account-bins-list not found');
         return;
     }
 
@@ -56,30 +87,40 @@ async function loadClaimedBins() {
 
         if (res.ok && data.devices && data.devices.length > 0) {
             console.log(`✅ Found ${data.devices.length} devices`);
-            container.innerHTML = data.devices.map(device => `
-                <div class="bin-card" data-device-id="${device.espID}">
-                    <div class="bin-icon">🗑️</div>
+            
+            // Show only first 2 bins on mobile, all on desktop
+            const displayDevices = data.devices.slice(0, 2);
+            
+            container.innerHTML = displayDevices.map(device => `
+                <div class="bin-item">
+                    <img src="/settings-content/settings-img/Account/bin-icon.svg" alt="Bin" class="bin-icon">
                     <div class="bin-info">
-                        <div class="bin-name">${device.nickname || 'My Compost Bin'}</div>
-                        <div class="bin-id">${device.espID}</div>
-                        <div class="bin-status ${device.status === 'active' ? '' : 'offline'}">
-                            <span>${device.status === 'active' ? '● Online' : '○ Offline'}</span>
-                        </div>
+                        <h3>${device.nickname || 'My Bin'} - ${device.espID.substring(7, 11)} ${device.espID.substring(11, 15)}</h3>
+                        <p>${device.status === 'active' ? 'Active bin' : 'Offline'}</p>
                     </div>
-                    <button class="btn-unclaim" onclick="window.openUnclaimModal('${device.espID}', '${device.nickname || device.espID}')" title="Unclaim device">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
+                    <button class="remove-bin" onclick="openUnclaimModal('${device.espID}', '${device.nickname || device.espID}')">
+                        <img src="/settings-content/settings-img/Account/remove.svg" alt="Remove" class="close-icon">
                     </button>
                 </div>
             `).join('');
+
+            // Show "View More" button if more than 2 devices
+            const viewMoreBtn = document.querySelector('.view-more-btn');
+            if (viewMoreBtn && data.devices.length > 2) {
+                viewMoreBtn.style.display = 'block';
+                viewMoreBtn.onclick = () => {
+                    // Could navigate to a full bins page or expand the list
+                    alert(`You have ${data.devices.length} total devices. View them in Dashboard.`);
+                };
+            }
         } else {
             console.log('ℹ️ No devices claimed');
             container.innerHTML = `
-                <div class="loading-bins">
-                    <p style="color: var(--text-muted);">No devices claimed yet</p>
-                    <button class="btn-add-device" onclick="window.location.hash = '#/claim-device'" style="margin-top: 16px;">
+                <div style="text-align: center; padding: 40px; color: #808080;">
+                    <p>No devices claimed yet</p>
+                    <button onclick="window.location.hash='#/claim-device'" 
+                            style="margin-top: 16px; padding: 12px 24px; background: #E8F5B3; 
+                                   border: 1px solid #000; border-radius: 20px; cursor: pointer;">
                         ➕ Claim Your First Device
                     </button>
                 </div>
@@ -87,19 +128,42 @@ async function loadClaimedBins() {
         }
     } catch (error) {
         console.error('❌ Failed to load devices:', error);
-        container.innerHTML = '<p class="error">Failed to load devices. Please refresh.</p>';
+        container.innerHTML = '<p style="color: #FF0000; text-align: center;">Failed to load devices</p>';
+    }
+}
+
+// ====== EMAIL UPDATE ======
+let isEditingEmail = false;
+
+function toggleEmailEdit() {
+    const input = document.getElementById('account-email');
+    const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
+    
+    if (!isEditingEmail) {
+        input.removeAttribute('readonly');
+        input.focus();
+        btn.textContent = 'Save';
+        btn.style.background = '#B8D989';
+        isEditingEmail = true;
+    } else {
+        updateEmail();
     }
 }
 
 async function updateEmail() {
     console.log('📧 Updating email...');
-    const newEmail = document.getElementById('email-input').value;
+    const input = document.getElementById('account-email');
+    const newEmail = input.value;
     const token = localStorage.getItem('avonic_token');
+    const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
     
     if (!newEmail || !newEmail.includes('@')) {
-        showMessage('email-message', 'Please enter a valid email', 'error');  // ← CHANGED
+        showModalMessage('Please enter a valid email', 'error');
         return;
     }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
 
     try {
         const res = await fetch(`${SETTINGS_API_BASE}/user/email`, {
@@ -115,30 +179,107 @@ async function updateEmail() {
 
         if (res.ok) {
             console.log('✅ Email updated');
-            showMessage('email-message', '✅ Email updated successfully!', 'success');  // ← CHANGED
+            showModalMessage('Email updated successfully!', 'success');
+            input.setAttribute('readonly', 'readonly');
+            btn.textContent = 'Edit';
+            btn.style.background = '#E8F5B3';
+            isEditingEmail = false;
         } else {
             console.error('❌ Email update failed:', data);
-            showMessage('email-message', '❌ ' + (data.error || 'Failed to update email'), 'error');  // ← CHANGED
+            showModalMessage(data.error || 'Failed to update email', 'error');
         }
     } catch (error) {
         console.error('❌ Email update error:', error);
-        showMessage('email-message', '❌ Network error. Please try again.', 'error');  // ← CHANGED
+        showModalMessage('Network error. Please try again.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// ====== PASSWORD UPDATE ======
+let isEditingPassword = false;
+
+function togglePasswordEdit() {
+    const card = document.querySelector('.password-card');
+    const inputs = card.querySelectorAll('.password-input');
+    const btn = card.querySelector('.edit-btn');
+    
+    if (!isEditingPassword) {
+        inputs.forEach(input => input.removeAttribute('readonly'));
+        btn.textContent = 'Save';
+        btn.style.background = '#B8D989';
+        isEditingPassword = true;
+    } else {
+        updatePassword();
     }
 }
 
 async function updatePassword() {
     console.log('🔐 Updating password...');
-    const currentPassword = document.getElementById('current-password').value;
-    const newPassword = document.getElementById('new-password').value;
-    const token = localStorage.getItem('avonic_token');
+    const inputs = document.querySelectorAll('.password-card .password-input');
+    const newPassword = inputs[0].value;
+    const confirmPassword = inputs[1].value;
+    const btn = document.querySelector('.password-card .edit-btn');
 
-    if (!currentPassword || !newPassword) {
-        showMessage('password-message', 'Please fill in both password fields', 'error');
+    if (!newPassword || !confirmPassword) {
+        showModalMessage('Please fill in both password fields', 'error');
         return;
     }
 
     if (newPassword.length < 6) {
-        showMessage('password-message', 'New password must be at least 6 characters', 'error');
+        showModalMessage('Password must be at least 6 characters', 'error');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showModalMessage('Passwords do not match', 'error');
+        return;
+    }
+
+    // Show current password modal first
+    showCurrentPasswordModal(newPassword);
+}
+
+// ====== PASSWORD VISIBILITY TOGGLE ======
+function togglePasswordVisibility(button) {
+    const input = button.previousElementSibling;
+    const eyeIcon = button.querySelector('.eye-icon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeIcon.src = '/settings-content/settings-img/Account/open-eyes.svg';
+    } else {
+        input.type = 'password';
+        eyeIcon.src = '/settings-content/settings-img/Account/close-eyes.svg';
+    }
+}
+
+// ====== MODAL SYSTEM ======
+function showCurrentPasswordModal(newPassword) {
+    const modal = document.getElementById('current-password-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.dataset.newPassword = newPassword;
+    }
+}
+
+function closeCurrentPasswordModal() {
+    const modal = document.getElementById('current-password-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        const input = modal.querySelector('.input-field');
+        if (input) input.value = '';
+    }
+}
+
+async function submitCurrentPassword() {
+    const modal = document.getElementById('current-password-modal');
+    const currentPassword = modal.querySelector('.input-field').value;
+    const newPassword = modal.dataset.newPassword;
+    const token = localStorage.getItem('avonic_token');
+
+    if (!currentPassword) {
+        showModalMessage('Please enter your current password', 'error');
         return;
     }
 
@@ -159,26 +300,31 @@ async function updatePassword() {
 
         if (res.ok) {
             console.log('✅ Password updated');
-            showMessage('password-message', '✅ Password updated successfully!', 'success');
-            document.getElementById('current-password').value = '';
-            document.getElementById('new-password').value = '';
+            closeCurrentPasswordModal();
+            showModalMessage('Password updated successfully!', 'success');
+            
+            // Reset password inputs
+            const inputs = document.querySelectorAll('.password-card .password-input');
+            inputs.forEach(input => {
+                input.value = '';
+                input.setAttribute('readonly', 'readonly');
+            });
+            
+            const btn = document.querySelector('.password-card .edit-btn');
+            btn.textContent = 'Edit';
+            btn.style.background = '#E8F5B3';
+            isEditingPassword = false;
         } else {
             console.error('❌ Password update failed:', data);
-            showMessage('password-message', '❌ ' + (data.error || 'Failed to update password'), 'error');
+            showModalMessage(data.error || 'Incorrect current password', 'error');
         }
     } catch (error) {
         console.error('❌ Password update error:', error);
-        showMessage('password-message', '❌ Network error. Please try again.', 'error');
+        showModalMessage('Network error. Please try again.', 'error');
     }
 }
 
-function togglePasswordVisibility(inputId) {
-    const input = document.getElementById(inputId);
-    if (input) {
-        input.type = input.type === 'password' ? 'text' : 'password';
-    }
-}
-
+// ====== UNCLAIM DEVICE ======
 let deviceToUnclaim = null;
 
 function openUnclaimModal(espID, deviceName) {
@@ -188,13 +334,13 @@ function openUnclaimModal(espID, deviceName) {
     const nameEl = document.getElementById('unclaim-device-name');
     
     if (nameEl) nameEl.textContent = deviceName;
-    if (modal) modal.classList.add('active');
+    if (modal) modal.style.display = 'flex';
 }
 
 function closeUnclaimModal() {
     deviceToUnclaim = null;
     const modal = document.getElementById('unclaim-modal');
-    if (modal) modal.classList.remove('active');
+    if (modal) modal.style.display = 'none';
 }
 
 async function confirmUnclaim() {
@@ -213,83 +359,93 @@ async function confirmUnclaim() {
 
         if (res.ok) {
             console.log('✅ Device unclaimed');
-            showMessage('bins-message', '✅ Device unclaimed successfully', 'success');
+            showModalMessage('Device unclaimed successfully', 'success');
             closeUnclaimModal();
-            loadClaimedBins();
+            loadClaimedBinsAccount();
         } else {
             console.error('❌ Unclaim failed:', data);
-            showMessage('bins-message', '❌ ' + (data.error || 'Failed to unclaim device'), 'error');
-            closeUnclaimModal();
+            showModalMessage(data.error || 'Failed to unclaim device', 'error');
         }
     } catch (error) {
         console.error('❌ Unclaim error:', error);
-        showMessage('bins-message', '❌ Failed to unclaim device', 'error');
-        closeUnclaimModal();
+        showModalMessage('Failed to unclaim device', 'error');
     }
 }
 
-async function handleLogout() {
-    console.log('👋 Logging out...');
-    if (!confirm('Are you sure you want to logout?')) return;
+// ====== WIFI SETTINGS ======
+async function loadWiFiSettings() {
+    console.log('📡 Loading WiFi settings...');
+    // This would fetch WiFi status from your ESP devices
+    // For now, we'll show connection status
+}
 
-    const token = localStorage.getItem('avonic_token');
-
-    try {
-        const res = await fetch(`${SETTINGS_API_BASE}/logout`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (res.ok) {
-            console.log('✅ Logout successful');
-        }
-    } catch (error) {
-        console.error('⚠️ Logout request failed:', error);
-    }
+async function connectWiFi() {
+    const ssid = document.getElementById('wifi-ssid').value;
+    const password = document.getElementById('wifi-password').value;
     
-    localStorage.removeItem('avonic_token');
-    localStorage.removeItem('avonic_user');
-    window.location.href = 'login.html';
-}
-
-function showMessage(elementId, message, type) {
-    const el = document.getElementById(elementId);
-    if (!el) {
-        console.error('❌ Message element not found:', elementId);
+    if (!ssid) {
+        showModalMessage('Please enter WiFi network name', 'error');
         return;
     }
     
-    el.textContent = message;
-    el.className = `settings-message ${type}`;
-    el.style.display = 'block';
-
-    setTimeout(() => {
-        el.style.display = 'none';
-    }, 5000);
+    console.log('📡 Connecting to WiFi:', ssid);
+    showModalMessage('WiFi connection feature coming soon!', 'info');
 }
 
-// Expose to window
-window.loadUserSettings = loadUserSettings;
-window.updateEmail = updateEmail;
-window.updatePassword = updatePassword;
+// ====== MESSAGE DISPLAY ======
+function showModalMessage(message, type = 'error') {
+    // Create or get message element
+    let msgDiv = document.getElementById('modal-message');
+    
+    if (!msgDiv) {
+        msgDiv = document.createElement('div');
+        msgDiv.id = 'modal-message';
+        msgDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            z-index: 10000;
+            border: 2px solid #000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        document.body.appendChild(msgDiv);
+    }
+    
+    if (type === 'error') {
+        msgDiv.style.background = '#FFE8E8';
+        msgDiv.style.color = '#D32F2F';
+    } else if (type === 'success') {
+        msgDiv.style.background = '#E8F5B3';
+        msgDiv.style.color = '#2A4633';
+    } else {
+        msgDiv.style.background = '#E3F2FD';
+        msgDiv.style.color = '#1565C0';
+    }
+    
+    msgDiv.textContent = message;
+    msgDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        msgDiv.style.display = 'none';
+    }, 4000);
+}
+
+// ====== EXPOSE FUNCTIONS TO WINDOW ======
+window.loadAccountSettings = loadAccountSettings;
+window.toggleEmailEdit = toggleEmailEdit;
+window.togglePasswordEdit = togglePasswordEdit;
 window.togglePasswordVisibility = togglePasswordVisibility;
+window.showCurrentPasswordModal = showCurrentPasswordModal;
+window.closeCurrentPasswordModal = closeCurrentPasswordModal;
+window.submitCurrentPassword = submitCurrentPassword;
 window.openUnclaimModal = openUnclaimModal;
 window.closeUnclaimModal = closeUnclaimModal;
 window.confirmUnclaim = confirmUnclaim;
-window.handleLogout = handleLogout;
+window.loadWiFiSettings = loadWiFiSettings;
+window.connectWiFi = connectWiFi;
 
-console.log('✅ All settings functions exposed to window');
-
-// Auto-load on hash change
-window.addEventListener('hashchange', () => {
-    if (window.location.hash === '#/settings') {
-        console.log('⚙️ Navigated to settings');
-        setTimeout(() => loadUserSettings(), 200);
-    }
-});
-
-// Initial load if already on settings
-if (window.location.hash === '#/settings') {
-    console.log('⚙️ Already on settings page');
-    setTimeout(() => loadUserSettings(), 200);
-}
+console.log('✅ All integrated settings functions exposed');
