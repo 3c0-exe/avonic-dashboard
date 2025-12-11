@@ -15,7 +15,6 @@ window.settingsNav = {
         window.open('/user-manual.pdf', '_blank');
     },
     handleLogout: () => {
-        // Confirmation before logging out
         openSaveChangesModal(() => {
             performLogout();
         }, "Are you sure you want to log out?");
@@ -51,6 +50,8 @@ window.settingsNav = {
             btn.disabled = false;
 
             if (response.ok) {
+                // Use the new Success Modal here too!
+                openSuccessModal("Device claimed successfully!");
                 successBox.style.display = 'block';
                 espInput.value = '';
                 if(typeof loadAccountSettings === 'function') loadClaimedBinsAccount();
@@ -61,7 +62,6 @@ window.settingsNav = {
                 alertBox.style.color = 'red';
             }
         } catch (error) {
-            console.error(error);
             loading.style.display = 'none';
             btn.disabled = false;
             alertBox.textContent = 'Network error. Please try again.';
@@ -148,27 +148,23 @@ async function loadClaimedBinsAccount() {
     }
 }
 
-// ====== 3. MODAL SYSTEM (CORRECTED FLOW) ======
+// ====== 3. MODAL SYSTEM ======
 let pendingModalAction = null;
 
-// Opens "Save Changes?" Modal
+// Save Changes Modal
 function openSaveChangesModal(actionCallback, customMessage) {
     const modal = document.getElementById('save-changes-modal');
     if (!modal) return;
 
-    // Optional: Update text if provided
     const desc = modal.querySelector('.modal-description');
-    if (desc && customMessage) desc.textContent = customMessage;
-    else if (desc) desc.textContent = "Your changes will be saved";
+    if (desc) desc.textContent = customMessage || "Your changes will be saved";
 
     modal.style.display = 'flex';
     pendingModalAction = actionCallback;
 
-    // Set up one-time listener for the SAVE button inside the modal
     const saveBtn = modal.querySelector('.btn-primary');
     const cancelBtn = modal.querySelector('.btn-secondary');
 
-    // Clone to remove old listeners
     const newSave = saveBtn.cloneNode(true);
     const newCancel = cancelBtn.cloneNode(true);
     saveBtn.parentNode.replaceChild(newSave, saveBtn);
@@ -188,14 +184,11 @@ function closeSaveChangesModal() {
     pendingModalAction = null;
 }
 
-// Opens "Current Password" Modal
+// Current Password Modal
 function showCurrentPasswordModal() {
     const modal = document.getElementById('current-password-modal');
     if (!modal) return;
-
     modal.style.display = 'flex';
-    
-    // Auto-focus the input
     setTimeout(() => {
         const input = modal.querySelector('.input-field');
         if(input) input.focus();
@@ -211,7 +204,25 @@ function closeCurrentPasswordModal() {
     }
 }
 
-// ====== 4. EMAIL LOGIC (WITH SAVE MODAL) ======
+// NEW: SUCCESS MODAL
+function openSuccessModal(message) {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        const msgEl = document.getElementById('success-modal-msg');
+        if(msgEl) msgEl.textContent = message;
+        modal.style.display = 'flex';
+    } else {
+        // Fallback if modal HTML is missing
+        alert(message);
+    }
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ====== 4. EMAIL LOGIC ======
 let isEditingEmail = false;
 
 function toggleEmailEdit() {
@@ -219,20 +230,16 @@ function toggleEmailEdit() {
     const btn = document.querySelector('.settings-card:nth-child(2) .edit-btn');
     
     if (!isEditingEmail) {
-        // Step 1: Click Edit -> Become Editable
         input.removeAttribute('readonly');
         input.focus();
         btn.textContent = 'Save';
         btn.style.background = '#B8D989';
         isEditingEmail = true;
     } else {
-        // Step 2: Click Save -> Validate -> Open Modal
         if (!input.value || !input.value.includes('@')) {
             showModalMessage('Please enter a valid email', 'error');
             return;
         }
-        
-        // Triggers the "Save Changes?" modal
         openSaveChangesModal(() => {
             performEmailUpdate(input.value, btn, input);
         });
@@ -241,8 +248,6 @@ function toggleEmailEdit() {
 
 async function performEmailUpdate(newEmail, btn, input) {
     const token = localStorage.getItem('avonic_token');
-    
-    // UI Loading state (button inside modal is already closed, so we update the page button)
     btn.textContent = 'Saving...';
     btn.disabled = true;
 
@@ -259,15 +264,15 @@ async function performEmailUpdate(newEmail, btn, input) {
         const data = await res.json();
 
         if (res.ok) {
-            showModalMessage('Email updated successfully!', 'success');
-            // Reset UI to "View" mode
+            // SUCCESS MODAL HERE
+            openSuccessModal('Email updated successfully!');
             input.setAttribute('readonly', 'readonly');
             btn.textContent = 'Edit';
             btn.style.background = '';
             isEditingEmail = false;
         } else {
             showModalMessage(data.error || 'Failed to update email', 'error');
-            btn.textContent = 'Save'; // Revert button if failed
+            btn.textContent = 'Save';
         }
     } catch (error) {
         showModalMessage('Network error', 'error');
@@ -277,7 +282,7 @@ async function performEmailUpdate(newEmail, btn, input) {
     }
 }
 
-// ====== 5. PASSWORD LOGIC (WITH CURRENT PASSWORD MODAL) ======
+// ====== 5. PASSWORD LOGIC ======
 let isEditingPassword = false;
 
 function togglePasswordEdit() {
@@ -286,14 +291,12 @@ function togglePasswordEdit() {
     const btn = card.querySelector('.edit-btn');
     
     if (!isEditingPassword) {
-        // Step 1: Click Edit -> Become Editable
         inputs.forEach(input => input.removeAttribute('readonly'));
         inputs[0].focus();
         btn.textContent = 'Save';
         btn.style.background = '#B8D989';
         isEditingPassword = true;
     } else {
-        // Step 2: Click Save -> Validate -> Open "Current Password" Modal
         const newPass = inputs[0].value;
         const confirmPass = inputs[1].value;
 
@@ -309,19 +312,15 @@ function togglePasswordEdit() {
             showModalMessage('Password must be at least 6 characters', 'error');
             return;
         }
-
-        // Open the modal to ask for old password
         showCurrentPasswordModal();
     }
 }
 
-// Called by the "Enter" button inside the Current Password Modal
 async function submitCurrentPassword() {
     const modal = document.getElementById('current-password-modal');
-    const currentPasswordInput = modal.querySelector('.input-field');
-    const currentPassword = currentPasswordInput.value;
+    const currentPassword = modal.querySelector('.input-field').value;
     
-    // Get new password from the page inputs
+    // Get new password from page
     const inputs = document.querySelectorAll('.password-card .password-input');
     const newPassword = inputs[0].value;
     const token = localStorage.getItem('avonic_token');
@@ -344,13 +343,11 @@ async function submitCurrentPassword() {
             })
         });
 
-        const data = await res.json();
-
         if (res.ok) {
             closeCurrentPasswordModal();
-            showModalMessage('Password updated successfully!', 'success');
+            // SUCCESS MODAL HERE
+            openSuccessModal('Password updated successfully!');
             
-            // Reset Page UI
             inputs.forEach(i => {
                 i.value = '';
                 i.setAttribute('readonly', 'readonly');
@@ -360,14 +357,11 @@ async function submitCurrentPassword() {
             btn.style.background = '';
             isEditingPassword = false;
         } else {
-            // Show error but keep modal open so they can retry
+            const data = await res.json();
             showModalMessage(data.error || 'Incorrect current password', 'error');
-            currentPasswordInput.value = '';
-            currentPasswordInput.focus();
         }
     } catch (error) {
         showModalMessage('Network error', 'error');
-        closeCurrentPasswordModal();
     }
 }
 
@@ -399,8 +393,9 @@ async function confirmUnclaim() {
         });
 
         if (res.ok) {
-            showModalMessage('Device unclaimed successfully', 'success');
             closeUnclaimModal();
+            // SUCCESS MODAL HERE
+            openSuccessModal('Device unclaimed successfully');
             loadClaimedBinsAccount();
         } else {
             showModalMessage('Failed to unclaim', 'error');
@@ -424,6 +419,7 @@ function togglePasswordVisibility(button) {
 }
 
 function showModalMessage(message, type = 'error') {
+    // Keep this for errors, but use Modal for success
     let msgDiv = document.getElementById('modal-message');
     if (!msgDiv) {
         msgDiv = document.createElement('div');
@@ -458,5 +454,7 @@ window.closeUnclaimModal = closeUnclaimModal;
 window.confirmUnclaim = confirmUnclaim;
 window.openSaveChangesModal = openSaveChangesModal;
 window.closeSaveChangesModal = closeSaveChangesModal;
+window.openSuccessModal = openSuccessModal;
+window.closeSuccessModal = closeSuccessModal;
 
-console.log('✅ All integrated settings functions exposed');
+console.log('✅ Integrated Settings loaded');

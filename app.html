@@ -961,6 +961,20 @@ setTimeout(() => {
     </div>
 </div>
 
+<!-- Success Modal -->
+<div id="success-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <div class="illustration">
+            <img src="/img/form-icons/success-icon.svg" alt="Success" style="width: 80px; height: 80px;">
+        </div>
+        <h2 class="modal-title">Success!</h2>
+        <p class="modal-description" id="success-modal-msg">Changes saved successfully.</p>
+        <div class="modal-buttons">
+            <button class="modal-btn btn-primary" onclick="window.closeSuccessModal()">OK</button>
+        </div>
+    </div>
+</div>
+
 <!-- Unclaim Confirmation Modal -->
 <!-- <div id="unclaim-modal" class="modal">
     <div class="modal-content">
