@@ -2755,3 +2755,664 @@ h1.page-header.help-sec {
         width: 100%;
     }
 }
+
+/* ================================================
+   NEW DASHBOARD - BIN FLUCTUATIONS MAIN STYLES
+   ================================================ */
+
+.bf-sensor-label{
+    display: flex;
+    align-items: center;
+}
+
+.bf-sensor-icon img{
+    padding-right: 8px;
+}
+
+.bin-fluctuations-main-wrapper .container.main{
+    display: flex;
+    justify-content: space-between;
+}
+
+.bin-fluctuations-main-wrapper .container.top{
+    display: flex;
+    justify-content: space-between;
+    width: 96%;
+}
+
+.bin-fluctuations .bf-sensor-label{
+    padding: 26px 0;
+}
+
+.bin-fluctuations .bf-sensor-label .title{
+    font-size: 18px;
+}
+
+.bin-fluctuations-main-wrapper .container.main .left .chart .title{
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.bin-fluctuations{
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+    border-bottom: 1px solid;
+}
+
+.bin-fluctuations-main-wrapper .ave-output .title{
+    font-size: 32px;
+}
+
+.bin-fluctuations-main-wrapper .ave-value .value{
+    font-size: 74px;
+}
+
+.bin-fluctuations-main-wrapper .ave-value .unit{
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+.bin-fluctuations-main-wrapper .ave-value{
+    display: flex;
+}
+
+.bin-fluctuations-main-wrapper .chart-wrapper {
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.bin-fluctuations-main-wrapper .chart-container {
+    width: 436px;
+    height: 246px;
+    position: relative;
+}
+
+.bin-fluctuations-main-wrapper .insights{
+    max-width: 289px;
+    width: 100%;
+    background-color: white;
+    height: 100px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px solid;
+    box-shadow: 0px 7.20548px 0px #000000;
+}
+
+.bin-fluctuations-main-wrapper .insights .title{
+    display: flex;
+    padding-bottom: 10px;
+    font-weight: 100;
+    font-size: 8px;
+    justify-content: space-between;
+}
+
+.bin-fluctuations-main-wrapper .insights .content{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.fix-icon{
+    cursor: pointer;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Container */
+.modal-overlay .modal-container {
+    background: #2a2a2a;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+    color: white;
+    border: 2px solid black;
+    box-shadow: 0px 7.20548px 0px #000000;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Close Button */
+.modal-overlay .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modal-overlay .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal Header */
+.modal-overlay .modal-header {
+    margin-bottom: 25px;
+}
+
+.modal-overlay .modal-title {
+    font-size: 28px;
+    font-weight: 200;
+    margin-bottom: 10px;
+}
+
+.modal-overlay .modal-subtitle {
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* Actions List */
+.modal-overlay .actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-overlay .action-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.modal-overlay .action-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.modal-overlay .action-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-overlay .action-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.modal-overlay .action-content {
+    flex: 1;
+}
+
+.modal-overlay .action-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #e0e0e0;
+}
+
+/* Scrollbar Styling */
+.modal-overlay .modal-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-overlay .modal-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.modal-overlay .modal-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.modal-overlay .modal-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.worm-condition-clipart img{
+    min-width: 100px;
+    max-height: 124px;
+    height: auto;
+    object-fit: contain;
+}
+
+.worm-condition-clipart ul .too-wet img{
+    max-height: 150px;
+}
+
+/* Action Icon with Notification Badge */
+.bin-fluctuations-main-wrapper .insights .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.action-icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.bin-fluctuations-main-wrapper .insights .fix-icon {
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.bin-fluctuations-main-wrapper .insights .fix-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Red notification badge */
+.action-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 12px;
+    height: 12px;
+    background: #ff3b3b;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: none;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+.bin-fluctuations-main-wrapper .insights .fix-icon[style*="opacity: 0.3"] {
+    filter: grayscale(100%);
+}
+
+.bin-fluctuations-main-wrapper .insights .fix-icon[style*="cursor: not-allowed"]:hover {
+    transform: none;
+}
+
+/* Hide all worm cliparts by default */
+.worm-condition-clipart ul li {
+    display: none !important;
+}
+
+.worm-condition-clipart ul li img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    display: block;
+}
+
+.worm-condition-clipart ul li[style*="display: block"] {
+    display: block !important;
+}
+
+/* ================================================
+   NEW DASHBOARD - RESPONSIVE STYLES
+   ================================================ */
+
+/* Mobile: Stack vertically, chart on top, info below */
+@media (max-width: 768px) {
+    
+    .chart-wrapper{
+        max-width: 544px;
+    }
+    
+    .bin-fluctuations-main-wrapper {
+        gap: 20px;
+        padding: 0;
+    }
+    
+    .bin-fluctuations {
+        max-width: 100%;
+        width: 100%;
+        padding: 25px 15px;
+        margin: 0;
+        border-bottom: 2px solid #ddd;
+        padding-top: 10px;
+    }
+    
+    .bin-fluctuations:last-child {
+        border-bottom: none;
+    }
+    
+    .bin-fluctuations .bf-sensor-label {
+        padding: 0 0 20px 0;
+        justify-content: flex-start;
+        margin-bottom: 0;
+    }
+    
+    .bin-fluctuations .bf-sensor-label .title {
+        font-size: 22px;
+        font-weight: 600;
+    }
+    
+    .bf-sensor-icon img {
+        width: 32px;
+        height: 32px;
+        padding-right: 10px;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main .left {
+        width: 100%;
+        order: 1;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main .left .chart {
+        width: 100%;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main .left .chart .title {
+        font-size: 18px;
+        text-align: center;
+        padding: 0 0 15px 0;
+        margin: 0;
+    }
+    
+    .bin-fluctuations-main-wrapper .chart-wrapper {
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        background: white;
+        border: 2px solid #000;
+        border-radius: 12px;
+        box-shadow: 0px 7.20548px 0px #000000;
+    }
+    
+    .bin-fluctuations-main-wrapper .chart-container {
+        width: 100%;
+        height: 220px;
+        margin: 0 auto;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main .right {
+        width: 100%;
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.ave {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 15px;
+        padding: 25px 20px;
+        margin: 0;
+        background: white;
+        border: 2px solid #000;
+        border-radius: 12px;
+        box-shadow: 0px 7.20548px 0px #000000;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-output {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-output .title {
+        font-size: 20px;
+        font-weight: 400;
+        margin-bottom: 8px;
+        color: #666;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .value {
+        font-size: 56px;
+        line-height: 1;
+        font-weight: 700;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .unit {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 0;
+    }
+    
+    .worm-condition-clipart {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .worm-condition-clipart ul {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .worm-condition-clipart img {
+        min-width: 90px;
+        max-width: 110px;
+        max-height: 110px;
+        width: auto;
+        height: auto;
+    }
+    
+    .worm-condition-clipart ul .too-wet img {
+        max-height: 130px;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights {
+        max-width: 100%;
+        width: 100%;
+        min-height: 100px;
+        padding: 20px;
+        margin: 0;
+        background-color: white;
+        border-radius: 12px;
+        border: 2px solid #000;
+        box-shadow: 0px 7.20548px 0px #000000;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights .title {
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights .title h1 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights .content {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+    }
+    
+    .action-icon-wrapper {
+        display: inline-flex;
+    }
+    
+    .fix-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 480px) {
+
+    .bf-sensor-label{
+        padding-top: 20px;
+    }
+    
+    .bin-fluctuations {
+        padding: 20px 10px;
+    }
+    
+    .bin-fluctuations .bf-sensor-label {
+        padding-bottom: 15px;
+    }
+    
+    .bin-fluctuations .bf-sensor-label .title {
+        font-size: 20px;
+    }
+    
+    .bin-fluctuations-main-wrapper .chart-wrapper {
+        padding: 15px;
+    }
+    
+    .bin-fluctuations-main-wrapper .chart-container {
+        height: 200px;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.main .left .chart .title {
+        font-size: 16px;
+        padding-bottom: 10px;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.ave {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 15px;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-output {
+        align-items: center;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-output .title {
+        font-size: 18px;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .value {
+        font-size: 48px;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .unit {
+        font-size: 18px;
+    }
+    
+    .worm-condition-clipart img {
+        max-width: 90px;
+        max-height: 90px;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights {
+        padding: 15px;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights .title h1 {
+        font-size: 16px;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights .content {
+        font-size: 13px;
+    }
+}
+
+/* Tablet Landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+    
+    .bin-fluctuations {
+        padding: 30px 20px;
+    }
+    
+    .bin-fluctuations-main-wrapper .chart-container {
+        max-width: 500px;
+        height: 240px;
+    }
+    
+    .bin-fluctuations-main-wrapper .container.ave {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .value {
+        font-size: 64px;
+    }
+    
+    .bin-fluctuations-main-wrapper .ave-value .unit {
+        font-size: 22px;
+    }
+    
+    .bin-fluctuations-main-wrapper .insights {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
