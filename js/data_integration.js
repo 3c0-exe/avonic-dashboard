@@ -1,6 +1,9 @@
 // js/data_integration.js - AVONIC Real Data Integration with Rate Limit Protection
 
-const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
+// ✅ Use API_BASE from main_components.js or define only if missing
+if (typeof API_BASE === 'undefined') {
+  var API_BASE = 'https://avonic-main-hub-production.up.railway.app';
+}
 
 // ====== Request Management ======
 let pendingRequest = null; // Prevent duplicate requests
