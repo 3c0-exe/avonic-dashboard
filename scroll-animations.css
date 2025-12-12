@@ -1,0 +1,256 @@
+/* ====================================
+   SCROLL ANIMATION STYLES
+   ==================================== */
+
+/* Base animation setup */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hero Section - Fade in from bottom */
+.hero-section.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(0);
+}
+
+.hero-section.animated {
+    opacity: 1;
+}
+
+.hero-section .left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+}
+
+.hero-section.animated .left {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.hero-section .right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
+}
+
+.hero-section.animated .right {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Dedication Section - Slide in from sides */
+.dedication.animate-on-scroll .left {
+    opacity: 0;
+    transform: translateX(-60px);
+    transition: opacity 0.7s ease-out 0.3s, transform 0.7s ease-out 0.3s;
+}
+
+.dedication.animated .left {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.dedication.animate-on-scroll .right {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.7s ease-out 0.3s, transform 0.7s ease-out 0.3s;
+}
+
+.dedication.animated .right {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Worm Fact Section - Scale in */
+.worm-fact.animate-on-scroll {
+    transform: scale(0.95) translateY(30px);
+}
+
+.worm-fact.animated {
+    transform: scale(1) translateY(0);
+}
+
+/* Info Cards - Stagger animation */
+.info-card-subcontainer {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    transition: 
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.info-card-subcontainer.animated {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Tutorial Cards - Slide in stagger */
+.tutorial-card {
+    opacity: 0;
+    transform: translateY(50px) rotateX(10deg);
+    transition: 
+        opacity 0.7s ease-out,
+        transform 0.7s ease-out;
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.tutorial-card.animated {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+
+/* Still Curious Section - Reveal effect */
+.still-curious.animate-on-scroll .left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+}
+
+.still-curious.animated .left {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.still-curious.animate-on-scroll .right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
+}
+
+.still-curious.animated .right {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* SDG Cards - Cascade effect */
+.sdg {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.sdg.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sdg-logo-container {
+    opacity: 0;
+    transform: scale(0.8) rotate(-10deg);
+    transition: 
+        opacity 0.5s ease-out 0.3s,
+        transform 0.5s ease-out 0.3s;
+}
+
+.sdg.animated .sdg-logo-container {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+}
+
+/* FAQ Section - Accordion reveal */
+.FAQ-section.animate-on-scroll .apw {
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
+}
+
+.FAQ-section.animated .apw {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.faq-item {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: 
+        opacity 0.5s ease-out,
+        transform 0.5s ease-out;
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.FAQ-section.animated .faq-item {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Section Titles - Pop in effect */
+.title.htgs {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    transition: 
+        opacity 0.6s ease-out 0.1s,
+        transform 0.6s ease-out 0.1s;
+}
+
+.animated .title.htgs,
+.title.htgs.animated {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Buttons - Subtle bounce */
+.animate-on-scroll .btn.orng {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out 0.6s, transform 0.5s ease-out 0.6s;
+}
+
+.animated .btn.orng {
+    opacity: 1;
+    transform: translateY(0);
+    animation: subtle-bounce 0.6s ease-out 0.8s;
+}
+
+@keyframes subtle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll,
+    .animate-on-scroll * {
+        animation: none !important;
+        transition: opacity 0.3s ease-out !important;
+        transform: none !important;
+    }
+    
+    .animated {
+        opacity: 1 !important;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 900px) {
+    .animate-on-scroll {
+        transform: translateY(20px);
+    }
+    
+    /* Reduce animation complexity on mobile */
+    .hero-section .left,
+    .hero-section .right,
+    .dedication .left,
+    .dedication .right {
+        transform: translateY(20px);
+    }
+    
+    .hero-section.animated .left,
+    .hero-section.animated .right,
+    .dedication.animated .left,
+    .dedication.animated .right {
+        transform: translateY(0);
+    }
+}
