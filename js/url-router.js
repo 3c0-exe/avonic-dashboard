@@ -1,10 +1,11 @@
-// UPDATED URL Router with Settings Sub-routes
+// AVONIC URL Router with Authentication
+// Handles page navigation using URL hash routing
+
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
+    '/claim-device': '.content.claim-device',
     '/settings': '.content.settings',
-    '/settings/account': '.content.settings-account',
-    '/settings/claim': '.content.settings-claim', // NEW ROUTE
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
@@ -12,20 +13,29 @@ const routes = {
 
 let currentPage = null;
 
+// Check if user is authenticated
 function isAuthenticated() {
-    const token = localStorage.getItem('avonic_token');
-    return !!token;
-}
-
-function requireAuth() {
-    if (!isAuthenticated()) {
-        console.log('🔒 Not authenticated, redirecting to login');
-        window.location.href = 'app.html';
-        return false;
-    }
+    // TEMPORARY: Always return true for CSS development
     return true;
+
+    // const token = localStorage.getItem('avonic_token');
+    // return !!token;
 }
 
+// Redirect to forms.html if not authenticated
+function requireAuth() {
+    // TEMPORARY: Disable redirect for development
+    return true;
+
+    // if (!isAuthenticated()) {
+    //     console.log('🔒 Not authenticated, redirecting to login');
+    //     window.location.href = 'app.html';
+    //     return false;
+    // }
+    // return true;
+}
+
+// Initialize router
 function initRouter() {
     console.log('🚀 Router initialized');
     
@@ -54,14 +64,19 @@ function initRouter() {
     }
 }
 
+// Handle route changes
 function handleRouteChange() {
     let hash = window.location.hash.slice(1);
     
+    // Default to DASHBOARD if authenticated
     if (!hash || hash === '') {
         hash = '/dashboard';
     }
     
+    // Strip query parameters for route matching
     const route = hash.split('?')[0];
+    
+    // Find matching route
     const pageSelector = routes[route];
     
     if (pageSelector) {
@@ -72,6 +87,7 @@ function handleRouteChange() {
     }
 }
 
+// Handle bin page navigation with ESP-ID parameter
 function handleBinPageLoad(route) {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash.split('?')[1]);
@@ -102,14 +118,17 @@ function handleBinPageLoad(route) {
     }
 }
 
+// Show specific page and hide all others
 function showPage(selector, route) {
     console.log(`📄 Navigating to: ${route}`);
     
+    // Remove active from all pages
     document.querySelectorAll('.content').forEach(page => {
         page.classList.remove('active');
         page.style.display = 'none';
     });
     
+    // Show target page
     const targetPage = document.querySelector(selector);
     if (targetPage) {
         targetPage.classList.add('active');
@@ -119,38 +138,24 @@ function showPage(selector, route) {
         window.scrollTo(0, 0);
         
         // Load page-specific data
-        if (route === '/settings' && typeof window.settingsNav !== 'undefined') {
-            console.log('⚙️ Loading settings hub...');
-        }
-        
-        if (route === '/settings/account' && typeof loadAccountSettings === 'function') {
-            console.log('👤 Loading account settings...');
-            loadAccountSettings();
-        }
-        
-// CHANGED: Removed WiFi check, added optional logging for Claim
-        if (route === '/settings/claim') {
-            console.log('🔗 Loading claim settings...');
-            // Reset form UI if needed
-            const alertBox = document.getElementById('settings-claim-alert');
-            const successBox = document.getElementById('settings-claim-success');
-            const input = document.getElementById('settings-esp-id');
-            if(alertBox) alertBox.style.display = 'none';
-            if(successBox) successBox.style.display = 'none';
-            if(input) input.value = '';
+        if (route === '/settings' && typeof loadUserSettings === 'function') {
+            console.log('📥 Loading settings data...');
+            loadUserSettings();
         }
         
         if (route === '/dashboard' && typeof loadDashboard === 'function') {
-            console.log('📊 Loading dashboard data...');
+            console.log('📥 Loading dashboard data...');
             loadDashboard();
         }
         
+        // Handle bin pages with ESP-ID parameter
         if (route === '/bin' || route === '/bin2') {
             handleBinPageLoad(route);
         }
         
+        // Load bin cards on home page
         if (route === '/' && typeof loadBinCards === 'function') {
-            console.log('🗑️ Loading bin cards...');
+            console.log('📥 Loading bin cards...');
             setTimeout(() => loadBinCards(), 100);
         }
         
@@ -160,20 +165,20 @@ function showPage(selector, route) {
     }
 }
 
+// Update active state in navigation
 function updateActiveNav(route) {
     const navLinks = document.querySelectorAll('nav a');
     navLinks.forEach(link => {
         link.classList.remove('active');
     });
     
-    // Handle settings sub-routes
-    const baseRoute = route.startsWith('/settings') ? '/settings' : route;
-    const activeLink = document.querySelector(`nav a[href="#${baseRoute}"]`);
+    const activeLink = document.querySelector(`nav a[href="#${route}"]`);
     if (activeLink) {
         activeLink.classList.add('active');
     }
 }
 
+// Setup navigation click handlers
 function setupNavigation() {
     const navLinks = document.querySelectorAll('nav a');
     
@@ -186,10 +191,12 @@ function setupNavigation() {
     console.log('✅ Navigation handlers setup');
 }
 
+// Programmatic navigation helper
 function navigateTo(route) {
     window.location.hash = '#' + route;
 }
 
+// Logout function
 function logout() {
     localStorage.removeItem('avonic_token');
     localStorage.removeItem('avonic_user');
@@ -197,8 +204,10 @@ function logout() {
     window.location.href = 'app.html';
 }
 
+// Initialize router
 initRouter();
 
+// Export for use in other scripts
 window.router = {
     navigateTo,
     logout,
