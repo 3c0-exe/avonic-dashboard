@@ -1,11 +1,4 @@
-.main.logo{
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    color: #BCD093;
-    padding-left: 18px;
-    padding-top: 0;
-}
+
 
 .main.logo h1 {
     font-size: 34px;

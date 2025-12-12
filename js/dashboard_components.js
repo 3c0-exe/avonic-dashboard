@@ -408,7 +408,7 @@ function generateDummyData(config) {
     
     return { labels, values };
 }
-
+ 
 // ========================================
 // 📊 CREATE CHART FOR SPECIFIC SECTION
 // ========================================

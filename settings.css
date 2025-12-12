@@ -50,8 +50,9 @@
     cursor: pointer;
     box-shadow: 0px 8.48408px 0px #000000;
     transition: transform 0.3s ease, background-color 0.2s ease;
-    animation: fadeIn 0.6s ease-out forwards;
+   
 }
+
 
 .settings-nav-card:nth-child(1) { animation-delay: 0.1s; }
 .settings-nav-card:nth-child(2) { animation-delay: 0.2s; }
