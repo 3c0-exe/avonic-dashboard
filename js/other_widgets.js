@@ -334,3 +334,25 @@ document.addEventListener('click', (e) => {
 });
 
 console.log('✅ other_widgets.js loaded with all handlers');
+
+
+// 1. Get all nav links
+    const navLinks = document.querySelectorAll('.horizontal.orientation');
+
+    // 2. Function to update active class based on URL hash
+    function updateActiveNav() {
+        const currentHash = window.location.hash || '#/'; // Default to #/ if empty
+
+        navLinks.forEach(link => {
+            // Check if this link's href matches the current URL hash
+            if (link.getAttribute('href') === currentHash) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+    // 3. Listen for hash changes (when user clicks links) and run on load
+    window.addEventListener('hashchange', updateActiveNav);
+    window.addEventListener('load', updateActiveNav);

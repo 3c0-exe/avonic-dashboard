@@ -406,6 +406,11 @@ width: 96%;
     gap: 15px;
 }
 
+.action-icon-wrapper{
+    display: flex;
+    justify-content: space-evenly;
+}
+
 .action-item {
     display: flex;
     align-items: center;
@@ -552,6 +557,9 @@ width: 96%;
 }
 
 /* Average card - WHITE background */
+.bin-fluctuations .container.ave {
+  
+  
  .container.ave {
     background: white;
     border: 3px solid #000;
@@ -637,4 +645,5 @@ width: 96%;
     font-size: 14px;
     line-height: 1.5;
     color: #333;
+}
 }
