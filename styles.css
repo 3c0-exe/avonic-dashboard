@@ -154,13 +154,13 @@ nav ul{
    LAYOUT
    ======================================== */
 
-/* body{
+body{
     min-height: 100vh;
     display: grid;
     grid-template-columns: 285px 1fr;
     grid-template-areas: "nav body";
     height: 100vh;
-} */
+}
 
 .content{
     grid-area: body;
