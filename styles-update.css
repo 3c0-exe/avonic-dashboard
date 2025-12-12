@@ -13,27 +13,9 @@
 
 /* bin fluctuations */
 
-.quick-insights-tab{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    max-width: 800px;
-    height: 684px;
-    background-color: white;
-    padding: 20px;
-    border: 2px solid;
-    border-radius: 12px;
-    box-shadow: 0px 7.20548px 0px #000000;
-    justify-self: center;
-}
 
 
 
-.bf-sensor-label{
-    display: flex;
-    align-items: center;
-}
 
 .bf-sensor-icon img{
     padding-right: 8px;
@@ -289,17 +271,7 @@ width: 96%;
     align-self: flex-start;
 }
 
-.bin-fluctuations .bf-sensor-label{
-    
-    padding: 26px 0;
-}
 
-
-
-.bin-fluctuations .bf-sensor-label .title{
-    font-size: 18px;
-    
-}
 
 .container.main .left .chart .title{
     font-size: 18px;
@@ -307,15 +279,7 @@ width: 96%;
 }
 
 
-.bin-fluctuations-sec{
-    max-width: 900px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    margin: 0 20px;
-   justify-self: center;
-   
-}
+
 
 .ave-output .title{
     font-size: 32px;
@@ -336,34 +300,7 @@ width: 96%;
 }
 
 
- .chart-wrapper {
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-.chart-container {
-    width: 436px;
-    height: 246px;
-    position: relative;
-}
-
-
-
-
-
-.insights{
-    max-width: 289px;
-    width: 100%;
-    
-    background-color: white;
-    height: 100px;
-    padding: 10px;
-    border-radius: 12px;
-    border: 2px solid;
-    box-shadow: 0px 7.20548px 0px #000000;
-}
-
-.insights .title{
+ .title{
     display: flex;
     padding-bottom: 10px;
     font-weight: 100;
@@ -384,24 +321,7 @@ width: 96%;
 }
 
 
-/* Modal Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
 
-.modal-overlay.active {
-    display: flex;
-}
 
 @keyframes fadeIn {
     from {
@@ -568,56 +488,34 @@ width: 96%;
     background: rgba(255, 255, 255, 0.3);
 }
 
-.worm-condition-clipart img{
-    min-width: 100px;
-    max-height: 124px;
-    height: auto;
-    object-fit:contain;
-}
+
 
 /* ========================================
    DASHBOARD FIX - Exact Target Match
    ======================================== */
 
 /* Main wrapper */
-.bin-fluctuations-main-wrapper {
+-main-wrapper {
     padding: 40px 20px;
 }
 
-/* Each sensor section */
-.bin-fluctuations {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto 50px;
-    padding-bottom: 50px;
-    border-bottom: 2px solid #ddd;
-}
 
-.bin-fluctuations:last-child {
+
+:last-child {
     border-bottom: none;
 }
 
-/* Sensor label - icon + name */
-.bin-fluctuations .bf-sensor-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 25px;
-}
 
-.bin-fluctuations .bf-sensor-icon img {
+
+ .bf-sensor-icon img {
     width: 32px;
     height: 32px;
 }
 
-.bin-fluctuations .bf-sensor-label .title {
-    font-size: 22px;
-    font-weight: 700;
-    display: block;
-}
+
 
 /* CRITICAL: Side-by-side layout */
-.bin-fluctuations .container.main {
+ .container.main {
     display: flex;
     flex-direction: row;
     gap: 40px;
@@ -625,38 +523,27 @@ width: 96%;
 }
 
 /* LEFT: Chart side (60%) */
-.bin-fluctuations .container.main .left {
+ .container.main .left {
     flex: 6;
     min-width: 0;
 }
 
-.bin-fluctuations .left .chart {
+ .left .chart {
     width: 100%;
 }
 
-.bin-fluctuations .left .chart .title {
+ .left .chart .title {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 20px;
     display: block;
 }
 
-/* Chart wrapper - NO background, transparent */
-.bin-fluctuations .chart-wrapper {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-}
 
-.bin-fluctuations .chart-container {
-    width: 100% !important;
-    height: 280px !important;
-    position: relative;
-}
+
 
 /* RIGHT: Average + Insights (40%) */
-.bin-fluctuations .container.main .right {
+ .container.main .right {
     flex: 4;
     min-width: 300px;
     display: flex;
@@ -665,7 +552,7 @@ width: 96%;
 }
 
 /* Average card - WHITE background */
-.bin-fluctuations .container.ave {
+ .container.ave {
     background: white;
     border: 3px solid #000;
     border-radius: 24px;
@@ -677,37 +564,37 @@ width: 96%;
     align-items: center;
 }
 
-.bin-fluctuations .ave-output {
+ .ave-output {
     display: flex;
     flex-direction: column;
 }
 
-.bin-fluctuations .ave-output .title {
+ .ave-output .title {
     font-size: 24px;
     font-weight: 400;
     color: #666;
     margin-bottom: 8px;
 }
 
-.bin-fluctuations .ave-value {
+ .ave-value {
     display: flex;
     align-items: baseline;
     gap: 5px;
 }
 
-.bin-fluctuations .ave-value .value {
+ .ave-value .value {
     font-size: 64px;
     font-weight: 700;
     line-height: 1;
 }
 
-.bin-fluctuations .ave-value .unit {
+ .ave-value .unit {
     font-size: 20px;
     font-weight: 600;
 }
 
 /* Worm clipart */
-.bin-fluctuations .worm-condition-clipart {
+ .worm-condition-clipart {
     flex-shrink: 0;
 }
 
@@ -732,40 +619,22 @@ width: 96%;
     object-fit: contain;
 }
 
-/* Insights card - WHITE background */
-.bin-fluctuations .insights {
-    background: white;
-    border: 3px solid #000;
-    border-radius: 24px;
-    box-shadow: none;
-    padding: 20px;
-    width: 100%;
-    min-height: 100px;
-    max-width: 100%;
-}
 
-.bin-fluctuations .insights .title {
+  .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
 }
 
-.bin-fluctuations .insights .title h1 {
+  .title h1 {
     font-size: 18px;
     font-weight: 700;
     margin: 0;
 }
 
-.bin-fluctuations .insights .content {
+  .content {
     font-size: 14px;
     line-height: 1.5;
     color: #333;
-}
-
-/* Action icon (wrench) */
-.fix-icon {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
 }

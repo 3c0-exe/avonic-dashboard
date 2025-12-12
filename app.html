@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="settings.css">
     <link rel="stylesheet" href="styles-update.css">
+    <link rel="stylesheet" href="dashboard-module.css">
     
   
     
@@ -254,291 +255,284 @@
 <div class="content dashboard">
     <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
     <div class="page-header">Dashboard</div>
-
-    <div class="bin-fluctuations-main-wrapper">
-        
-        <!-- Temperature Section -->
-        <div class="bin-fluctuations" data-sensor="temperature">
-            <div class="bf-sensor-label">
-                <div class="bf-sensor-icon">
-                    <img src="img/icons/sensorIcons/TempIcon.svg" alt="">
-                </div>
-                <div class="title">Temperature</div>
+<div class="dashboard-module-wrapper">
+    
+    <!-- Temperature Section -->
+    <div class="dashboard-section" data-sensor="temperature">
+        <div class="dashboard-sensor-header">
+            <div class="dashboard-sensor-icon">
+                <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
             </div>
-
-            <div class="container main">
-                <div class="left">
-                    <div class="chart">
-                        <h1 class="title">Summary</h1>
-                        <div class="chart-wrapper">
-                            <div class="chart-container">
-                                <canvas id="chart-temperature"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="right">
-                    <div class="container ave">
-                        <div class="ave-output">
-                            <div class="title">Average</div>
-                            <div class="ave-value">
-                                <div class="value">--</div>
-                                <div class="unit">°C</div>
-                            </div>
-                        </div>
-
-                        <div class="worm-condition-clipart">
-                            <ul>
-                                <li id="worm-normal">
-                                    <img src="img/worm-conditions/Normal.png" alt="">
-                                </li>
-                                <li id="worm-too-wet">
-                                    <img src="img/worm-conditions/Too Wet.png" alt="">
-                                </li>
-                                <li id="worm-too-hot">
-                                    <img src="img/worm-conditions/Too Hot.png" alt="">
-                                </li>
-                                <li id="worm-too-dry">
-                                    <img src="img/worm-conditions/Too Dry.png" alt="">
-                                </li>
-                                <li id="worm-gas-too-high">
-                                    <img src="img/worm-conditions/Gas Too High.png" alt="">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="insights">
-                        <div class="title">
-                            <h1>Insights</h1>
-                            <div class="action-icon-wrapper">
-                                <img class="fix-icon" src="img/icons/Actions.svg" alt="" onclick="openActionsModal(event)">
-                                <div class="action-badge"></div>
-                            </div>
-                        </div>
-                        <div class="content">Loading insights...</div>
-                    </div>
-                </div>
-            </div>
+            <h2 class="dashboard-sensor-title">Temperature</h2>
         </div>
 
-        <!-- Soil Moisture Section -->
-        <div class="bin-fluctuations" data-sensor="soilMoisture">
-            <div class="bf-sensor-label">
-                <div class="bf-sensor-icon">
-                    <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="">
-                </div>
-                <div class="title">Soil Moisture</div>
-            </div>
-
-            <div class="container main">
-                <div class="left">
-                    <div class="chart">
-                        <h1 class="title">Summary</h1>
-                        <div class="chart-wrapper">
-                            <div class="chart-container">
-                                <canvas id="chart-soilMoisture"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="right">
-                    <div class="container ave">
-                        <div class="ave-output">
-                            <div class="title">Average</div>
-                            <div class="ave-value">
-                                <div class="value">--</div>
-                                <div class="unit">%</div>
-                            </div>
-                        </div>
-
-                        <div class="worm-condition-clipart">
-                            <ul>
-                                <li id="worm-normal">
-                                    <img src="img/worm-conditions/Normal.png" alt="">
-                                </li>
-                                <li id="worm-too-wet">
-                                    <img src="img/worm-conditions/Too Wet.png" alt="">
-                                </li>
-                                <li id="worm-too-hot">
-                                    <img src="img/worm-conditions/Too Hot.png" alt="">
-                                </li>
-                                <li id="worm-too-dry">
-                                    <img src="img/worm-conditions/Too Dry.png" alt="">
-                                </li>
-                                <li id="worm-gas-too-high">
-                                    <img src="img/worm-conditions/Gas Too High.png" alt="">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="insights">
-                        <div class="title">
-                            <h1>Insights</h1>
-                            <div class="action-icon-wrapper">
-                                <img class="fix-icon" src="img/icons/Actions.svg" alt="" onclick="openActionsModal(event)">
-                                <div class="action-badge"></div>
-                            </div>
-                        </div>
-                        <div class="content">Loading insights...</div>
+        <div class="dashboard-content-grid">
+            <!-- Left: Chart -->
+            <div class="dashboard-chart-column">
+                <div class="dashboard-chart-card">
+                    <h3 class="dashboard-card-title">Summary</h3>
+                    <div class="dashboard-chart-container">
+                        <canvas class="dashboard-chart-canvas"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Humidity Section -->
-        <div class="bin-fluctuations" data-sensor="humidity">
-            <div class="bf-sensor-label">
-                <div class="bf-sensor-icon">
-                    <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="">
-                </div>
-                <div class="title">Humidity</div>
-            </div>
-
-            <div class="container main">
-                <div class="left">
-                    <div class="chart">
-                        <h1 class="title">Summary</h1>
-                        <div class="chart-wrapper">
-                            <div class="chart-container">
-                                <canvas id="chart-humidity"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="right">
-                    <div class="container ave">
-                        <div class="ave-output">
-                            <div class="title">Average</div>
-                            <div class="ave-value">
-                                <div class="value">--</div>
-                                <div class="unit">%</div>
-                            </div>
-                        </div>
-
-                        <div class="worm-condition-clipart">
-                            <ul>
-                                <li id="worm-normal">
-                                    <img src="img/worm-conditions/Normal.png" alt="">
-                                </li>
-                                <li id="worm-too-wet">
-                                    <img src="img/worm-conditions/Too Wet.png" alt="">
-                                </li>
-                                <li id="worm-too-hot">
-                                    <img src="img/worm-conditions/Too Hot.png" alt="">
-                                </li>
-                                <li id="worm-too-dry">
-                                    <img src="img/worm-conditions/Too Dry.png" alt="">
-                                </li>
-                                <li id="worm-gas-too-high">
-                                    <img src="img/worm-conditions/Gas Too High.png" alt="">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="insights">
-                        <div class="title">
-                            <h1>Insights</h1>
-                            <div class="action-icon-wrapper">
-                                <img class="fix-icon" src="img/icons/Actions.svg" alt="" onclick="openActionsModal(event)">
-                                <div class="action-badge"></div>
-                            </div>
-                        </div>
-                        <div class="content">Loading insights...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gas Levels Section -->
-        <div class="bin-fluctuations" data-sensor="gasLevels">
-            <div class="bf-sensor-label">
-                <div class="bf-sensor-icon">
-                    <img src="img/icons/sensorIcons/GasIcon.svg" alt="">
-                </div>
-                <div class="title">Gas Levels</div>
-            </div>
-
-            <div class="container main">
-                <div class="left">
-                    <div class="chart">
-                        <h1 class="title">Summary</h1>
-                        <div class="chart-wrapper">
-                            <div class="chart-container">
-                                <canvas id="chart-gasLevels"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="right">
-                    <div class="container ave">
-                        <div class="ave-output">
-                            <div class="title">Average</div>
-                            <div class="ave-value">
-                                <div class="value">--</div>
-                                <div class="unit">ppm</div>
-                            </div>
-                        </div>
-
-                        <div class="worm-condition-clipart">
-                            <ul>
-                                <li id="worm-normal">
-                                    <img src="img/worm-conditions/Normal.png" alt="">
-                                </li>
-                                <li id="worm-too-wet">
-                                    <img src="img/worm-conditions/Too Wet.png" alt="">
-                                </li>
-                                <li id="worm-too-hot">
-                                    <img src="img/worm-conditions/Too Hot.png" alt="">
-                                </li>
-                                <li id="worm-too-dry">
-                                    <img src="img/worm-conditions/Too Dry.png" alt="">
-                                </li>
-                                <li id="worm-gas-too-high">
-                                    <img src="img/worm-conditions/Gas Too High.png" alt="">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="insights">
-                        <div class="title">
-                            <h1>Insights</h1>
-                            <div class="action-icon-wrapper">
-                                <img class="fix-icon" src="img/icons/Actions.svg" alt="" onclick="openActionsModal(event)">
-                                <div class="action-badge"></div>
-                            </div>
-                        </div>
-                        <div class="content">Loading insights...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Actions Modal -->
-    <div class="modal-overlay" id="actionsModal">
-        <div class="modal-container">
-            <button class="close-btn" onclick="closeActionsModal()">×</button>
             
-            <div class="modal-header">
-                <h2 class="modal-title">Actions</h2>
-                <p class="modal-subtitle">Recommended steps to improve conditions</p>
-            </div>
+            <!-- Right: Average & Insights -->
+            <div class="dashboard-info-column">
+                <!-- Average Card -->
+                <div class="dashboard-average-card">
+                    <div class="dashboard-average-content">
+                        <div class="dashboard-average-label">Average</div>
+                        <div class="dashboard-average-value-wrapper">
+                            <span class="dashboard-average-value">--</span>
+                            <span class="dashboard-average-unit">°C</span>
+                        </div>
+                    </div>
 
-            <div class="actions-list" id="actionsList">
-                <!-- Actions will be inserted here dynamically -->
+                    <div class="dashboard-worm-clipart">
+                        <ul>
+                            <li data-condition="normal">
+                                <img src="img/worm-conditions/Normal.png" alt="Normal">
+                            </li>
+                            <li data-condition="too-wet">
+                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
+                            </li>
+                            <li data-condition="too-hot">
+                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
+                            </li>
+                            <li data-condition="too-dry">
+                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
+                            </li>
+                            <li data-condition="gas-high">
+                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insights Card -->
+                <div class="dashboard-insights-card">
+                    <div class="dashboard-insights-header">
+                        <h3>Insights</h3>
+                        <div class="dashboard-action-icon-wrapper">
+                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
+                            <div class="dashboard-action-badge"></div>
+                        </div>
+                    </div>
+                    <p class="dashboard-insights-content">Loading insights...</p>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Soil Moisture Section -->
+    <div class="dashboard-section" data-sensor="soilMoisture">
+        <div class="dashboard-sensor-header">
+            <div class="dashboard-sensor-icon">
+                <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
+            </div>
+            <h2 class="dashboard-sensor-title">Soil Moisture</h2>
+        </div>
+
+        <div class="dashboard-content-grid">
+            <div class="dashboard-chart-column">
+                <div class="dashboard-chart-card">
+                    <h3 class="dashboard-card-title">Summary</h3>
+                    <div class="dashboard-chart-container">
+                        <canvas class="dashboard-chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-info-column">
+                <div class="dashboard-average-card">
+                    <div class="dashboard-average-content">
+                        <div class="dashboard-average-label">Average</div>
+                        <div class="dashboard-average-value-wrapper">
+                            <span class="dashboard-average-value">--</span>
+                            <span class="dashboard-average-unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-worm-clipart">
+                        <ul>
+                            <li data-condition="normal">
+                                <img src="img/worm-conditions/Normal.png" alt="Normal">
+                            </li>
+                            <li data-condition="too-wet">
+                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
+                            </li>
+                            <li data-condition="too-hot">
+                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
+                            </li>
+                            <li data-condition="too-dry">
+                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
+                            </li>
+                            <li data-condition="gas-high">
+                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="dashboard-insights-card">
+                    <div class="dashboard-insights-header">
+                        <h3>Insights</h3>
+                        <div class="dashboard-action-icon-wrapper">
+                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
+                            <div class="dashboard-action-badge"></div>
+                        </div>
+                    </div>
+                    <p class="dashboard-insights-content">Loading insights...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Humidity Section -->
+    <div class="dashboard-section" data-sensor="humidity">
+        <div class="dashboard-sensor-header">
+            <div class="dashboard-sensor-icon">
+                <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
+            </div>
+            <h2 class="dashboard-sensor-title">Humidity</h2>
+        </div>
+
+        <div class="dashboard-content-grid">
+            <div class="dashboard-chart-column">
+                <div class="dashboard-chart-card">
+                    <h3 class="dashboard-card-title">Summary</h3>
+                    <div class="dashboard-chart-container">
+                        <canvas class="dashboard-chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-info-column">
+                <div class="dashboard-average-card">
+                    <div class="dashboard-average-content">
+                        <div class="dashboard-average-label">Average</div>
+                        <div class="dashboard-average-value-wrapper">
+                            <span class="dashboard-average-value">--</span>
+                            <span class="dashboard-average-unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-worm-clipart">
+                        <ul>
+                            <li data-condition="normal">
+                                <img src="img/worm-conditions/Normal.png" alt="Normal">
+                            </li>
+                            <li data-condition="too-wet">
+                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
+                            </li>
+                            <li data-condition="too-hot">
+                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
+                            </li>
+                            <li data-condition="too-dry">
+                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
+                            </li>
+                            <li data-condition="gas-high">
+                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="dashboard-insights-card">
+                    <div class="dashboard-insights-header">
+                        <h3>Insights</h3>
+                        <div class="dashboard-action-icon-wrapper">
+                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
+                            <div class="dashboard-action-badge"></div>
+                        </div>
+                    </div>
+                    <p class="dashboard-insights-content">Loading insights...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gas Levels Section -->
+    <div class="dashboard-section" data-sensor="gasLevels">
+        <div class="dashboard-sensor-header">
+            <div class="dashboard-sensor-icon">
+                <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
+            </div>
+            <h2 class="dashboard-sensor-title">Gas Levels</h2>
+        </div>
+
+        <div class="dashboard-content-grid">
+            <div class="dashboard-chart-column">
+                <div class="dashboard-chart-card">
+                    <h3 class="dashboard-card-title">Summary</h3>
+                    <div class="dashboard-chart-container">
+                        <canvas class="dashboard-chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-info-column">
+                <div class="dashboard-average-card">
+                    <div class="dashboard-average-content">
+                        <div class="dashboard-average-label">Average</div>
+                        <div class="dashboard-average-value-wrapper">
+                            <span class="dashboard-average-value">--</span>
+                            <span class="dashboard-average-unit">ppm</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-worm-clipart">
+                        <ul>
+                            <li data-condition="normal">
+                                <img src="img/worm-conditions/Normal.png" alt="Normal">
+                            </li>
+                            <li data-condition="too-wet">
+                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
+                            </li>
+                            <li data-condition="too-hot">
+                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
+                            </li>
+                            <li data-condition="too-dry">
+                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
+                            </li>
+                            <li data-condition="gas-high">
+                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="dashboard-insights-card">
+                    <div class="dashboard-insights-header">
+                        <h3>Insights</h3>
+                        <div class="dashboard-action-icon-wrapper">
+                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
+                            <div class="dashboard-action-badge"></div>
+                        </div>
+                    </div>
+                    <p class="dashboard-insights-content">Loading insights...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="dashboard-modal-overlay">
+    <div class="dashboard-modal-container">
+        <button class="dashboard-modal-close">×</button>
+        
+        <div class="dashboard-modal-header">
+            <h2 class="dashboard-modal-title">Actions</h2>
+            <p class="dashboard-modal-subtitle">Recommended steps to improve conditions</p>
+        </div>
+
+        <div class="dashboard-actions-list">
+            <!-- Actions will be inserted here dynamically -->
+        </div>
+    </div>
+</div>
+
+</div>
     <div class="mobile-nav-spacer"></div>
 </div>
 <!-- END OF DASHBOARD PAGE -->
@@ -595,6 +589,7 @@
 <!-- ✅ CORRECT ORDER -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="js/dashboard-module.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/url-router.js"></script>
 <script src="js/main_components.js"></script>         <!-- Creates components FIRST -->

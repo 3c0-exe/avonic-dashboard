@@ -1,0 +1,696 @@
+/* ========================================
+   DASHBOARD MODULE - FULLY NAMESPACED CSS
+   Save as: dashboard-module.css
+   Link in app.html: <link rel="stylesheet" href="dashboard-module.css">
+   ======================================== */
+
+/* ========================================
+   BASE WRAPPER
+   ======================================== */
+
+.dashboard-module-wrapper {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ========================================
+   SENSOR SECTIONS
+   ======================================== */
+
+.dashboard-section {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto 50px;
+    padding-bottom: 50px;
+    border-bottom: 2px solid #ddd;
+}
+
+.dashboard-section:last-child {
+    border-bottom: none;
+}
+
+/* ========================================
+   SENSOR HEADER
+   ======================================== */
+
+.dashboard-sensor-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.dashboard-sensor-icon img {
+    width: 32px;
+    height: 32px;
+}
+
+.dashboard-sensor-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+}
+
+/* ========================================
+   CONTENT GRID (Side-by-Side Layout)
+   ======================================== */
+
+.dashboard-content-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* ========================================
+   LEFT COLUMN - CHART (60%)
+   ======================================== */
+
+.dashboard-chart-column {
+    flex: 6;
+    min-width: 0;
+}
+
+.dashboard-chart-card {
+    width: 100%;
+    background: white;
+    border: 3px solid #000;
+    border-radius: 24px;
+    padding: 30px 25px;
+    box-sizing: border-box;
+}
+
+.dashboard-card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    color: #000;
+}
+
+.dashboard-chart-container {
+    width: 100%;
+    height: 280px;
+    position: relative;
+}
+
+.dashboard-chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ========================================
+   RIGHT COLUMN - AVERAGE & INSIGHTS (40%)
+   ======================================== */
+
+.dashboard-info-column {
+    flex: 4;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ========================================
+   AVERAGE CARD
+   ======================================== */
+
+.dashboard-average-card {
+    background: white;
+    border: 3px solid #000;
+    border-radius: 24px;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-average-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-average-label {
+    font-size: 24px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.dashboard-average-value-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.dashboard-average-value {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+}
+
+.dashboard-average-unit {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* ========================================
+   WORM CLIPART
+   ======================================== */
+
+.dashboard-worm-clipart {
+    flex-shrink: 0;
+}
+
+.dashboard-worm-clipart ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dashboard-worm-clipart ul li {
+    display: none !important;
+}
+
+.dashboard-worm-clipart ul li[style*="display: block"] {
+    display: block !important;
+}
+
+.dashboard-worm-clipart img {
+    width: 100px;
+    height: auto;
+    max-height: 120px;
+    object-fit: contain;
+}
+
+/* ========================================
+   INSIGHTS CARD
+   ======================================== */
+
+.dashboard-insights-card {
+    background: white;
+    border: 3px solid #000;
+    border-radius: 24px;
+    padding: 20px;
+    width: 100%;
+    min-height: 100px;
+}
+
+.dashboard-insights-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.dashboard-insights-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+}
+
+.dashboard-insights-content {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+}
+
+/* ========================================
+   ACTION ICON WITH BADGE
+   ======================================== */
+
+.dashboard-action-icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.dashboard-action-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.dashboard-action-icon:hover {
+    transform: scale(1.1);
+}
+
+.dashboard-action-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 12px;
+    height: 12px;
+    background: #ff3b3b;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: none;
+    animation: dashboardPulse 2s infinite;
+}
+
+@keyframes dashboardPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Disabled state */
+.dashboard-action-icon[style*="opacity: 0.3"] {
+    filter: grayscale(100%);
+}
+
+.dashboard-action-icon[style*="cursor: not-allowed"]:hover {
+    transform: none;
+}
+
+/* ========================================
+   MODAL OVERLAY
+   ======================================== */
+
+.dashboard-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: dashboardFadeIn 0.3s ease;
+}
+
+.dashboard-modal-overlay.active {
+    display: flex;
+}
+
+@keyframes dashboardFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   MODAL CONTAINER
+   ======================================== */
+
+.dashboard-modal-container {
+    background: #2a2a2a;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: dashboardSlideUp 0.3s ease;
+    color: white;
+    border: 2px solid black;
+    box-shadow: 0px 7.20548px 0px #000000;
+}
+
+@keyframes dashboardSlideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   MODAL CLOSE BUTTON
+   ======================================== */
+
+.dashboard-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.dashboard-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   MODAL HEADER
+   ======================================== */
+
+.dashboard-modal-header {
+    margin-bottom: 25px;
+}
+
+.dashboard-modal-title {
+    font-size: 28px;
+    font-weight: 200;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.dashboard-modal-subtitle {
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* ========================================
+   ACTIONS LIST
+   ======================================== */
+
+.dashboard-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dashboard-action-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.dashboard-action-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-action-item-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dashboard-action-item-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.dashboard-action-item-content {
+    flex: 1;
+}
+
+.dashboard-action-item-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #e0e0e0;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+.dashboard-modal-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard-modal-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.dashboard-modal-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.dashboard-modal-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   RESPONSIVE: TABLET
+   ======================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboard-module-wrapper {
+        padding: 30px 15px;
+    }
+    
+    .dashboard-section {
+        padding-bottom: 40px;
+    }
+    
+    .dashboard-content-grid {
+        gap: 30px;
+    }
+    
+    .dashboard-chart-container {
+        height: 260px;
+    }
+    
+    .dashboard-average-card {
+        padding: 25px 20px;
+    }
+    
+    .dashboard-average-value {
+        font-size: 56px;
+    }
+    
+    .dashboard-average-unit {
+        font-size: 18px;
+    }
+    
+    .dashboard-worm-clipart img {
+        max-width: 90px;
+        max-height: 100px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: MOBILE (STACKED LAYOUT)
+   ======================================== */
+
+@media (max-width: 768px) {
+    .dashboard-module-wrapper {
+        padding: 20px 15px;
+    }
+    
+    .dashboard-section {
+        padding-bottom: 35px;
+        margin-bottom: 35px;
+    }
+    
+    .dashboard-sensor-header {
+        margin-bottom: 20px;
+    }
+    
+    .dashboard-sensor-icon img {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .dashboard-sensor-title {
+        font-size: 20px;
+    }
+    
+    /* STACK VERTICALLY ON MOBILE */
+    .dashboard-content-grid {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .dashboard-chart-column {
+        width: 100%;
+        order: 1;
+    }
+    
+    .dashboard-info-column {
+        width: 100%;
+        min-width: 0;
+        order: 2;
+        gap: 20px;
+    }
+    
+    .dashboard-chart-card {
+        padding: 20px 15px;
+        border-width: 2px;
+    }
+    
+    .dashboard-card-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .dashboard-chart-container {
+        height: 220px;
+    }
+    
+    .dashboard-average-card {
+        padding: 20px 15px;
+        border-width: 2px;
+    }
+    
+    .dashboard-average-label {
+        font-size: 20px;
+    }
+    
+    .dashboard-average-value {
+        font-size: 48px;
+    }
+    
+    .dashboard-average-unit {
+        font-size: 16px;
+    }
+    
+    .dashboard-worm-clipart img {
+        max-width: 80px;
+        max-height: 90px;
+    }
+    
+    .dashboard-insights-card {
+        padding: 15px;
+        border-width: 2px;
+    }
+    
+    .dashboard-insights-header h3 {
+        font-size: 16px;
+    }
+    
+    .dashboard-insights-content {
+        font-size: 13px;
+    }
+    
+    .dashboard-action-icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: EXTRA SMALL MOBILE
+   ======================================== */
+
+@media (max-width: 480px) {
+    .dashboard-module-wrapper {
+        padding: 15px 10px;
+    }
+    
+    .dashboard-section {
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-sensor-header {
+        margin-bottom: 15px;
+    }
+    
+    .dashboard-sensor-icon img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .dashboard-sensor-title {
+        font-size: 18px;
+    }
+    
+    .dashboard-content-grid {
+        gap: 20px;
+    }
+    
+    .dashboard-chart-card {
+        padding: 15px 10px;
+    }
+    
+    .dashboard-card-title {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .dashboard-chart-container {
+        height: 200px;
+    }
+    
+    /* STACK AVERAGE VERTICALLY ON VERY SMALL SCREENS */
+    .dashboard-average-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 15px;
+    }
+    
+    .dashboard-average-content {
+        align-items: center;
+    }
+    
+    .dashboard-average-label {
+        font-size: 18px;
+    }
+    
+    .dashboard-average-value {
+        font-size: 42px;
+    }
+    
+    .dashboard-average-unit {
+        font-size: 14px;
+    }
+    
+    .dashboard-worm-clipart img {
+        max-width: 70px;
+        max-height: 80px;
+    }
+    
+    .dashboard-insights-card {
+        padding: 12px;
+    }
+    
+    .dashboard-insights-header h3 {
+        font-size: 14px;
+    }
+    
+    .dashboard-insights-content {
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   UTILITY: PREVENT HORIZONTAL SCROLL
+   ======================================== */
+
+.dashboard-module-wrapper,
+.dashboard-section,
+.dashboard-content-grid,
+.dashboard-chart-column,
+.dashboard-info-column {
+    max-width: 100%;
+    overflow-x: hidden;
+}
