@@ -50,7 +50,6 @@ window.settingsNav = {
             btn.disabled = false;
 
             if (response.ok) {
-                // Use the new Success Modal here too!
                 openSuccessModal("Device claimed successfully!");
                 successBox.style.display = 'block';
                 espInput.value = '';
@@ -122,8 +121,8 @@ async function loadClaimedBinsAccount() {
         const data = await res.json();
 
         if (res.ok && data.devices && data.devices.length > 0) {
-            const displayDevices = data.devices.slice(0, 2);
-            container.innerHTML = displayDevices.map(device => `
+            // Show ALL devices (not just first 2)
+            container.innerHTML = data.devices.map(device => `
                 <div class="bin-item">
                     <img src="/settings-content/settings-img/Account/bin-icon.svg" alt="Bin" class="bin-icon">
                     <div class="bin-info">
@@ -136,10 +135,8 @@ async function loadClaimedBinsAccount() {
                 </div>
             `).join('');
             
-            const viewMoreBtn = document.querySelector('.view-more-btn');
-            if (viewMoreBtn) {
-                viewMoreBtn.style.display = data.devices.length > 2 ? 'block' : 'none';
-            }
+            // Initialize the View More button after loading bins
+            initializeViewMoreButton();
         } else {
             container.innerHTML = `<div style="text-align:center; color:#888; padding:20px;">No devices yet</div>`;
         }
@@ -148,10 +145,45 @@ async function loadClaimedBinsAccount() {
     }
 }
 
+// ====== VIEW MORE BINS FUNCTIONALITY ======
+function toggleViewMoreBins() {
+    const binsList = document.getElementById('account-bins-list');
+    const viewMoreBtn = document.querySelector('.bins-card .view-more-btn');
+    
+    if (!binsList || !viewMoreBtn) return;
+    
+    const isExpanded = binsList.classList.contains('expanded');
+    
+    if (isExpanded) {
+        binsList.classList.remove('expanded');
+        viewMoreBtn.textContent = 'View More';
+    } else {
+        binsList.classList.add('expanded');
+        viewMoreBtn.textContent = 'View Less';
+    }
+}
+
+function initializeViewMoreButton() {
+    const binsList = document.getElementById('account-bins-list');
+    const viewMoreBtn = document.querySelector('.bins-card .view-more-btn');
+    
+    if (!binsList || !viewMoreBtn) return;
+    
+    const binItems = binsList.querySelectorAll('.bin-item');
+    
+    if (binItems.length > 2) {
+        viewMoreBtn.style.display = 'block';
+        viewMoreBtn.onclick = toggleViewMoreBins;
+        binsList.classList.remove('expanded');
+    } else {
+        viewMoreBtn.style.display = 'none';
+        binsList.classList.add('expanded');
+    }
+}
+
 // ====== 3. MODAL SYSTEM ======
 let pendingModalAction = null;
 
-// Save Changes Modal
 function openSaveChangesModal(actionCallback, customMessage) {
     const modal = document.getElementById('save-changes-modal');
     if (!modal) return;
@@ -184,7 +216,6 @@ function closeSaveChangesModal() {
     pendingModalAction = null;
 }
 
-// Current Password Modal
 function showCurrentPasswordModal() {
     const modal = document.getElementById('current-password-modal');
     if (!modal) return;
@@ -204,7 +235,6 @@ function closeCurrentPasswordModal() {
     }
 }
 
-// NEW: SUCCESS MODAL
 function openSuccessModal(message) {
     const modal = document.getElementById('success-modal');
     if (modal) {
@@ -212,7 +242,6 @@ function openSuccessModal(message) {
         if(msgEl) msgEl.textContent = message;
         modal.style.display = 'flex';
     } else {
-        // Fallback if modal HTML is missing
         alert(message);
     }
 }
@@ -264,7 +293,6 @@ async function performEmailUpdate(newEmail, btn, input) {
         const data = await res.json();
 
         if (res.ok) {
-            // SUCCESS MODAL HERE
             openSuccessModal('Email updated successfully!');
             input.setAttribute('readonly', 'readonly');
             btn.textContent = 'Edit';
@@ -320,7 +348,6 @@ async function submitCurrentPassword() {
     const modal = document.getElementById('current-password-modal');
     const currentPassword = modal.querySelector('.input-field').value;
     
-    // Get new password from page
     const inputs = document.querySelectorAll('.password-card .password-input');
     const newPassword = inputs[0].value;
     const token = localStorage.getItem('avonic_token');
@@ -345,7 +372,6 @@ async function submitCurrentPassword() {
 
         if (res.ok) {
             closeCurrentPasswordModal();
-            // SUCCESS MODAL HERE
             openSuccessModal('Password updated successfully!');
             
             inputs.forEach(i => {
@@ -365,7 +391,7 @@ async function submitCurrentPassword() {
     }
 }
 
-// ====== UNCLAIM DEVICE ======
+// ====== 6. UNCLAIM DEVICE ======
 let deviceToUnclaim = null;
 
 function openUnclaimModal(espID, deviceName) {
@@ -394,7 +420,6 @@ async function confirmUnclaim() {
 
         if (res.ok) {
             closeUnclaimModal();
-            // SUCCESS MODAL HERE
             openSuccessModal('Device unclaimed successfully');
             loadClaimedBinsAccount();
         } else {
@@ -405,7 +430,7 @@ async function confirmUnclaim() {
     }
 }
 
-// ====== UTILS ======
+// ====== 7. UTILS ======
 function togglePasswordVisibility(button) {
     const input = button.previousElementSibling;
     const eyeIcon = button.querySelector('.eye-icon');
@@ -419,7 +444,6 @@ function togglePasswordVisibility(button) {
 }
 
 function showModalMessage(message, type = 'error') {
-    // Keep this for errors, but use Modal for success
     let msgDiv = document.getElementById('modal-message');
     if (!msgDiv) {
         msgDiv = document.createElement('div');
