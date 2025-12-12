@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="settings.css">
     <link rel="stylesheet" href="styles-update.css">
     <link rel="stylesheet" href="dashboard-module.css">
+    <link rel="stylesheet" href="quick-insights.css">
     <link rel="icon" type="image/png" href="img/cliparts/favicon.png">
   
     
@@ -255,8 +256,151 @@
 <div class="content dashboard">
     <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
     <div class="page-header">Dashboard</div>
-<div class="dashboard-module-wrapper">
+
+    <!-- ✅ ADD TAB SWITCHER -->
+    <div class="dashboard-tabs">
+        <button class="dashboard-tab-btn active" data-tab="quick-insights">Quick Insights</button>
+        <button class="dashboard-tab-btn" data-tab="bin-fluctuations">Bin Fluctuations</button>
+    </div>
+
+<!-- Quick Insights Content -->
+<div class="quick-insights-wrapper active" id="quickInsightsContent">
     
+    <!-- Top Bar: Date/Time + Bin Selector -->
+    <div class="qi-top-bar">
+        <div class="qi-datetime">
+            <div class="qi-date">Date: <span id="qi-current-date">Aug 26, 2025</span> <strong>(Today)</strong></div>
+            <div class="qi-last-updated">Last Updated: <span id="qi-last-updated">10:30AM</span></div>
+        </div>
+        
+        <div class="qi-bin-selector">
+            <select id="qi-bin-dropdown" class="qi-dropdown">
+                <option value="1">Bin 1</option>
+                <option value="2">Bin 2</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Sensor Tabs (Expandable) -->
+    <div class="qi-sensor-tabs">
+        <button class="qi-sensor-tab active" data-sensor="soilMoisture">
+            <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
+            Soil Moisture
+        </button>
+        <button class="qi-sensor-tab" data-sensor="temperature">
+            <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
+            Temp
+        </button>
+        <button class="qi-sensor-tab" data-sensor="humidity">
+            <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
+            Humidity
+        </button>
+        <button class="qi-sensor-tab" data-sensor="gasLevels">
+            <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
+            Gas Levels
+        </button>
+    </div>
+
+    <!-- Main Content: Stats + Insight -->
+    <div class="qi-main-content">
+        
+        <!-- Left: Statistics Cards -->
+        <div class="qi-stats-container">
+            <div class="qi-stat-card">
+                <div class="qi-stat-label">Min</div>
+                <div class="qi-stat-value">
+                    <span class="value" id="qi-min-value">27.6</span>
+                    <span class="unit" id="qi-min-unit">°C</span>
+                </div>
+            </div>
+
+            <div class="qi-stat-card">
+                <div class="qi-stat-label">Average</div>
+                <div class="qi-stat-value">
+                    <span class="value" id="qi-avg-value">31.6</span>
+                    <span class="unit" id="qi-avg-unit">°C</span>
+                </div>
+            </div>
+
+            <div class="qi-stat-card">
+                <div class="qi-stat-label">Max</div>
+                <div class="qi-stat-value">
+                    <span class="value" id="qi-max-value">35.6</span>
+                    <span class="unit" id="qi-max-unit">°C</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Insight Card -->
+        <div class="qi-insight-card">
+            <div class="qi-insight-title">Insight</div>
+            <p class="qi-insight-content" id="qi-insight-text">
+                Spikes above safe range occurred 2 times today
+            </p>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="qi-table-container">
+        <table class="qi-log-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Reading</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="qi-table-body">
+                <!-- Data will be populated by JavaScript -->
+                <tr>
+                    <td>10:00 AM</td>
+                    <td>31.2°C</td>
+                    <td>Normal</td>
+                </tr>
+                <tr>
+                    <td>10:10 AM</td>
+                    <td>35.8°C</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>10:20 AM</td>
+                    <td>28.5°C</td>
+                    <td>Normal</td>
+                </tr>
+                <tr>
+                    <td>10:30 AM</td>
+                    <td>32.1°C</td>
+                    <td>Normal</td>
+                </tr>
+                <tr>
+                    <td>10:40 AM</td>
+                    <td>29.7°C</td>
+                    <td>Normal</td>
+                </tr>
+                <tr>
+                    <td>10:50 AM</td>
+                    <td>33.4°C</td>
+                    <td>Normal</td>
+                </tr>
+                <tr>
+                    <td>11:00 AM</td>
+                    <td>36.2°C</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>11:10 AM</td>
+                    <td>31.8°C</td>
+                    <td>Normal</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Bin Fluctuations Wrapper (wrap existing dashboard-module-wrapper) -->
+<div class="bin-fluctuations-wrapper" id="binFluctuationsContent" style="display: none;">
+<div class="dashboard-module-wrapper">
     <!-- Temperature Section -->
     <div class="dashboard-section" data-sensor="temperature">
         <div class="dashboard-sensor-header">
@@ -533,6 +677,7 @@
 </div>
 
 </div>
+</div>
     <div class="mobile-nav-spacer"></div>
 </div>
 <!-- END OF DASHBOARD PAGE -->
@@ -589,6 +734,7 @@
 <!-- ✅ CORRECT ORDER -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="js/quick-insights.js"></script>  <!-- ✅ ADD THIS FIRST -->
 <script src="js/dashboard-module.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/url-router.js"></script>
