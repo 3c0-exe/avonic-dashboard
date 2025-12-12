@@ -1,73 +1,7 @@
-// dashboard_components.js - NEW VERSION WITH WORM INTELLIGENCE
+// dashboard_components.js - FIXED VERSION (No duplicate declarations)
 
-// ========================================
-// 📊 SENSOR CONFIGURATIONS
-// ========================================
-
-const SENSOR_CONFIGS = {
-    temperature: {
-        unit: '°C',
-        minValue: 15,
-        maxValue: 35,
-        chartMaxValue: 40,
-        useDummyData: true
-    },
-    soilMoisture: {
-        unit: '%',
-        minValue: 70,
-        maxValue: 95,
-        chartMaxValue: 100,
-        useDummyData: true
-    },
-    humidity: {
-        unit: '%',
-        minValue: 70,
-        maxValue: 95,
-        chartMaxValue: 100,
-        useDummyData: true
-    },
-    gasLevels: {
-        unit: 'ppm',
-        minValue: 0,
-        maxValue: 200,
-        chartMaxValue: 250,
-        useDummyData: true
-    }
-};
-
-// ========================================
-// 🐛 AFRICAN NIGHTCRAWLER OPTIMAL RANGES
-// ========================================
-
-const WORM_CONDITIONS = {
-    temperature: {
-        optimal_min: 22,
-        optimal_max: 28,
-        critical_min: 15,
-        critical_max: 35,
-        unit: '°C'
-    },
-    soilMoisture: {
-        optimal_min: 60,
-        optimal_max: 80,
-        critical_min: 40,
-        critical_max: 90,
-        unit: '%'
-    },
-    humidity: {
-        optimal_min: 60,
-        optimal_max: 80,
-        critical_min: 40,
-        critical_max: 90,
-        unit: '%'
-    },
-    gasLevels: {
-        optimal_min: 0,
-        optimal_max: 100,
-        critical_max: 200,
-        unit: 'ppm'
-    }
-};
+// ✅ Use SENSOR_CONFIGS and WORM_CONDITIONS from main_components.js
+// (No declarations needed - they're already global)
 
 // ========================================
 // 🎨 WORM CONDITION EVALUATOR
@@ -213,6 +147,7 @@ function updateWormClipartForSection(section, clipartFilename) {
     if (targetClipart) {
         targetClipart.classList.add('active');
         targetClipart.style.display = 'block';
+        console.log('✅ Worm clipart updated:', targetId);
     } else {
         console.error('❌ ERROR: Element with ID not found in section:', targetId);
     }
@@ -415,7 +350,12 @@ function generateDummyData(config) {
 
 function createChartForSection(section, canvasId, sensorType) {
     const ctx = document.getElementById(canvasId);
-    if (!ctx) return null;
+    if (!ctx) {
+        console.error('❌ Canvas not found:', canvasId);
+        return null;
+    }
+    
+    console.log('✅ Creating chart for:', sensorType, 'on canvas:', canvasId);
     
     const config = SENSOR_CONFIGS[sensorType];
     const chartData = config.useDummyData ? generateDummyData(config) : {
@@ -511,7 +451,10 @@ function createChartForSection(section, canvasId, sensorType) {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Dashboard Components: DOM Ready, initializing charts...');
+    
     const sensorSections = document.querySelectorAll('.bin-fluctuations[data-sensor]');
+    console.log('📊 Found', sensorSections.length, 'sensor sections');
     
     sensorSections.forEach((section, index) => {
         const sensorType = section.dataset.sensor;
@@ -519,7 +462,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (canvas) {
             canvas.id = `chart-${sensorType}`;
+            console.log(`📈 Initializing chart ${index + 1}/${sensorSections.length}: ${sensorType}`);
             createChartForSection(section, canvas.id, sensorType);
+        } else {
+            console.error('❌ No canvas found in section:', sensorType);
         }
     });
     
@@ -537,6 +483,8 @@ document.addEventListener('DOMContentLoaded', function() {
             closeActionsModal();
         }
     });
+    
+    console.log('✅ Dashboard Components initialized successfully!');
 });
 
-console.log('✅ New Dashboard Components Loaded Successfully!');
+console.log('✅ dashboard_components.js loaded');

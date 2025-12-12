@@ -1,0 +1,515 @@
+html, body {
+    /* 1. Ensure no browser default margin/padding on the root elements */
+    padding: 0;
+    margin: 0;
+    
+    /* 2. Crucially, prevent content from forcing the page wider than the viewport */
+    width: 100%;
+    overflow-x: hidden; /* This is the key to hide unwanted horizontal scrollbar */
+}
+
+.bin-fluctuations-main-wrapper {
+    /* Re-check this element's padding, especially for small screens (as noted previously) */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Hide all worm cliparts by default */
+.worm-condition-clipart ul li {
+    display: none !important;
+}
+
+/* Make sure the images are visible when their parent li is shown */
+.worm-condition-clipart ul li img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    display: block;
+}
+
+/* Override the display:none when JavaScript sets display:block */
+.worm-condition-clipart ul li[style*="display: block"] {
+    display: block !important;
+}
+
+ .bin-fluctuations-nav{
+    position: sticky;
+    top: 0;
+    z-index: 150;
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    grid-template-rows: 100px auto;
+    grid-template-areas:
+        "E1 E2"
+        "E3 E3";
+    width: 100%;
+    padding: 16px;
+    background: #222;
+    color: var(--bg);
+    box-sizing: border-box;
+   }
+
+/* ========================================
+   MOBILE LAYOUT FOR BIN FLUCTUATIONS
+   ======================================== */
+
+/* Mobile: Stack vertically, chart on top, info below */
+@media (max-width: 768px) {
+    
+    /* Body adjustments for mobile */
+    body {
+        padding: 20px;
+    }
+    
+    /* Bin Fluctuations Main Wrapper */
+    .bin-fluctuations-main-wrapper {
+        gap: 40px; /* Space between different sensors */
+       
+        width: 100%;
+    }
+    
+    /* Individual Bin Fluctuations Container */
+    .bin-fluctuations {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border-bottom: 3px solid #333;
+        padding-bottom: 40px;
+    }
+    
+    .bin-fluctuations:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    /* Sensor Label */
+    .bin-fluctuations .bf-sensor-label {
+        padding: 0;
+        margin: 25px 0;
+        justify-content: flex-start;
+    }
+    
+    .bin-fluctuations .bf-sensor-label .title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    .bf-sensor-icon img {
+        width: 36px;
+        height: 36px;
+        padding-right: 12px;
+    }
+    
+    /* Main Container - Stack Vertically */
+    .container.main {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 25px; /* Space between chart and average/insights */
+        width: 100%;
+    }
+    
+    /* Chart Section */
+    .container.main .left {
+        width: 100%;
+        order: 1;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .container.main .left .chart {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .container.main .left .chart .title {
+        font-size: 20px;
+        font-weight: 600;
+        text-align: left;
+        padding: 0 0 0 5px;
+        margin: 0 0 20px 0;
+    }
+    
+    .chart-wrapper {
+        padding: 25px 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        background: white;
+        border: 3px solid #000;
+        border-radius: 16px;
+        box-shadow: 0px 8px 0px #000000;
+    }
+    
+    .chart-container {
+        width: 100%;
+        max-width: 100%;
+        height: 240px;
+        margin: 0;
+    }
+    
+    /* Right Section - Average & Insights */
+    .container.main .right {
+        width: 100%;
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 25px; /* Space between average box and insights box */
+    }
+    
+    /* Average Container - Horizontal Layout */
+    .container.ave {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        gap: 20px;
+        padding: 30px 25px;
+        margin: 0;
+        background: white;
+        border: 3px solid #000;
+        border-radius: 16px;
+        box-shadow: 0px 8px 0px #000000;
+        box-sizing: border-box;
+    }
+    
+    /* Average Output - Left Side */
+    .ave-output {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .ave-output .title {
+        font-size: 22px;
+        font-weight: 400;
+        margin: 0 0 10px 0;
+        color: #666;
+    }
+    
+    .ave-value {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+    }
+    
+    .ave-value .value {
+        font-size: 64px;
+        line-height: 1;
+        font-weight: 700;
+    }
+    
+    .ave-value .unit {
+        font-size: 22px;
+        font-weight: 600;
+        margin-top: 0;
+    }
+    
+    /* Worm Clipart - Right Side */
+    .worm-condition-clipart {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .worm-condition-clipart ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    
+    .worm-condition-clipart li {
+        display: none;
+    }
+    
+    .worm-condition-clipart li.active {
+        display: block;
+    }
+    
+    .worm-condition-clipart img {
+        min-width: 100px;
+        max-width: 120px;
+        max-height: 120px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+    
+    .worm-condition-clipart ul .too-wet img {
+        max-height: 140px;
+    }
+    
+    /* Insights - Full Width Below */
+    .insights {
+        max-width: 100%;
+        width: 100%;
+        min-height: 120px;
+        height: 150px;
+        padding: 25px;
+        margin: 0;
+        background-color: white;
+        border-radius: 16px;
+        border: 3px solid #000;
+        box-shadow: 0px 8px 0px #000000;
+        box-sizing: border-box;
+        overflow-y: visible;
+    }
+    
+    .insights .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0;
+        margin: 0 0 15px 0;
+        border-bottom: none;
+    }
+    
+    .insights .title h1 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .insights .content {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+    }
+    
+    /* Action Icon */
+    .action-icon-wrapper {
+        display: inline-flex;
+        position: relative;
+    }
+    
+    .fix-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .action-badge {
+        width: 14px;
+        height: 14px;
+    }
+
+.bin-fluctuations-nav{
+    position: sticky;
+    top: 0;
+    z-index: 150;
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    grid-template-rows: 100px auto;
+    grid-template-areas:
+        "E1 E2"
+        "E3 E3";
+    width: 100%;
+    padding: 16px;
+    background: #222;
+    color: var(--bg);
+    box-sizing: border-box;
+   }
+
+   .bin-selection{
+    grid-area: E3;
+    display: flex;              /* use flexbox inside */
+    justify-content: center;    /* horizontally center */
+    align-items: center;        /* vertically center */
+   }
+
+}
+
+/* Extra Small Mobile Devices (Phone Portrait) */
+@media (max-width: 480px) {
+    
+    .bin-fluctuations-main-wrapper {
+        padding: 0;
+        gap: 35px;
+    }
+    
+    .bin-fluctuations {
+        padding-bottom: 35px;
+    }
+    
+    .bin-fluctuations .bf-sensor-label {
+        margin-bottom: 20px;
+    }
+    
+    .bin-fluctuations .bf-sensor-label .title {
+        font-size: 22px;
+    }
+    
+    .bf-sensor-icon img {
+        width: 32px;
+        height: 32px;
+        padding-right: 10px;
+    }
+    
+    .container.main {
+        gap: 20px;
+    }
+    
+    .container.main .left .chart .title {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .chart-wrapper {
+        padding: 20px 15px;
+        border-width: 2px;
+        box-shadow: 0px 6px 0px #000000;
+    }
+    
+    .chart-container {
+        height: 220px;
+    }
+    
+    .container.main .right {
+        gap: 20px;
+    }
+    
+    /* Stack vertically on very small screens */
+    .container.ave {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        gap: 25px;
+        padding: 25px 20px;
+        border-width: 2px;
+        box-shadow: 0px 6px 0px #000000;
+    }
+    
+    .ave-output {
+        align-items: center;
+    }
+    
+    .ave-output .title {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    
+    .ave-value .value {
+        font-size: 56px;
+    }
+    
+    .ave-value .unit {
+        font-size: 20px;
+    }
+    
+    .worm-condition-clipart img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    
+    .insights {
+        padding: 20px;
+        min-height: 100px;
+        border-width: 2px;
+        box-shadow: 0px 6px 0px #000000;
+    }
+    
+    .insights .title {
+        margin-bottom: 12px;
+    }
+    
+    .insights .title h1 {
+        font-size: 18px;
+    }
+    
+    .insights .content {
+        font-size: 14px;
+    }
+    
+    .fix-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Small Tablets (Phone Landscape) */
+@media (min-width: 481px) and (max-width: 768px) {
+    
+    .chart-container {
+        height: 260px;
+    }
+    
+    .container.ave {
+    max-width: 100%; /* Change this from 550px to 100% */
+        margin: 0 auto;
+    }
+    
+    .insights {
+     max-width: 100%; /* Change this from 550px to 100% */
+        margin: 0 auto;
+    }
+}
+
+/* Tablet Landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+    
+      .bf-sensor-label{
+        padding-top: 20px;
+    }
+
+    .bin-fluctuations-main-wrapper {
+        padding: 0;
+    }
+    
+    .bin-fluctuations {
+        padding-bottom: 50px;
+    }
+    
+    .container.main {
+        gap: 30px;
+    }
+    
+    .chart-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .chart-container {
+        height: 280px;
+    }
+    
+    .container.ave {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 35px 30px;
+    }
+    
+    .ave-value .value {
+        font-size: 72px;
+    }
+    
+    .ave-value .unit {
+        font-size: 24px;
+    }
+    
+    .worm-condition-clipart img {
+        max-width: 130px;
+        max-height: 130px;
+    }
+    
+    .insights {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+    }
+    
+    .insights .title h1 {
+        font-size: 22px;
+    }
+    
+    .insights .content {
+        font-size: 16px;
+    }
+}
