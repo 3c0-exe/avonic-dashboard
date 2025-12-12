@@ -9,7 +9,7 @@
 
 body {
   /* This creates the GREEN Background */
-  background: linear-gradient(135deg, #3E6B46 0%, #2A4633 100%);
+  background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
