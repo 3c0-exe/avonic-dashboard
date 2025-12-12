@@ -175,10 +175,7 @@ nav ul {
 
  
 
-.horizontal.orientation:hover {
-    transform: scale(1.05);
-}
-
+ 
 .horizontal.orientation:active {
     transform: scale(0.95);
     color: var(--primary);
@@ -193,6 +190,53 @@ nav ul {
     filter: invert(1);
     width: 50px;
     height: 50px;
+}
+
+/* ========== ACTIVE STATE (Sticking to Side) ========== */
+
+.horizontal.orientation.active {
+    /* 1. Visual Style */
+    background: #F2FED1;
+    border: 2px solid #000000;
+    box-shadow: 0px 8px 0px #000000;
+    color: #000000;
+
+    /* 2. TAB SHAPE & POSITION */
+    /* Pull the box left by 28px (matching your nav padding) */
+    margin-left: -28px; 
+    
+    /* Make it wider to compensate for the shift so the right side stays aligned */
+    width: calc(100% + 28px); 
+    
+    /* Make left corners sharp (0), keep right corners rounded (21px) */
+    border-radius: 0 21px 21px 0; 
+    
+    /* Optional: Remove the left border so it looks like it merges with the edge */
+    border-left: none; 
+
+    /* 3. ALIGNMENT */
+    /* Add extra padding-left (approx 32px) to keep the icon aligned with the dashboard icon below */
+    padding: 12px 20px 12px 32px;
+    
+    /* 4. Spacing for Shadow */
+    margin-bottom: 8px; 
+}
+
+/* Ensure text turns dark green/black */
+.horizontal.orientation.active .navName {
+    color: #2A4633; 
+    font-weight: 700;
+}
+
+/* Ensure icon turns dark (removes the white filter) */
+.horizontal.orientation.active .navIcon {
+    filter: none; 
+}
+
+/* Press effect */
+.horizontal.orientation.active:active {
+    transform: translateY(4px);
+    box-shadow: 0px 4px 0px #000000;
 }
 
 /* ========== BUTTONS (Consolidated) ========== */
