@@ -288,19 +288,33 @@
     height: 20px;
 }
 
-/* Bins Section */
+/* REPLACE THE BINS SECTION IN settings.css WITH THIS */
+
+/* Bins Section - FIXED VERSION */
 .bins-card h2 {
     margin-bottom: 16px;
 }
 
 .bins-list {
     display: flex;
+    flex-direction: column;
     gap: 16px;
     margin-bottom: 16px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Hide bins after the 2nd one by default */
+.bins-list:not(.expanded) .bin-item:nth-child(n+3) {
+    display: none;
+}
+
+/* Show all bins when expanded */
+.bins-list.expanded .bin-item {
+    display: flex;
 }
 
 .bin-item {
-    flex: 1;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -308,11 +322,13 @@
     background: #E8E8E8;
     border: 2px solid #000;
     border-radius: 30px;
+    min-height: 80px;
 }
 
 .bin-icon {
     width: 48px;
     height: 48px;
+    flex-shrink: 0;
 }
 
 .bin-info {
@@ -323,11 +339,13 @@
     font-size: 16px;
     color: #2A4633;
     font-weight: 700;
+    margin: 0 0 4px 0;
 }
 
 .bin-info p {
     font-size: 14px;
     color: #808080;
+    margin: 0;
 }
 
 .remove-bin {
@@ -335,6 +353,7 @@
     border: none;
     cursor: pointer;
     transition: transform 0.2s;
+    flex-shrink: 0;
 }
 
 .remove-bin:hover {
@@ -362,6 +381,14 @@
 
 .view-more-btn:hover {
     background: #B8D989;
+    transform: translateY(-2px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .bins-card .card-description {
+        display: block;
+    }
 }
 
 /* ====== WIFI SETTINGS PAGE ====== */
