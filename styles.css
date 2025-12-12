@@ -2355,31 +2355,35 @@ h1.page-header.help-sec {
     
  
 
-    nav {
+  nav {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: black;
-        height: 70px;
+        background: #2A4633; /* Match your brand dark green */
+        height: 85px;
         padding: 0;
         z-index: 200;
         display: flex;
         justify-content: space-around;
         align-items: center;
+        /* Important: allows the active circle to pop OUT of the container */
+        overflow: visible; 
+        box-shadow: 0px -4px 10px rgba(0,0,0,0.1); /* Optional top shadow */
     }
     
-    nav ul {
+  nav ul {
         list-style: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
         margin: 0;
-        padding: 0 24px;
+        padding: 0 24px; /* Space on sides */
         box-sizing: border-box;
+        position: relative;
     }
-    
+
     nav li:nth-child(1) { order: 2; }
     nav li:nth-child(2) { order: 1; }
     nav li:nth-child(3) { order: 3; }
@@ -2388,6 +2392,7 @@ h1.page-header.help-sec {
         height: 80px;
         flex-shrink: 0;
     }
+    
     
     .navName {
         color: var(--bg);
@@ -2719,6 +2724,108 @@ h1.page-header.help-sec {
     .modalWrapper .manualControl {
         min-width: 100%;
         width: 100%;
+    }
+
+nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #2A4633;
+        height: 85px;
+        padding: 0;
+        z-index: 200;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: visible;
+        box-shadow: 0px -4px 10px rgba(0,0,0,0.1);
+    }
+    
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 40px;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    /* Reorder: Dashboard, Home, Settings */
+    nav li:nth-child(1) { order: 2; } /* Home */
+    nav li:nth-child(2) { order: 1; } /* Dashboard */
+    nav li:nth-child(3) { order: 3; } /* Settings */
+    
+    /* Base style for all nav items */
+    .horizontal.orientation {
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 12px 20px;
+        border: none;
+        box-shadow: none;
+        border-radius: 12px;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.2s ease;
+    }
+
+    /* Active state (Off-white circle background) */
+    .horizontal.orientation.active {
+        background: #F2FED1;
+        border-radius: 20%;
+        padding: 16px 24px;
+        margin-left: 0;
+        width: auto;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Active text - Dark green */
+    .horizontal.orientation.active .navName {
+        color: #2A4633;
+        font-weight: 700;
+        display: block;
+        font-size: 12px;
+    }
+
+    /* Active icon - Dark green */
+    .horizontal.orientation.active .navIcon {
+        filter: brightness(0) saturate(100%) invert(23%) sepi(13%) saturate(969%) hue-rotate(85deg) brightness(96%) contrast(90%);
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Inactive items */
+    .horizontal.orientation .navName {
+        color: #F2FED1;
+        font-size: 11px;
+        font-weight: 500;
+        display: block;
+    }
+    
+    .horizontal.orientation .navIcon {
+        filter: brightness(0) invert(1);
+        width: 28px;
+        height: 28px;
+    }
+    
+    /* Press effect */
+    .horizontal.orientation:active {
+        transform: scale(0.95);
+    }
+    
+    .mobile-nav-spacer {
+        height: 85px;
+        flex-shrink: 0;
     }
 }
 
