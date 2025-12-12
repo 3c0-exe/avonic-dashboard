@@ -2050,29 +2050,40 @@ function createDeviceSelector(devices) {
   selectorWrapper.className = 'device-selector-wrapper';
   
 selectorWrapper.innerHTML = `
-    <div class="device-selector-label">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
-        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
-        <line x1="6" y1="6" x2="6.01" y2="6"/>
-        <line x1="6" y1="18" x2="6.01" y2="18"/>
-      </svg>
-      <span>Viewing Device:</span>
+<div class="connection-status-section">
+  <div class="connection-label">Connected to:</div>
+
+  <div class="connection-controls-row">
+    
+    <div class="device-select-wrapper">
+      <div class="select-icon-left">
+      <img src="img/icons/bin-icon-selection.png" alt="">
+      </div>
+
+      <select class="device-select-pill" id="home-device-selector">
+        ${devices.map((device) => `
+          <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
+            ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
+          </option>
+        `).join('')}
+      </select>
+
+      <div class="select-icon-right">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
     </div>
-    <select class="device-selector" id="home-device-selector">
-      ${devices.map((device) => `
-        <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
-          ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
-        </option>
-      `).join('')}
-    </select>
-    <button class="edit-nickname-btn" data-esp-id="${selectedESPID}" data-nickname="${devices.find(d => d.espID === selectedESPID)?.nickname || ''}" title="Edit nickname">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-      </svg>
+
+    <button class="edit-nickname-btn" 
+      data-esp-id="${selectedESPID}" 
+      data-nickname="${devices.find(d => d.espID === selectedESPID)?.nickname || ''}" 
+      title="Edit nickname">
+      
+       <img src="img/icons/edit-icon.svg" alt="">
     </button>
-  `;
+    
+  </div>
+</div>
+`;
 
   // Insert after page header
   pageHeader.insertAdjacentElement('afterend', selectorWrapper);

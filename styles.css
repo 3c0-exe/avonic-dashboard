@@ -79,10 +79,11 @@ a {
 }
 
 .main.logo.mobile {
-     
-    height: 50px;
+
     display: none;
 }
+
+
 
 .main.logo.mobile.inside-bins {
     /* position: absolute;
@@ -2044,112 +2045,99 @@ h1.page-header.help-sec {
 }
 
 /* ========== DEVICE SELECTOR ========== */
-.device-selection {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: white;
-    border-radius: 8px;
+/* Layout Containers */
+.connection-status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-.device-selection label {
-    font-weight: 600;
-    color: #333;
+.connection-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  margin-left: 5px;
 }
 
-.device-selector-wrapper {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    background: var(--bg-light);
-    border: 2px solid var(--text);
-    border-radius: 12px;
-    padding: var(--space-3) var(--space-4);
-    margin: var(--space-4) 0 var(--space-5);
-    max-width: 600px;
-    transition: all 0.3s ease;
+.connection-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the grey pill and green button */
+  width: 100%;
+  max-width: 500px;
 }
 
-.device-selector-wrapper:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* --- Grey Pill Styling --- */
+.device-select-wrapper {
+  position: relative;
+  flex-grow: 1; 
+  background-color: #FFFFFF; /* Grey background */
+  border: 1px solid #000;
+  border-radius: 50px;
+  height: 45px;
+  display: flex;
+  align-items: center;
 }
 
-.device-selector-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--fs-w-default);
-    font-weight: var(--fw-bold);
-    color: var(--text);
-    white-space: nowrap;
+.select-icon-left, .select-icon-right {
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  color: #333;
+ 
+}
+.select-icon-left { left: 10px; }
+.select-icon-right { 
+    right: 15px;
+    transform: rotate(90deg);
+ }
+
+.device-select-pill {
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #000;
+  padding-left: 45px;
+  padding-right: 40px;
+  cursor: pointer;
+  outline: none;
 }
 
-.device-selector-label svg {
-    flex-shrink: 0;
-    stroke: var(--primary);
-}
-
-.device-selector {
-    flex: 1;
-    padding: var(--space-2) var(--space-4);
-    padding-right: var(--space-6);
-    border: 2px solid var(--border-muted);
-    border-radius: 8px;
-    font-size: var(--fs-w-default);
-    font-family: 'Hoss Round', sans-serif;
-    font-weight: var(--fw-semi-bold);
-    background: var(--bg-light);
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23191919' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right var(--space-3) center;
-    background-size: 12px;
-    min-width: 200px;
-}
-
-.device-selector:hover {
-    border-color: var(--primary);
-    background-color: rgba(184, 217, 137, 0.1);
-}
-
-.device-selector:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(184, 217, 137, 0.2);
-}
-
-.device-selector option {
-    padding: var(--space-3);
-    background: var(--bg-light);
-    color: var(--text);
-    font-size: var(--fs-w-default);
-}
-
+/* --- Green Circle Button Styling --- */
+/* Targeting the class used in your JS */
 .edit-nickname-btn {
-    background: var(--primary);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0; /* Ensures it stays a perfect circle */
+  
+  background-color: #2b4c2b; /* Dark Green */
+  border: 1px solid #000;
+  border-radius: 50%; /* Makes it circular */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  padding: 0; /* Remove default padding */
 }
 
-.edit-nickname-btn:hover {
-    transform: scale(1.05);
+/* Icon Color inside the green button */
+.edit-nickname-btn img {
+  width: 18px;
+  height: auto;
 }
 
-.edit-nickname-btn svg {
-    color: white;
+/* Click effect */
+.edit-nickname-btn:active {
+  transform: scale(0.95);
 }
-
 /* Nickname Modal */
 .nickname-form {
     padding: 20px;
@@ -2303,7 +2291,11 @@ h1.page-header.help-sec {
     .main.logo.mobile {
         display: block;
         margin-top: 10px;
-        width: 50px;
+        
+    }
+
+    .main.logo.mobile img{
+        width: 60px;
         height: auto;
         
     }
@@ -2704,4 +2696,13 @@ h1.page-header.help-sec {
     .modal-control-section {
         padding: 10px;
     }
+}
+
+
+/* more styles */
+
+.content.home .machine_status h1{
+    font-size: 34px;
+    font-weight: 400;
+
 }
