@@ -107,11 +107,10 @@
    ======================================== */
 
 .dashboard-info-column {
-    flex: 4;
-    min-width: 300px;
+    width: 326px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
 
 /* ========================================
