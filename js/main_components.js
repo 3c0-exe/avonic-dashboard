@@ -368,6 +368,8 @@ class Bincard extends HTMLElement {
 customElements.define("bin-card", Bincard)
 
 
+
+
 // ========================================
 // 1. 🎨 STYLE DEFINITIONS (Matches your Screenshots)
 // ========================================

@@ -147,6 +147,16 @@ body {
     color: var(--text);
 }
 
+
+.content-wrapper{
+    margin: 0 50px;
+
+}
+
+.page-header{
+    padding: 0;
+}
+
 /* ========== NAVIGATION ========== */
 nav {
     grid-area: nav;
@@ -318,7 +328,9 @@ nav ul {
 }
 
 .btn.control.manual{
+    font-family: "Hoss Round";
     font-weight: 300;
+    font-size: 12px;
 }
 .btn.skip:hover {
     border-color: #667eea;
@@ -497,6 +509,16 @@ svg {
 .close_btn {
     cursor: pointer;
 }
+/* ========== Header ========== */
+
+.header .title{
+    font-size: 34px;
+    font-weight: 600;
+    padding: 52px;
+}
+
+
+ 
 
 /* ========== HOME PAGE ========== */
 .machine_status {
@@ -2387,6 +2409,11 @@ h1.page-header.help-sec {
     nav li:nth-child(1) { order: 2; }
     nav li:nth-child(2) { order: 1; }
     nav li:nth-child(3) { order: 3; }
+
+    .content-wrapper{
+    margin: 0;
+
+        }
     
     .mobile-nav-spacer {
         height: 80px;
@@ -2826,6 +2853,23 @@ nav {
     .mobile-nav-spacer {
         height: 85px;
         flex-shrink: 0;
+    }
+
+/* header mobile */
+
+    .content.home.active .header{
+        margin: 0 20px;
+    }
+
+    .main.logo.mobile{
+        padding: 0;
+        margin-top: 16px;
+        
+    }
+
+     .header .title{
+        
+        padding: 26px 12px;
     }
 }
 

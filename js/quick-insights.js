@@ -335,48 +335,65 @@
     }
 
     // ========================================
-    // 🔀 TAB SWITCHER (Quick Insights ↔ Bin Fluctuations)
-    // ========================================
+// 🔧 FIX FOR TAB SWITCHER IN quick-insights.js
+// ========================================
+// Replace the handleTabSwitch function (around line 324-355)
+// with this corrected version:
 
-    function handleTabSwitch(event) {
-        const clickedBtn = event.currentTarget;
-        const targetTab = clickedBtn.dataset.tab;
-        
-        // Remove active class from all buttons
-        document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        // Add active class to clicked button
-        clickedBtn.classList.add('active');
-        
-        // Show/hide content
-        const quickInsights = document.getElementById('quickInsightsContent');
-        const binFluctuations = document.getElementById('binFluctuationsContent');
-        
-        if (targetTab === 'quick-insights') {
-            if (quickInsights) {
-                quickInsights.classList.add('active');
-                quickInsights.style.display = 'block';
-            }
-            if (binFluctuations) {
-                binFluctuations.classList.remove('active');
-                binFluctuations.style.display = 'none';
-            }
-        } else {
-            if (quickInsights) {
-                quickInsights.classList.remove('active');
-                quickInsights.style.display = 'none';
-            }
-            if (binFluctuations) {
-                binFluctuations.classList.add('active');
-                binFluctuations.style.display = 'block';
-            }
+function handleTabSwitch(event) {
+    const clickedBtn = event.currentTarget;
+    const targetTab = clickedBtn.dataset.tab;
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Add active class to clicked button
+    clickedBtn.classList.add('active');
+    
+    // Show/hide content
+    const quickInsights = document.getElementById('quickInsightsContent');
+    const binFluctuations = document.getElementById('binFluctuationsContent');
+    
+    if (targetTab === 'quick-insights') {
+        if (quickInsights) {
+            quickInsights.classList.add('active');
+            quickInsights.style.display = ''; // ✅ CHANGED: Remove inline style, let CSS handle it
         }
-        
-        console.log(`✅ Switched to: ${targetTab}`);
+        if (binFluctuations) {
+            binFluctuations.classList.remove('active');
+            binFluctuations.style.display = ''; // ✅ CHANGED: Remove inline style
+        }
+    } else {
+        if (quickInsights) {
+            quickInsights.classList.remove('active');
+            quickInsights.style.display = ''; // ✅ CHANGED: Remove inline style
+        }
+        if (binFluctuations) {
+            binFluctuations.classList.add('active');
+            binFluctuations.style.display = ''; // ✅ CHANGED: Remove inline style
+        }
     }
 
+    if (targetTab === 'bin-fluctuations') {
+    // Show nav bar
+    const nav = document.getElementById('binFluctuationsNav');
+    if (nav) {
+        nav.classList.add('active');
+        nav.style.display = 'grid';
+    }
+} else {
+    // Hide nav bar
+    const nav = document.getElementById('binFluctuationsNav');
+    if (nav) {
+        nav.classList.remove('active');
+        nav.style.display = 'none';
+    }
+}
+    
+    console.log(`✅ Switched to: ${targetTab}`);
+}
     // ========================================
     // 🚀 INITIALIZE
     // ========================================
@@ -522,3 +539,96 @@ console.log('✅ quick-insights.js loaded');
    - Adjust table rendering if needed
 
 */
+
+(function() {
+    'use strict';
+
+    let currentBinIndex = 0;
+    const bins = ['Bin 1', 'Bin 2']; // Add more bins as needed
+
+    function initBinFluctuationsNav() {
+        const nav = document.getElementById('binFluctuationsNav');
+        const binDisplay = document.querySelector('.bf-nav-bin-display');
+        const leftArrow = document.querySelector('.bf-nav-arrow-left');
+        const rightArrow = document.querySelector('.bf-nav-arrow-right');
+        const calendarBtn = document.querySelector('.bf-nav-calendar-btn');
+
+        if (!nav) return;
+
+        // Show/hide nav based on active tab
+        const tabButtons = document.querySelectorAll('.dashboard-tab-btn');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                if (targetTab === 'bin-fluctuations') {
+                    nav.classList.add('active');
+                    nav.style.display = 'grid';
+                } else {
+                    nav.classList.remove('active');
+                    nav.style.display = 'none';
+                }
+            });
+        });
+
+        // Bin selector arrows
+        if (leftArrow) {
+            leftArrow.addEventListener('click', function() {
+                currentBinIndex = (currentBinIndex - 1 + bins.length) % bins.length;
+                binDisplay.textContent = bins[currentBinIndex];
+                updateBinFluctuationsData(currentBinIndex + 1);
+                console.log(`Switched to ${bins[currentBinIndex]}`);
+            });
+        }
+
+        if (rightArrow) {
+            rightArrow.addEventListener('click', function() {
+                currentBinIndex = (currentBinIndex + 1) % bins.length;
+                binDisplay.textContent = bins[currentBinIndex];
+                updateBinFluctuationsData(currentBinIndex + 1);
+                console.log(`Switched to ${bins[currentBinIndex]}`);
+            });
+        }
+
+        // Calendar button
+        if (calendarBtn) {
+            calendarBtn.addEventListener('click', function() {
+                // TODO: Open date picker modal
+                console.log('Calendar button clicked - implement date picker');
+                alert('Date picker feature coming soon!');
+            });
+        }
+
+        console.log('✅ Bin Fluctuations Nav initialized');
+    }
+
+    function updateBinFluctuationsData(binId) {
+        // TODO: Update dashboard data based on selected bin
+        console.log(`Loading data for Bin ${binId}`);
+        
+        // You can integrate with your existing dashboard module here
+        if (window.DashboardModule && typeof window.DashboardModule.loadBinData === 'function') {
+            window.DashboardModule.loadBinData(binId);
+        }
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBinFluctuationsNav);
+    } else {
+        initBinFluctuationsNav();
+    }
+
+    // Expose for external use
+    window.BinFluctuationsNav = {
+        setCurrentBin: function(index) {
+            currentBinIndex = index;
+            const binDisplay = document.querySelector('.bf-nav-bin-display');
+            if (binDisplay) binDisplay.textContent = bins[index];
+        },
+        getCurrentBin: function() {
+            return currentBinIndex + 1;
+        }
+    };
+})();
+
+console.log('✅ Bin Fluctuations Nav script loaded');
