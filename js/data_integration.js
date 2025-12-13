@@ -1,4 +1,4 @@
-// js/data_integration.js - AVONIC Real Data Integration with Rate Limit Protection
+ck// js/data_integration.js - AVONIC Real Data Integration with Rate Limit Protection
 
 // ✅ Use API_BASE from main_components.js or define only if missing
 if (typeof API_BASE === 'undefined') {

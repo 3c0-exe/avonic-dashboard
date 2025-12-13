@@ -466,7 +466,7 @@ window.auth = {
 
 console.log('📦 auth.js module loaded');
 
-async function handleLogin(event) {
+/*async function handleLogin(event) {
   event.preventDefault();
 
   // --- START OF BYPASS CODE ---
@@ -494,4 +494,4 @@ async function handleLogin(event) {
 
   // ... (The original code below this line is now ignored) ...
   const form = event.target;
-  const inputs = form.querySelectorAll('input');}
+  const inputs = form.querySelectorAll('input');}  */

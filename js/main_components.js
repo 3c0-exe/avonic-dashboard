@@ -3,7 +3,7 @@
 // ========================================
 // Place this at the TOP of main_components.js
 
-const DEV_MODE = true; // Set to false when connecting to real backend
+const DEV_MODE = false; // Set to false when connecting to real backend
 const MOCK_DELAY = 300; // Simulate network delay (ms)
 
 // ========================================
@@ -1388,7 +1388,7 @@ async function loadDashboard() {
 
   try {
     // Fetch user's devices
-    const response = await fetch(`${API_BASE}/api/devices`, {
+    const response = await fetch(`${API_BASE}/api/devices/claimed`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -2240,8 +2240,8 @@ async function fetchSensorDataForDevice(espID) {
   if (!token) return;
   
   try {
-    const response = await fetch(`${API_BASE}/api/sensors/latest/${espID}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch(`${API_BASE}/api/devices/${espID}/latest`, { 
+        headers: { 'Authorization': `Bearer ${token}` } 
     });
     
     if (!response.ok) {
@@ -2303,6 +2303,67 @@ let currentBinPage = null;
 let isLoadingBinData = false;
 
 // Load data for specific bin page
+/*async function loadBinPageData(binNumber) {
+  const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+  const espID = urlParams.get('espID');
+  
+  // ✅ Guard: Check if we're already loading
+  if (isLoadingBinData) {
+    console.log('⏳ Already loading bin data, skipping...');
+    return;
+  }
+  
+  // ✅ Guard: Check if ESP-ID exists
+  if (!espID) {
+    console.error('❌ No ESP-ID in URL, cannot load bin data');
+    showBinError(binNumber, 'No device selected');
+    return;
+  }
+  
+  // ✅ Guard: Check if we're already on this bin page
+  if (currentBinPage === `bin${binNumber}-${espID}`) {
+    console.log(`✅ Already viewing Bin ${binNumber} for ${espID}`);
+    return;
+  }
+  
+  console.log(`🔄 Loading Bin ${binNumber} data for ${espID}...`);
+  isLoadingBinData = true;
+  currentBinPage = `bin${binNumber}-${espID}`;
+  
+  const token = localStorage.getItem('avonic_token');
+  if (!token) {
+    console.error('❌ No auth token');
+    isLoadingBinData = false;
+    return;
+  }
+  
+  try {
+    // Show loading state
+    updateBinCards(binNumber, 'loading');
+    
+    const response = await fetch(`${API_BASE}/api/devices/${espID}/latest`, { 
+    headers: { 'Authorization': `Bearer ${token}` } 
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // ✅ Update cards for the correct bin
+    updateBinCards(binNumber, 'success', data, espID);
+    
+    console.log(`✅ Bin ${binNumber} data loaded successfully`);
+    
+  } catch (error) {
+    console.error(`❌ Failed to load Bin ${binNumber} data:`, error);
+    updateBinCards(binNumber, 'error');
+  } finally {
+    isLoadingBinData = false;
+  }
+}*/
+
 async function loadBinPageData(binNumber) {
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
   const espID = urlParams.get('espID');
@@ -2341,18 +2402,29 @@ async function loadBinPageData(binNumber) {
     // Show loading state
     updateBinCards(binNumber, 'loading');
     
-    const response = await fetch(`${API_BASE}/api/sensors/latest/${espID}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+    // ✅ Correct URL structure
+    const response = await fetch(`${API_BASE}/api/devices/${espID}/latest`, { 
+      headers: { 'Authorization': `Bearer ${token}` } 
     });
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
     
-    const data = await response.json();
+    const result = await response.json();
+
+    // 🛑 FIX: UNWRAP THE DATA OBJECT HERE
+    // The backend sends: { success: true, data: { bin1: {...}, bin2: {...} } }
+    // We need just the inner 'data' part to pass to updateBinCards
+    const sensorData = result.data; 
     
-    // ✅ Update cards for the correct bin
-    updateBinCards(binNumber, 'success', data, espID);
+    if (!sensorData) {
+        console.warn(`⚠️ No sensor data found for device ${espID}`);
+        // Optional: you can show an empty state here if you want
+    }
+
+    // ✅ Pass the unwrapped 'sensorData' instead of the raw 'result'
+    updateBinCards(binNumber, 'success', sensorData, espID);
     
     console.log(`✅ Bin ${binNumber} data loaded successfully`);
     

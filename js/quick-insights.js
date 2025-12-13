@@ -35,27 +35,9 @@
     };
 
     // ========================================
-    // 🗄️ DUMMY DATA (MongoDB-ready structure)
+    // 🗄️ DUMMY DATA (Fallback only)
     // ========================================
-
-    // TODO: MongoDB Integration
-    // Collection: sensor_readings
-    // Schema: {
-    //   binId: String,              // '1' or '2'
-    //   sensorType: String,         // 'temperature', 'soilMoisture', 'humidity', 'gasLevels'
-    //   value: Number,              // Sensor reading
-    //   status: String,             // 'Normal', 'High', 'Low', 'Critical'
-    //   timestamp: Date             // ISO 8601 format
-    // }
-    // 
-    // Query Example:
-    // db.sensor_readings
-    //   .find({ binId: selectedBin, sensorType: selectedSensor })
-    //   .sort({ timestamp: -1 })
-    //   .limit(20)  // Last 20 readings
-    //
-    // Replace DUMMY_READINGS with your MongoDB query result
-
+    
     const DUMMY_READINGS = {
         '1': { // Bin 1
             temperature: [
@@ -173,114 +155,281 @@
     }
 
     // ========================================
-    // 📊 CALCULATE MIN/AVE/MAX
+    // 📊 FETCH AND UPDATE DATA FROM API
     // ========================================
 
-    function calculateStats(readings) {
-        if (!readings || readings.length === 0) {
-            return { min: 0, avg: 0, max: 0 };
-        }
+    async function updateFluctuationsWithRealData() {
+        const tableBody = document.getElementById('qi-table-body');
+        const minEl = document.getElementById('qi-min-value');
+        const avgEl = document.getElementById('qi-avg-value');
+        const maxEl = document.getElementById('qi-max-value');
+        const insightEl = document.getElementById('qi-insight-text');
         
-        const values = readings.map(r => r.value);
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
-        
-        return {
-            min: min.toFixed(1),
-            avg: avg.toFixed(1),
-            max: max.toFixed(1)
-        };
-    }
-
-    // ========================================
-    // 📝 GENERATE INSIGHT TEXT
-    // ========================================
-
-    function generateInsight(readings, sensorType) {
-        if (!readings || readings.length === 0) {
-            return 'No data available for this sensor.';
-        }
-        
-        const highCount = readings.filter(r => r.status === 'High' || r.status === 'Critical').length;
-        const lowCount = readings.filter(r => r.status === 'Low').length;
-        
-        if (highCount > 0) {
-            return `Spikes above safe range occurred ${highCount} time${highCount > 1 ? 's' : ''} today`;
-        }
-        
-        if (lowCount > 0) {
-            return `Values below optimal range occurred ${lowCount} time${lowCount > 1 ? 's' : ''} today`;
-        }
-        
-        return 'All readings are within normal range today. Great job!';
-    }
-
-    // ========================================
-    // 🔄 UPDATE STATISTICS DISPLAY
-    // ========================================
-
-    function updateStatistics() {
-        // TODO: MongoDB Integration
-        // Replace this with:
-        // const readings = await fetchReadingsFromMongoDB(currentBin, currentSensor);
-        
-        const readings = DUMMY_READINGS[currentBin][currentSensor];
-        const stats = calculateStats(readings);
         const config = QI_SENSOR_CONFIGS[currentSensor];
         
-        // Update Min
-        document.getElementById('qi-min-value').textContent = stats.min;
-        document.getElementById('qi-min-unit').textContent = config.unit;
-        
-        // Update Average
-        document.getElementById('qi-avg-value').textContent = stats.avg;
-        document.getElementById('qi-avg-unit').textContent = config.unit;
-        
-        // Update Max
-        document.getElementById('qi-max-value').textContent = stats.max;
-        document.getElementById('qi-max-unit').textContent = config.unit;
-        
-        // Update Insight
-        const insight = generateInsight(readings, currentSensor);
-        document.getElementById('qi-insight-text').textContent = insight;
-    }
+        if(tableBody) tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">⏳ Loading...</td></tr>';
+        if(insightEl) insightEl.textContent = 'Fetching latest data...';
 
-    // ========================================
-    // 📋 UPDATE DATA TABLE
-    // ========================================
+        try {
+            const token = localStorage.getItem('avonic_token');
+            if (!token) throw new Error("Not logged in");
 
-    function updateTable() {
-        // TODO: MongoDB Integration
-        // Replace this with:
-        // const readings = await fetchReadingsFromMongoDB(currentBin, currentSensor);
-        
-        const readings = DUMMY_READINGS[currentBin][currentSensor];
-        const config = QI_SENSOR_CONFIGS[currentSensor];
-        const tbody = document.getElementById('qi-table-body');
-        
-        if (!tbody) return;
-        
-        tbody.innerHTML = '';
-        
-        readings.forEach(reading => {
-            const row = document.createElement('tr');
+            // Get Device ID
+            let espID = localStorage.getItem('selected_espID');
             
-            // Determine row class based on status
-            if (reading.status === 'High' || reading.status === 'Critical') {
-                row.classList.add('status-high');
-            } else if (reading.status === 'Low') {
-                row.classList.add('status-low');
+            if (!espID) {
+                const devRes = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const devData = await devRes.json();
+                
+                if (devData.devices && devData.devices.length > 0) {
+                    espID = devData.devices[0].espID;
+                    localStorage.setItem('selected_espID', espID);
+                } else {
+                    throw new Error("No devices found");
+                }
+            }
+
+            // Fetch valid readings from API
+            const response = await fetch(
+                `https://avonic-main-hub-production.up.railway.app/api/devices/${espID}/valid-readings?limit=50`, 
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+            
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            
+            const result = await response.json();
+            const readings = result.readings || [];
+
+            console.log(`📊 Fetched ${readings.length} VALID readings (with bin data)`);
+            
+            if (readings.length === 0) {
+                throw new Error("No valid sensor readings found. ESP32 may not be sending bin data.");
+            }
+
+            // Map sensor type to database key
+            let dbKey = '';
+            switch(currentSensor) {
+                case 'temperature':  dbKey = 'temp'; break;
+                case 'soilMoisture': dbKey = 'soil'; break;
+                case 'humidity':     dbKey = 'humidity'; break;
+                case 'gasLevels':    dbKey = 'gas'; break;
+                default:             dbKey = 'soil';
+            }
+
+            console.log(`🎯 Sensor: ${currentSensor}, DB Key: ${dbKey}, Bin: ${currentBin}`);
+
+            // Process readings for the selected bin
+            const validValues = [];
+            const rowsHTML = readings.map(reading => {
+                // Get the correct bin data
+                const binData = currentBin === '1' ? reading.bin1 : reading.bin2;
+                
+                if (!binData || binData[dbKey] === undefined || binData[dbKey] === null) {
+                    return null;
+                }
+
+                const val = parseFloat(binData[dbKey]);
+                if (isNaN(val)) return null;
+                
+                validValues.push(val);
+
+                // Format timestamp
+                const date = new Date(reading.timestamp);
+                const now = new Date();
+                const daysDiff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                
+                // Show date if more than 1 day old
+                const timeStr = date.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                const dateStr = daysDiff > 1 ? date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                }) : '';
+
+                // Determine status based on sensor type
+                let status = 'Normal';
+                let statusClass = '';
+                
+                if (currentSensor === 'temperature') {
+                    if (val < 15 || val > 35) { 
+                        status = 'Critical'; 
+                        statusClass = 'status-high'; 
+                    } else if (val < 20 || val > 30) { 
+                        status = 'Warning'; 
+                        statusClass = 'status-low'; 
+                    }
+                } 
+                else if (currentSensor === 'soilMoisture') {
+                    if (val < 40) { 
+                        status = 'Dry'; 
+                        statusClass = 'status-low'; 
+                    } else if (val > 80) { 
+                        status = 'Wet'; 
+                        statusClass = 'status-high'; 
+                    }
+                }
+                else if (currentSensor === 'humidity') {
+                    if (val < 30) { 
+                        status = 'Low'; 
+                        statusClass = 'status-low'; 
+                    } else if (val > 80) { 
+                        status = 'High'; 
+                        statusClass = 'status-high'; 
+                    }
+                }
+                else if (currentSensor === 'gasLevels') {
+                    if (val > 200) { 
+                        status = 'Critical'; 
+                        statusClass = 'status-high'; 
+                    } else if (val > 100) { 
+                        status = 'High'; 
+                        statusClass = 'status-high'; 
+                    }
+                }
+
+                return `
+                    <tr class="${statusClass}">
+                        <td>${dateStr ? `${dateStr} ` : ''}${timeStr}</td>
+                        <td>${val.toFixed(1)}${config.unit}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            }).filter(row => row !== null).join('');
+
+            console.log(`✅ Found ${validValues.length} values for ${config.label}`);
+
+            if (validValues.length === 0) {
+                throw new Error(`No ${config.label} data found for Bin ${currentBin}`);
+            }
+
+            // Take only the most recent 20 readings for display
+            const displayValues = validValues.slice(0, 20);
+            const displayRows = rowsHTML.split('</tr>').slice(0, 20).join('</tr>') + (rowsHTML ? '</tr>' : '');
+
+            // Render table
+            if(tableBody) tableBody.innerHTML = displayRows;
+
+            // Calculate stats
+            const min = Math.min(...displayValues).toFixed(1);
+            const max = Math.max(...displayValues).toFixed(1);
+            const avg = (displayValues.reduce((a, b) => a + b, 0) / displayValues.length).toFixed(1);
+
+            if(minEl) minEl.textContent = min;
+            if(maxEl) maxEl.textContent = max;
+            if(avgEl) avgEl.textContent = avg;
+            
+            document.getElementById('qi-min-unit').textContent = config.unit;
+            document.getElementById('qi-avg-unit').textContent = config.unit;
+            document.getElementById('qi-max-unit').textContent = config.unit;
+
+            // Check if data is old
+            const newestReading = readings[0];
+            const dataAge = Date.now() - new Date(newestReading.timestamp).getTime();
+            const hoursOld = Math.floor(dataAge / (60 * 60 * 1000));
+            const isOld = dataAge > (60 * 60 * 1000); // More than 1 hour
+
+            // Generate insight
+            let insightText = generateRealInsight(displayValues, currentSensor);
+            
+            if (isOld) {
+                insightText += ` ⚠️ (Last reading: ${hoursOld}h ago)`;
+            } else {
+                insightText += ' ✅ Recent Data';
             }
             
-            row.innerHTML = `
-                <td>${reading.time}</td>
-                <td>${reading.value}${config.unit}</td>
-                <td>${reading.status}</td>
-            `;
+            if(insightEl) {
+                insightEl.textContent = insightText;
+                insightEl.style.color = isOld ? '#FF9800' : '#4CAF50';
+            }
+
+            console.log(`✅ Quick Insights updated: Min=${min}, Avg=${avg}, Max=${max}`);
+
+        } catch (error) {
+            console.error("❌ Error:", error.message);
             
-            tbody.appendChild(row);
-        });
+            // FALLBACK TO DUMMY DATA
+            console.log('📦 Using demo data as fallback...');
+            
+            const dummyReadings = DUMMY_READINGS[currentBin][currentSensor];
+            const validValues = dummyReadings.map(r => r.value);
+            
+            const rowsHTML = dummyReadings.map(reading => {
+                let statusClass = '';
+                if (reading.status === 'High' || reading.status === 'Critical') {
+                    statusClass = 'status-high';
+                } else if (reading.status === 'Low') {
+                    statusClass = 'status-low';
+                }
+                
+                return `
+                    <tr class="${statusClass}">
+                        <td>${reading.time}</td>
+                        <td>${reading.value}${config.unit}</td>
+                        <td>${reading.status}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            if(tableBody) tableBody.innerHTML = rowsHTML;
+            
+            const min = Math.min(...validValues).toFixed(1);
+            const max = Math.max(...validValues).toFixed(1);
+            const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
+            
+            if(minEl) minEl.textContent = min;
+            if(maxEl) maxEl.textContent = max;
+            if(avgEl) avgEl.textContent = avg;
+            
+            document.getElementById('qi-min-unit').textContent = config.unit;
+            document.getElementById('qi-avg-unit').textContent = config.unit;
+            document.getElementById('qi-max-unit').textContent = config.unit;
+            
+            if(insightEl) {
+                insightEl.textContent = '📊 Demo Data - ' + error.message;
+                insightEl.style.color = '#FF9800';
+            }
+        }
+    }
+
+    // ========================================
+    // 💡 GENERATE INSIGHTS
+    // ========================================
+
+    function generateRealInsight(values, type) {
+        if(!values.length) return "No data available.";
+        
+        const avgVal = values.reduce((a, b) => a + b, 0) / values.length;
+        
+        if (type === 'soilMoisture') {
+            if (avgVal < 50) return "Soil moisture is low. Consider watering.";
+            if (avgVal > 80) return "Soil moisture is high. Good hydration.";
+            return "Soil moisture is optimal for composting.";
+        }
+        
+        if (type === 'temperature') {
+            if (avgVal > 30) return "Temperature is elevated. Check ventilation.";
+            if (avgVal < 20) return "Temperature is low. Composting may be slow.";
+            return "Temperature is in the optimal range.";
+        }
+        
+        if (type === 'humidity') {
+            if (avgVal < 50) return "Humidity is low. Consider adding moisture.";
+            if (avgVal > 80) return "Humidity is high. Monitor for excess moisture.";
+            return "Humidity levels are stable.";
+        }
+        
+        if (type === 'gasLevels') {
+            if (avgVal > 100) return "Gas levels elevated. Check ventilation.";
+            return "Gas levels are normal.";
+        }
+        
+        return "Readings appear stable.";
     }
 
     // ========================================
@@ -289,9 +438,7 @@
 
     function updateAllData() {
         updateDateTime();
-        updateStatistics();
-        updateTable();
-        
+        updateFluctuationsWithRealData();
         console.log(`✅ Quick Insights updated for Bin ${currentBin}, Sensor: ${currentSensor}`);
     }
 
@@ -335,65 +482,60 @@
     }
 
     // ========================================
-// 🔧 FIX FOR TAB SWITCHER IN quick-insights.js
-// ========================================
-// Replace the handleTabSwitch function (around line 324-355)
-// with this corrected version:
+    // 🔧 TAB SWITCHER (Quick Insights ↔ Bin Fluctuations)
+    // ========================================
 
-function handleTabSwitch(event) {
-    const clickedBtn = event.currentTarget;
-    const targetTab = clickedBtn.dataset.tab;
-    
-    // Remove active class from all buttons
-    document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Add active class to clicked button
-    clickedBtn.classList.add('active');
-    
-    // Show/hide content
-    const quickInsights = document.getElementById('quickInsightsContent');
-    const binFluctuations = document.getElementById('binFluctuationsContent');
-    
-    if (targetTab === 'quick-insights') {
-        if (quickInsights) {
-            quickInsights.classList.add('active');
-            quickInsights.style.display = ''; // ✅ CHANGED: Remove inline style, let CSS handle it
+    function handleTabSwitch(event) {
+        const clickedBtn = event.currentTarget;
+        const targetTab = clickedBtn.dataset.tab;
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        clickedBtn.classList.add('active');
+        
+        // Show/hide content
+        const quickInsights = document.getElementById('quickInsightsContent');
+        const binFluctuations = document.getElementById('binFluctuationsContent');
+        
+        if (targetTab === 'quick-insights') {
+            if (quickInsights) {
+                quickInsights.classList.add('active');
+                quickInsights.style.display = '';
+            }
+            if (binFluctuations) {
+                binFluctuations.classList.remove('active');
+                binFluctuations.style.display = 'none';
+            }
+        } else {
+            if (quickInsights) {
+                quickInsights.classList.remove('active');
+                quickInsights.style.display = 'none';
+            }
+            if (binFluctuations) {
+                binFluctuations.classList.add('active');
+                binFluctuations.style.display = '';
+            }
         }
-        if (binFluctuations) {
-            binFluctuations.classList.remove('active');
-            binFluctuations.style.display = ''; // ✅ CHANGED: Remove inline style
+
+        // Show/hide bin fluctuations nav bar
+        const nav = document.getElementById('binFluctuationsNav');
+        if (nav) {
+            if (targetTab === 'bin-fluctuations') {
+                nav.classList.add('active');
+                nav.style.display = 'grid';
+            } else {
+                nav.classList.remove('active');
+                nav.style.display = 'none';
+            }
         }
-    } else {
-        if (quickInsights) {
-            quickInsights.classList.remove('active');
-            quickInsights.style.display = ''; // ✅ CHANGED: Remove inline style
-        }
-        if (binFluctuations) {
-            binFluctuations.classList.add('active');
-            binFluctuations.style.display = ''; // ✅ CHANGED: Remove inline style
-        }
+        
+        console.log(`✅ Switched to: ${targetTab}`);
     }
 
-    if (targetTab === 'bin-fluctuations') {
-    // Show nav bar
-    const nav = document.getElementById('binFluctuationsNav');
-    if (nav) {
-        nav.classList.add('active');
-        nav.style.display = 'grid';
-    }
-} else {
-    // Hide nav bar
-    const nav = document.getElementById('binFluctuationsNav');
-    if (nav) {
-        nav.classList.remove('active');
-        nav.style.display = 'none';
-    }
-}
-    
-    console.log(`✅ Switched to: ${targetTab}`);
-}
     // ========================================
     // 🚀 INITIALIZE
     // ========================================
@@ -457,178 +599,3 @@ function handleTabSwitch(event) {
 })();
 
 console.log('✅ quick-insights.js loaded');
-
-// ========================================
-// 📝 MONGODB INTEGRATION INSTRUCTIONS
-// ========================================
-/*
-
-## HOW TO CONNECT TO MONGODB
-
-1. **Install MongoDB Driver** (if not already):
-   npm install mongodb
-
-2. **Backend API Endpoint** (Node.js example):
-
-   ```javascript
-   // server.js or api/readings.js
-   
-   const { MongoClient } = require('mongodb');
-   
-   app.get('/api/readings', async (req, res) => {
-       const { binId, sensorType, limit = 20 } = req.query;
-       
-       const client = new MongoClient(process.env.MONGODB_URI);
-       
-       try {
-           await client.connect();
-           const db = client.db('avonic');
-           const readings = await db.collection('sensor_readings')
-               .find({ 
-                   binId: binId,
-                   sensorType: sensorType 
-               })
-               .sort({ timestamp: -1 })
-               .limit(parseInt(limit))
-               .toArray();
-           
-           res.json(readings);
-       } finally {
-           await client.close();
-       }
-   });
-   ```
-
-3. **Replace Dummy Data in quick-insights.js**:
-
-   Find this line:
-   ```javascript
-   const readings = DUMMY_READINGS[currentBin][currentSensor];
-   ```
-   
-   Replace with:
-   ```javascript
-   const readings = await fetchReadingsFromMongoDB(currentBin, currentSensor);
-   ```
-
-4. **Add Fetch Function**:
-
-   ```javascript
-   async function fetchReadingsFromMongoDB(binId, sensorType) {
-       try {
-           const response = await fetch(
-               `/api/readings?binId=${binId}&sensorType=${sensorType}&limit=20`
-           );
-           const data = await response.json();
-           return data;
-       } catch (error) {
-           console.error('Error fetching readings:', error);
-           return [];
-       }
-   }
-   ```
-
-5. **Make Functions Async**:
-   - Change `function updateStatistics()` to `async function updateStatistics()`
-   - Change `function updateTable()` to `async function updateTable()`
-   - Change `function updateAllData()` to `async function updateAllData()`
-
-6. **Test with Real Data**:
-   - Check browser console for API calls
-   - Verify data structure matches expected format
-   - Adjust table rendering if needed
-
-*/
-
-(function() {
-    'use strict';
-
-    let currentBinIndex = 0;
-    const bins = ['Bin 1', 'Bin 2']; // Add more bins as needed
-
-    function initBinFluctuationsNav() {
-        const nav = document.getElementById('binFluctuationsNav');
-        const binDisplay = document.querySelector('.bf-nav-bin-display');
-        const leftArrow = document.querySelector('.bf-nav-arrow-left');
-        const rightArrow = document.querySelector('.bf-nav-arrow-right');
-        const calendarBtn = document.querySelector('.bf-nav-calendar-btn');
-
-        if (!nav) return;
-
-        // Show/hide nav based on active tab
-        const tabButtons = document.querySelectorAll('.dashboard-tab-btn');
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-tab');
-                if (targetTab === 'bin-fluctuations') {
-                    nav.classList.add('active');
-                    nav.style.display = 'grid';
-                } else {
-                    nav.classList.remove('active');
-                    nav.style.display = 'none';
-                }
-            });
-        });
-
-        // Bin selector arrows
-        if (leftArrow) {
-            leftArrow.addEventListener('click', function() {
-                currentBinIndex = (currentBinIndex - 1 + bins.length) % bins.length;
-                binDisplay.textContent = bins[currentBinIndex];
-                updateBinFluctuationsData(currentBinIndex + 1);
-                console.log(`Switched to ${bins[currentBinIndex]}`);
-            });
-        }
-
-        if (rightArrow) {
-            rightArrow.addEventListener('click', function() {
-                currentBinIndex = (currentBinIndex + 1) % bins.length;
-                binDisplay.textContent = bins[currentBinIndex];
-                updateBinFluctuationsData(currentBinIndex + 1);
-                console.log(`Switched to ${bins[currentBinIndex]}`);
-            });
-        }
-
-        // Calendar button
-        if (calendarBtn) {
-            calendarBtn.addEventListener('click', function() {
-                // TODO: Open date picker modal
-                console.log('Calendar button clicked - implement date picker');
-                alert('Date picker feature coming soon!');
-            });
-        }
-
-        console.log('✅ Bin Fluctuations Nav initialized');
-    }
-
-    function updateBinFluctuationsData(binId) {
-        // TODO: Update dashboard data based on selected bin
-        console.log(`Loading data for Bin ${binId}`);
-        
-        // You can integrate with your existing dashboard module here
-        if (window.DashboardModule && typeof window.DashboardModule.loadBinData === 'function') {
-            window.DashboardModule.loadBinData(binId);
-        }
-    }
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBinFluctuationsNav);
-    } else {
-        initBinFluctuationsNav();
-    }
-
-    // Expose for external use
-    window.BinFluctuationsNav = {
-        setCurrentBin: function(index) {
-            currentBinIndex = index;
-            const binDisplay = document.querySelector('.bf-nav-bin-display');
-            if (binDisplay) binDisplay.textContent = bins[index];
-        },
-        getCurrentBin: function() {
-            return currentBinIndex + 1;
-        }
-    };
-})();
-
-console.log('✅ Bin Fluctuations Nav script loaded');

@@ -18,28 +18,28 @@
             minValue: 15,
             maxValue: 35,
             chartMaxValue: 40,
-            useDummyData: true
+            useDummyData: false
         },
         soilMoisture: {
             unit: '%',
             minValue: 70,
             maxValue: 95,
             chartMaxValue: 100,
-            useDummyData: true
+            useDummyData: false
         },
         humidity: {
             unit: '%',
             minValue: 70,
             maxValue: 95,
             chartMaxValue: 100,
-            useDummyData: true
+            useDummyData: false
         },
         gasLevels: {
             unit: 'ppm',
             minValue: 0,
             maxValue: 200,
             chartMaxValue: 250,
-            useDummyData: true
+            useDummyData: false
         }
     };
 
@@ -333,11 +333,78 @@
         return { labels, values };
     }
 
+    async function fetchRealSensorData(sensorType) {
+        try {
+            const token = localStorage.getItem('avonic_token');
+            if (!token) {
+                console.warn("⚠️ No login token found. Using dummy data.");
+                return null;
+            }
+
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            // 1. Get the User's First Device ID
+            const deviceRes = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', { headers });
+            const deviceData = await deviceRes.json();
+
+            if (!deviceData.success || deviceData.devices.length === 0) {
+                console.warn("⚠️ No devices found for this user.");
+                return null;
+            }
+
+            const espID = deviceData.devices[0].espID;
+
+            // 2. Fetch Readings for this Device
+            const readingsRes = await fetch(`https://avonic-main-hub-production.up.railway.app/api/devices/${espID}/readings?limit=7`, { headers });
+            const readingsData = await readingsRes.json();
+
+            if (!readingsData.readings || readingsData.readings.length === 0) return null;
+
+            // 3. Map Backend Data to Frontend Chart Format
+            
+            // ✅ FIX: Filter out bad records where bin1 is missing
+            // This prevents the "Cannot read properties of undefined" error
+            const validReadings = readingsData.readings.filter(r => r.bin1 !== undefined && r.bin1 !== null);
+
+            if (validReadings.length === 0) return null;
+
+            const processedData = validReadings.map(reading => {
+                let val = 0;
+
+                // MAPPING LOGIC with safety checks
+                switch(sensorType) {
+                    case 'temperature':  val = reading.bin1.temp || 0; break;
+                    case 'humidity':     val = reading.bin1.humidity || 0; break;
+                    case 'soilMoisture': val = reading.bin1.soil || 0; break;
+                    case 'gasLevels':    val = reading.bin1.gas || 0; break;
+                    default: val = 0;
+                }
+
+                // Format timestamp
+                const date = new Date(reading.timestamp);
+                const label = `${date.getMonth() + 1}/${date.getDate()}`;
+
+                return { label, value: val };
+            });
+
+            // The API returns newest first, but charts need oldest first
+            processedData.reverse();
+
+            return {
+                labels: processedData.map(d => d.label),
+                values: processedData.map(d => d.value)
+            };
+
+        } catch (error) {
+            console.error("❌ Data Fetch Error:", error);
+            return null;
+        }
+    }
     // ========================================
     // 📊 CREATE CHART FOR SPECIFIC SECTION
     // ========================================
 
-    function createChart(section, sensorType) {
+    async function createChart(section, sensorType) {
         const canvas = section.querySelector('.dashboard-chart-canvas');
         if (!canvas) {
             console.error('❌ Canvas not found in section');
@@ -345,10 +412,25 @@
         }
         
         const config = DASHBOARD_SENSOR_CONFIGS[sensorType];
-        const chartData = config.useDummyData ? generateDummyData(config) : {
+
+        let chartData = null;
+
+
+        if (!config.useDummyData) {
+            chartData = await fetchRealSensorData(sensorType);
+        }
+
+
+        // Fallback: If fetch failed or useDummyData is true, generate fake data
+        if (!chartData) {
+            // console.log(`Using dummy data for ${sensorType}`); 
+            chartData = generateDummyData(config);
+        }
+
+        /*const chartData = config.useDummyData ? generateDummyData(config) : {
             labels: ['7/11', '7/12', '7/13', '7/14', '7/15', '7/16', '7/17'],
             values: [25, 26, 24, 27, 28, 26, 25]
-        };
+        };*/
         
         // Update average and condition
         updateAverage(section, chartData.values, sensorType);
