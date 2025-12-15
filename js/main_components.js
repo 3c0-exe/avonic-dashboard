@@ -2235,52 +2235,79 @@ function createBinCardElement(espID, nickname, binNumber) {
 }
 
 // ✅ FETCH SENSOR DATA FOR SPECIFIC DEVICE
+// ✅ FETCH SENSOR DATA FOR SPECIFIC DEVICE
 async function fetchSensorDataForDevice(espID) {
   const token = localStorage.getItem('avonic_token');
   if (!token) return;
-  
+
   try {
-      const response = await fetch(`${API_BASE}/api/devices/${espID}/latest`, { 
+    const response = await fetch(`${API_BASE}/api/devices/${espID}/latest`, { 
         headers: { 'Authorization': `Bearer ${token}` } 
     });
-    
+
     if (!response.ok) {
       console.warn(`⚠️ No data for ${espID}`);
       return;
     }
-    
-    const data = await response.json();
-    
-    // Update cards for this specific device
-    updateCardsForDevice(espID, data);
-    
-    console.log(`✅ Sensor data loaded for ${espID}`);
+
+    const jsonResponse = await response.json(); // Get the full response wrapper
+
+    // 🛑 CRITICAL FIX: The actual readings are inside jsonResponse.data
+    const sensorData = jsonResponse.data; 
+
+    if (sensorData) {
+      updateCardsForDevice(espID, sensorData);
+      console.log(`✅ Sensor data loaded for ${espID}`);
+    } else {
+      console.warn(`⚠️ Device ${espID} exists but has no sensor data yet.`);
+    }
+
   } catch (error) {
     console.error(`❌ Fetch sensor error for ${espID}:`, error);
   }
 }
 
 // ✅ UPDATE CARDS FOR SPECIFIC DEVICE
+// ✅ UPDATE CARDS FOR SPECIFIC DEVICE
 function updateCardsForDevice(espID, reading) {
-  const cards = document.querySelectorAll(`.card_stats[data-esp-id="${espID}"]`);
-  
-  cards.forEach(card => {
+  // 1. Select the CUSTOM ELEMENT <status-card>
+  const statusCards = document.querySelectorAll(`status-card[data-esp-id="${espID}"]`);
+
+  if (statusCards.length === 0) return;
+
+  statusCards.forEach(customEl => {
+    const card = customEl.querySelector('.card_stats');
+    if (!card) return;
+
     const dataType = card.dataset.type;
-    
-    if (dataType === 'battery' && reading.battery !== undefined) {
-      setCardValue(card, reading.battery);
+
+    // --- Battery (Fix: Check inside system object) ---
+    if (dataType === 'battery') {
+      let val = reading.battery; // Check root (legacy)
+      if (val === undefined && reading.system?.battery_level !== undefined) {
+        val = reading.system.battery_level; // Check system object (real data)
+      }
+      if (val !== undefined) setCardValue(card, val);
     }
-    
-    if (dataType === 'water-tank' && reading.water_level !== undefined) {
-      setCardValue(card, reading.water_level);
+
+    // --- Water Level ---
+    if (dataType === 'water-tank') {
+      let val = reading.water_level;
+      if (val === undefined && reading.bin2?.water_level !== undefined) {
+        val = reading.bin2.water_level;
+      }
+      if (val !== undefined) setCardValue(card, val);
     }
-    
-    if (dataType === 'water-temp' && reading.water_temp !== undefined) {
-      setCardValue(card, reading.water_temp);
+
+    // --- Water Temp ---
+    if (dataType === 'water-temp') {
+      let val = reading.water_temp;
+      if (val === undefined && reading.bin1?.ds18b20 !== undefined) {
+        val = reading.bin1.ds18b20;
+      }
+      if (val !== undefined) setCardValue(card, val);
     }
   });
-  
-  console.log(`✅ Cards updated for ${espID}`);
 }
 
 // ✅ SHOW EMPTY STATE
