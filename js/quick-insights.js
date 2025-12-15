@@ -154,195 +154,235 @@
         if (timeEl) timeEl.textContent = timeStr;
     }
 
-    // ========================================
-    // 📊 FETCH AND UPDATE DATA FROM API
-    // ========================================
+// ========================================
+// 🔍 VALIDATE ESP ID AGAINST CLAIMED DEVICES
+// ========================================
+
+async function getValidEspID() {
+    const storedESP = localStorage.getItem('selected_espID');
+    const token = localStorage.getItem('avonic_token');
+    
+    if (!token) {
+        console.warn('⚠️ No auth token found');
+        return null;
+    }
+    
+    try {
+        // Fetch user's claimed devices
+        const response = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            console.error('❌ Failed to fetch claimed devices');
+            return storedESP;
+        }
+        
+        const data = await response.json();
+        
+        // No devices claimed
+        if (!data.devices || data.devices.length === 0) {
+            console.warn('⚠️ No devices claimed yet');
+            localStorage.removeItem('selected_espID');
+            return null;
+        }
+        
+        // Get first device (or find matching device if multiple)
+        const validESP = data.devices[0].espID;
+        
+        // Check if stored ESP ID is still valid
+        const isValid = data.devices.some(d => d.espID === storedESP);
+        
+        if (!isValid) {
+            console.log(`🔄 Stored ESP ID invalid. Updating: ${storedESP} → ${validESP}`);
+            localStorage.setItem('selected_espID', validESP);
+            return validESP;
+        }
+        
+        console.log(`✅ ESP ID validated: ${storedESP}`);
+        return storedESP;
+        
+    } catch (error) {
+        console.error('❌ ESP ID validation error:', error);
+        return storedESP; // Fallback to stored value
+    }
+}
 
 // ========================================
-    // 📊 FETCH AND UPDATE DATA FROM API
-    // ========================================
+// 📊 FETCH AND UPDATE DATA FROM API
+// ========================================
 
-    async function updateFluctuationsWithRealData() {
-        const tableBody = document.getElementById('qi-table-body');
-        const minEl = document.getElementById('qi-min-value');
-        const avgEl = document.getElementById('qi-avg-value');
-        const maxEl = document.getElementById('qi-max-value');
-        const insightEl = document.getElementById('qi-insight-text');
+async function updateFluctuationsWithRealData() {
+    const tableBody = document.getElementById('qi-table-body');
+    const minEl = document.getElementById('qi-min-value');
+    const avgEl = document.getElementById('qi-avg-value');
+    const maxEl = document.getElementById('qi-max-value');
+    const insightEl = document.getElementById('qi-insight-text');
+    
+    const config = QI_SENSOR_CONFIGS[currentSensor];
+    
+    // Show loading state initially
+    if(tableBody) tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">⏳ Loading...</td></tr>';
+    if(insightEl) insightEl.textContent = 'Fetching latest data...';
+
+    try {
+        const token = localStorage.getItem('avonic_token');
+        if (!token) throw new Error("Not logged in");
+
+        // 1. ✅ VALIDATE ESP ID (checks against claimed devices)
+        let espID = await getValidEspID();
+
+        // 2. Check URL for override (optional - for multi-device support)
+        const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+        const urlESP = urlParams.get('espID');
+        if (urlESP) {
+            espID = urlESP;
+            localStorage.setItem('selected_espID', urlESP);
+        }
+
+        // 3. If still no ESP ID, show error
+        if (!espID) {
+            throw new Error("No devices found. Please claim a device first.");
+        }
+
+        // 4. Fetch Real Data
+        const response = await fetch(
+            `https://avonic-main-hub-production.up.railway.app/api/devices/${espID}/valid-readings?limit=50`, 
+            { headers: { 'Authorization': `Bearer ${token}` } }
+        );
         
-        const config = QI_SENSOR_CONFIGS[currentSensor];
-        
-        // Show loading state initially
-        if(tableBody) tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">⏳ Loading...</td></tr>';
-        if(insightEl) insightEl.textContent = 'Fetching latest data...';
-
-        try {
-            const token = localStorage.getItem('avonic_token');
-            if (!token) throw new Error("Not logged in");
-
-            // 1. ✅ FIX: Get the real ID from URL or Storage
-            const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-            let espID = urlParams.get('espID');
-
-            if (!espID) {
-                espID = localStorage.getItem('selected_espID');
-            }
-
-            // 🛑 KILL SWITCH: If the old placeholder is stuck in storage, clear it.
-            if (espID === 'AVONIC-X12XXXXXXXXX') {
-                console.warn('⚠️ Placeholder ID detected. Clearing...');
-                espID = null;
+        if (!response.ok) {
+            // If 403, the device might have been unclaimed
+            if (response.status === 403) {
+                console.warn('⚠️ Device unauthorized - clearing stored ESP ID');
                 localStorage.removeItem('selected_espID');
             }
+            throw new Error(`API Error: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        const readings = result.readings || [];
 
-            // 2. If no ID found, fetch list from API
-            if (!espID) {
-                const devRes = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const devData = await devRes.json();
-                
-                if (devData.devices && devData.devices.length > 0) {
-                    espID = devData.devices[0].espID;
-                    localStorage.setItem('selected_espID', espID);
-                } else {
-                    throw new Error("No devices found");
-                }
+        console.log(`📊 Fetched ${readings.length} VALID readings for ${espID}`);
+        
+        // ⚠️ TRIGGER FALLBACK if no data exists
+        if (readings.length === 0) {
+            throw new Error("No valid sensor readings found.");
+        }
+
+        // --- REAL DATA RENDERING (rest of your existing code) ---
+        let dbKey = '';
+        switch(currentSensor) {
+            case 'temperature':  dbKey = 'temp'; break;
+            case 'soilMoisture': dbKey = 'soil'; break;
+            case 'humidity':     dbKey = 'humidity'; break;
+            case 'gasLevels':    dbKey = 'gas'; break;
+            default:             dbKey = 'soil';
+        }
+
+        const validValues = [];
+        const rowsHTML = readings.map(reading => {
+            const binData = currentBin === '1' ? reading.bin1 : reading.bin2;
+            if (!binData || binData[dbKey] === undefined || binData[dbKey] === null) return null;
+
+            const val = parseFloat(binData[dbKey]);
+            if (isNaN(val)) return null;
+            
+            validValues.push(val);
+
+            const date = new Date(reading.timestamp);
+            const now = new Date();
+            const daysDiff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+            const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const dateStr = daysDiff > 1 ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+
+            let status = 'Normal';
+            let statusClass = '';
+            
+            // Status Logic
+            if (currentSensor === 'temperature') {
+                if (val < 15 || val > 35) { status = 'Critical'; statusClass = 'status-high'; } 
+                else if (val < 20 || val > 30) { status = 'Warning'; statusClass = 'status-low'; }
+            } else if (currentSensor === 'soilMoisture') {
+                if (val < 40) { status = 'Dry'; statusClass = 'status-low'; } 
+                else if (val > 80) { status = 'Wet'; statusClass = 'status-high'; }
+            } else if (currentSensor === 'humidity') {
+                if (val < 30) { status = 'Low'; statusClass = 'status-low'; } 
+                else if (val > 80) { status = 'High'; statusClass = 'status-high'; }
+            } else if (currentSensor === 'gasLevels') {
+                if (val > 200) { status = 'Critical'; statusClass = 'status-high'; } 
+                else if (val > 100) { status = 'High'; statusClass = 'status-high'; }
             }
 
-            // 3. Fetch Real Data
-            const response = await fetch(
-                `https://avonic-main-hub-production.up.railway.app/api/devices/${espID}/valid-readings?limit=50`, 
-                { headers: { 'Authorization': `Bearer ${token}` } }
-            );
-            
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-            
-            const result = await response.json();
-            const readings = result.readings || [];
+            return `<tr class="${statusClass}"><td>${dateStr ? `${dateStr} ` : ''}${timeStr}</td><td>${val.toFixed(1)}${config.unit}</td><td>${status}</td></tr>`;
+        }).filter(row => row !== null).join('');
 
-            console.log(`📊 Fetched ${readings.length} VALID readings for ${espID}`);
-            
-            // ⚠️ TRIGGER FALLBACK if no data exists
-            if (readings.length === 0) {
-                throw new Error("No valid sensor readings found.");
-            }
+        if (validValues.length === 0) throw new Error(`No ${config.label} data found for Bin ${currentBin}`);
 
-            // --- REAL DATA RENDERING ---
-            let dbKey = '';
-            switch(currentSensor) {
-                case 'temperature':  dbKey = 'temp'; break;
-                case 'soilMoisture': dbKey = 'soil'; break;
-                case 'humidity':     dbKey = 'humidity'; break;
-                case 'gasLevels':    dbKey = 'gas'; break;
-                default:             dbKey = 'soil';
-            }
+        if(tableBody) tableBody.innerHTML = rowsHTML;
 
-            const validValues = [];
-            const rowsHTML = readings.map(reading => {
-                const binData = currentBin === '1' ? reading.bin1 : reading.bin2;
-                if (!binData || binData[dbKey] === undefined || binData[dbKey] === null) return null;
+        const min = Math.min(...validValues).toFixed(1);
+        const max = Math.max(...validValues).toFixed(1);
+        const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
 
-                const val = parseFloat(binData[dbKey]);
-                if (isNaN(val)) return null;
-                
-                validValues.push(val);
+        if(minEl) minEl.textContent = min;
+        if(maxEl) maxEl.textContent = max;
+        if(avgEl) avgEl.textContent = avg;
+        
+        document.getElementById('qi-min-unit').textContent = config.unit;
+        document.getElementById('qi-avg-unit').textContent = config.unit;
+        document.getElementById('qi-max-unit').textContent = config.unit;
 
-                const date = new Date(reading.timestamp);
-                const now = new Date();
-                const daysDiff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-                const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-                const dateStr = daysDiff > 1 ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+        if(insightEl) {
+            insightEl.textContent = generateRealInsight(validValues, currentSensor) + ' ✅ Recent Data';
+            insightEl.style.color = '#4CAF50';
+        }
 
-                let status = 'Normal';
-                let statusClass = '';
-                
-                // (Status Logic remains the same as your original)
-                if (currentSensor === 'temperature') {
-                    if (val < 15 || val > 35) { status = 'Critical'; statusClass = 'status-high'; } 
-                    else if (val < 20 || val > 30) { status = 'Warning'; statusClass = 'status-low'; }
-                } else if (currentSensor === 'soilMoisture') {
-                    if (val < 40) { status = 'Dry'; statusClass = 'status-low'; } 
-                    else if (val > 80) { status = 'Wet'; statusClass = 'status-high'; }
-                } else if (currentSensor === 'humidity') {
-                    if (val < 30) { status = 'Low'; statusClass = 'status-low'; } 
-                    else if (val > 80) { status = 'High'; statusClass = 'status-high'; }
-                } else if (currentSensor === 'gasLevels') {
-                    if (val > 200) { status = 'Critical'; statusClass = 'status-high'; } 
-                    else if (val > 100) { status = 'High'; statusClass = 'status-high'; }
-                }
-
-                return `<tr class="${statusClass}"><td>${dateStr ? `${dateStr} ` : ''}${timeStr}</td><td>${val.toFixed(1)}${config.unit}</td><td>${status}</td></tr>`;
-            }).filter(row => row !== null).join('');
-
-            if (validValues.length === 0) throw new Error(`No ${config.label} data found for Bin ${currentBin}`);
-
-            if(tableBody) tableBody.innerHTML = rowsHTML;
-
-            const min = Math.min(...validValues).toFixed(1);
-            const max = Math.max(...validValues).toFixed(1);
-            const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
-
-            if(minEl) minEl.textContent = min;
-            if(maxEl) maxEl.textContent = max;
-            if(avgEl) avgEl.textContent = avg;
-            
-            document.getElementById('qi-min-unit').textContent = config.unit;
-            document.getElementById('qi-avg-unit').textContent = config.unit;
-            document.getElementById('qi-max-unit').textContent = config.unit;
-
-            if(insightEl) {
-                insightEl.textContent = generateRealInsight(validValues, currentSensor) + ' ✅ Recent Data';
-                insightEl.style.color = '#4CAF50';
-            }
-
-        } catch (error) {
-            // ========================================
-            // 📦 FALLBACK: DEMO MODE (Keeps UI Intact)
-            // ========================================
-            console.error("❌ Fetch Error:", error.message);
-            console.log('📦 Using demo data as fallback to keep UI intact...');
-            
-            const dummyReadings = DUMMY_READINGS[currentBin][currentSensor];
-            const validValues = dummyReadings.map(r => r.value);
-            
-            const rowsHTML = dummyReadings.map(reading => {
-               // ✅ Preserving your original styling logic here
-               let statusClass = '';
-               if (reading.status === 'High' || reading.status === 'Critical') {
-                   statusClass = 'status-high';
-               } else if (reading.status === 'Low' || reading.status === 'Dry') {
-                   statusClass = 'status-low';
-               }
-               
-               return `
-                   <tr class="${statusClass}">
-                       <td>${reading.time}</td>
-                       <td>${reading.value}${config.unit}</td>
-                       <td>${reading.status}</td>
-                   </tr>
-               `;
-            }).join('');
-            
-            if(tableBody) tableBody.innerHTML = rowsHTML;
-            
-            const min = Math.min(...validValues).toFixed(1);
-            const max = Math.max(...validValues).toFixed(1);
-            const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
-            
-            if(minEl) minEl.textContent = min;
-            if(maxEl) maxEl.textContent = max;
-            if(avgEl) avgEl.textContent = avg;
-            
-            document.getElementById('qi-min-unit').textContent = config.unit;
-            document.getElementById('qi-avg-unit').textContent = config.unit;
-            document.getElementById('qi-max-unit').textContent = config.unit;
-            
-            if(insightEl) {
-                insightEl.textContent = '📊 Demo Data (No live readings yet)';
-                insightEl.style.color = '#FF9800';
-            }
+    } catch (error) {
+        // FALLBACK TO DEMO DATA
+        console.error("❌ Fetch Error:", error.message);
+        console.log('📦 Using demo data as fallback to keep UI intact...');
+        
+        const dummyReadings = DUMMY_READINGS[currentBin][currentSensor];
+        const validValues = dummyReadings.map(r => r.value);
+        
+        const rowsHTML = dummyReadings.map(reading => {
+           let statusClass = '';
+           if (reading.status === 'High' || reading.status === 'Critical') {
+               statusClass = 'status-high';
+           } else if (reading.status === 'Low' || reading.status === 'Dry') {
+               statusClass = 'status-low';
+           }
+           
+           return `
+               <tr class="${statusClass}">
+                   <td>${reading.time}</td>
+                   <td>${reading.value}${config.unit}</td>
+                   <td>${reading.status}</td>
+               </tr>
+           `;
+        }).join('');
+        
+        if(tableBody) tableBody.innerHTML = rowsHTML;
+        
+        const min = Math.min(...validValues).toFixed(1);
+        const max = Math.max(...validValues).toFixed(1);
+        const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
+        
+        if(minEl) minEl.textContent = min;
+        if(maxEl) maxEl.textContent = max;
+        if(avgEl) avgEl.textContent = avg;
+        
+        document.getElementById('qi-min-unit').textContent = config.unit;
+        document.getElementById('qi-avg-unit').textContent = config.unit;
+        document.getElementById('qi-max-unit').textContent = config.unit;
+        
+        if(insightEl) {
+            insightEl.textContent = '📊 Demo Data (No live readings yet)';
+            insightEl.style.color = '#FF9800';
         }
     }
+}
     // ========================================
     // 💡 GENERATE INSIGHTS
     // ========================================
