@@ -40,8 +40,7 @@ function setupFormNavigation() {
   }
   
   // Login -> Forgot Password
-  const forgotLink = document.querySelector('.forgot a');
-  if (forgotLink) {
+const forgotLink = document.querySelector('.forgot-link');  if (forgotLink) {
     forgotLink.addEventListener('click', (e) => {
       e.preventDefault();
       showForm('forgot');
