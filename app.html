@@ -787,6 +787,9 @@
 
 
     </div>
+<!-- ✅ CRITICAL: Load Chart.js FIRST (required by dashboard charts) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <!-- ✅ CRITICAL: Load in this exact order! -->
 
@@ -796,6 +799,7 @@
 <!-- 2. Utilities (no dependencies) -->
 <script src="js/utils/data-stats.js"></script>
 <script src="js/utils/sensor-units.js"></script>
+<script src="js/utils/dummy-data.js"></script>
 
 <!-- 3. API Client (auth layer) -->
 <script src="js/services/api-client.js"></script>
@@ -826,23 +830,33 @@
 <script src="js/components/dashboard-loader.js"></script>
 <script src="js/components/bin-page-loader.js"></script>
 
-<!-- 9. Auto-refresh (orchestrates data fetching) -->
+<!-- 9. Dashboard Module (depends on services & components) -->
+<script src="js/dashboard/sensor-configs.js"></script>
+<script src="js/dashboard/worm-evaluator.js"></script>
+<script src="js/dashboard/insights-manager.js"></script>
+<script src="js/dashboard/data-fetcher.js"></script>
+<script src="js/dashboard/chart-creator.js"></script>
+<script src="js/dashboard/modal-controller.js"></script>
+<script src="js/dashboard-module.js"></script>
+
+<!-- 10. Auto-refresh (orchestrates data fetching) -->
 <script src="js/services/auto-refresh.js"></script>
 
-<!-- 10. Main Orchestrators -->
+<!-- 11. Main Orchestrators -->
 <script src="js/main_components.js"></script>
 <script src="js/data_integration.js"></script>
 
-<!-- 11. Other App Scripts -->
+<!-- 12. Other App Scripts -->
 <script src="js/quick-insights.js"></script>
 <script src="js/bin-fluctuations.js"></script>
-<script src="js/dashboard-module.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/url-router.js"></script>
-<script src="js/dashboard_components.js"></script>
 <script src="js/other_widgets.js"></script>
-<script src="js/mqtt_integration.js"></script>
 <script src="js/settings.js"></script>
+
+<!-- ❌ REMOVED: These files don't exist -->
+<!-- <script src="js/dashboard_components.js"></script> -->
+<!-- <script src="js/mqtt_integration.js"></script> -->
 
     <script>
 // Debug: Check router initialization
