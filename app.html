@@ -864,10 +864,27 @@
 <!-- 4. UI Handlers -->
 <script src="js/insights/table-renderer.js"></script>
 <script src="js/insights/tab-handler.js"></script>
+<!-- ✅ BIN FLUCTUATIONS MODULE - Load in this exact order! -->
+
+<!-- 1. Configurations & State -->
+<script src="js/fluctuations/sensor-configs.js"></script>
+<script src="js/fluctuations/state-manager.js"></script>
+
+<!-- 2. Core Services -->
+<script src="js/fluctuations/data-fetcher.js"></script>
+<script src="js/fluctuations/insights-generator.js"></script>
+
+<!-- 3. UI Managers -->
+<script src="js/fluctuations/chart-manager.js"></script>
+<script src="js/fluctuations/ui-updater.js"></script>
+<script src="js/fluctuations/nav-controller.js"></script>
+<script src="js/fluctuations/date-picker.js"></script>
+
+<!-- 4. Main Entry Point -->
+<script src="js/bin-fluctuations.js"></script>
 
 <!-- 5. Main Entry Point -->
 <script src="js/quick-insights.js"></script>
-<script src="js/bin-fluctuations.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/url-router.js"></script>
 <script src="js/other_widgets.js"></script>
