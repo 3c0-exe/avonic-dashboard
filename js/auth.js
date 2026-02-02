@@ -1,7 +1,7 @@
 // auth.js - Complete Authentication Handler for forms.html
 // Handles login, register, forgot password, and reset password
 
-// const API_BASE = 'https://avonic-main-hub-production.up.railway.app'; // Commented - using api-config.js
+const API_BASE = 'https://avonic-main-hub-production.up.railway.app'; // Commented - using api-config.js
 
 // ====== FORM SWITCHING LOGIC ======
 

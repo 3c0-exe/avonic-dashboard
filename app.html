@@ -847,6 +847,25 @@
 <script src="js/data_integration.js"></script>
 
 <!-- 12. Other App Scripts -->
+<!-- ✅ QUICK INSIGHTS MODULE - Load in this exact order! -->
+
+<!-- 1. Configurations -->
+<script src="js/insights/sensor-configs.js"></script>
+<script src="js/insights/dummy-data.js"></script>
+
+<!-- 2. Core Services -->
+<script src="js/insights/esp-validator.js"></script>
+<script src="js/insights/data-fetcher.js"></script>
+
+<!-- 3. Utilities -->
+<script src="js/insights/stats-calculator.js"></script>
+<script src="js/insights/insight-generator.js"></script>
+
+<!-- 4. UI Handlers -->
+<script src="js/insights/table-renderer.js"></script>
+<script src="js/insights/tab-handler.js"></script>
+
+<!-- 5. Main Entry Point -->
 <script src="js/quick-insights.js"></script>
 <script src="js/bin-fluctuations.js"></script>
 <script src="js/auth.js"></script>

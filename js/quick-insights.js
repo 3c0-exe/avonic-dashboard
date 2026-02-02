@@ -1,129 +1,10 @@
 // ========================================
-// QUICK INSIGHTS MODULE
-// Save as: js/quick-insights.js
-// Link in app.html BEFORE dashboard-module.js
+// QUICK INSIGHTS MODULE - MAIN ENTRY POINT
+// js/quick-insights.js
 // ========================================
 
 (function() {
     'use strict';
-
-    // ========================================
-    // 📊 SENSOR CONFIGURATIONS
-    // ========================================
-
-    const QI_SENSOR_CONFIGS = {
-        temperature: {
-            unit: '°C',
-            label: 'Temperature',
-            icon: 'img/icons/sensorIcons/TempIcon.svg'
-        },
-        soilMoisture: {
-            unit: '%',
-            label: 'Soil Moisture',
-            icon: 'img/icons/sensorIcons/SoilMoistureIcon.svg'
-        },
-        humidity: {
-            unit: '%',
-            label: 'Humidity',
-            icon: 'img/icons/sensorIcons/HumidityIcon.svg'
-        },
-        gasLevels: {
-            unit: 'ppm',
-            label: 'Gas Levels',
-            icon: 'img/icons/sensorIcons/GasIcon.svg'
-        }
-    };
-
-    // ========================================
-    // 🗄️ DUMMY DATA (Fallback only)
-    // ========================================
-    
-    const DUMMY_READINGS = {
-        '1': { // Bin 1
-            temperature: [
-                { time: '10:00 AM', value: 31.2, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 35.8, status: 'High', timestamp: new Date() },
-                { time: '10:20 AM', value: 28.5, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 32.1, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 29.7, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 33.4, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 36.2, status: 'High', timestamp: new Date() },
-                { time: '11:10 AM', value: 31.8, status: 'Normal', timestamp: new Date() }
-            ],
-            soilMoisture: [
-                { time: '10:00 AM', value: 75, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 82, status: 'High', timestamp: new Date() },
-                { time: '10:20 AM', value: 68, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 71, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 79, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 65, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 88, status: 'High', timestamp: new Date() },
-                { time: '11:10 AM', value: 73, status: 'Normal', timestamp: new Date() }
-            ],
-            humidity: [
-                { time: '10:00 AM', value: 72, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 85, status: 'High', timestamp: new Date() },
-                { time: '10:20 AM', value: 68, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 74, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 70, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 77, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 89, status: 'High', timestamp: new Date() },
-                { time: '11:10 AM', value: 71, status: 'Normal', timestamp: new Date() }
-            ],
-            gasLevels: [
-                { time: '10:00 AM', value: 45, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 120, status: 'High', timestamp: new Date() },
-                { time: '10:20 AM', value: 38, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 52, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 47, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 61, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 135, status: 'High', timestamp: new Date() },
-                { time: '11:10 AM', value: 49, status: 'Normal', timestamp: new Date() }
-            ]
-        },
-        '2': { // Bin 2
-            temperature: [
-                { time: '10:00 AM', value: 28.5, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 32.1, status: 'Normal', timestamp: new Date() },
-                { time: '10:20 AM', value: 29.8, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 31.4, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 27.9, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 30.2, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 33.7, status: 'Normal', timestamp: new Date() },
-                { time: '11:10 AM', value: 29.1, status: 'Normal', timestamp: new Date() }
-            ],
-            soilMoisture: [
-                { time: '10:00 AM', value: 70, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 76, status: 'Normal', timestamp: new Date() },
-                { time: '10:20 AM', value: 68, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 72, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 74, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 69, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 77, status: 'Normal', timestamp: new Date() },
-                { time: '11:10 AM', value: 71, status: 'Normal', timestamp: new Date() }
-            ],
-            humidity: [
-                { time: '10:00 AM', value: 68, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 73, status: 'Normal', timestamp: new Date() },
-                { time: '10:20 AM', value: 66, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 71, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 69, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 74, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 72, status: 'Normal', timestamp: new Date() },
-                { time: '11:10 AM', value: 70, status: 'Normal', timestamp: new Date() }
-            ],
-            gasLevels: [
-                { time: '10:00 AM', value: 42, status: 'Normal', timestamp: new Date() },
-                { time: '10:10 AM', value: 55, status: 'Normal', timestamp: new Date() },
-                { time: '10:20 AM', value: 38, status: 'Normal', timestamp: new Date() },
-                { time: '10:30 AM', value: 47, status: 'Normal', timestamp: new Date() },
-                { time: '10:40 AM', value: 51, status: 'Normal', timestamp: new Date() },
-                { time: '10:50 AM', value: 44, status: 'Normal', timestamp: new Date() },
-                { time: '11:00 AM', value: 59, status: 'Normal', timestamp: new Date() },
-                { time: '11:10 AM', value: 46, status: 'Normal', timestamp: new Date() }
-            ]
-        }
-    };
 
     // ========================================
     // 🎯 STATE MANAGEMENT
@@ -133,289 +14,78 @@
     let currentSensor = 'soilMoisture';
 
     // ========================================
-    // 📅 UPDATE DATE/TIME DISPLAY
+    // 📊 MAIN UPDATE FUNCTION
     // ========================================
 
-    function updateDateTime() {
-        const now = new Date();
-        const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-        const dateStr = now.toLocaleDateString('en-US', dateOptions);
+    async function updateFluctuationsWithRealData() {
+        const tableBody = document.getElementById('qi-table-body');
+        const insightEl = document.getElementById('qi-insight-text');
+        const config = window.QI_SENSOR_CONFIGS[currentSensor];
         
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        const displayHours = hours % 12 || 12;
-        const timeStr = `${displayHours}:${minutes.toString().padStart(2, '0')}${ampm}`;
-        
-        const dateEl = document.getElementById('qi-current-date');
-        const timeEl = document.getElementById('qi-last-updated');
-        
-        if (dateEl) dateEl.textContent = dateStr;
-        if (timeEl) timeEl.textContent = timeStr;
-    }
+        // Show loading state
+        window.QI_TableRenderer.showLoadingState();
 
-// ========================================
-// 🔍 VALIDATE ESP ID AGAINST CLAIMED DEVICES
-// ========================================
-
-async function getValidEspID() {
-    const storedESP = localStorage.getItem('selected_espID');
-    const token = localStorage.getItem('avonic_token');
-    
-    if (!token) {
-        console.warn('⚠️ No auth token found');
-        return null;
-    }
-    
-    try {
-        // Fetch user's claimed devices
-        const response = await fetch('https://avonic-main-hub-production.up.railway.app/api/devices/claimed', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (!response.ok) {
-            console.error('❌ Failed to fetch claimed devices');
-            return storedESP;
-        }
-        
-        const data = await response.json();
-        
-        // No devices claimed
-        if (!data.devices || data.devices.length === 0) {
-            console.warn('⚠️ No devices claimed yet');
-            localStorage.removeItem('selected_espID');
-            return null;
-        }
-        
-        // Get first device (or find matching device if multiple)
-        const validESP = data.devices[0].espID;
-        
-        // Check if stored ESP ID is still valid
-        const isValid = data.devices.some(d => d.espID === storedESP);
-        
-        if (!isValid) {
-            console.log(`🔄 Stored ESP ID invalid. Updating: ${storedESP} → ${validESP}`);
-            localStorage.setItem('selected_espID', validESP);
-            return validESP;
-        }
-        
-        console.log(`✅ ESP ID validated: ${storedESP}`);
-        return storedESP;
-        
-    } catch (error) {
-        console.error('❌ ESP ID validation error:', error);
-        return storedESP; // Fallback to stored value
-    }
-}
-
-// ========================================
-// 📊 FETCH AND UPDATE DATA FROM API
-// ========================================
-
-async function updateFluctuationsWithRealData() {
-    const tableBody = document.getElementById('qi-table-body');
-    const minEl = document.getElementById('qi-min-value');
-    const avgEl = document.getElementById('qi-avg-value');
-    const maxEl = document.getElementById('qi-max-value');
-    const insightEl = document.getElementById('qi-insight-text');
-    
-    const config = QI_SENSOR_CONFIGS[currentSensor];
-    
-    // Show loading state initially
-    if(tableBody) tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">⏳ Loading...</td></tr>';
-    if(insightEl) insightEl.textContent = 'Fetching latest data...';
-
-    try {
-        const token = localStorage.getItem('avonic_token');
-        if (!token) throw new Error("Not logged in");
-
-        // 1. ✅ VALIDATE ESP ID (checks against claimed devices)
-        let espID = await getValidEspID();
-
-        // 2. Check URL for override (optional - for multi-device support)
-        const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-        const urlESP = urlParams.get('espID');
-        if (urlESP) {
-            espID = urlESP;
-            localStorage.setItem('selected_espID', urlESP);
-        }
-
-        // 3. If still no ESP ID, show error
-        if (!espID) {
-            throw new Error("No devices found. Please claim a device first.");
-        }
-
-        // 4. Fetch Real Data
-        const response = await fetch(
-            `https://avonic-main-hub-production.up.railway.app/api/devices/${espID}/valid-readings?limit=50`, 
-            { headers: { 'Authorization': `Bearer ${token}` } }
-        );
-        
-        if (!response.ok) {
-            // If 403, the device might have been unclaimed
-            if (response.status === 403) {
-                console.warn('⚠️ Device unauthorized - clearing stored ESP ID');
-                localStorage.removeItem('selected_espID');
-            }
-            throw new Error(`API Error: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        const readings = result.readings || [];
-
-        console.log(`📊 Fetched ${readings.length} VALID readings for ${espID}`);
-        
-        // ⚠️ TRIGGER FALLBACK if no data exists
-        if (readings.length === 0) {
-            throw new Error("No valid sensor readings found.");
-        }
-
-        // --- REAL DATA RENDERING (rest of your existing code) ---
-        let dbKey = '';
-        switch(currentSensor) {
-            case 'temperature':  dbKey = 'temp'; break;
-            case 'soilMoisture': dbKey = 'soil'; break;
-            case 'humidity':     dbKey = 'humidity'; break;
-            case 'gasLevels':    dbKey = 'gas'; break;
-            default:             dbKey = 'soil';
-        }
-
-        const validValues = [];
-        const rowsHTML = readings.map(reading => {
-            const binData = currentBin === '1' ? reading.bin1 : reading.bin2;
-            if (!binData || binData[dbKey] === undefined || binData[dbKey] === null) return null;
-
-            const val = parseFloat(binData[dbKey]);
-            if (isNaN(val)) return null;
+        try {
+            const token = localStorage.getItem('avonic_token');
             
-            validValues.push(val);
+            // 1. Validate ESP ID
+            const espID = await window.QI_EspValidator.getEspIDWithURLOverride();
 
-            const date = new Date(reading.timestamp);
-            const now = new Date();
-            const daysDiff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-            const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            const dateStr = daysDiff > 1 ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-
-            let status = 'Normal';
-            let statusClass = '';
+            // 2. Fetch real data
+            const result = await window.QI_DataFetcher.fetchSensorReadings(espID, token);
             
-            // Status Logic
-            if (currentSensor === 'temperature') {
-                if (val < 15 || val > 35) { status = 'Critical'; statusClass = 'status-high'; } 
-                else if (val < 20 || val > 30) { status = 'Warning'; statusClass = 'status-low'; }
-            } else if (currentSensor === 'soilMoisture') {
-                if (val < 40) { status = 'Dry'; statusClass = 'status-low'; } 
-                else if (val > 80) { status = 'Wet'; statusClass = 'status-high'; }
-            } else if (currentSensor === 'humidity') {
-                if (val < 30) { status = 'Low'; statusClass = 'status-low'; } 
-                else if (val > 80) { status = 'High'; statusClass = 'status-high'; }
-            } else if (currentSensor === 'gasLevels') {
-                if (val > 200) { status = 'Critical'; statusClass = 'status-high'; } 
-                else if (val > 100) { status = 'High'; statusClass = 'status-high'; }
+            if (!result.success) {
+                throw new Error(result.error);
             }
 
-            return `<tr class="${statusClass}"><td>${dateStr ? `${dateStr} ` : ''}${timeStr}</td><td>${val.toFixed(1)}${config.unit}</td><td>${status}</td></tr>`;
-        }).filter(row => row !== null).join('');
+            // 3. Extract values for current bin and sensor
+            const { validValues, processedReadings } = window.QI_DataFetcher.extractSensorValues(
+                result.readings,
+                currentBin,
+                currentSensor,
+                config.dbKey
+            );
 
-        if (validValues.length === 0) throw new Error(`No ${config.label} data found for Bin ${currentBin}`);
+            if (validValues.length === 0) {
+                throw new Error(`No ${config.label} data found for Bin ${currentBin}`);
+            }
 
-        if(tableBody) tableBody.innerHTML = rowsHTML;
+            // 4. Render table with real data
+            const rowsHTML = window.QI_TableRenderer.renderRealDataTable(
+                processedReadings,
+                currentSensor,
+                config
+            );
+            
+            if (tableBody) tableBody.innerHTML = rowsHTML;
 
-        const min = Math.min(...validValues).toFixed(1);
-        const max = Math.max(...validValues).toFixed(1);
-        const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
+            // 5. Calculate and display statistics
+            const stats = window.QI_StatsCalculator.calculateStats(validValues);
+            window.QI_TableRenderer.updateStatisticsDisplay(stats, config.unit);
 
-        if(minEl) minEl.textContent = min;
-        if(maxEl) maxEl.textContent = max;
-        if(avgEl) avgEl.textContent = avg;
-        
-        document.getElementById('qi-min-unit').textContent = config.unit;
-        document.getElementById('qi-avg-unit').textContent = config.unit;
-        document.getElementById('qi-max-unit').textContent = config.unit;
+            // 6. Generate and display insight
+            const insight = window.QI_InsightGenerator.generateRealInsight(validValues, currentSensor);
+            window.QI_InsightGenerator.updateInsightDisplay(insightEl, insight, true);
 
-        if(insightEl) {
-            insightEl.textContent = generateRealInsight(validValues, currentSensor) + ' ✅ Recent Data';
-            insightEl.style.color = '#4CAF50';
+        } catch (error) {
+            // FALLBACK TO DEMO DATA
+            console.error("❌ Fetch Error:", error.message);
+            console.log('📦 Using demo data as fallback to keep UI intact...');
+            
+            const dummyReadings = window.QI_DUMMY_READINGS[currentBin][currentSensor];
+            const validValues = dummyReadings.map(r => r.value);
+            
+            // Render dummy data table
+            const rowsHTML = window.QI_TableRenderer.renderDummyDataTable(dummyReadings, config);
+            if (tableBody) tableBody.innerHTML = rowsHTML;
+            
+            // Calculate and display statistics
+            const stats = window.QI_StatsCalculator.calculateStats(validValues);
+            window.QI_TableRenderer.updateStatisticsDisplay(stats, config.unit);
+            
+            // Show demo data message
+            window.QI_InsightGenerator.updateInsightDisplay(insightEl, '', false);
         }
-
-    } catch (error) {
-        // FALLBACK TO DEMO DATA
-        console.error("❌ Fetch Error:", error.message);
-        console.log('📦 Using demo data as fallback to keep UI intact...');
-        
-        const dummyReadings = DUMMY_READINGS[currentBin][currentSensor];
-        const validValues = dummyReadings.map(r => r.value);
-        
-        const rowsHTML = dummyReadings.map(reading => {
-           let statusClass = '';
-           if (reading.status === 'High' || reading.status === 'Critical') {
-               statusClass = 'status-high';
-           } else if (reading.status === 'Low' || reading.status === 'Dry') {
-               statusClass = 'status-low';
-           }
-           
-           return `
-               <tr class="${statusClass}">
-                   <td>${reading.time}</td>
-                   <td>${reading.value}${config.unit}</td>
-                   <td>${reading.status}</td>
-               </tr>
-           `;
-        }).join('');
-        
-        if(tableBody) tableBody.innerHTML = rowsHTML;
-        
-        const min = Math.min(...validValues).toFixed(1);
-        const max = Math.max(...validValues).toFixed(1);
-        const avg = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
-        
-        if(minEl) minEl.textContent = min;
-        if(maxEl) maxEl.textContent = max;
-        if(avgEl) avgEl.textContent = avg;
-        
-        document.getElementById('qi-min-unit').textContent = config.unit;
-        document.getElementById('qi-avg-unit').textContent = config.unit;
-        document.getElementById('qi-max-unit').textContent = config.unit;
-        
-        if(insightEl) {
-            insightEl.textContent = '📊 Demo Data (No live readings yet)';
-            insightEl.style.color = '#FF9800';
-        }
-    }
-}
-    // ========================================
-    // 💡 GENERATE INSIGHTS
-    // ========================================
-
-    function generateRealInsight(values, type) {
-        if(!values.length) return "No data available.";
-        
-        const avgVal = values.reduce((a, b) => a + b, 0) / values.length;
-        
-        if (type === 'soilMoisture') {
-            if (avgVal < 50) return "Soil moisture is low. Consider watering.";
-            if (avgVal > 80) return "Soil moisture is high. Good hydration.";
-            return "Soil moisture is optimal for composting.";
-        }
-        
-        if (type === 'temperature') {
-            if (avgVal > 30) return "Temperature is elevated. Check ventilation.";
-            if (avgVal < 20) return "Temperature is low. Composting may be slow.";
-            return "Temperature is in the optimal range.";
-        }
-        
-        if (type === 'humidity') {
-            if (avgVal < 50) return "Humidity is low. Consider adding moisture.";
-            if (avgVal > 80) return "Humidity is high. Monitor for excess moisture.";
-            return "Humidity levels are stable.";
-        }
-        
-        if (type === 'gasLevels') {
-            if (avgVal > 100) return "Gas levels elevated. Check ventilation.";
-            return "Gas levels are normal.";
-        }
-        
-        return "Readings appear stable.";
     }
 
     // ========================================
@@ -423,103 +93,9 @@ async function updateFluctuationsWithRealData() {
     // ========================================
 
     function updateAllData() {
-        updateDateTime();
+        window.QI_TableRenderer.updateDateTime();
         updateFluctuationsWithRealData();
         console.log(`✅ Quick Insights updated for Bin ${currentBin}, Sensor: ${currentSensor}`);
-    }
-
-    // ========================================
-    // 🎨 HANDLE SENSOR TAB CLICKS
-    // ========================================
-
-    function handleSensorTabClick(event) {
-        const clickedTab = event.currentTarget;
-        const sensor = clickedTab.dataset.sensor;
-        
-        if (!sensor) return;
-        
-        // Remove active class from all tabs
-        document.querySelectorAll('.qi-sensor-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // Add active class to clicked tab
-        clickedTab.classList.add('active');
-        
-        // Update current sensor
-        currentSensor = sensor;
-        
-        // Update all data
-        updateAllData();
-    }
-
-    // ========================================
-    // 🔄 HANDLE BIN SELECTOR CHANGE
-    // ========================================
-
-    function handleBinChange(event) {
-        const selectedBin = event.target.value;
-        currentBin = selectedBin;
-        
-        console.log(`🔄 Bin changed to: ${currentBin}`);
-        
-        // Update all data
-        updateAllData();
-    }
-
-    // ========================================
-    // 🔧 TAB SWITCHER (Quick Insights ↔ Bin Fluctuations)
-    // ========================================
-
-    function handleTabSwitch(event) {
-        const clickedBtn = event.currentTarget;
-        const targetTab = clickedBtn.dataset.tab;
-        
-        // Remove active class from all buttons
-        document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        // Add active class to clicked button
-        clickedBtn.classList.add('active');
-        
-        // Show/hide content
-        const quickInsights = document.getElementById('quickInsightsContent');
-        const binFluctuations = document.getElementById('binFluctuationsContent');
-        
-        if (targetTab === 'quick-insights') {
-            if (quickInsights) {
-                quickInsights.classList.add('active');
-                quickInsights.style.display = '';
-            }
-            if (binFluctuations) {
-                binFluctuations.classList.remove('active');
-                binFluctuations.style.display = 'none';
-            }
-        } else {
-            if (quickInsights) {
-                quickInsights.classList.remove('active');
-                quickInsights.style.display = 'none';
-            }
-            if (binFluctuations) {
-                binFluctuations.classList.add('active');
-                binFluctuations.style.display = '';
-            }
-        }
-
-        // Show/hide bin fluctuations nav bar
-        const nav = document.getElementById('binFluctuationsNav');
-        if (nav) {
-            if (targetTab === 'bin-fluctuations') {
-                nav.classList.add('active');
-                nav.style.display = 'grid';
-            } else {
-                nav.classList.remove('active');
-                nav.style.display = 'none';
-            }
-        }
-        
-        console.log(`✅ Switched to: ${targetTab}`);
     }
 
     // ========================================
@@ -529,27 +105,23 @@ async function updateFluctuationsWithRealData() {
     function initializeQuickInsights() {
         console.log('🎨 Quick Insights Module: Initializing...');
         
-        // Set up tab switcher
-        document.querySelectorAll('.dashboard-tab-btn').forEach(btn => {
-            btn.addEventListener('click', handleTabSwitch);
+        // Setup event listeners with callbacks
+        window.QI_TabHandler.setupEventListeners({
+            onSensorChange: (sensor) => {
+                currentSensor = sensor;
+                updateAllData();
+            },
+            onBinChange: (bin) => {
+                currentBin = bin;
+                updateAllData();
+            }
         });
-        
-        // Set up sensor tabs
-        document.querySelectorAll('.qi-sensor-tab').forEach(tab => {
-            tab.addEventListener('click', handleSensorTabClick);
-        });
-        
-        // Set up bin selector
-        const binDropdown = document.getElementById('qi-bin-dropdown');
-        if (binDropdown) {
-            binDropdown.addEventListener('change', handleBinChange);
-        }
         
         // Initial data load
         updateAllData();
         
-        // Auto-refresh every 10 seconds
-        setInterval(updateDateTime, 10000);
+        // Auto-refresh date/time every 10 seconds
+        setInterval(window.QI_TableRenderer.updateDateTime, 10000);
         
         console.log('✅ Quick Insights Module initialized successfully!');
     }
@@ -565,7 +137,7 @@ async function updateFluctuationsWithRealData() {
     }
 
     // ========================================
-    // 🌍 EXPOSE FUNCTIONS FOR EXTERNAL USE
+    // 🌍 EXPOSE API FOR EXTERNAL USE
     // ========================================
 
     window.QuickInsights = {
