@@ -788,43 +788,58 @@
 
     </div>
 
-
 <!-- ✅ CRITICAL: Load in this exact order! -->
 
 <!-- 1. Configuration (must load first) -->
 <script src="js/config/api-config.js"></script>
 
-<!-- 2. Core Components (no dependencies) -->
+<!-- 2. Utilities (no dependencies) -->
+<script src="js/utils/data-stats.js"></script>
+<script src="js/utils/sensor-units.js"></script>
+
+<!-- 3. API Client (auth layer) -->
+<script src="js/services/api-client.js"></script>
+
+<!-- 4. Core Services (depend on API client) -->
+<script src="js/services/device-service.js"></script>
+<script src="js/services/sensor-service.js"></script>
+<script src="js/services/chart-service.js"></script>
+
+<!-- 5. Core Components (no dependencies) -->
 <script src="js/components/dev-mode.js"></script>
 <script src="js/components/worm-conditions.js"></script>
 <script src="js/components/toast-notifications.js"></script>
 
-<!-- 3. UI Components (depend on core) -->
+<!-- 6. UI Components (depend on core) -->
 <script src="js/components/modal-system.js"></script>
 <script src="js/components/card-visuals.js"></script>
 <script src="js/components/bin-card.js"></script>
 <script src="js/components/status-card.js"></script>
 <script src="js/components/mode-switcher.js"></script>
+<script src="js/components/chart-renderer.js"></script>
 
-<!-- 4. Feature Modules (depend on UI) -->
+<!-- 7. Feature Modules (depend on UI) -->
 <script src="js/components/nickname-manager.js"></script>
 <script src="js/components/claim-device.js"></script>
 
-<!-- 5. Page Loaders (depend on everything) -->
+<!-- 8. Page Loaders (depend on everything) -->
 <script src="js/components/dashboard-loader.js"></script>
 <script src="js/components/bin-page-loader.js"></script>
 
-<!-- 6. Main Orchestrator -->
-<script src="js/main_components.js"></script>
+<!-- 9. Auto-refresh (orchestrates data fetching) -->
+<script src="js/services/auto-refresh.js"></script>
 
-<!-- 7. Other App Scripts (keep your existing order) -->
+<!-- 10. Main Orchestrators -->
+<script src="js/main_components.js"></script>
+<script src="js/data_integration.js"></script>
+
+<!-- 11. Other App Scripts -->
 <script src="js/quick-insights.js"></script>
 <script src="js/bin-fluctuations.js"></script>
 <script src="js/dashboard-module.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/url-router.js"></script>
 <script src="js/dashboard_components.js"></script>
-<script src="js/data_integration.js"></script>
 <script src="js/other_widgets.js"></script>
 <script src="js/mqtt_integration.js"></script>
 <script src="js/settings.js"></script>
