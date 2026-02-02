@@ -4,7 +4,7 @@
 
 const API_BASE = 'https://avonic-main-hub-production.up.railway.app';
 
-// ✅ Export to global window object for browser use
+// ✅ CRITICAL: Export to window for browser JavaScript
 window.API_BASE = API_BASE;
 
 // Export for Node.js modules (if needed)
