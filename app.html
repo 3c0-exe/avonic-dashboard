@@ -22,6 +22,13 @@
   }
 </script>
 <nav class="topbar">
+
+    <button id="menuBtn" class="menu-btn">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </button>
+    
     <div class="top-nav">
         <div class="logo">
             <img src="img/AVONIC LOGO (white-new).svg" alt="">
@@ -30,17 +37,24 @@
 </nav>
       <!-- sidebar -->
 <nav class="sidebar">
+
+    
      
     <ul>
         <li>
             <a class="horizontal orientation" href="#/">
-                <img class="navIcon" src="img/icons/navIcons/HomeIcon.svg" alt="">
+                <div class="navIconWrapper">
+                     <img class="navIcon" src="img/icons/navIcons/HomeIcon.svg" alt="">
+                </div>
                 <span class="navName">Home</span>
             </a>
         </li>
         <li>
             <a class="horizontal orientation active" href="#/dashboard">
-                <img class="navIcon"    src="img/icons/navIcons/DashboardIcon.svg" alt="">
+                <div class="navIconWrapper">
+                                    <img class="navIcon"    src="img/icons/navIcons/DashboardIcon.svg" alt="">
+                </div>
+
                 <span class="navName">Dashboard</span>
             </a>
         </li>
@@ -48,7 +62,9 @@
        
         <li>
             <a class="horizontal orientation" href="#/settings">
-                <img class="navIcon" src="img/icons/navIcons/SettingsIcon.svg" alt="">
+                <div class="navIconWrapper">
+                    <img class="navIcon" src="img/icons/navIcons/SettingsIcon.svg" alt="">
+                </div>
                 <span class="navName">Settings</span>
             </a>
         </li>
@@ -1164,6 +1180,16 @@ setTimeout(() => {
         </div>
     </div>
 </div>
+
+<script>
+    const menuBtn = document.getElementById('menuBtn');
+    const body = document.body;
+
+    menuBtn.addEventListener('click', () => {
+        // Toggle the .collapsed class on the body
+        body.classList.toggle('collapsed');
+    });
+</script>
 
 </body>
 </html>
