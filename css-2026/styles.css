@@ -6,3 +6,456 @@
   box-sizing: border-box;
   font-family: 'Quicksand', sans-serif;
 }
+
+/* ========== BASE RESET & VARIABLES ========== */
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+:root {
+    /* Colors */
+    --bg-light: #FFFFFF;
+    --bg: #F1E1C7;
+    --bg-dark: #E4E4E4;
+    --auto-mode-clr: #347900;
+    --manual-mode-clr: #c5b507;
+    --text: #0B0B0B;
+    --text-muted: #484848;
+    --highlight: #FFFFFF;
+    --border: #808080;
+    --border-muted: #9E9E9E;
+    --primary: #32520F;
+    --secondary: #5A366E;
+    --danger: #7D5952;
+    --warning: #6A6443;
+    --success: #4A6C59;
+    --info: #536480;
+    
+    /* Font Sizes */
+    --fs-w-header: 2.125rem;
+    --fs-w-default: 1.125rem;
+    --fs-w-secondary: 1rem;
+    --fs-w-tertiary-1: 0.875rem;
+    --fs-w-tertiary-2: 0.75rem;
+    
+    /* Font Weights */
+    --fw-extra-bold: 800;
+    --fw-bold: 700;
+    --fw-semi-bold: 600;
+    --fw-medium: 500;
+    --fw-regular: 400;
+    
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+}
+
+/* ========== TYPOGRAPHY ========== */
+h1 {
+    margin: 12px 0;
+    font-size: var(--fs-w-default);
+    font-weight: var(--fw-extra-bold);
+}
+
+a {
+    font-size: var(--fs-w-default);
+    text-decoration: none;
+    color: var(--text);
+}
+
+/* ========== LOGOS ========== */
+.main.logo{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: #BCD093;
+    padding-left: 18px;
+    padding-top: 0;
+}
+
+.main.logo.mobile {
+
+    display: none;
+}
+
+
+
+.main.logo.mobile.inside-bins {
+    /* position: absolute;
+    top: 15px; */
+}
+
+.secondary.logo {
+    display: none;
+    padding: 22px 0;
+}
+
+/* ========== LAYOUT ========== */
+body {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: auto 1fr; /* Added to define row heights */
+    grid-template-areas: 
+        "navTopBar  navTopBar"
+        "navSideBar body";
+}
+
+.content {
+    grid-area: body;
+    
+    background: var(--bg);
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+    display: none;
+}
+
+.content.active {
+    display: block;
+}
+
+.content.home {
+    padding: 0 20px;
+}
+
+.content.dashboard {
+    padding: 0;
+}
+
+.content.bin,
+.content.bin2 {
+    display: flex;
+    padding: 0 24px;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-header {
+    font-size: var(--fs-w-header);
+    font-weight: var(--fw-extra-bold);
+    padding: 38px 12px 0 0;
+}
+
+.page-header.bin {
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+}
+
+
+.content-wrapper{
+    margin: 0 50px;
+
+}
+
+.page-header{
+    padding: 0;
+}
+
+/* ========== NAVIGATION ========== */
+.topbar{
+  grid-area: navTopBar;
+  background: #2E4C38;
+  padding: 0 26px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.top-nav .logo img{
+height: 40px;
+width: auto;
+
+}
+
+
+.sidebar {
+    grid-area: navSideBar;
+    padding: 32px 28px;
+    background: #3D8C6C;
+   display: flex;
+   flex-direction: column;
+   gap: 50px;
+   width: 250px;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 0;
+    list-style: none;
+}
+
+.horizontal.orientation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    transition: transform 0.15s ease;
+}
+
+ 
+
+ 
+.horizontal.orientation:active {
+    transform: scale(0.95);
+    color: var(--primary);
+    filter: brightness(0) saturate(100%) invert(47%) sepia(19%) saturate(2205%) hue-rotate(57deg) brightness(95%) contrast(92%);
+}
+
+.navName {
+    color: var(--bg-light);
+}
+
+.navIcon {
+    filter: invert(1);
+    width: 50px;
+    height: 50px;
+  
+}
+
+/* ========== ACTIVE STATE (Sticking to Side) ========== */
+
+.horizontal.orientation.active {
+    /* 1. Visual Style */
+    background: #F2FED1;
+    border: 2px solid #000000;
+    box-shadow: 0px 8px 0px #000000;
+    color: #000000;
+
+    /* 2. TAB SHAPE & POSITION */
+    /* Pull the box left by 28px (matching your nav padding) */
+    margin-left: -28px; 
+    
+    /* Make it wider to compensate for the shift so the right side stays aligned */
+    width: calc(100% + 28px); 
+    
+    /* Make left corners sharp (0), keep right corners rounded (21px) */
+    border-radius: 0 21px 21px 0; 
+    
+    /* Optional: Remove the left border so it looks like it merges with the edge */
+    border-left: none; 
+
+    /* 3. ALIGNMENT */
+    /* Add extra padding-left (approx 32px) to keep the icon aligned with the dashboard icon below */
+    padding: 12px 20px 12px 32px;
+    
+    /* 4. Spacing for Shadow */
+    margin-bottom: 8px; 
+}
+
+/* Ensure text turns dark green/black */
+.horizontal.orientation.active .navName {
+    color: #2A4633; 
+    font-weight: 700;
+}
+
+/* Ensure icon turns dark (removes the white filter) */
+.horizontal.orientation.active .navIcon {
+    filter: none; 
+}
+
+/* Press effect */
+.horizontal.orientation.active:active {
+    transform: translateY(4px);
+    box-shadow: 0px 4px 0px #000000;
+}
+
+/* ========== BUTTONS (Consolidated) ========== */
+.btn {
+    width: 130px;
+    height: 42px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    cursor: pointer;
+    background: #FFC46B;
+    border: 0.71194px solid #000;
+    border-radius: 71.194px;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(0.95);
+    background-color: var(--border);
+}
+
+.btn.ts {
+    background: var(--bg);
+    color: #132CAA;
+}
+
+.btn.bin {
+    background: #EC8701;
+     color: #000000;
+    align-self: flex-end;
+    height: 42px;
+    
+}
+
+.btn.claim {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn.claim:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn.claim:active {
+    transform: translateY(0);
+}
+
+.btn.claim:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn.skip {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: transparent;
+    color: #7f8c8d;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn.control.manual{
+    font-family: "Hoss Round";
+    font-weight: 300;
+    font-size: 12px;
+}
+.btn.skip:hover {
+    border-color: #667eea;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.btn-primary {
+    background: #F8B84E;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #e5a73d;
+    transform: translateY(-2px);
+}
+
+.btn.claim-device-nav {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn.claim-device-nav:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 767px){
+  
+  .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #2A4633; /* Match your brand dark green */
+        height: 85px;
+        padding: 0;
+        z-index: 200;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        /* Important: allows the active circle to pop OUT of the container */
+        overflow: visible; 
+        box-shadow: 0px -4px 10px rgba(0,0,0,0.1); /* Optional top shadow */
+    }
+    
+  .sidebar ul {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        padding: 0 24px; /* Space on sides */
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    nav li:nth-child(1) { order: 2; }
+    nav li:nth-child(2) { order: 1; }
+    nav li:nth-child(3) { order: 3; }
+
+    .content-wrapper{
+    margin: 0;
+
+        }
+    
+    .mobile-nav-spacer {
+        height: 80px;
+        flex-shrink: 0;
+    }
+    
+    
+    .navName {
+        color: var(--bg);
+    }
+    
+    .navIcon {
+      
+        
+        object-fit: contain;
+    }
+    
+    body {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 48px;
+        grid-template-areas: 
+            "body body"
+            "navSideBar navSideBar";
+    }
+}
