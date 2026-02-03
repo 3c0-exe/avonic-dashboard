@@ -1900,59 +1900,7 @@ h1.page-header.help-sec {
     50% { opacity: 0.5; }
 }
 
-/* ========== RESPONSIVE: TABLET ========== */
-@media (max-width: 1263px) {
-   
-    
-    .navName {
-        font-size: 10px;
-    }
-    
-    .horizontal.orientation {
-        flex-direction: column;
-        gap: 0;
-    }
-    
-    .main.logo {
-        display: none;
-    }
-    
-    body {
-        grid-template-columns: 100px 1fr;
-    }
-    
-    .page-header.help-sec {
-        left: 6rem;
-    }
-    
-    .secondary.logo {
-        display: block;
-        justify-self: center;
-    }
-    
-    .bin_container {
-        justify-content: space-around;
-    }
-    
-    .chart-container {
-        width: 600px;
-    }
-}
 
-@media (max-width: 1080px) {
-    .bf-wrapper {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .range-wrapper {
-        order: 2;
-    }
-    
-    .chart {
-        order: 1;
-    }
-}
 
 @media (max-width: 1051px) {
     .bin_container {

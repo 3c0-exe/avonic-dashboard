@@ -196,7 +196,7 @@ width: auto;
 .sidebar {
     grid-area: navSideBar;
     padding: 32px 28px;
-    background: #3D8C6C;
+    background: #385c4d;
    display: flex;
    flex-direction: column;
    gap: 50px;
@@ -463,68 +463,179 @@ nav ul {
     transform: translateY(-2px);
 }
 
-@media (max-width: 767px){
-  
-  .sidebar {
+
+
+/* =========================================
+   MOBILE / TABLET BREAKPOINT (max-width: 768px)
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* 1. LAYOUT RESET */
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas: "navTopBar" "body";
+    }
+
+    /* 2. BOTTOM NAV CONTAINER */
+    .sidebar {
+        grid-area: unset;
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: #2A4633; /* Match your brand dark green */
-        height: 85px;
-        padding: 0;
-        z-index: 200;
+        height: 80px; 
+        background: #2A4633;
+        z-index: 1000;
+        padding: 0 24px;
         display: flex;
-        justify-content: space-around;
+        flex-direction: row;
         align-items: center;
-        /* Important: allows the active circle to pop OUT of the container */
-        overflow: visible; 
-        box-shadow: 0px -4px 10px rgba(0,0,0,0.1); /* Optional top shadow */
+        justify-content: center;
+        box-shadow: 0px -4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* 3. LIST RESET */
+    .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: 400px;
+        justify-content: space-around; 
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: 0;
     }
     
-  .sidebar ul {
-        list-style: none;
+    .sidebar li {
+        width: auto;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+    }
+
+    .navName {
+        display: none !important;
+    }
+
+    /* 4. ICON WRAPPER FIX (Prevents collapse) */
+    .navIconWrapper {
+        width: auto !important;
+        height: auto !important;
+        display: flex !important;
         align-items: center;
-        width: 100%;
-        margin: 0;
-        padding: 0 24px; /* Space on sides */
-        box-sizing: border-box;
+        justify-content: center;
+        flex-shrink: 0 !important; /* CRITICAL: Don't let flexbox crush this */
+    }
+
+   /* 5. OPTICAL SIZING (Bigger & Bolder) */
+    
+    /* DASHBOARD (Left) -> 28px (Solid/Heavy) */
+    .sidebar li:nth-child(2) .navIcon {
+        width: 28px !important; 
+        height: 28px !important;
+        /* CRITICAL: Match min-width to width to prevent collapsing */
+        min-width: 28px !important; 
+    }
+
+    /* HOME (Center) & SETTINGS (Right) -> 36px (Line/Light) */
+    .sidebar li:nth-child(1) .navIcon,
+    .sidebar li:nth-child(3) .navIcon {
+        width: 36px !important; 
+        height: 36px !important;
+        /* CRITICAL: Match min-width to width to prevent collapsing */
+        min-width: 36px !important;
+    }
+
+    /* General Reset */
+    .navIcon {
+        max-width: none !important; 
+        max-height: none !important;
+        object-fit: contain;
+        display: block;
+        margin: 0 !important; 
+    }
+
+    /* 6. CONTAINER & ACTIVE STATE */
+    .horizontal.orientation.active {
+        width: 56px !important; 
+        height: 56px !important;
+        padding: 0 !important; /* Keep this 0 to stay centered! */
+        margin: 0 !important;
+        border: none !important;
+        
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        
+        /* Visuals */
+        border-radius: 18px !important; 
+        background: #F2FED1; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        transform: translateY(-10px);
         position: relative;
     }
 
-    nav li:nth-child(1) { order: 2; }
-    nav li:nth-child(2) { order: 1; }
-    nav li:nth-child(3) { order: 3; }
-
-    .content-wrapper{
-    margin: 0;
-
-        }
-    
-    .mobile-nav-spacer {
-        height: 80px;
-        flex-shrink: 0;
-    }
-    
-    
-    .navName {
-        color: var(--bg);
-    }
-    
-    .navIcon {
-      
+    /* 7. ACTIVE STATE (Squircle) */
+    .horizontal.orientation.active {
+        width: 56px !important; 
+        height: 56px !important;
+        border-radius: 18px !important; 
+        background: #F2FED1; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        transform: translateY(-10px);
+        position: relative;
+        margin: 0 !important;
+        border: none !important;
         
-        object-fit: contain;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
+
+    /* Inside @media (max-width: 768px) { ... } */
+
+    /* TARGET THE ACTIVE CONTAINER */
+    .horizontal.orientation.active {
+        /* 1. RESET THE SIZE */
+        width: 56px !important; 
+        height: 56px !important;
+        
+        /* 2. KILL THE PADDING (The Fix) */
+        /* Your screenshot showed "12px 20px 12px 32px". This forces it to 0. */
+        padding: 0 !important; 
+        
+        /* 3. RESET MARGINS & BORDERS */
+        margin: 0 !important;
+        border: none !important;
+        
+        /* 4. CENTER THE ICON */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        
+        /* Visuals */
+        border-radius: 18px !important; 
+        background: #F2FED1; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        transform: translateY(-10px);
+        position: relative;
+    }
+
+   /* ZOOM EFFECT */
+    /* Since icons are bigger now, we reduce scale slightly (1.15 -> 1.1) 
+       so they don't hit the edges of the box */
+    .horizontal.orientation.active .navIcon {
+        transform: scale(1.1); 
+        filter: none !important;
+
+    /* 8. ORDERING & CONTENT */
+    nav li:nth-child(1) { order: 2; } /* Dashboard (Center) */
+    nav li:nth-child(2) { order: 1; } /* Home (Left) */
+    nav li:nth-child(3) { order: 3; } /* Settings (Right) */
     
-    body {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 48px;
-        grid-template-areas: 
-            "body body"
-            "navSideBar navSideBar";
+    .content {
+        padding-bottom: 100px !important;
     }
-}
+}}
