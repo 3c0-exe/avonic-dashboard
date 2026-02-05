@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVONIC</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
     <link rel="stylesheet" href="settings.css">
-    <link rel="stylesheet" href="styles-update.css">
+    <!-- <link rel="stylesheet" href="styles-update.css"> -->
     <link rel="stylesheet" href="dashboard-module.css">
     <link rel="stylesheet" href="quick-insights.css">
     <link rel="icon" type="image/png" href="img/cliparts/favicon.png">
@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="css-2026/styles.css">
     <link rel="stylesheet" href="css-2026/nav/topbar.css">
     <link rel="stylesheet" href="css-2026/nav/sidebar.css">
+    <!-- Updated pages -->
+     <link rel="stylesheet" href="css-2026/pages/home-page.css">
   
     
 </head>
@@ -102,211 +104,115 @@
 <!-- HOME -->
 <div class="content home active"> 
 
-      <div class="header">
-                <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
-                <div class="title">Home</div>
+    <div class="cont-wrapper">
+        <div class="page-title">
+            Home
         </div>
-    
-   
-   
+        <hr>
+    <!-- Machine Status -->
+        <div class="machine-status">
 
-   
+            <h1 class="page-title">Machine Status</h1>
 
-      
-<div class="content-wrapper">
-     <div class="page-header"></div>
-    <div class="machine_status">
-            <h1>Vermicompost Bins</h1>
-            <!-- ✅ EMPTY CONTAINER - Will be populated dynamically -->
-            <div class="bin_container" id="binCardsContainer">
-                <!-- Bin cards will be injected here -->
-            </div>
+            <div class="machine-status-card-container">
+               <!-- Battery Card - With Charging Indicator -->
+    <div class="battery-card">
+        <div class="battery-header">
+            <div class="battery-title">Battery</div>
+            <div class="battery-percentage-text" id="batteryPercentage">23%</div>
         </div>
-    </div>
-    </div>
-
-        
-    <!-- inside-bins -->
-
-        <div class="content bin">
-
-            <div class="header">
-                    <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
-            <div class="title">Home</div>
-        
-        </div>
-        
-            <div class="wrapper">
-                
-                        <div class="bin_header_wrapper">
-                            
-                        <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
-                    
-
-
-                        <h1 class="page-header bin">Monitoring</h1> 
-
-                    <mode-switcher>
-                    
-                </div>
-
-                <div class="bin_monitoring_indicator_card">
-                    <div class="bin-device">
-                        <div class="bin_name">Bin 1</div>
-                        <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+        <div class="battery-circle-container">
+            <div class="battery-circle medium" id="batteryCircle">
+                <div class="battery-icon-wrapper">
+                    <div class="battery-body">
+                        <div class="battery-terminal"></div>
+                        <div class="battery-fill" id="batteryFill"></div>
                     </div>
-                
-                <img class="placeholder-icon" src="img/cliparts/open bin worm.png" alt="">
-
+                    <div class="charging-indicator" id="chargingIndicator">
+                        <div class="lightning-bolt">
+                            <!-- Flat lightning bolt SVG -->
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-
-            <div class="bin_header_wrapper">
-                <div class="time-updated">Updated 10s Ago</div>
-                <div class="refresh-sensors"><img class="refresh_icon" src="/img/icons/refresh_icon.svg" alt=""></div>
             </div>
-        
-
-    <div class="sensor-readings container">
-                <status-card
-                        class="sensor-reading"
-                        dataType="Sensors"
-                        dataLabel="Soil Moisture"
-                        subDataLabel=" "
-                        dataUnit="%"
-                        icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
-                        isClickable="true"
-                        showWaterPressure="true"
-                        showFanRPM="true"
-                    data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                        ><template class="help">
-                        </template>
-                    </status-card>
-                <status-card
-                        class="sensor-reading"
-                        dataType="Sensors"
-                        dataLabel="Temperature"
-                        subDataLabel=" "
-                        dataUnit="°C"
-                        icon="img/icons/sensorIcons/TempIcon.svg"
-                        isClickable="true"
-                        showWaterPressure=""
-                        showFanRPM="true"
-                    data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                        ></status-card>
-                <status-card
-                        class="sensor-reading"
-                        dataType="Sensors"
-                        dataLabel="Humidity"
-                        subDataLabel=" "
-                        dataUnit="%"
-                        icon="img/icons/sensorIcons/HumidityIcon.svg"
-                        isClickable="true"
-                        showWaterPressure="true"
-                        showFanRPM="true"
-                    data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                        ></status-card>
-                    <status-card
-                            class="sensor-reading"
-                            dataType="Sensors"
-                            dataLabel="Gas Level"
-                            subDataLabel=" "
-                            dataUnit="%"
-                            icon="img/icons/sensorIcons/GasIcon.svg"
-                            isClickable="true"
-                            showWaterPressure=""
-                            showFanRPM="true"
-                    data-bin-id="1">  <!-- ✅ CHANGE THIS -->
-                            ></status-card>
-
-            </div> <!-- Close sensor-readings container -->
-                            
-        </div> <!-- Close wrapper -->
-    </div> <!-- Close content.bin -->
-
-    <!-- BIN 2 PAGE -->
-     
-    <div class="content bin2">
-                    <div class="header">
-                    <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
-            <div class="title">Home</div>
-        
         </div>
-        <div class="wrapper">
-            <!-- <img class="main logo mobile inside-bins" src="img/Avonic Logo.svg" alt=""> -->
-            <div class="bin_header_wrapper">
-                <img class="back_btn" src="img/icons/navIcons/backIcon.svg" alt="">
-                <h1 class="page-header bin">Monitoring</h1> 
-                <mode-switcher></mode-switcher>
-            </div>
+    </div>
 
-            <div class="bin_monitoring_indicator_card">
-                <div class="bin-device">
-                    <div class="bin_name">Bin 2</div>
-                    <div class="esp-id-display" style="font-size: 0.8em; color: #666;"></div> <!-- ✅ ADD THIS -->
+    
+                
+ <!-- Water Tank Card -->
+                <div class="water-tank-card" id="waterTankCard">
+                    <div class="tank-header">
+                        <div class="tank-title">Water Tank</div>
+                        <div class="tank-percentage-text" id="tankPercentage">96%</div>
+                    </div>
+
+                    <div class="gauge-container">
+                        <div class="gauge-wrapper">
+                            <div class="gauge-background"></div>
+                            <div class="gauge-fill temp-normal" id="gaugeFill"></div>
+                            
+                            <div class="droplet-container temp-normal" id="dropletContainer">
+                                <div class="water-droplet">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 22C16.4183 22 20 18.4183 20 14C20 8 12 2 12 2C12 2 4 8 4 14C4 18.4183 7.58172 22 12 22Z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tank-status-text" id="tankStatusText">Tank Full</div>
+
+                    <div class="divider"></div>
+
+                    <div class="temperature-section">
+                        <div class="temp-icon">
+                            <svg class="temp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+                            </svg>
+                        </div>
+                        <div class="temperature-text">
+                            Temperature: <span class="temperature-status temp-normal" id="temperatureStatus">Normal</span>
+                        </div>
+                    </div>
                 </div>
-                <img class="placeholder-icon" src="img/cliparts/open bin worm.png" alt="">
-            </div>
 
-            <div class="bin_header_wrapper">
-                <div class="time-updated">Updated 10s Ago</div>
-                <div class="refresh-sensors"><img class="refresh_icon" src="img/icons/refresh_icon.svg" alt=""></div>
-            </div>
+                
 
-            <div class="sensor-readings container">
-                <status-card
-                    class="sensor-reading"
-                    dataType="Sensors"
-                    dataLabel="Soil Moisture"
-                    subDataLabel=" "
-                    dataUnit="%"
-                    icon="img/icons/sensorIcons/SoilMoistureIcon.svg"
-                    isClickable="true"
-                    showWaterPressure="true"
-                    showFanRPM="true"
-                    data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-                </status-card>
-                
-                <status-card
-                    class="sensor-reading"
-                    dataType="Sensors"
-                    dataLabel="Temperature"
-                    subDataLabel=" "
-                    dataUnit="°C"
-                    icon="img/icons/sensorIcons/TempIcon.svg"
-                    isClickable="true"
-                    showWaterPressure=""
-                    showFanRPM="true"
-        data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-                </status-card>
-                
-                <status-card
-                    class="sensor-reading"
-                    dataType="Sensors"
-                    dataLabel="Humidity"
-                    subDataLabel=" "
-                    dataUnit="%"
-                    icon="img/icons/sensorIcons/HumidityIcon.svg"
-                    isClickable="true"
-                    showWaterPressure="true"
-                    showFanRPM="true"
-        data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-                </status-card>
-                
-                <status-card
-                    class="sensor-reading"
-                    dataType="Sensors"
-                    dataLabel="Gas Level"
-                    subDataLabel=" "
-                    dataUnit="%"
-                    icon="img/icons/sensorIcons/GasIcon.svg"
-                    isClickable="true"
-                    showWaterPressure=""
-                    showFanRPM="true"
-        data-bin-id="2">  <!-- ✅ CHANGE THIS -->
-                </status-card>
-            </div> <!-- Close sensor-readings container -->
-        </div> <!-- Close wrapper -->
-    </div> <!-- Close content.bin2 -->
+            </div>
+            
+        </div>
+
+    <!-- Vermicompost Bins -->
+
+    <div class="vermicompost-bins-card-container">
+        <h1>Vermicompost Bins</h1>
+
+        <div class="bin-wrapper">
+
+
+            <div class="bin-card">
+
+                <div class="bin-title">
+                    Bin 1
+                </div>
+
+                <div class="mode-indicator">
+                    <img src="" alt="">
+                    <div class="mode">Auto Mode</div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    </div>
+ 
 </div>
 
 
@@ -1214,6 +1120,368 @@ setTimeout(() => {
         body.classList.toggle('collapsed');
     });
 </script>
+
+<div id="devControls" class="dev-controls-panel minimized">
+    <div class="dev-header" onclick="toggleDevPanel()">
+        <span>🛠 Dev Controls</span>
+        <button class="toggle-btn" id="devToggleBtn">+</button>
+    </div>
+    
+    <div class="dev-content">
+        <div class="dev-section">
+            <h4>🔋 Battery</h4>
+            <label>Level: <span id="currentValue">23</span>%</label>
+            <input type="range" id="batterySlider" min="0" max="100" value="23">
+            
+            <div class="charging-toggle">
+                <input type="checkbox" id="chargingToggle">
+                <label for="chargingToggle">Charging Mode</label>
+            </div>
+            <div class="status-display" id="statusDisplay">Medium Battery</div>
+        </div>
+
+        <hr>
+
+        <div class="dev-section">
+            <h4>🚰 Water Tank</h4>
+            <label>Level: <span id="waterLevelValue">96%</span></label>
+            <input type="range" id="waterLevelSlider" min="0" max="100" value="96">
+            
+            <label>Temp Status:</label>
+            <select id="tempStatusSelect">
+                <option value="Normal" selected>Normal</option>
+                <option value="High">High</option>
+                <option value="Low">Low</option>
+            </select>
+            
+            <div id="waterStatusDisplay" class="status-display status-high">
+                Tank Level: HIGH
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDevPanel() {
+        const panel = document.getElementById('devControls');
+        const btn = document.getElementById('devToggleBtn');
+        
+        panel.classList.toggle('minimized');
+        
+        // Update button symbol
+        if (panel.classList.contains('minimized')) {
+            btn.textContent = '+';
+        } else {
+            btn.textContent = '−'; // Minus sign or X
+        }
+    }
+</script>
+
+ <script>
+  // Battery Card Controller
+        class BatteryCard {
+            constructor(circleId, fillElementId, percentageElementId, chargingIndicatorId, initialLevel = 23) {
+                this.circleElement = document.getElementById(circleId);
+                this.fillElement = document.getElementById(fillElementId);
+                this.percentageElement = document.getElementById(percentageElementId);
+                this.chargingIndicator = chargingIndicatorId ? document.getElementById(chargingIndicatorId) : null;
+                this.level = initialLevel;
+                this.isCharging = false;
+                this.updateDisplay();
+            }
+
+            setLevel(percentage) {
+                this.level = Math.max(0, Math.min(100, percentage));
+                this.updateDisplay();
+            }
+
+            setCharging(charging) {
+                this.isCharging = charging;
+                
+                // Toggle charging indicator
+                if (this.chargingIndicator) {
+                    if (charging) {
+                        this.chargingIndicator.classList.add('active');
+                    } else {
+                        this.chargingIndicator.classList.remove('active');
+                    }
+                }
+                
+                // Toggle charging animation on battery fill
+                if (this.fillElement) {
+                    if (charging) {
+                        this.fillElement.style.setProperty('--current-level', `${this.level}%`);
+                        this.fillElement.classList.add('charging');
+                    } else {
+                        this.fillElement.classList.remove('charging');
+                    }
+                }
+            }
+
+            updateDisplay() {
+                if (this.fillElement && this.percentageElement && this.circleElement) {
+                    // Update fill WIDTH (battery is horizontal)
+                    this.fillElement.style.width = `${this.level}%`;
+                    
+                    // Update CSS variable for charging animation
+                    if (this.isCharging) {
+                        this.fillElement.style.setProperty('--current-level', `${this.level}%`);
+                    }
+                    
+                    // Update percentage text
+                    this.percentageElement.textContent = `${this.level}%`;
+                    
+                    // Update gradient color based on battery level
+                    this.circleElement.classList.remove('high', 'medium', 'low');
+                    
+                    if (this.level > 60) {
+                        this.circleElement.classList.add('high');
+                    } else if (this.level >= 20) {
+                        this.circleElement.classList.add('medium');
+                    } else {
+                        this.circleElement.classList.add('low');
+                    }
+                }
+            }
+
+            getLevel() {
+                return this.level;
+            }
+
+            getStatus() {
+                if (this.level > 60) return 'high';
+                if (this.level >= 20) return 'medium';
+                return 'low';
+            }
+
+            getStatusText() {
+                const status = this.getStatus();
+                if (status === 'high') return 'High Battery';
+                if (status === 'medium') return 'Medium Battery';
+                return 'Low Battery';
+            }
+
+            isChargingActive() {
+                return this.isCharging;
+            }
+        }
+
+        // Initialize battery card
+        const battery = new BatteryCard('batteryCircle', 'batteryFill', 'batteryPercentage', 'chargingIndicator', 23);
+
+        // Control panel functionality
+        const slider = document.getElementById('batterySlider');
+        const currentValue = document.getElementById('currentValue');
+        const statusDisplay = document.getElementById('statusDisplay');
+        const chargingToggle = document.getElementById('chargingToggle');
+
+        function updateStatusDisplay() {
+            const status = battery.getStatus();
+            statusDisplay.className = `status-display status-${status}`;
+            statusDisplay.textContent = battery.getStatusText();
+        }
+
+        slider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            battery.setLevel(value);
+            currentValue.textContent = value;
+            updateStatusDisplay();
+        });
+
+        chargingToggle.addEventListener('change', (e) => {
+            battery.setCharging(e.target.checked);
+        });
+
+        // Initialize status display
+        updateStatusDisplay();
+
+        // ===== HOW TO USE IN YOUR PROJECT =====
+        
+        /* 
+        // Initialize battery card with charging indicator
+        const myBattery = new BatteryCard(
+            'batteryCircle',        // Circle element ID
+            'batteryFill',          // Fill element ID
+            'batteryPercentage',    // Percentage text ID
+            'chargingIndicator',    // Charging indicator ID
+            45                      // Initial level (optional, default is 23)
+        );
+
+        // Update battery level
+        myBattery.setLevel(75);
+
+        // Toggle charging indicator
+        myBattery.setCharging(true);  // Show flat lightning bolt ⚡
+        myBattery.setCharging(false); // Hide lightning bolt
+
+        // Get battery info
+        console.log(myBattery.getLevel());           // Returns: 75
+        console.log(myBattery.getStatus());          // Returns: 'high', 'medium', or 'low'
+        console.log(myBattery.getStatusText());      // Returns: 'High Battery', etc.
+        console.log(myBattery.isChargingActive());   // Returns: true/false
+
+        // Connect to API
+        async function updateFromAPI() {
+            const response = await fetch('/api/battery-status');
+            const data = await response.json();
+            
+            myBattery.setLevel(data.level);
+            myBattery.setCharging(data.isCharging);
+        }
+        
+        setInterval(updateFromAPI, 3000); // Update every 3 seconds
+        */
+    </script>
+
+    <script>
+        /**
+         * WaterTankCard Class
+         * Manages the water tank status card component
+         * 
+         * Usage:
+         * const tank = new WaterTankCard('waterTankCard');
+         * tank.setWaterLevel(75); // Set water level 0-100%
+         * tank.setTemperature('Normal'); // 'Normal', 'High', or 'Low'
+         */
+        class WaterTankCard {
+            constructor(cardId) {
+                this.card = document.getElementById(cardId);
+                this.percentageElement = this.card.querySelector('#tankPercentage');
+                this.gaugeFill = this.card.querySelector('#gaugeFill');
+                this.dropletContainer = this.card.querySelector('#dropletContainer');
+                this.statusText = this.card.querySelector('#tankStatusText');
+                this.temperatureStatus = this.card.querySelector('#temperatureStatus');
+                
+                this.waterLevel = 96;
+                this.temperature = 'Normal';
+                
+                this.updateGauge();
+            }
+
+            /**
+             * Set water level (0-100%)
+             * @param {number} level - Water level percentage
+             */
+            setWaterLevel(level) {
+                this.waterLevel = Math.max(0, Math.min(100, level));
+                this.updateGauge();
+            }
+
+            /**
+             * Set temperature status
+             * @param {string} status - 'Normal', 'High', or 'Low'
+             */
+            setTemperature(status) {
+                this.temperature = status;
+                this.updateTemperature();
+                this.updateGaugeColor();
+            }
+
+            /**
+             * Update gauge fill based on water level
+             */
+            updateGauge() {
+                this.percentageElement.textContent = `${Math.round(this.waterLevel)}%`;
+                
+                // Rotate the gauge from -90deg (0%) to 90deg (100%)
+                // At 0%: rotate to hide (extra rotation)
+                // At 100%: no rotation needed
+                const rotationDegrees = -180 + (this.waterLevel / 100) * 180;
+                this.gaugeFill.style.transform = `rotate(${rotationDegrees}deg)`;
+                
+                this.updateStatusText();
+            }
+
+            /**
+             * Update gauge and droplet colors based on temperature
+             */
+            updateGaugeColor() {
+                this.gaugeFill.classList.remove('temp-normal', 'temp-high', 'temp-low');
+                this.dropletContainer.classList.remove('temp-normal', 'temp-high', 'temp-low');
+
+                const tempClass = `temp-${this.temperature.toLowerCase()}`;
+                this.gaugeFill.classList.add(tempClass);
+                this.dropletContainer.classList.add(tempClass);
+            }
+
+            /**
+             * Update status text based on water level
+             */
+            updateStatusText() {
+                if (this.waterLevel > 80) {
+                    this.statusText.textContent = 'Tank Full';
+                } else if (this.waterLevel > 50) {
+                    this.statusText.textContent = 'Tank Adequate';
+                } else if (this.waterLevel > 20) {
+                    this.statusText.textContent = 'Tank Low';
+                } else {
+                    this.statusText.textContent = 'Tank Critical';
+                }
+            }
+
+            /**
+             * Update temperature display
+             */
+            updateTemperature() {
+                this.temperatureStatus.textContent = this.temperature;
+                this.temperatureStatus.classList.remove('temp-normal', 'temp-high', 'temp-low');
+                const tempClass = `temp-${this.temperature.toLowerCase()}`;
+                this.temperatureStatus.classList.add(tempClass);
+            }
+
+            /**
+             * Get current water level
+             * @returns {number} Current water level percentage
+             */
+            getWaterLevel() {
+                return this.waterLevel;
+            }
+
+            /**
+             * Get current temperature status
+             * @returns {string} Current temperature status
+             */
+            getTemperature() {
+                return this.temperature;
+            }
+        }
+
+        // Initialize the water tank card
+        const waterTank = new WaterTankCard('waterTankCard');
+
+        // Control Panel Bindings
+        const waterLevelSlider = document.getElementById('waterLevelSlider');
+        const waterLevelValue = document.getElementById('waterLevelValue');
+        const tempStatusSelect = document.getElementById('tempStatusSelect');
+        const waterStatusDisplay = document.getElementById('waterStatusDisplay');
+
+        waterLevelSlider.addEventListener('input', (e) => {
+            const level = parseInt(e.target.value);
+            waterLevelValue.textContent = `${level}%`;
+            waterTank.setWaterLevel(level);
+            updateWaterStatusDisplay(level);
+        });
+
+        tempStatusSelect.addEventListener('change', (e) => {
+            waterTank.setTemperature(e.target.value);
+        });
+
+        function updateWaterStatusDisplay(level) {
+            waterStatusDisplay.classList.remove('status-high', 'status-medium', 'status-low');
+            
+            if (level > 80) {
+                waterStatusDisplay.textContent = 'Tank Level: HIGH (>80%)';
+                waterStatusDisplay.classList.add('status-high');
+            } else if (level > 50) {
+                waterStatusDisplay.textContent = 'Tank Level: MEDIUM (50-80%)';
+                waterStatusDisplay.classList.add('status-medium');
+            } else {
+                waterStatusDisplay.textContent = 'Tank Level: LOW (<50%)';
+                waterStatusDisplay.classList.add('status-low');
+            }
+        }
+    </script>
+
 
 </body>
 </html>
