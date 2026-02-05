@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css-2026/nav/sidebar.css">
     <!-- Updated pages -->
      <link rel="stylesheet" href="css-2026/pages/home-page.css">
+     <link rel="stylesheet" href="css-2026/pages/monitoring-page.css">
   
     
 </head>
@@ -104,18 +105,18 @@
 <!-- HOME -->
 <div class="content home active"> 
 
-    <div class="cont-wrapper">
+    <!-- <div class="cont-wrapper glass">
         <div class="page-title">
             Home
         </div>
         <hr>
-    <!-- Machine Status -->
+
         <div class="machine-status">
 
             <h1 class="page-title sub">Machine Status</h1>
 
             <div class="machine-status-card-container">
-               <!-- Battery Card - With Charging Indicator -->
+             
     <div class="battery-card">
         <div class="battery-header">
             <div class="battery-title">Battery</div>
@@ -130,7 +131,7 @@
                     </div>
                     <div class="charging-indicator" id="chargingIndicator">
                         <div class="lightning-bolt">
-                            <!-- Flat lightning bolt SVG -->
+                           
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
                             </svg>
@@ -143,7 +144,7 @@
 
     
                 
- <!-- Water Tank Card -->
+
                 <div class="water-tank-card" id="waterTankCard">
                     <div class="tank-header">
                         <div class="tank-title">Water Tank</div>
@@ -187,7 +188,7 @@
             
         </div>
 
-    <!-- Vermicompost Bins -->
+
 
     <div class="vermicompost-bins-card-container">
         <h1 class="page-title sub">Vermicompost Bins</h1>
@@ -225,10 +226,104 @@
 
     </div>
 
-    </div>
- 
-</div>
+    </div> -->
 
+   <div class="cont-wrapper default">
+
+    <div class="top">
+        <div class="header-card">
+            <button class="back-btn" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <div class="header-content">
+                <span class="breadcrumb">Home &gt; Monitoring</span>
+                <h1 class="title">Monitoring</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-body">
+        
+        <div class="bin-indicator-card">
+            <div class="card-left">
+                <h2 class="bin-title">Bin 1</h2>
+                <p class="update-text">Updated 10s ago</p>
+                
+                <button class="refresh-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path>
+                        <path d="M1 20v-6h6"></path>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="card-right">
+                <div class="mode-container">
+                    <span class="mode-label">Mode:</span>
+                    <button class="mode-select">
+                        Manual 
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                </div>
+               
+            </div>
+        </div>
+
+        <div class="sensor-grid">
+            <div class="sensor-card">
+                <div class="card-info">
+                    <span class="sensor-label">Soil Moisture</span>
+                    <span class="sensor-status">Optimal</span>
+                    <div class="sensor-value">50<span class="unit">%</span></div>
+                </div>
+                <div class="sensor-icon-circle">
+                    <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Moisture Icon">
+                </div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="card-info">
+                    <span class="sensor-label">Temperature</span>
+                    <span class="sensor-status">Optimal</span>
+                    <div class="sensor-value">50<span class="unit">%</span></div>
+                </div>
+                <div class="sensor-icon-circle">
+                    <img src="img/icons/sensorIcons/TempIcon.svg" alt="Moisture Icon">
+                </div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="card-info">
+                    <span class="sensor-label">Humidity</span>
+                    <span class="sensor-status">Optimal</span>
+                    <div class="sensor-value">50<span class="unit">%</span></div>
+                </div>
+                <div class="sensor-icon-circle">
+                   <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Moisture Icon">
+                </div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="card-info">
+                    <span class="sensor-label">Gas Levels</span>
+                    <span class="sensor-status">Optimal</span>
+                    <div class="sensor-value">50<span class="unit">%</span></div>
+                </div>
+                <div class="sensor-icon-circle">
+                    <img src="img/icons/sensorIcons/GasIcon.svg" alt="Moisture Icon">
+                </div>
+            </div>
+        </div>
+
+    </div> 
+</div>
 
 
        

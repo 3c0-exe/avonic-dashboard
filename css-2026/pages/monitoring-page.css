@@ -1,0 +1,50 @@
+.header-card {
+    background-color: #E2E2E2; /* Light gray background */
+    padding: 20px 24px;
+    border-radius: 12px 12px 0 0; /* Rounded top corners, likely flat bottom based on image */
+    display: flex;
+    align-items: center; /* Vertically centers the button with text */
+    gap: 16px; /* Space between button and text */
+    border-bottom: 1px solid #333; /* The dark line seen at the bottom */
+}
+
+/* The Orange Back Button */
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #FFCD75; /* Pastel orange */
+    border: 1px solid #7a7a7a; /* Thin dark border */
+    border-radius: 50%; /* Makes it a perfect circle */
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex-shrink: 0; /* Prevents button from squishing */
+}
+
+.back-btn:hover {
+    background-color: #ffbf50;
+}
+
+/* The Text Wrapper */
+.header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Breadcrumb styling (Home > Monitoring) */
+.breadcrumb {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 2px;
+}
+
+/* Title styling (Monitoring) */
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+    line-height: 1.1;
+}
