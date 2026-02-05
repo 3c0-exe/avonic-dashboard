@@ -1,0 +1,207 @@
+.sidebar {
+    grid-area: navSideBar;
+    padding: 32px 28px;
+    background: #385c4d;
+    border-right: solid 1px;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   gap: 50px;
+   width: 250px;
+   /* IMPORTANT: Remove fixed width (250px) so it obeys the grid */
+    width: 100%;
+    overflow: hidden; /* Hides text when it slides out */
+    transition: padding var(--transition-speed) ease;
+}
+
+body.collapsed .sidebar {
+    padding: 32px 0; 
+    align-items: center;
+} 
+
+
+body.collapsed .navName {
+    opacity: 0;
+    pointer-events: none; /* Prevents clicking hidden text */
+    display: none; /* optional: ensures it's fully gone */
+}
+
+body.collapsed .sidebar .orientation {
+    justify-content: center; /* Horizontal alignment */
+              /* Remove side padding to prevent offsetting */
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+}
+
+.menu-btn .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 0;
+    list-style: none;
+}
+
+.horizontal.orientation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    transition: transform 0.15s ease;
+}
+
+ 
+
+ 
+.horizontal.orientation:active {
+    transform: scale(0.95);
+    color: var(--primary);
+    filter: brightness(0) saturate(100%) invert(47%) sepia(19%) saturate(2205%) hue-rotate(57deg) brightness(95%) contrast(92%);
+}
+
+.navName {
+    color: var(--bg-light);
+    white-space: nowrap; /* Prevents text wrapping while closing */
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+/* 1. Create a container for the icon to live in */
+.navIconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;  /* Set a fixed "frame" width */
+    height: 40px; /* Set a fixed "frame" height */
+    flex-shrink: 0; /* Prevents the frame from squishing */
+}
+
+/* 2. Make the icon fit inside that frame proportionally */
+.navIcon {
+    filter: invert(1);
+    max-width: 100%;  /* Ensures it doesn't overflow the frame */
+    max-height: 100%; /* Keeps the height in check */
+    width: auto;      /* Allows the icon to keep its natural shape */
+    height: auto;
+    object-fit: contain;
+}
+
+/* ========== ACTIVE STATE (Sticking to Side) ========== */
+
+.horizontal.orientation.active {
+    /* 1. Visual Style */
+    background: #F2FED1;
+    border: 2px solid #000000;
+    box-shadow: 0px 8px 0px #000000;
+    color: #000000;
+
+    /* 2. TAB SHAPE & POSITION */
+    /* Pull the box left by 28px (matching your nav padding) */
+    margin-left: -28px; 
+    
+    /* Make it wider to compensate for the shift so the right side stays aligned */
+    width: calc(100% + 28px); 
+    
+    /* Make left corners sharp (0), keep right corners rounded (21px) */
+    border-radius: 0 21px 21px 0; 
+    
+    /* Optional: Remove the left border so it looks like it merges with the edge */
+    border-left: none; 
+
+    /* 3. ALIGNMENT */
+    /* Add extra padding-left (approx 32px) to keep the icon aligned with the dashboard icon below */
+    padding: 12px 20px 12px 32px;
+    
+    /* 4. Spacing for Shadow */
+    margin-bottom: 8px; 
+}
+
+/* Ensure text turns dark green/black */
+.horizontal.orientation.active .navName {
+    color: #2A4633; 
+    font-weight: 700;
+}
+
+/* Ensure icon turns dark (removes the white filter) */
+.horizontal.orientation.active .navIcon {
+    filter: none; 
+}
+
+/* Press effect */
+.horizontal.orientation.active:active {
+    transform: translateY(4px);
+    box-shadow: 0px 4px 0px #000000;
+}
+
+/* Sidebar Support text */
+.sidebar .message-box{
+    background:#4AA17E;
+    padding: 16px 32px;
+    border-radius: 20px;
+    color: white;
+    opacity: 20%;
+    height: 250px;
+    /* inside contents */
+    h1{
+        font-size: 18px;
+    }
+
+    p{
+        font-size: 14px;
+        opacity: 50%;
+    }
+}
+
+.sidebar .wrapper {
+    gap: 20px;
+}
+
+/* 1. Hide the Support/Message box completely when collapsed */
+body.collapsed .sidebar .message-box {
+    display: none;
+}
+
+/* 2. Hide the text inside the Log-out button */
+body.collapsed .sidebar .log-out  {
+   border: none;
+
+   img{
+     height: 25px;
+   }
+    .nav-title{
+         display: none;
+    }
+}
+
+/* 3. Center the Log-out icon and ensure the container fits the collapsed width */
+body.collapsed .sidebar .log-out {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0; /* Remove any padding that might push the icon off-center */
+}
+
+/* Optional: Adjust the wrapper width to ensure items center correctly */
+body.collapsed .sidebar .wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
