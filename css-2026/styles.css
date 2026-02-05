@@ -17,7 +17,7 @@ html, body {
 :root {
     /* Colors */
     --bg-light: #FFFFFF;
-    --bg: #F1E1C7;
+    --bg:  linear-gradient(360deg, #F1E1C7 0%, #FFFFFF 100%);;
     --bg-dark: #E4E4E4;
     --auto-mode-clr: #347900;
     --manual-mode-clr: #c5b507;
@@ -137,9 +137,10 @@ body.collapsed {
  .page-title{
     font-size: 32px;
     font-weight: 500;
+    margin: 16px 0;
 }
 
-.page-title.small{
+.page-title.sub{
     font-size: 26px;
 }
  
