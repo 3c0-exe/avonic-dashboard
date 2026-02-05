@@ -268,12 +268,14 @@ async function loadBinCards() {
     // Handle empty state
     if (devices.length === 0) {
       showEmptyState(binContainer);
+      // Clear the navbar connection controls
+      clearNavbarConnectionControls();
       return;
     }
 
-    // CREATE DEVICE SELECTOR (only if multiple devices)
-    if (devices.length > 1) {
-      createDeviceSelector(devices);
+    // CREATE DEVICE SELECTOR IN NAVBAR (only if multiple devices)
+    if (devices.length >= 1) {
+      createNavbarConnectionControls(devices);
     }
 
     // Get remembered device or use first device
@@ -291,15 +293,16 @@ async function loadBinCards() {
   }
 }
 
-// CREATE DEVICE SELECTOR DROPDOWN
-function createDeviceSelector(devices) {
-  const homeContent = document.querySelector('.content.home');
-  const pageHeader = homeContent.querySelector('.page-header');
-  
-  if (!pageHeader) return;
+// ========================================
+// 🔝 NAVBAR CONNECTION CONTROLS
+// ========================================
 
-  if (document.querySelector('.device-selector-wrapper')) {
-    console.log('⚠️ Selector already exists, skipping...');
+// CREATE NAVBAR CONNECTION CONTROLS
+function createNavbarConnectionControls(devices) {
+  const navbarContainer = document.getElementById('topbar-connection-controls');
+  
+  if (!navbarContainer) {
+    console.error('❌ Navbar connection controls container not found');
     return;
   }
 
@@ -319,72 +322,71 @@ function createDeviceSelector(devices) {
     }
   }
 
-  // Create selector wrapper
-  const selectorWrapper = document.createElement('div');
-  selectorWrapper.className = 'device-selector-wrapper';
-  
-  selectorWrapper.innerHTML = `
-<div class="connection-status-section">
-  <div class="connection-label">Connected to:</div>
-
-  <div class="connection-controls-row">
-    
-    <div class="device-select-wrapper">
-      <div class="select-icon-left">
-      <img src="img/icons/bin-icon-selection.png" alt="">
-      </div>
-
-      <select class="device-select-pill" id="home-device-selector">
-        ${devices.map((device) => `
-          <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
-            ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
-          </option>
-        `).join('')}
-      </select>
-
-      <div class="select-icon-right">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </div>
-    </div>
-
-    <button class="edit-nickname-btn" 
-      data-esp-id="${selectedESPID}" 
-      data-nickname="${devices.find(d => d.espID === selectedESPID)?.nickname || ''}" 
-      title="Edit nickname">
+  // Create connection controls HTML
+  navbarContainer.innerHTML = `
+    <div class="connection-controls-row">
+      <div class="connection-label">Connected to:</div>
       
-       <img src="img/icons/edit-icon.svg" alt="">
-    </button>
-    
-  </div>
-</div>
-`;
+      <div class="device-select-wrapper">
+        <div class="select-icon-left">
+          <img src="img/icons/bin-icon-selection.png" alt="">
+        </div>
 
-  // Insert after page header
-  pageHeader.insertAdjacentElement('afterend', selectorWrapper);
+        <select class="device-select-pill" id="navbar-device-selector">
+          ${devices.map((device) => `
+            <option value="${device.espID}" ${device.espID === selectedESPID ? 'selected' : ''}>
+              ${device.nickname || device.espID} ${device.nickname ? `(${device.espID.slice(-6)})` : ''}
+            </option>
+          `).join('')}
+        </select>
+
+        <div class="select-icon-right">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+      </div>
+
+      <button class="edit-nickname-btn" 
+        data-esp-id="${selectedESPID}" 
+        data-nickname="${devices.find(d => d.espID === selectedESPID)?.nickname || ''}" 
+        title="Edit nickname">
+        <img src="img/icons/edit-icon.svg" alt="">
+      </button>
+    </div>
+  `;
 
   // Add change event listener with memory
-  const selector = document.getElementById('home-device-selector');
-  selector.addEventListener('change', (e) => {
-    const selectedDevice = devices.find(d => d.espID === e.target.value);
-    if (selectedDevice) {
-      console.log(`🔄 Switching to device: ${selectedDevice.espID}`);
-      
-      // Save the selected ESP-ID to localStorage
-      localStorage.setItem('selected_espID', selectedDevice.espID);
-      console.log(`💾 Saved device selection: ${selectedDevice.espID}`);
-      
-      // Update edit button attributes
-      const editBtn = selectorWrapper.querySelector('.edit-nickname-btn');
-      if (editBtn) {
-        editBtn.dataset.espId = selectedDevice.espID;
-        editBtn.dataset.nickname = selectedDevice.nickname || '';
+  const selector = document.getElementById('navbar-device-selector');
+  if (selector) {
+    selector.addEventListener('change', (e) => {
+      const selectedDevice = devices.find(d => d.espID === e.target.value);
+      if (selectedDevice) {
+        console.log(`🔄 Switching to device: ${selectedDevice.espID}`);
+        
+        // Save the selected ESP-ID to localStorage
+        localStorage.setItem('selected_espID', selectedDevice.espID);
+        console.log(`💾 Saved device selection: ${selectedDevice.espID}`);
+        
+        // Update edit button attributes
+        const editBtn = navbarContainer.querySelector('.edit-nickname-btn');
+        if (editBtn) {
+          editBtn.dataset.espId = selectedDevice.espID;
+          editBtn.dataset.nickname = selectedDevice.nickname || '';
+        }
+        
+        renderDeviceData(selectedDevice, devices);
       }
-      
-      renderDeviceData(selectedDevice, devices);
-    }
-  });
+    });
+  }
 
-  console.log('✅ Device selector created with', devices.length, 'devices');
+  console.log('✅ Navbar connection controls created with', devices.length, 'devices');
+}
+
+// CLEAR NAVBAR CONNECTION CONTROLS
+function clearNavbarConnectionControls() {
+  const navbarContainer = document.getElementById('topbar-connection-controls');
+  if (navbarContainer) {
+    navbarContainer.innerHTML = '';
+  }
 }
 
 // RENDER DATA FOR SELECTED DEVICE
@@ -601,6 +603,9 @@ window.addEventListener('hashchange', () => {
   }
   if (hash === '#/home' || hash === '#/' || hash === '') {
     setTimeout(() => loadBinCards(), 100);
+  } else {
+    // Clear navbar controls when navigating away from home
+    clearNavbarConnectionControls();
   }
 });
 

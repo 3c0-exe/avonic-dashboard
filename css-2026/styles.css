@@ -464,6 +464,167 @@ nav ul {
 }
 
 
+/* =========================================
+   OTHER TOP NAV ELEMENTS
+   ========================================= */
+
+/* Container for connection controls in navbar */
+#topbar-connection-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  /* IMPORTANT: Don't let it grow to fill space */
+  flex-shrink: 0;
+  width: auto;
+}
+
+/* Connection controls row - main container */
+.connection-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* CHANGED: Reduced from 16px for tighter spacing */
+  padding: 6px 12px; /* CHANGED: Reduced padding for more compact look */
+  border-radius: 8px;
+  /* Prevent expansion */
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* Connection label */
+.connection-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Device select wrapper */
+.device-select-wrapper {
+    position: relative;
+ border: 1px solid white;
+  display: flex;
+  align-items: center;
+  background: rgba(134, 133, 133, 0.15);
+  border-radius: 50px;
+  padding: 6px 12px; /* CHANGED: More balanced padding all around */
+  gap: 6px; /* CHANGED: Reduced gap since select now has its own padding */
+  transition: all 0.3s ease;
+  /* Control the width */
+  width: auto;
+  flex-shrink: 0;
+  min-width: 240px; /* CHANGED: Added min-width to prevent cramping */
+}
+
+.device-select-wrapper:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Icon containers */
+.select-icon-left,
+.select-icon-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  pointer-events: none; /* CHANGED: Make icons non-clickable so clicks go through to select */
+}
+
+.select-icon-left img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+.select-icon-right {
+  color: rgba(255, 255, 255, 0.8);
+  margin-left: -28px; /* CHANGED: Position arrow over the select's padding area */
+  z-index: 1; /* CHANGED: Keep arrow visible */
+}
+
+/* Device select pill/dropdown */
+.device-select-pill {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* CHANGED: Remove fixed width, use flex to fill space */
+  width: auto;      /* Was 180px */
+  flex: 1;          /* Grow to fill remaining space */
+  
+  /* CHANGED: Add padding on right so text doesn't hit the arrow */
+  padding: 4px 30px 4px 4px; 
+}
+
+.device-select-pill:focus {
+  outline: none;
+}
+
+.device-select-pill option {
+  background: #2c3e50;
+  color: white;
+  padding: 8px;
+}
+
+/* Edit nickname button */
+.edit-nickname-btn { 
+  background: rgba(255, 255, 255, 0.15);
+  border: white solid 1px;
+  border-radius: 50px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.edit-nickname-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.edit-nickname-btn img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+/* Make sure topbar has proper layout */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.topbar .left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.topbar .right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+  /* IMPORTANT: Don't let right side grow */
+  flex-shrink: 0;
+  width: auto;
+}
+
+/* bin selection online */
 
 /* =========================================
    MOBILE / TABLET BREAKPOINT (max-width: 768px)

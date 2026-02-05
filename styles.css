@@ -106,10 +106,7 @@
     transform: translate(-50%, -50%);
 }
 
-svg {
-    transform: rotate(-90deg);
-}
-
+ 
 .refresh_btn {
     grid-area: RF;
     display: flex;
@@ -1744,96 +1741,7 @@ h1.page-header.help-sec {
     transform: scale(1.05);
 }
 
-/* ========== DEVICE SELECTOR ========== */
-/* Layout Containers */
-.connection-status-section {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.connection-label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #000;
-  margin-left: 5px;
-}
-
-.connection-controls-row {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Space between the grey pill and green button */
-  width: 100%;
-  max-width: 500px;
-}
-
-/* --- Grey Pill Styling --- */
-.device-select-wrapper {
-  position: relative;
-  flex-grow: 1; 
-  background-color: #FFFFFF; /* Grey background */
-  border: 1px solid #000;
-  border-radius: 50px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-}
-
-.select-icon-left, .select-icon-right {
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  color: #333;
  
-}
-.select-icon-left { left: 10px; }
-.select-icon-right { 
-    right: 15px;
-    transform: rotate(90deg);
- }
-
-.device-select-pill {
-  width: 100%;
-  height: 100%;
-  appearance: none;
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  color: #000;
-  padding-left: 45px;
-  padding-right: 40px;
-  cursor: pointer;
-  outline: none;
-}
-
-/* --- Green Circle Button Styling --- */
-/* Targeting the class used in your JS */
-.edit-nickname-btn {
-  width: 45px;
-  height: 45px;
-  flex-shrink: 0; /* Ensures it stays a perfect circle */
-  
-  background-color: #2b4c2b; /* Dark Green */
-  border: 1px solid #000;
-  border-radius: 50%; /* Makes it circular */
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.1s;
-  padding: 0; /* Remove default padding */
-}
-
-/* Icon Color inside the green button */
-.edit-nickname-btn img {
-  width: 18px;
-  height: auto;
-}
-
 /* Click effect */
 .edit-nickname-btn:active {
   transform: scale(0.95);
