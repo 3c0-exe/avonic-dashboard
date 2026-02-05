@@ -40,7 +40,8 @@ function setupFormNavigation() {
   }
   
   // Login -> Forgot Password
-const forgotLink = document.querySelector('.forgot-link');  if (forgotLink) {
+  const forgotLink = document.querySelector('.forgot-link');
+  if (forgotLink) {
     forgotLink.addEventListener('click', (e) => {
       e.preventDefault();
       showForm('forgot');
@@ -464,33 +465,3 @@ window.auth = {
 };
 
 console.log('📦 auth.js module loaded');
-
-/*async function handleLogin(event) {
-  event.preventDefault();
-
-  // --- START OF BYPASS CODE ---
-  console.log("🔓 DEV MODE: Bypassing Login...");
-  
-  // 1. Set a fake token so the system thinks you are verified
-  localStorage.setItem('avonic_token', 'developer-pass-token');
-  
-  // 2. Set a fake user profile
-  localStorage.setItem('avonic_user', JSON.stringify({ 
-      username: 'Developer', 
-      email: 'dev@avonic.local' 
-  }));
-
-  // 3. Show success message
-  showMessage('Developer Bypass Active! Redirecting...', 'success');
-
-  // 4. Force redirect to dashboard immediately
-  setTimeout(() => {
-    window.location.href = 'app.html#/dashboard';
-  }, 500);
-  
-  return; // Stop the rest of the function from running
-  // --- END OF BYPASS CODE ---
-
-  // ... (The original code below this line is now ignored) ...
-  const form = event.target;
-  const inputs = form.querySelectorAll('input');}  */
