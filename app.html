@@ -322,6 +322,8 @@
             </div>
         </div>
 
+       
+
     </div> 
 </div>
 
@@ -1270,6 +1272,30 @@ setTimeout(() => {
     </div>
 </div>
 
+
+ <div id="sensorDevControls" class="dev-panel minimized">
+    <div class="dev-header" onclick="toggleSensorPanel()">
+        <span>🧪 Sensor Controls</span>
+        <button class="toggle-btn" id="sensorToggleBtn">+</button>
+    </div>
+    
+    <div class="dev-content">
+        <div class="dev-section">
+            <label class="dev-label">Simulation</label>
+            <p class="dev-desc">Randomize values to test color states and circular progress.</p>
+            
+            <button class="dev-action-btn" onclick="randomizeSensors()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                Randomize Values
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     function toggleDevPanel() {
         const panel = document.getElementById('devControls');
@@ -1590,6 +1616,65 @@ setTimeout(() => {
             }
         }
     </script>
+
+    <script>
+       /* --- Toggle Panel Logic --- */
+function toggleSensorPanel() {
+    const panel = document.getElementById('sensorDevControls');
+    const btn = document.getElementById('sensorToggleBtn');
+    
+    panel.classList.toggle('minimized');
+    
+    // Update the button symbol (+ / -)
+    if (panel.classList.contains('minimized')) {
+        btn.textContent = '+';
+    } else {
+        btn.textContent = '−';
+    }
+}
+
+/* --- Sensor Randomization Logic (Matches your requested behavior) --- */
+function randomizeSensors() {
+    const cards = document.querySelectorAll('.sensor-card');
+
+    cards.forEach(card => {
+        // 1. Generate Random Value (0 - 100)
+        const newValue = Math.floor(Math.random() * 101);
+        
+        // 2. Determine Color & Status
+        let color, statusText;
+        
+        if (newValue >= 30 && newValue <= 70) {
+            color = '#4CAF50'; // Green (Optimal)
+            statusText = "Optimal";
+        } else if (newValue > 70) {
+            color = '#FF5252'; // Red (High)
+            statusText = "High";
+        } else {
+            color = '#FF9800'; // Orange (Low)
+            statusText = "Low";
+        }
+
+        // 3. Update Text
+        const valueDisplay = card.querySelector('.sensor-value');
+        const statusDisplay = card.querySelector('.sensor-status');
+        
+        valueDisplay.innerHTML = `${newValue}<span class="unit">%</span>`;
+        statusDisplay.textContent = statusText;
+        statusDisplay.style.color = (statusText === "Optimal") ? "#999" : color;
+
+        // 4. Update Ring Animation
+        const circle = card.querySelector('.sensor-icon-circle');
+        circle.style.setProperty('--p', newValue);
+        circle.style.setProperty('--c', color);
+    });
+}
+
+// Optional: Initialize simulation on load
+// window.addEventListener('DOMContentLoaded', randomizeSensors);
+    </script>
+
+    
 
 
 </body>
