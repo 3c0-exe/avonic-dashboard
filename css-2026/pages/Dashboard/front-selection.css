@@ -1,0 +1,678 @@
+/* ========================================
+   COMPLETE DASHBOARD STYLES - FIXED VERSION
+   Includes base styles + card selection + strict visibility control
+   ======================================== */
+
+/* ========================================
+   BASE RESET & TYPOGRAPHY
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Hoss Round', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   DASHBOARD CONTENT WRAPPER
+   ======================================== */
+
+.content.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100%;
+    padding: 0;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+/* Dashboard Header */
+.content.dashboard .header {
+    width: 100%;
+    padding: 30px 40px;
+    background: #fff;
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content.dashboard .header .title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+}
+
+.content.dashboard .header .main.logo.mobile {
+    display: none;
+}
+
+/* ========================================
+   CRITICAL: VISIBILITY CONTROL
+   Force only one section visible at a time
+   ======================================== */
+
+/* By default, ONLY card selection is visible */
+.dashboard-card-selection {
+    display: flex !important;
+}
+
+.quick-insights-wrapper {
+    display: none !important;
+}
+
+.bin-fluctuations-wrapper {
+    display: none !important;
+}
+
+/* When card selection is hidden */
+.dashboard-card-selection.hidden {
+    display: none !important;
+}
+
+/* When Quick Insights is active */
+.quick-insights-wrapper.active {
+    display: flex !important;
+    flex-direction: column;
+}
+
+/* When Bin Fluctuations is active */
+.bin-fluctuations-wrapper.active {
+    display: block !important;
+}
+
+/* ========================================
+   CARD SELECTION VIEW (LANDING PAGE)
+   ======================================== */
+
+.dashboard-card-selection {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 40px;
+}
+
+.dashboard-cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+/* ========================================
+   INDIVIDUAL SELECTION CARDS
+   ======================================== */
+
+.dashboard-selection-card {
+    position: relative;
+    background: white;
+    border: 3px solid #000;
+    border-radius: 24px;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0px 8px 0px #000000;
+    min-height: 450px;
+    overflow: visible;
+}
+
+.dashboard-selection-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0px 14px 0px #000000;
+}
+
+.dashboard-selection-card:active {
+    transform: translateY(2px);
+    box-shadow: 0px 4px 0px #000000;
+}
+
+/* ========================================
+   QUICK INSIGHTS CARD (YELLOW)
+   ======================================== */
+
+.dashboard-selection-card.quick-insights-card {
+    background: #FFD700;
+}
+
+.dashboard-selection-card.quick-insights-card .card-icon {
+    color: #000;
+}
+
+.dashboard-selection-card.quick-insights-card .card-title {
+    color: #000;
+}
+
+.dashboard-selection-card.quick-insights-card .card-description {
+    color: #1a1a1a;
+}
+
+.dashboard-selection-card.quick-insights-card .ray {
+    background: #000;
+}
+
+/* ========================================
+   BIN FLUCTUATIONS CARD (GREEN)
+   ======================================== */
+
+.dashboard-selection-card.bin-fluctuations-card {
+    background: #7FBA7A;
+}
+
+.dashboard-selection-card.bin-fluctuations-card .card-icon {
+    color: #000;
+}
+
+.dashboard-selection-card.bin-fluctuations-card .card-title {
+    color: #000;
+}
+
+.dashboard-selection-card.bin-fluctuations-card .card-description {
+    color: #1a1a1a;
+}
+
+/* ========================================
+   CARD ICON WRAPPER
+   ======================================== */
+
+.card-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    width: 120px;
+    height: 120px;
+}
+
+.card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    position: relative;
+    z-index: 2;
+}
+
+.card-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ========================================
+   ICON RAYS (LIGHTBULB ONLY)
+   ======================================== */
+
+.icon-rays {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.ray {
+    position: absolute;
+    width: 4px;
+    height: 24px;
+    background: #000;
+    border-radius: 2px;
+    top: 50%;
+    left: 50%;
+}
+
+.ray-1 {
+    transform: translate(-50%, -50%) translateY(-60px);
+}
+
+.ray-2 {
+    transform: translate(-50%, -50%) translateY(60px);
+}
+
+.ray-3 {
+    transform: translate(-50%, -50%) translateX(-60px);
+}
+
+.ray-4 {
+    transform: translate(-50%, -50%) translateX(60px);
+}
+
+/* ========================================
+   CARD CONTENT
+   ======================================== */
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 360px;
+}
+
+.card-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0;
+    font-family: 'Hoss Round', sans-serif;
+}
+
+.card-description {
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* ========================================
+   BACK BUTTON
+   ======================================== */
+
+.dashboard-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Hoss Round', sans-serif;
+    margin: 30px 0 20px;
+    align-self: flex-start;
+    box-shadow: 0px 4px 0px #000000;
+    color: #000;
+}
+
+.dashboard-back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 0px #000000;
+    background: #f9f9f9;
+}
+
+.dashboard-back-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 0px #000000;
+}
+
+.dashboard-back-btn svg {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   QUICK INSIGHTS WRAPPER LAYOUT
+   ======================================== */
+
+.quick-insights-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* ========================================
+   BIN FLUCTUATIONS WRAPPER LAYOUT
+   ======================================== */
+
+.bin-fluctuations-wrapper {
+    width: 100%;
+    padding: 0;
+}
+
+/* ========================================
+   RESPONSIVE: LARGE DESKTOP
+   ======================================== */
+
+@media (min-width: 1441px) {
+    .dashboard-cards-container {
+        max-width: 1100px;
+        gap: 50px;
+    }
+    
+    .dashboard-selection-card {
+        min-height: 480px;
+        padding: 70px 50px;
+    }
+    
+    .card-title {
+        font-size: 36px;
+    }
+    
+    .card-description {
+        font-size: 17px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: TABLET
+   ======================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .content.dashboard .header {
+        padding: 25px 30px;
+    }
+    
+    .content.dashboard .header .title {
+        font-size: 28px;
+    }
+    
+    .dashboard-card-selection {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 30px;
+    }
+    
+    .dashboard-cards-container {
+        gap: 30px;
+    }
+    
+    .dashboard-selection-card {
+        padding: 50px 35px;
+        min-height: 400px;
+    }
+    
+    .card-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 35px;
+    }
+    
+    .card-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .card-title {
+        font-size: 28px;
+    }
+    
+    .card-description {
+        font-size: 15px;
+    }
+    
+    .ray {
+        height: 20px;
+    }
+    
+    .ray-1 {
+        transform: translate(-50%, -50%) translateY(-50px);
+    }
+    
+    .ray-2 {
+        transform: translate(-50%, -50%) translateY(50px);
+    }
+    
+    .ray-3 {
+        transform: translate(-50%, -50%) translateX(-50px);
+    }
+    
+    .ray-4 {
+        transform: translate(-50%, -50%) translateX(50px);
+    }
+}
+
+/* ========================================
+   RESPONSIVE: MOBILE (STACKED LAYOUT)
+   ======================================== */
+
+@media (max-width: 768px) {
+    .content.dashboard {
+        padding: 0;
+    }
+    
+    .content.dashboard .header {
+        padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .content.dashboard .header .title {
+        font-size: 24px;
+    }
+    
+    .content.dashboard .header .main.logo.mobile {
+        display: block;
+        max-width: 120px;
+    }
+    
+    .dashboard-card-selection {
+        margin: 30px auto;
+        padding: 20px;
+    }
+    
+    .dashboard-cards-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 500px;
+    }
+    
+    .dashboard-selection-card {
+        padding: 45px 30px;
+        min-height: 350px;
+    }
+    
+    .card-icon-wrapper {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 30px;
+    }
+    
+    .card-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .card-title {
+        font-size: 24px;
+    }
+    
+    .card-description {
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 100%;
+    }
+    
+    .ray {
+        width: 3px;
+        height: 18px;
+    }
+    
+    .ray-1 {
+        transform: translate(-50%, -50%) translateY(-45px);
+    }
+    
+    .ray-2 {
+        transform: translate(-50%, -50%) translateY(45px);
+    }
+    
+    .ray-3 {
+        transform: translate(-50%, -50%) translateX(-45px);
+    }
+    
+    .ray-4 {
+        transform: translate(-50%, -50%) translateX(45px);
+    }
+    
+    .dashboard-back-btn {
+        padding: 12px 24px;
+        font-size: 15px;
+        margin: 20px 0 15px;
+    }
+    
+    .quick-insights-wrapper {
+        padding: 20px 15px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: EXTRA SMALL MOBILE
+   ======================================== */
+
+@media (max-width: 480px) {
+    .content.dashboard .header {
+        padding: 15px;
+    }
+    
+    .content.dashboard .header .title {
+        font-size: 22px;
+    }
+    
+    .dashboard-card-selection {
+        margin: 20px auto;
+        padding: 15px;
+    }
+    
+    .dashboard-cards-container {
+        gap: 20px;
+    }
+    
+    .dashboard-selection-card {
+        padding: 40px 25px;
+        min-height: 320px;
+        border-width: 2px;
+        box-shadow: 0px 6px 0px #000000;
+    }
+    
+    .dashboard-selection-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0px 10px 0px #000000;
+    }
+    
+    .card-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 25px;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .card-title {
+        font-size: 22px;
+    }
+    
+    .card-description {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    
+    .ray {
+        width: 2px;
+        height: 16px;
+    }
+    
+    .ray-1 {
+        transform: translate(-50%, -50%) translateY(-40px);
+    }
+    
+    .ray-2 {
+        transform: translate(-50%, -50%) translateY(40px);
+    }
+    
+    .ray-3 {
+        transform: translate(-50%, -50%) translateX(-40px);
+    }
+    
+    .ray-4 {
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+    
+    .dashboard-back-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        border-width: 2px;
+        box-shadow: 0px 3px 0px #000000;
+    }
+}
+
+/* ========================================
+   SMOOTH TRANSITIONS & ANIMATIONS
+   ======================================== */
+
+.dashboard-card-selection,
+.quick-insights-wrapper,
+.bin-fluctuations-wrapper {
+    animation: dashboardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dashboardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtle pulse animation for cards on load */
+@keyframes cardPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.dashboard-selection-card {
+    animation: dashboardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-selection-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.dashboard-selection-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+/* Prevent horizontal scroll */
+body {
+    overflow-x: hidden;
+}
+
+.content.dashboard {
+    overflow-x: hidden;
+}
+
+
+
+

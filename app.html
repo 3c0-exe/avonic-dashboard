@@ -7,8 +7,8 @@
     <!-- <link rel="stylesheet" href="styles.css"> -->
     <link rel="stylesheet" href="settings.css">
     <!-- <link rel="stylesheet" href="styles-update.css"> -->
-    <link rel="stylesheet" href="dashboard-module.css">
-    <link rel="stylesheet" href="quick-insights.css">
+    <!-- <link rel="stylesheet" href="dashboard-module.css"> -->
+    <!-- <link rel="stylesheet" href="quick-insights.css"> -->
     <link rel="icon" type="image/png" href="img/cliparts/favicon.png">
     <!-- Updated stuff -->
     <link rel="stylesheet" href="css-2026/styles.css">
@@ -17,6 +17,8 @@
     <!-- Updated pages -->
      <link rel="stylesheet" href="css-2026/pages/home-page.css">
      <link rel="stylesheet" href="css-2026/pages/monitoring-page.css">
+     <link rel="stylesheet" href="css-2026/pages/Dashboard/front-selection.css">
+     <link rel="stylesheet" href="css-2026/pages/Dashboard/quick-insights.css">
   
     
 </head>
@@ -228,7 +230,7 @@
 
     </div> -->
 
-   <div class="cont-wrapper default">
+   <!-- <div class="cont-wrapper default">
 
     <div class="top">
         <div class="header-card">
@@ -324,7 +326,7 @@
 
        
 
-    </div> 
+    </div>  -->
 </div>
 
 
@@ -334,469 +336,340 @@
 
 
 
-<!-- DASHBOARD PAGE -->
-<div class="content dashboard" style="display: flex; flex-direction: column; justify-content: center;">
-    <div class="header">
-                <img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
-                <div class="title">Dashboard</div>
+<!-- UPDATED DASHBOARD CONTENT - Replace the existing .content.dashboard section in app.html -->
+
+<div class="content dashboard">
+   
+
+    <!-- NEW: Card Selection View (Landing Page) -->
+    <div class="dashboard-card-selection" id="dashboardCardSelection">
+        <div class="dashboard-cards-container">
+            
+            <!-- Quick Insights Card -->
+            <div class="dashboard-selection-card quick-insights-card" data-page="quick-insights">
+                <div class="card-icon-wrapper">
+                    <div class="card-icon">
+                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Lightbulb Icon -->
+                            <path d="M30 10C23.3726 10 18 15.3726 18 22C18 26.4183 20.3643 30.2938 23.8571 32.3571V38.5714C23.8571 39.9091 24.948 41 26.2857 41H33.7143C35.052 41 36.1429 39.9091 36.1429 38.5714V32.3571C39.6357 30.2938 42 26.4183 42 22C42 15.3726 36.6274 10 30 10Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M26.2857 44.4286H33.7143" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M28.5714 47.8571H31.4286" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <!-- Lightning Bolt -->
+                            <path d="M30 16V28L34 24L30 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Rays around icon -->
+                    <div class="icon-rays">
+                        <div class="ray ray-1"></div>
+                        <div class="ray ray-2"></div>
+                        <div class="ray ray-3"></div>
+                        <div class="ray ray-4"></div>
+                    </div>
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="card-title">QUICK INSIGHTS</h2>
+                    <p class="card-description">
+                        Get instant snapshots of your bin's current conditions. View real-time sensor readings, daily averages, and quick status updates at a glance.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bin Fluctuations Card -->
+            <div class="dashboard-selection-card bin-fluctuations-card" data-page="bin-fluctuations">
+                <div class="card-icon-wrapper">
+                    <div class="card-icon">
+                        <!-- Bar Chart Icon -->
+                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="14" y="30" width="8" height="20" rx="2" fill="currentColor"/>
+                            <rect x="26" y="20" width="8" height="30" rx="2" fill="currentColor"/>
+                            <rect x="38" y="25" width="8" height="25" rx="2" fill="currentColor"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="card-title">BIN FLUCTUATIONS</h2>
+                    <p class="card-description">
+                        Track environmental changes over time with detailed graphs and historical data. Analyze trends, identify patterns, and monitor bin health across multiple sensors.
+                    </p>
+                </div>
+            </div>
+
         </div>
-
-    <!-- ✅ ADD TAB SWITCHER -->
-    <div class="dashboard-tabs" style="align-self: center;">
-        <button class="dashboard-tab-btn active" data-tab="quick-insights">Quick Insights</button>
-        <button class="dashboard-tab-btn" data-tab="bin-fluctuations">Bin Fluctuations</button>
     </div>
 
+    <!-- EXISTING: Quick Insights Content (Hidden by default) -->
+    <div class="quick-insights-wrapper" id="quickInsightsContent" style="display: none;">
 
-<!-- ✅ ADD THIS NEW STICKY NAV BAR -->
-<div class="bin-fluctuations-nav" id="binFluctuationsNav" style="display: none;">
-    <div class="bf-nav-bin-selector">
-        <button class="bf-nav-arrow bf-nav-arrow-left">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
-            </svg>
-        </button>
-        <div class="bf-nav-bin-display">Bin 1</div>
-        <button class="bf-nav-arrow bf-nav-arrow-right">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
-            </svg>
-        </button>
-    </div>
 
-    <div class="bf-nav-date-range">
-        <span id="bf-nav-date-text">July 12, 2025 - July 21, 2025</span>
-    </div>
+        <div class="cont-wrapper default">
+             
 
-    <button class="bf-nav-calendar-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        <span>Select Date</span>
-    </button>
-</div>
-<!-- Quick Insights Content -->
-<div class="quick-insights-wrapper active" id="quickInsightsContent">
-    
-    <!-- Top Bar: Date/Time + Bin Selector -->
-    <div class="qi-top-bar">
-        <div class="qi-datetime">
-            <div class="qi-date">Date: <span id="qi-current-date">Aug 26, 2025</span> <strong>(Today)</strong></div>
-            <div class="qi-last-updated">Last Updated: <span id="qi-last-updated">10:30AM</span></div>
-        </div>
+         <div class="header-card">
+            <!-- Back Button -->
+
+         
+                <button class="back-btn" aria-label="Go back" id="backToDashboardFromQI">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                    <div class="header-content">
+                        <span class="breadcrumb">Dashboard &gt; Quick Insights</span>
+                        <h1 class="title">Quick Insights</h1>
+                    </div>
+                
+            </div>
+
+               <!-- Top Bar: Date/Time + Bin Selector -->
+      <div class="content-wrapper" style="padding: 10px; display: flex; justify-content: center;">
+          <div class="qi-top-bar">
+            
+        <div class="qi-selection">
+            <div class="qi-bin-selector">
+                    <select id="qi-bin-dropdown" class="qi-dropdown">
+                        <option value="1">Bin 1</option>
+                        <option value="2">Bin 2</option>
+                    </select>
+                </div>
+            
+
         
-        <div class="qi-bin-selector">
-            <select id="qi-bin-dropdown" class="qi-dropdown">
-                <option value="1">Bin 1</option>
-                <option value="2">Bin 2</option>
-            </select>
+
+            <!-- Sensor Tabs (Expandable) -->
+            <div class="qi-sensor-tabs">
+                <button class="qi-sensor-tab active" data-sensor="soilMoisture">
+                    <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
+                    Soil Moisture
+                </button>
+                <button class="qi-sensor-tab" data-sensor="temperature">
+                    <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
+                    Temp
+                </button>
+                <button class="qi-sensor-tab" data-sensor="humidity">
+                    <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
+                    Humidity
+                </button>
+                <button class="qi-sensor-tab" data-sensor="gasLevels">
+                    <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
+                    Gas Levels
+                </button>
+            </div>
         </div>
-    </div>
+        </div>
 
-    <!-- Sensor Tabs (Expandable) -->
-    <div class="qi-sensor-tabs">
-        <button class="qi-sensor-tab active" data-sensor="soilMoisture">
-            <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
-            Soil Moisture
-        </button>
-        <button class="qi-sensor-tab" data-sensor="temperature">
-            <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
-            Temp
-        </button>
-        <button class="qi-sensor-tab" data-sensor="humidity">
-            <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
-            Humidity
-        </button>
-        <button class="qi-sensor-tab" data-sensor="gasLevels">
-            <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
-            Gas Levels
-        </button>
+ <div class="qi-wrapper" >
+    <div class="sensor">
+        <div class="icon"></div>
+        <div class="name">Temperature</div>
     </div>
-
+    <hr>
     <!-- Main Content: Stats + Insight -->
-    <div class="qi-main-content">
+        <div class="qi-main-content">
+            <div class="qi-datetime">
+                <div class="qi-date">Date: <span id="qi-current-date">Aug 26, 2025</span> <strong>(Today)</strong></div>
+                <div class="qi-last-updated">Last Updated: <span id="qi-last-updated">10:30AM</span></div>
+            </div>
+            <!-- Left: Statistics Cards -->
+            <div class="qi-stats-container">
+                <div class="qi-stat-card">
+                    <div class="qi-stat-label">Min</div>
+                    <div class="qi-stat-value">
+                        <span class="value" id="qi-min-value">27.6</span>
+                        <span class="unit" id="qi-min-unit">°C</span>
+                    </div>
+                </div>
+
+                <div class="qi-stat-card">
+                    <div class="qi-stat-label">Average</div>
+                    <div class="qi-stat-value">
+                        <span class="value" id="qi-avg-value">31.6</span>
+                        <span class="unit" id="qi-avg-unit">°C</span>
+                    </div>
+                </div>
+
+                <div class="qi-stat-card">
+                    <div class="qi-stat-label">Max</div>
+                    <div class="qi-stat-value">
+                        <span class="value" id="qi-max-value">35.6</span>
+                        <span class="unit" id="qi-max-unit">°C</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Insight Card -->
+            <div class="qi-insight-card">
+                <div class="qi-insight-title">Insight</div>
+                <p class="qi-insight-content" id="qi-insight-text">
+                    Spikes above safe range occurred 2 times today
+                </p>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="qi-table-container">
+            <table class="qi-log-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Reading</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="qi-table-body">
+                    <!-- Data will be populated by JavaScript -->
+                    <tr>
+                        <td>10:00 AM</td>
+                        <td>31.2°C</td>
+                        <td>Normal</td>
+                    </tr>
+                    <tr>
+                        <td>10:10 AM</td>
+                        <td>35.8°C</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>10:20 AM</td>
+                        <td>28.5°C</td>
+                        <td>Normal</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+      </div>
+       
+        </div>
         
-        <!-- Left: Statistics Cards -->
-        <div class="qi-stats-container">
-            <div class="qi-stat-card">
-                <div class="qi-stat-label">Min</div>
-                <div class="qi-stat-value">
-                    <span class="value" id="qi-min-value">27.6</span>
-                    <span class="unit" id="qi-min-unit">°C</span>
-                </div>
-            </div>
-
-            <div class="qi-stat-card">
-                <div class="qi-stat-label">Average</div>
-                <div class="qi-stat-value">
-                    <span class="value" id="qi-avg-value">31.6</span>
-                    <span class="unit" id="qi-avg-unit">°C</span>
-                </div>
-            </div>
-
-            <div class="qi-stat-card">
-                <div class="qi-stat-label">Max</div>
-                <div class="qi-stat-value">
-                    <span class="value" id="qi-max-value">35.6</span>
-                    <span class="unit" id="qi-max-unit">°C</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right: Insight Card -->
-        <div class="qi-insight-card">
-            <div class="qi-insight-title">Insight</div>
-            <p class="qi-insight-content" id="qi-insight-text">
-                Spikes above safe range occurred 2 times today
-            </p>
-        </div>
-    </div>
-
-    <!-- Data Table -->
-    <div class="qi-table-container">
-        <table class="qi-log-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Reading</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="qi-table-body">
-                <!-- Data will be populated by JavaScript -->
-                <tr>
-                    <td>10:00 AM</td>
-                    <td>31.2°C</td>
-                    <td>Normal</td>
-                </tr>
-                <tr>
-                    <td>10:10 AM</td>
-                    <td>35.8°C</td>
-                    <td>High</td>
-                </tr>
-                <tr>
-                    <td>10:20 AM</td>
-                    <td>28.5°C</td>
-                    <td>Normal</td>
-                </tr>
-                <tr>
-                    <td>10:30 AM</td>
-                    <td>32.1°C</td>
-                    <td>Normal</td>
-                </tr>
-                <tr>
-                    <td>10:40 AM</td>
-                    <td>29.7°C</td>
-                    <td>Normal</td>
-                </tr>
-                <tr>
-                    <td>10:50 AM</td>
-                    <td>33.4°C</td>
-                    <td>Normal</td>
-                </tr>
-                <tr>
-                    <td>11:00 AM</td>
-                    <td>36.2°C</td>
-                    <td>High</td>
-                </tr>
-                <tr>
-                    <td>11:10 AM</td>
-                    <td>31.8°C</td>
-                    <td>Normal</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-</div>
-
-<!-- Bin Fluctuations Wrapper (wrap existing dashboard-module-wrapper) -->
-<div class="bin-fluctuations-wrapper" id="binFluctuationsContent" style="display: none;">
 
 
-    
-<div class="dashboard-module-wrapper">
-    <!-- Temperature Section -->
-    <div class="dashboard-section" data-sensor="temperature">
-        <div class="dashboard-sensor-header">
-            <div class="dashboard-sensor-icon">
-                <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
-            </div>
-            <h2 class="dashboard-sensor-title">Temperature</h2>
-        </div>
 
-        <div class="dashboard-content-grid">
-            <!-- Left: Chart -->
-            <div class="dashboard-chart-column">
-                <div class="dashboard-chart-card">
-                    <h3 class="dashboard-card-title">Summary</h3>
-                    <div class="dashboard-chart-container">
-                        <canvas class="dashboard-chart-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Right: Average & Insights -->
-            <div class="dashboard-info-column">
-                <!-- Average Card -->
-                <div class="dashboard-average-card">
-                    <div class="dashboard-average-content">
-                        <div class="dashboard-average-label">Average</div>
-                        <div class="dashboard-average-value-wrapper">
-                            <span class="dashboard-average-value">--</span>
-                            <span class="dashboard-average-unit">°C</span>
-                        </div>
-                    </div>
 
-                    <div class="dashboard-worm-clipart">
-                        <ul>
-                            <li data-condition="normal">
-                                <img src="img/worm-conditions/Normal.png" alt="Normal">
-                            </li>
-                            <li data-condition="too-wet">
-                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
-                            </li>
-                            <li data-condition="too-hot">
-                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
-                            </li>
-                            <li data-condition="too-dry">
-                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
-                            </li>
-                            <li data-condition="gas-high">
-                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Insights Card -->
-                <div class="dashboard-insights-card">
-                    <div class="dashboard-insights-header">
-                        <h3>Insights</h3>
-                        <div class="dashboard-action-icon-wrapper">
-                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
-                            <div class="dashboard-action-badge"></div>
-                        </div>
-                    </div>
-                    <p class="dashboard-insights-content">Loading insights...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Soil Moisture Section -->
-    <div class="dashboard-section" data-sensor="soilMoisture">
-        <div class="dashboard-sensor-header">
-            <div class="dashboard-sensor-icon">
-                <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
-            </div>
-            <h2 class="dashboard-sensor-title">Soil Moisture</h2>
-        </div>
-
-        <div class="dashboard-content-grid">
-            <div class="dashboard-chart-column">
-                <div class="dashboard-chart-card">
-                    <h3 class="dashboard-card-title">Summary</h3>
-                    <div class="dashboard-chart-container">
-                        <canvas class="dashboard-chart-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-info-column">
-                <div class="dashboard-average-card">
-                    <div class="dashboard-average-content">
-                        <div class="dashboard-average-label">Average</div>
-                        <div class="dashboard-average-value-wrapper">
-                            <span class="dashboard-average-value">--</span>
-                            <span class="dashboard-average-unit">%</span>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-worm-clipart">
-                        <ul>
-                            <li data-condition="normal">
-                                <img src="img/worm-conditions/Normal.png" alt="Normal">
-                            </li>
-                            <li data-condition="too-wet">
-                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
-                            </li>
-                            <li data-condition="too-hot">
-                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
-                            </li>
-                            <li data-condition="too-dry">
-                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
-                            </li>
-                            <li data-condition="gas-high">
-                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="dashboard-insights-card">
-                    <div class="dashboard-insights-header">
-                        <h3>Insights</h3>
-                        <div class="dashboard-action-icon-wrapper">
-                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
-                            <div class="dashboard-action-badge"></div>
-                        </div>
-                    </div>
-                    <p class="dashboard-insights-content">Loading insights...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Humidity Section -->
-    <div class="dashboard-section" data-sensor="humidity">
-        <div class="dashboard-sensor-header">
-            <div class="dashboard-sensor-icon">
-                <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
-            </div>
-            <h2 class="dashboard-sensor-title">Humidity</h2>
-        </div>
-
-        <div class="dashboard-content-grid">
-            <div class="dashboard-chart-column">
-                <div class="dashboard-chart-card">
-                    <h3 class="dashboard-card-title">Summary</h3>
-                    <div class="dashboard-chart-container">
-                        <canvas class="dashboard-chart-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-info-column">
-                <div class="dashboard-average-card">
-                    <div class="dashboard-average-content">
-                        <div class="dashboard-average-label">Average</div>
-                        <div class="dashboard-average-value-wrapper">
-                            <span class="dashboard-average-value">--</span>
-                            <span class="dashboard-average-unit">%</span>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-worm-clipart">
-                        <ul>
-                            <li data-condition="normal">
-                                <img src="img/worm-conditions/Normal.png" alt="Normal">
-                            </li>
-                            <li data-condition="too-wet">
-                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
-                            </li>
-                            <li data-condition="too-hot">
-                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
-                            </li>
-                            <li data-condition="too-dry">
-                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
-                            </li>
-                            <li data-condition="gas-high">
-                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="dashboard-insights-card">
-                    <div class="dashboard-insights-header">
-                        <h3>Insights</h3>
-                        <div class="dashboard-action-icon-wrapper">
-                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
-                            <div class="dashboard-action-badge"></div>
-                        </div>
-                    </div>
-                    <p class="dashboard-insights-content">Loading insights...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gas Levels Section -->
-    <div class="dashboard-section" data-sensor="gasLevels">
-        <div class="dashboard-sensor-header">
-            <div class="dashboard-sensor-icon">
-                <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
-            </div>
-            <h2 class="dashboard-sensor-title">Gas Levels</h2>
-        </div>
-
-        <div class="dashboard-content-grid">
-            <div class="dashboard-chart-column">
-                <div class="dashboard-chart-card">
-                    <h3 class="dashboard-card-title">Summary</h3>
-                    <div class="dashboard-chart-container">
-                        <canvas class="dashboard-chart-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-info-column">
-                <div class="dashboard-average-card">
-                    <div class="dashboard-average-content">
-                        <div class="dashboard-average-label">Average</div>
-                        <div class="dashboard-average-value-wrapper">
-                            <span class="dashboard-average-value">--</span>
-                            <span class="dashboard-average-unit">ppm</span>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-worm-clipart">
-                        <ul>
-                            <li data-condition="normal">
-                                <img src="img/worm-conditions/Normal.png" alt="Normal">
-                            </li>
-                            <li data-condition="too-wet">
-                                <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
-                            </li>
-                            <li data-condition="too-hot">
-                                <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
-                            </li>
-                            <li data-condition="too-dry">
-                                <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
-                            </li>
-                            <li data-condition="gas-high">
-                                <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="dashboard-insights-card">
-                    <div class="dashboard-insights-header">
-                        <h3>Insights</h3>
-                        <div class="dashboard-action-icon-wrapper">
-                            <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
-                            <div class="dashboard-action-badge"></div>
-                        </div>
-                    </div>
-                    <p class="dashboard-insights-content">Loading insights...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<div class="dashboard-modal-overlay">
-    <div class="dashboard-modal-container">
-        <button class="dashboard-modal-close">×</button>
         
-        <div class="dashboard-modal-header">
-            <h2 class="dashboard-modal-title">Actions</h2>
-            <p class="dashboard-modal-subtitle">Recommended steps to improve conditions</p>
+     
+ </div>
+        
+
+    <!-- EXISTING: Bin Fluctuations Wrapper (Hidden by default) -->
+    <div class="bin-fluctuations-wrapper" id="binFluctuationsContent" style="display: none;">
+        
+        <!-- Sticky Nav Bar -->
+        <div class="bin-fluctuations-nav" id="binFluctuationsNav">
+            <div class="bf-nav-bin-selector">
+                <button class="bf-nav-arrow bf-nav-arrow-left">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="bf-nav-bin-display">Bin 1</div>
+                <button class="bf-nav-arrow bf-nav-arrow-right">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bf-nav-date-range">
+                <span id="bf-nav-date-text">July 12, 2025 - July 21, 2025</span>
+            </div>
+
+            <button class="bf-nav-calendar-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Select Date</span>
+            </button>
         </div>
 
-        <div class="dashboard-actions-list">
-            <!-- Actions will be inserted here dynamically -->
+        <!-- Back Button -->
+        <button class="dashboard-back-btn" id="backToDashboardFromBF">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Dashboard
+        </button>
+
+        <!-- Dashboard Module Content -->
+        <div class="dashboard-module-wrapper">
+            <!-- Temperature Section -->
+            <div class="dashboard-section" data-sensor="temperature">
+                <div class="dashboard-sensor-header">
+                    <div class="dashboard-sensor-icon">
+                        <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
+                    </div>
+                    <h2 class="dashboard-sensor-title">Temperature</h2>
+                </div>
+
+                <div class="dashboard-content-grid">
+                    <!-- Left: Chart -->
+                    <div class="dashboard-chart-column">
+                        <div class="dashboard-chart-card">
+                            <h3 class="dashboard-card-title">Summary</h3>
+                            <div class="dashboard-chart-container">
+                                <canvas class="dashboard-chart-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Average & Insights -->
+                    <div class="dashboard-info-column">
+                        <!-- Average Card -->
+                        <div class="dashboard-average-card">
+                            <div class="dashboard-average-content">
+                                <div class="dashboard-average-label">Average</div>
+                                <div class="dashboard-average-value-wrapper">
+                                    <span class="dashboard-average-value">--</span>
+                                    <span class="dashboard-average-unit">°C</span>
+                                </div>
+                            </div>
+
+                            <div class="dashboard-worm-clipart">
+                                <ul>
+                                    <li data-condition="normal">
+                                        <img src="img/worm-conditions/Normal.png" alt="Normal">
+                                    </li>
+                                    <li data-condition="too-wet">
+                                        <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
+                                    </li>
+                                    <li data-condition="too-hot">
+                                        <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
+                                    </li>
+                                    <li data-condition="too-dry">
+                                        <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
+                                    </li>
+                                    <li data-condition="gas-high">
+                                        <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Insights Card -->
+                        <div class="dashboard-insights-card">
+                            <div class="dashboard-insights-header">
+                                <h3>Insights</h3>
+                                <div class="dashboard-action-icon-wrapper">
+                                    <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
+                                    <div class="dashboard-action-badge"></div>
+                                </div>
+                            </div>
+                            <p class="dashboard-insights-content">Loading insights...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional sensor sections would follow the same pattern... -->
+            
         </div>
     </div>
-</div>
 
-</div>
-</div>
-    <div class="mobile-nav-spacer"></div>
 </div>
 <!-- END OF DASHBOARD PAGE -->
 
@@ -898,6 +771,7 @@
 <script src="js/dashboard/chart-creator.js"></script>
 <script src="js/dashboard/modal-controller.js"></script>
 <script src="js/dashboard-module.js"></script>
+<script src="js/dashboard/dashboard-nav.js"></script>
 
 <!-- 10. Auto-refresh (orchestrates data fetching) -->
 <script src="js/services/auto-refresh.js"></script>

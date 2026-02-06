@@ -1,0 +1,273 @@
+
+.qi-selection{
+  width: 150px;
+  padding: 10px;
+  height: 600px;
+  background-color: #ffffff; /* Silver/Grey gradient */
+  border: 1px solid #777; /* Thin dark border */
+  border-radius: 8px;
+}
+
+.qi-dropdown{
+    margin-bottom: 12px;
+    width: 100%;
+   
+}
+
+
+
+
+.qi-sensor-tabs{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+   
+    
+
+    .qi-sensor-tab{
+        display: flex;
+        flex-direction: column;
+        width: 120px;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 1px solid;
+    }
+
+    img{
+        width: 50px;
+        height: auto;
+        align-self: center;
+    }
+}
+
+
+
+
+
+/* --- Main Wrapper --- */
+.qi-wrapper {
+   
+  border: 1px solid #d1d1d1;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 600px;
+  background-color: #ffffff;
+  color: #111;
+  box-sizing: border-box;
+}
+
+/* Ensure all elements use border-box sizing */
+.qi-wrapper * {
+  box-sizing: border-box;
+}
+
+/* --- Layout Grid --- */
+/* We use a grid on the main content to handle the layout of Date, Stats, and Insight */
+.qi-main-content {
+  display: grid;
+  /* Create 4 equal columns for the 3 stats + 1 insight card */
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* --- Date & Time Section --- */
+.qi-datetime {
+  /* Span all 4 columns */
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.qi-date, .qi-last-updated {
+  margin-bottom: 4px;
+}
+
+/* Bold labels like "Date:" and "Last Updated:" */
+.qi-datetime strong, 
+.qi-date strong, /* Catches the (Today) */
+.qi-date::before, /* Optional if you wanted to target text content specifically, but simple font-weight works */
+.qi-last-updated {
+  font-weight: 600;
+}
+
+/* --- Stats Cards Container --- */
+/* Key Trick: display: contents makes this container 'disappear' visually, 
+   so its children (the cards) become direct children of the .qi-main-content grid */
+.qi-stats-container {
+  display: contents; 
+}
+
+/* --- Common Card Styles (Stats + Insight) --- */
+.qi-stat-card, .qi-insight-card {
+  background: linear-gradient(180deg, #e0e0e0 0%, #bfbfbf 100%); /* Silver/Grey gradient */
+  border: 1px solid #777; /* Thin dark border */
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px; /* Adjust height to match aspect ratio */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Specific styling for Stats Cards */
+.qi-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.qi-stat-value {
+  text-align: center;
+  font-size: 22px; /* Large font for values */
+  font-weight: 500;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.qi-stat-value .unit {
+  font-size: 0.8em; /* Make unit slightly smaller */
+}
+
+/* Specific styling for Insight Card */
+.qi-insight-card {
+  /* Insight card is just the 4th item in the grid naturally */
+  background: linear-gradient(180deg, #dcdcdc 0%, #c0c0c0 100%);
+}
+
+.qi-insight-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.qi-insight-content {
+  font-size: 11px;
+  line-height: 1.2;
+  margin: 0;
+  color: #444;
+}
+
+/* --- Table Section --- */
+.qi-table-container {
+  width: 100%;
+}
+
+.qi-log-table {
+  width: 100%;
+  border-collapse: separate; /* Allows spacing if we wanted, but we use zebra */
+  border-spacing: 0;
+  text-align: center;
+}
+
+/* Table Header */
+.qi-log-table thead th {
+  font-weight: 500;
+  font-size: 13px;
+  padding-bottom: 12px;
+  color: #111;
+  /* Distribute alignment to match image roughly */
+}
+/* Align headers specifically if needed to match the columns visually */
+.qi-log-table thead th:first-child { width: 30%; }
+.qi-log-table thead th:nth-child(2) { width: 40%; }
+.qi-log-table thead th:last-child { width: 30%; }
+
+/* Table Body */
+.qi-log-table tbody tr {
+  height: 35px; /* Height of the rows */
+}
+
+.qi-log-table td {
+  font-size: 14px;
+  color: #444;
+  padding: 8px 0;
+}
+
+/* Zebra Striping */
+/* Even rows get the grey background */
+.qi-log-table tbody tr:nth-child(even) {
+  background-color: #e6e6e6; 
+}
+/* Odd rows stay white */
+.qi-log-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Optional: Add the "Soil Moisture" header icon styles if you add that HTML later */
+
+.qi-table-container {
+    /* Height of roughly 10 rows + header */
+    max-height: 354px; 
+    /* Adds a scrollbar if content overflows */
+    overflow-y: auto; 
+    /* aesthetic border tweak */
+    border-bottom: 1px solid #d1d1d1; 
+}
+
+/* Ensure the header stays visible while scrolling (Optional) */
+.qi-log-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
+}
+
+/* 1. Ensure the parent container centers its children */
+.content-wrapper {
+    display: flex;
+    justify-content: center; /* This centers the items horizontally */
+    align-items: flex-start; /* Keeps them at the top */
+    gap: 10px;
+    margin-bottom: 35px;
+    width: 100%;            /* Ensure it takes full width */
+}
+
+/* 2. Fix the selector (remove the space) and ensure width is handled */
+.cont-wrapper.default {
+    display: flex;
+    flex-direction: column; 
+    margin: 0 auto;         /* Fallback centering */
+    width: 100%;            /* Allow it to fill up to its max-width */
+}
+
+/* This targets the page section itself */
+.content.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This centers the card horizontally */
+    width: 100%;
+    padding: 20px;
+}
+
+/* Add this to quick-insights.css */
+.quick-insights-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Forces the child card to the horizontal center */
+    align-items: flex-start;
+}
+
+/* Ensure the card itself has the margin auto fallback */
+.cont-wrapper.default {
+    display: flex;
+    flex-direction: column; 
+    margin: 0 auto;         
+    width: 100%;            
+    max-width: 800px; /* This allows the margin auto to have space to work */
+}
+/* Ensure the card itself has the margin auto fallback */
+.cont-wrapper.default {
+    display: flex;
+    flex-direction: column; 
+    margin: 0 auto;         
+    width: 100%;            
+    max-width: 800px; /* This allows the margin auto to have space to work */
+}
