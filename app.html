@@ -19,6 +19,7 @@
      <link rel="stylesheet" href="css-2026/pages/monitoring-page.css">
      <link rel="stylesheet" href="css-2026/pages/Dashboard/front-selection.css">
      <link rel="stylesheet" href="css-2026/pages/Dashboard/quick-insights.css">
+     <link rel="stylesheet" href="css-2026/pages/Dashboard/bin-fluctuations.css">
   
     
 </head>
@@ -554,290 +555,150 @@
         
 
     <!-- EXISTING: Bin Fluctuations Wrapper (Hidden by default) -->
-    <div class="bin-fluctuations-wrapper" id="binFluctuationsContent" style="display: none;">
+
+ <!-- Bin Fluctuations Wrapper (Exact Layout Match) -->
+<div class="bin-fluctuations-wrapper" id="binFluctuationsContent" style="display: none;">
+    
+    <div class="cont-wrapper default">
         
-        <!-- Sticky Nav Bar -->
-        <div class="bin-fluctuations-nav" id="binFluctuationsNav">
-            <div class="bf-nav-bin-selector">
-                <button class="bf-nav-arrow bf-nav-arrow-left">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 18l-6-6 6-6"/>
-                    </svg>
-                </button>
-                <div class="bf-nav-bin-display">Bin 1</div>
-                <button class="bf-nav-arrow bf-nav-arrow-right">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 18l6-6-6-6"/>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="bf-nav-date-range">
-                <span id="bf-nav-date-text">July 12, 2025 - July 21, 2025</span>
-            </div>
-
-            <button class="bf-nav-calendar-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
+        <!-- Header Card -->
+        <div class="header-card">
+            <!-- Back Button -->
+            <button class="back-btn" aria-label="Go back" id="backToDashboardFromBF">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Select Date</span>
             </button>
+            <div class="header-content">
+                <span class="breadcrumb">Dashboard &gt; Bin Fluctuation</span>
+                <h1 class="title">Bin Fluctuation</h1>
+            </div>
         </div>
 
-        <!-- Back Button -->
-        <button class="dashboard-back-btn" id="backToDashboardFromBF">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Dashboard
-        </button>
-
-        <!-- Dashboard Module Content -->
-        <div class="dashboard-module-wrapper">
-            <!-- Temperature Section -->
-            <div class="dashboard-section" data-sensor="temperature">
-                <div class="dashboard-sensor-header">
-                    <div class="dashboard-sensor-icon">
-                        <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
-                    </div>
-                    <h2 class="dashboard-sensor-title">Temperature</h2>
+        <!-- Main Content Layout -->
+        <div class="bf-content-layout">
+            
+            <!-- Left Selection Panel -->
+            <div class="bf-left-panel">
+                
+                <!-- Bin Selector Dropdown -->
+                <div class="bf-bin-selector">
+                    <select id="bf-bin-dropdown" class="bf-dropdown">
+                        <option value="1">Bin 1</option>
+                        <option value="2">Bin 2</option>
+                    </select>
                 </div>
 
-                <div class="dashboard-content-grid">
-                    <!-- Left: Chart -->
-                    <div class="dashboard-chart-column">
-                        <div class="dashboard-chart-card">
-                            <h3 class="dashboard-card-title">Summary</h3>
-                            <div class="dashboard-chart-container">
-                                <canvas class="dashboard-chart-canvas"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Right: Average & Insights -->
-                    <div class="dashboard-info-column">
-                        <!-- Average Card -->
-                        <div class="dashboard-average-card">
-                            <div class="dashboard-average-content">
-                                <div class="dashboard-average-label">Average</div>
-                                <div class="dashboard-average-value-wrapper">
-                                    <span class="dashboard-average-value">--</span>
-                                    <span class="dashboard-average-unit">°C</span>
-                                </div>
-                            </div>
-
-                            <div class="dashboard-worm-clipart">
-                                <ul>
-                                    <li data-condition="normal">
-                                        <img src="img/worm-conditions/Normal.png" alt="Normal">
-                                    </li>
-                                    <li data-condition="too-wet">
-                                        <img src="img/worm-conditions/Too Wet.png" alt="Too Wet">
-                                    </li>
-                                    <li data-condition="too-hot">
-                                        <img src="img/worm-conditions/Too Hot.png" alt="Too Hot">
-                                    </li>
-                                    <li data-condition="too-dry">
-                                        <img src="img/worm-conditions/Too Dry.png" alt="Too Dry">
-                                    </li>
-                                    <li data-condition="gas-high">
-                                        <img src="img/worm-conditions/Gas Too High.png" alt="Gas High">
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Insights Card -->
-                        <div class="dashboard-insights-card">
-                            <div class="dashboard-insights-header">
-                                <h3>Insights</h3>
-                                <div class="dashboard-action-icon-wrapper">
-                                    <img class="dashboard-action-icon" src="img/icons/Actions.svg" alt="Actions">
-                                    <div class="dashboard-action-badge"></div>
-                                </div>
-                            </div>
-                            <p class="dashboard-insights-content">Loading insights...</p>
-                        </div>
-                    </div>
+                <!-- Sensor Tabs -->
+                <div class="bf-sensor-tabs">
+                    <button class="bf-sensor-tab active" data-sensor="soilMoisture">
+                        <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
+                        <span>Soil Moisture</span>
+                    </button>
+                    <button class="bf-sensor-tab" data-sensor="temperature">
+                        <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
+                        <span>Temperature</span>
+                    </button>
+                    <button class="bf-sensor-tab" data-sensor="humidity">
+                        <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
+                        <span>Humidity</span>
+                    </button>
+                    <button class="bf-sensor-tab" data-sensor="gasLevels">
+                        <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
+                        <span>Gas Levels</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Additional sensor sections would follow the same pattern... -->
+            <!-- Right Content Area -->
+            <div class="bf-right-panel">
+                
+                <!-- Grid Container -->
+                <div class="bf-grid-container">
+                    
+                    <!-- Top Row: Sensor Title and Date Range (Full Width) -->
+                    <div class="bf-grid-header">
+                        <div class="bf-sensor-title-block">
+                            <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture" class="bf-header-icon" id="bf-header-icon">
+                            <h2 class="bf-sensor-title-text" id="bf-sensor-title">Soil Moisture</h2>
+                        </div>
+                        <div class="bf-date-range-block">
+                            <div class="bf-calendar-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M3 10h18M7 3v4M17 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <input type="date" id="bf-date-from" class="bf-date-input" value="2026-02-14">
+                            <span class="bf-date-separator">to</span>
+                            <input type="date" id="bf-date-to" class="bf-date-input" value="2026-12-10">
+                        </div>
+                    </div>
+
+                    <!-- Middle Row: Average Display (Left) and Insights (Right) -->
+                    <div class="bf-grid-middle-left">
+                        <div class="bf-average-section">
+                            <div class="bf-average-label">Average</div>
+                            <div class="bf-average-value-display">
+                                <span class="bf-value-large" id="bf-avg-value">31.6</span>
+                                <span class="bf-unit-large" id="bf-avg-unit">°C</span>
+                            </div>
+                        </div>
+                        <div class="bf-worm-display">
+                            <img src="img/worm-conditions/Normal.png" alt="Worm Condition" id="bf-worm-image" class="bf-worm-img">
+                        </div>
+                    </div>
+
+                    <div class="bf-grid-middle-right">
+                        <div class="bf-insights-card">
+                            <div class="bf-insights-card-header">
+                                <h3>Insights</h3>
+                                <button class="bf-action-btn" id="bf-action-btn" aria-label="View Actions">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21.71 20.29L18 16.61C19.2306 15.0944 19.8937 13.1836 19.8762 11.219C19.8588 9.25435 19.1618 7.35583 17.9024 5.86351C16.643 4.37118 14.8952 3.36726 12.9612 3.01948C11.0272 2.6717 9.02607 2.9999 7.29889 3.95132C5.57171 4.90274 4.22714 6.42073 3.49346 8.24374C2.75978 10.0668 2.68356 12.0803 3.27813 13.9503C3.8727 15.8202 5.10299 17.4289 6.76183 18.5114C8.42068 19.5938 10.4072 20.0864 12.3896 19.9077C14.372 19.7291 16.2365 18.8894 17.66 17.52L21.29 21.15C21.3834 21.2438 21.4943 21.3181 21.6161 21.3689C21.7379 21.4197 21.8684 21.4461 22 21.4461C22.1316 21.4461 22.2621 21.4197 22.3839 21.3689C22.5057 21.3181 22.6166 21.2438 22.71 21.15C22.8903 20.9625 22.9913 20.7113 22.9913 20.45C22.9913 20.1887 22.8903 19.9375 22.71 19.75L21.71 20.29ZM12.5 18C11.2089 18 9.93552 17.6896 8.77772 17.0952C7.61992 16.5008 6.60723 15.6388 5.82736 14.5747C5.04749 13.5106 4.52184 12.2731 4.29324 10.9639C4.06463 9.65466 4.13977 8.31046 4.51246 7.03643C4.88515 5.7624 5.54478 4.59418 6.43817 3.61783C7.33156 2.64148 8.43574 1.88118 9.66683 1.39335C10.8979 0.905524 12.2236 0.704152 13.5401 0.803895C14.8566 0.903638 16.1314 1.30162 17.2704 1.96885C18.4095 2.63608 19.3838 3.55518 20.1219 4.65698C20.8599 5.75878 21.3424 7.01386 21.5334 8.32807C21.7245 9.64229 21.6194 10.9831 21.2257 12.2507C20.832 13.5184 20.1589 14.6798 19.256 15.6534C18.3531 16.6271 17.242 17.3887 16.0035 17.8841C14.765 18.3795 13.4291 18.5968 12.09 18.52L12.5 18Z" fill="currentColor"/>
+                                        <path d="M14.29 10.29L12 12.59L9.70999 10.29C9.61695 10.1968 9.50626 10.1228 9.38496 10.0723C9.26366 10.0219 9.13403 9.99591 9.00299 9.99591C8.87195 9.99591 8.74232 10.0219 8.62102 10.0723C8.49972 10.1228 8.38903 10.1968 8.29599 10.29C8.11032 10.4777 8.00595 10.7321 8.00595 11C8.00595 11.2679 8.11032 11.5223 8.29599 11.71L11.29 14.71C11.3834 14.8037 11.4943 14.878 11.6161 14.9289C11.7379 14.9797 11.8684 15.0061 12 15.0061C12.1316 15.0061 12.2621 14.9797 12.3839 14.9289C12.5057 14.878 12.6166 14.8037 12.71 14.71L15.71 11.71C15.8037 11.6166 15.878 11.5057 15.9289 11.3839C15.9797 11.2621 16.0061 11.1316 16.0061 11C16.0061 10.8684 15.9797 10.7379 15.9289 10.6161C15.878 10.4943 15.8037 10.3834 15.71 10.29C15.617 10.1968 15.5063 10.1228 15.385 10.0723C15.2637 10.0219 15.134 9.99591 15.003 9.99591C14.872 9.99591 14.7423 10.0219 14.621 10.0723C14.4997 10.1228 14.389 10.1968 14.296 10.29H14.29Z" fill="currentColor"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="bf-insights-text" id="bf-insights-text">Loading insights...</p>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: Chart (Full Width) -->
+                    <div class="bf-grid-chart">
+                        <div class="bf-chart-wrapper" id="bf-chart-wrapper">
+                            <canvas id="bf-chart-canvas"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Actions Modal -->
+    <div class="bf-modal-overlay" id="bf-modal-overlay">
+        <div class="bf-modal-container">
+            <button class="bf-modal-close" id="bf-modal-close">×</button>
             
+            <div class="bf-modal-header">
+                <h2 class="bf-modal-title">Actions</h2>
+                <p class="bf-modal-subtitle">Recommended steps to improve conditions</p>
+            </div>
+
+            <div class="bf-actions-list" id="bf-actions-list">
+                <!-- Actions will be inserted here dynamically -->
+            </div>
         </div>
     </div>
 
 </div>
+<!-- END OF BIN FLUCTUATIONS -->
 <!-- END OF DASHBOARD PAGE -->
 
-    <!-- HELP PAGE -->
-  <div class="content help">
-         
-        <div class="scroll-back-widget">
-            <img src="img/icons/navIcons/ScrollBackIcon.svg" alt="">
-        </div>
-       <h1 id="page-header" class="page-header help-sec">Help Page</h1>
-        <div class="section help ">
-         
-        <section class="section get-to-know">
-            <div class="display-msg-help">
-                <span>Get to know</span>
-                <img class="logo-for-gtk" src="img/Avonic Logo.svg" alt="">
-                <span class="sub-text-help">know the system's objectives and purpose</span>
-            </div>
-            
-            <div class="btn">Get Started</div>
-        </section>
+   
 
-           <section class="section user-manual">
-            <div class="display-msg-help">
-                
-                <span class="help-header">User Manual</span>
-                <span class="sub-text-help">How to use AVONIC Vermicompost System</span>
-            </div>
-            
-            <div class="btn">Get Started</div>
-        </section>
-
-         <section class="section troubleshoot">
-            <div class="display-msg-help">
-                <span class="help-header">Troubleshoot</span>
-                 
-                <span class="sub-text-help">How to fix basic system troubles</span>
-            </div>
-            
-            <div class="btn ts">Get Started</div>
-        </section>
-
-
-    
-     </div> 
-    
- <!-- END OF HELP PAGE -->
-
-
-    </div>
-<!-- ✅ CRITICAL: Load Chart.js FIRST (required by dashboard charts) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-
-<!-- ✅ CRITICAL: Load in this exact order! -->
-
-<!-- 1. Configuration (must load first) -->
-<script src="js/config/api-config.js"></script>
-
-<!-- 2. Utilities (no dependencies) -->
-<script src="js/utils/data-stats.js"></script>
-<script src="js/utils/sensor-units.js"></script>
-<script src="js/utils/dummy-data.js"></script>
-
-<!-- 3. API Client (auth layer) -->
-<script src="js/services/api-client.js"></script>
-
-<!-- 4. Core Services (depend on API client) -->
-<script src="js/services/device-service.js"></script>
-<script src="js/services/sensor-service.js"></script>
-<script src="js/services/chart-service.js"></script>
-
-<!-- 5. Core Components (no dependencies) -->
-<script src="js/components/dev-mode.js"></script>
-<script src="js/components/worm-conditions.js"></script>
-<script src="js/components/toast-notifications.js"></script>
-
-<!-- 6. UI Components (depend on core) -->
-<script src="js/components/modal-system.js"></script>
-<script src="js/components/card-visuals.js"></script>
-<script src="js/components/bin-card.js"></script>
-<script src="js/components/status-card.js"></script>
-<script src="js/components/mode-switcher.js"></script>
-<script src="js/components/chart-renderer.js"></script>
-
-<!-- 7. Feature Modules (depend on UI) -->
-<script src="js/components/nickname-manager.js"></script>
-<script src="js/components/claim-device.js"></script>
-
-<!-- 8. Page Loaders (depend on everything) -->
-<script src="js/components/dashboard-loader.js"></script>
-<script src="js/components/bin-page-loader.js"></script>
-
-<!-- 9. Dashboard Module (depends on services & components) -->
-<script src="js/dashboard/sensor-configs.js"></script>
-<script src="js/dashboard/worm-evaluator.js"></script>
-<script src="js/dashboard/insights-manager.js"></script>
-<script src="js/dashboard/data-fetcher.js"></script>
-<script src="js/dashboard/chart-creator.js"></script>
-<script src="js/dashboard/modal-controller.js"></script>
-<script src="js/dashboard-module.js"></script>
-<script src="js/dashboard/dashboard-nav.js"></script>
-
-<!-- 10. Auto-refresh (orchestrates data fetching) -->
-<script src="js/services/auto-refresh.js"></script>
-
-<!-- 11. Main Orchestrators -->
-<script src="js/main_components.js"></script>
-<script src="js/data_integration.js"></script>
-
-<!-- 12. Other App Scripts -->
-<!-- ✅ QUICK INSIGHTS MODULE - Load in this exact order! -->
-
-<!-- 1. Configurations -->
-<script src="js/insights/sensor-configs.js"></script>
-<script src="js/insights/dummy-data.js"></script>
-
-<!-- 2. Core Services -->
-<script src="js/insights/esp-validator.js"></script>
-<script src="js/insights/data-fetcher.js"></script>
-
-<!-- 3. Utilities -->
-<script src="js/insights/stats-calculator.js"></script>
-<script src="js/insights/insight-generator.js"></script>
-
-<!-- 4. UI Handlers -->
-<script src="js/insights/table-renderer.js"></script>
-<script src="js/insights/tab-handler.js"></script>
-<!-- ✅ BIN FLUCTUATIONS MODULE - Load in this exact order! -->
-
-<!-- 1. Configurations & State -->
-<script src="js/fluctuations/sensor-configs.js"></script>
-<script src="js/fluctuations/state-manager.js"></script>
-
-<!-- 2. Core Services -->
-<script src="js/fluctuations/data-fetcher.js"></script>
-<script src="js/fluctuations/insights-generator.js"></script>
-
-<!-- 3. UI Managers -->
-<script src="js/fluctuations/chart-manager.js"></script>
-<script src="js/fluctuations/ui-updater.js"></script>
-<script src="js/fluctuations/nav-controller.js"></script>
-<script src="js/fluctuations/date-picker.js"></script>
-
-<!-- 4. Main Entry Point -->
-<script src="js/bin-fluctuations.js"></script>
-
-<!-- 5. Main Entry Point -->
-<script src="js/quick-insights.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/url-router.js"></script>
-<script src="js/other_widgets.js"></script>
-<script src="js/settings.js"></script>
-
-<!-- ❌ REMOVED: These files don't exist -->
-<!-- <script src="js/dashboard_components.js"></script> -->
-<!-- <script src="js/mqtt_integration.js"></script> -->
-
-    <script>
-// Debug: Check router initialization
-setTimeout(() => {
-    console.log('=== ROUTER DEBUG ===');
-    console.log('Router exists:', typeof window.router !== 'undefined');
-    console.log('Current hash:', window.location.hash);
-    console.log('Active pages:', document.querySelectorAll('.content.active').length);
-    console.log('===================');
-}, 1000);
-</script>
 
 <!-- SETTINGS PAGE -->
 <!-- ====== SETTINGS HUB PAGE ====== -->
@@ -1095,6 +956,125 @@ setTimeout(() => {
         </div>
     </div>
 </div>
+
+<!-- ✅ CRITICAL: Load Chart.js FIRST (required by dashboard charts) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<!-- ✅ CRITICAL: Load in this exact order! -->
+
+<!-- 1. Configuration (must load first) -->
+<script src="js/config/api-config.js"></script>
+
+<!-- 2. Utilities (no dependencies) -->
+<script src="js/utils/data-stats.js"></script>
+<script src="js/utils/sensor-units.js"></script>
+<script src="js/utils/dummy-data.js"></script>
+
+<!-- 3. API Client (auth layer) -->
+<script src="js/services/api-client.js"></script>
+
+<!-- 4. Core Services (depend on API client) -->
+<script src="js/services/device-service.js"></script>
+<script src="js/services/sensor-service.js"></script>
+<script src="js/services/chart-service.js"></script>
+
+<!-- 5. Core Components (no dependencies) -->
+<script src="js/components/dev-mode.js"></script>
+<script src="js/components/worm-conditions.js"></script>
+<script src="js/components/toast-notifications.js"></script>
+
+<!-- 6. UI Components (depend on core) -->
+<script src="js/components/modal-system.js"></script>
+<script src="js/components/card-visuals.js"></script>
+<script src="js/components/bin-card.js"></script>
+<script src="js/components/status-card.js"></script>
+<script src="js/components/mode-switcher.js"></script>
+<script src="js/components/chart-renderer.js"></script>
+
+<!-- 7. Feature Modules (depend on UI) -->
+<script src="js/components/nickname-manager.js"></script>
+<script src="js/components/claim-device.js"></script>
+
+<!-- 8. Page Loaders (depend on everything) -->
+<script src="js/components/dashboard-loader.js"></script>
+<script src="js/components/bin-page-loader.js"></script>
+
+<!-- 9. Dashboard Module (depends on services & components) -->
+<script src="js/dashboard/sensor-configs.js"></script>
+<script src="js/dashboard/worm-evaluator.js"></script>
+<script src="js/dashboard/insights-manager.js"></script>
+<script src="js/dashboard/data-fetcher.js"></script>
+<script src="js/dashboard/chart-creator.js"></script>
+<script src="js/dashboard/modal-controller.js"></script>
+<script src="js/dashboard-module.js"></script>
+<script src="js/dashboard/dashboard-nav.js"></script>
+
+<!-- 10. Auto-refresh (orchestrates data fetching) -->
+<script src="js/services/auto-refresh.js"></script>
+
+<!-- 11. Main Orchestrators -->
+<script src="js/main_components.js"></script>
+<script src="js/data_integration.js"></script>
+
+<!-- 12. Other App Scripts -->
+<!-- ✅ QUICK INSIGHTS MODULE - Load in this exact order! -->
+
+<!-- 1. Configurations -->
+<script src="js/insights/sensor-configs.js"></script>
+<script src="js/insights/dummy-data.js"></script>
+
+<!-- 2. Core Services -->
+<script src="js/insights/esp-validator.js"></script>
+<script src="js/insights/data-fetcher.js"></script>
+
+<!-- 3. Utilities -->
+<script src="js/insights/stats-calculator.js"></script>
+<script src="js/insights/insight-generator.js"></script>
+
+<!-- 4. UI Handlers -->
+<script src="js/insights/table-renderer.js"></script>
+<script src="js/insights/tab-handler.js"></script>
+<!-- ✅ BIN FLUCTUATIONS MODULE - Load in this exact order! -->
+
+<!-- 1. Configurations & State -->
+<script src="js/fluctuations/sensor-configs.js"></script>
+<script src="js/fluctuations/state-manager.js"></script>
+
+<!-- 2. Core Services -->
+<script src="js/fluctuations/data-fetcher.js"></script>
+<script src="js/fluctuations/insights-generator.js"></script>
+
+<!-- 3. UI Managers -->
+<script src="js/fluctuations/chart-manager.js"></script>
+<script src="js/fluctuations/ui-updater.js"></script>
+<script src="js/fluctuations/nav-controller.js"></script>
+<script src="js/fluctuations/date-picker.js"></script>
+
+<!-- 4. Main Entry Point -->
+<script src="js/bin-fluctuations.js"></script>
+
+<!-- 5. Main Entry Point -->
+<script src="js/quick-insights.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/url-router.js"></script>
+<script src="js/other_widgets.js"></script>
+<script src="js/settings.js"></script>
+
+<!-- ❌ REMOVED: These files don't exist -->
+<!-- <script src="js/dashboard_components.js"></script> -->
+<!-- <script src="js/mqtt_integration.js"></script> -->
+
+    <script>
+// Debug: Check router initialization
+setTimeout(() => {
+    console.log('=== ROUTER DEBUG ===');
+    console.log('Router exists:', typeof window.router !== 'undefined');
+    console.log('Current hash:', window.location.hash);
+    console.log('Active pages:', document.querySelectorAll('.content.active').length);
+    console.log('===================');
+}, 1000);
+</script>
 
 <script>
     const menuBtn = document.getElementById('menuBtn');
@@ -1548,6 +1528,505 @@ function randomizeSensors() {
 // window.addEventListener('DOMContentLoaded', randomizeSensors);
     </script>
 
+
+<script>
+/**
+ * Bin Fluctuations Module - Exact Match
+ * Bar chart with swipeable functionality
+ */
+
+class BinFluctuations {
+    constructor() {
+        this.currentBin = 1;
+        this.currentSensor = 'soilMoisture';
+        this.chartInstance = null;
+        this.sensorConfig = {
+            temperature: {
+                name: 'Temperature',
+                icon: 'img/icons/sensorIcons/TempIcon.svg',
+                unit: '°C',
+                color: '#FF6B6B',
+                wormImage: 'img/worm-conditions/Normal.png'
+            },
+            soilMoisture: {
+                name: 'Soil Moisture',
+                icon: 'img/icons/sensorIcons/SoilMoistureIcon.svg',
+                unit: '°C',
+                color: '#FDB54E',
+                wormImage: 'img/worm-conditions/Normal.png'
+            },
+            humidity: {
+                name: 'Humidity',
+                icon: 'img/icons/sensorIcons/HumidityIcon.svg',
+                unit: '%',
+                color: '#95E1D3',
+                wormImage: 'img/worm-conditions/Normal.png'
+            },
+            gasLevels: {
+                name: 'Gas Levels',
+                icon: 'img/icons/sensorIcons/GasIcon.svg',
+                unit: 'ppm',
+                color: '#F38181',
+                wormImage: 'img/worm-conditions/Normal.png'
+            }
+        };
+
+        // Touch support for swipe
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.updateDisplay();
+    }
+
+    setupEventListeners() {
+        // Bin selector
+        const binDropdown = document.getElementById('bf-bin-dropdown');
+        if (binDropdown) {
+            binDropdown.addEventListener('change', (e) => {
+                this.currentBin = parseInt(e.target.value);
+                this.updateDisplay();
+            });
+        }
+
+        // Sensor tabs
+        const sensorTabs = document.querySelectorAll('.bf-sensor-tab');
+        sensorTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const sensor = e.currentTarget.dataset.sensor;
+                this.selectSensor(sensor);
+            });
+        });
+
+        // Date inputs
+        const dateFrom = document.getElementById('bf-date-from');
+        const dateTo = document.getElementById('bf-date-to');
+        
+        if (dateFrom) {
+            dateFrom.addEventListener('change', () => this.updateDisplay());
+        }
+        if (dateTo) {
+            dateTo.addEventListener('change', () => this.updateDisplay());
+        }
+
+        // Modal handling
+        const actionBtn = document.getElementById('bf-action-btn');
+        const modalClose = document.getElementById('bf-modal-close');
+        const modalOverlay = document.getElementById('bf-modal-overlay');
+        
+        if (actionBtn) {
+            actionBtn.addEventListener('click', () => this.showActionsModal());
+        }
+
+        if (modalClose) {
+            modalClose.addEventListener('click', () => {
+                modalOverlay.classList.remove('active');
+            });
+        }
+
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove('active');
+                }
+            });
+        }
+
+        // Back button
+        const backButton = document.getElementById('backToDashboardFromBF');
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                document.getElementById('binFluctuationsContent').style.display = 'none';
+                // Adjust based on your navigation system
+                const dashboardPage = document.querySelector('.content.dashboard');
+                if (dashboardPage) {
+                    dashboardPage.style.display = 'block';
+                }
+            });
+        }
+
+        // Touch/Swipe support for chart
+        this.setupSwipeSupport();
+    }
+
+    setupSwipeSupport() {
+        const chartWrapper = document.getElementById('bf-chart-wrapper');
+        if (!chartWrapper) return;
+
+        chartWrapper.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        chartWrapper.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe();
+        }, false);
+
+        // Mouse drag support for desktop
+        let isDragging = false;
+        let startX = 0;
+
+        chartWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            chartWrapper.style.cursor = 'grabbing';
+        });
+
+        chartWrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            chartWrapper.scrollLeft -= deltaX;
+            startX = e.clientX;
+        });
+
+        chartWrapper.addEventListener('mouseup', () => {
+            isDragging = false;
+            chartWrapper.style.cursor = 'grab';
+        });
+
+        chartWrapper.addEventListener('mouseleave', () => {
+            isDragging = false;
+            chartWrapper.style.cursor = 'grab';
+        });
+
+        chartWrapper.style.cursor = 'grab';
+    }
+
+    handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swiped left - can trigger chart scroll or data load
+                console.log('Swiped left');
+            } else {
+                // Swiped right
+                console.log('Swiped right');
+            }
+        }
+    }
+
+    selectSensor(sensor) {
+        // Update active tab
+        document.querySelectorAll('.bf-sensor-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        const activeTab = document.querySelector(`[data-sensor="${sensor}"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
+
+        this.currentSensor = sensor;
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+        const config = this.sensorConfig[this.currentSensor];
+        
+        // Update header sensor icon and title
+        const headerIcon = document.getElementById('bf-header-icon');
+        const sensorTitle = document.getElementById('bf-sensor-title');
+        
+        if (headerIcon) headerIcon.src = config.icon;
+        if (sensorTitle) sensorTitle.textContent = config.name;
+
+        // Update unit
+        const avgUnit = document.getElementById('bf-avg-unit');
+        if (avgUnit) avgUnit.textContent = config.unit;
+
+        // Update average value (placeholder)
+        this.updateAverageValue();
+
+        // Update worm image
+        this.updateWormImage();
+
+        // Update insights
+        this.updateInsights();
+
+        // Update chart
+        this.updateChart();
+    }
+
+    updateAverageValue() {
+        const avgValue = document.getElementById('bf-avg-value');
+        if (avgValue) {
+            // Placeholder - will be replaced with actual data
+            avgValue.textContent = '31.6';
+        }
+    }
+
+    updateWormImage() {
+        const config = this.sensorConfig[this.currentSensor];
+        const wormImage = document.getElementById('bf-worm-image');
+        
+        if (wormImage) {
+            wormImage.src = config.wormImage;
+        }
+    }
+
+    updateInsights() {
+        const insightsText = document.getElementById('bf-insights-text');
+        if (insightsText) {
+            insightsText.textContent = 'Loading insights...';
+        }
+    }
+
+    updateChart() {
+        const canvas = document.getElementById('bf-chart-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const config = this.sensorConfig[this.currentSensor];
+
+        // Destroy existing chart
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+        }
+
+        // Generate data
+        const labels = this.generateDateLabels();
+        const data = this.generateSampleData(labels.length);
+
+        // Create BAR chart (matching your design)
+        this.chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: config.name,
+                    data: data,
+                    backgroundColor: config.color,
+                    borderColor: config.color,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: (context) => {
+                                return `${context.parsed.y}${config.unit}`;
+                            }
+                        }
+                    },
+                    // Display values on top of bars
+                    datalabels: false
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: (value) => value + config.unit,
+                            font: {
+                                size: 11
+                            },
+                            color: '#666'
+                        },
+                        grid: {
+                            color: '#e0e0e0',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#333'
+                        }
+                    }
+                },
+                // Enable value labels on top of bars
+                animation: {
+                    onComplete: () => {
+                        const chartInstance = this.chartInstance;
+                        const ctx = chartInstance.ctx;
+                        
+                        ctx.font = '12px sans-serif';
+                        ctx.fillStyle = '#000';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        
+                        chartInstance.data.datasets.forEach((dataset, i) => {
+                            const meta = chartInstance.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                ctx.fillText(data, bar.x, bar.y - 5);
+                            });
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    generateDateLabels() {
+        // Generate 7 days of labels (matching your design)
+        return ['7/11', '7/12', '7/13', '7/14', '7/15', '7/16', '7/17'];
+    }
+
+    generateSampleData(length) {
+        // Generate sample data with value of 8 (matching your image)
+        return Array.from({ length }, () => 8);
+    }
+
+    showActionsModal() {
+        const modalOverlay = document.getElementById('bf-modal-overlay');
+        const actionsList = document.getElementById('bf-actions-list');
+        
+        if (!modalOverlay || !actionsList) return;
+
+        // Clear existing actions
+        actionsList.innerHTML = '';
+
+        // Get recommended actions
+        const actions = this.getRecommendedActions();
+        
+        actions.forEach(action => {
+            const actionItem = document.createElement('div');
+            actionItem.className = 'bf-action-item';
+            actionItem.innerHTML = `
+                <h4>${action.title}</h4>
+                <p>${action.description}</p>
+            `;
+            actionsList.appendChild(actionItem);
+        });
+
+        modalOverlay.classList.add('active');
+    }
+
+    getRecommendedActions() {
+        // Generate actions based on sensor type
+        const actions = {
+            temperature: [
+                {
+                    title: 'Monitor Temperature Levels',
+                    description: 'Temperature is within normal range. Continue monitoring for any significant changes.'
+                },
+                {
+                    title: 'Ensure Proper Ventilation',
+                    description: 'Make sure the bin has adequate airflow to maintain optimal temperature.'
+                }
+            ],
+            soilMoisture: [
+                {
+                    title: 'Check Moisture Levels',
+                    description: 'Soil moisture appears stable. Maintain current watering schedule.'
+                },
+                {
+                    title: 'Monitor for Dry Spots',
+                    description: 'Check different areas of the bin to ensure even moisture distribution.'
+                }
+            ],
+            humidity: [
+                {
+                    title: 'Maintain Humidity Balance',
+                    description: 'Current humidity levels are optimal for worm activity.'
+                }
+            ],
+            gasLevels: [
+                {
+                    title: 'Monitor Gas Levels',
+                    description: 'Gas levels are within safe range. No immediate action required.'
+                }
+            ]
+        };
+
+        return actions[this.currentSensor] || [
+            {
+                title: 'Monitor Conditions',
+                description: 'All parameters are within normal range.'
+            }
+        ];
+    }
+
+    // Method to load real data
+    loadData(binId, sensor, dateFrom, dateTo) {
+        console.log(`Loading data for Bin ${binId}, Sensor: ${sensor}`);
+        
+        // Example API call structure
+        /*
+        fetch(`/api/bin-fluctuations?bin=${binId}&sensor=${sensor}&from=${dateFrom}&to=${dateTo}`)
+            .then(response => response.json())
+            .then(data => {
+                this.updateWithData(data);
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+            });
+        */
+    }
+
+    updateWithData(data) {
+        // Update UI with real data
+        if (data.average) {
+            document.getElementById('bf-avg-value').textContent = data.average.toFixed(1);
+        }
+
+        if (data.insights) {
+            document.getElementById('bf-insights-text').textContent = data.insights;
+        }
+
+        if (data.wormCondition) {
+            const wormImages = {
+                'normal': 'img/worm-conditions/Normal.png',
+                'too-wet': 'img/worm-conditions/Too Wet.png',
+                'too-hot': 'img/worm-conditions/Too Hot.png',
+                'too-dry': 'img/worm-conditions/Too Dry.png',
+                'gas-high': 'img/worm-conditions/Gas Too High.png'
+            };
+            
+            const wormImage = document.getElementById('bf-worm-image');
+            if (wormImage && wormImages[data.wormCondition]) {
+                wormImage.src = wormImages[data.wormCondition];
+            }
+        }
+
+        // Update chart with real data
+        if (data.chartData && this.chartInstance) {
+            this.chartInstance.data.labels = data.chartData.labels;
+            this.chartInstance.data.datasets[0].data = data.chartData.values;
+            this.chartInstance.update();
+        }
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is required. Please include Chart.js library.');
+        return;
+    }
+
+    window.binFluctuations = new BinFluctuations();
+});
+</script>
     
 
 
