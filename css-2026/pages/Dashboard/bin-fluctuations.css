@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    margin-top: 22px;
 }
 
 .bin-fluctuations-wrapper .cont-wrapper.default {
@@ -244,12 +245,10 @@
 
 /* Middle Left: Average + Worm */
 .bf-grid-middle-left {
-    grid-column: 1;
-    grid-row: 2;
+    
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     padding: 30px 20px;
     border-right: 2px solid #e0e0e0;
     border-bottom: 2px solid #e0e0e0;

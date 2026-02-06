@@ -79,15 +79,14 @@ body {
     display: none !important;
 }
 
-/* When Quick Insights is active */
+/* When Quick Insights is active - SIMPLIFIED */
 .quick-insights-wrapper.active {
     display: flex !important;
-    flex-direction: column;
 }
 
 /* When Bin Fluctuations is active */
 .bin-fluctuations-wrapper.active {
-    display: block !important;
+    display: flex !important;
 }
 
 /* ========================================
@@ -321,26 +320,6 @@ body {
 }
 
 /* ========================================
-   QUICK INSIGHTS WRAPPER LAYOUT
-   ======================================== */
-
-.quick-insights-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    padding: 40px 20px;
-    box-sizing: border-box;
-}
-
-/* ========================================
-   BIN FLUCTUATIONS WRAPPER LAYOUT
-   ======================================== */
-
-.bin-fluctuations-wrapper {
-    width: 100%;
-    padding: 0;
-}
-
-/* ========================================
    RESPONSIVE: LARGE DESKTOP
    ======================================== */
 
@@ -520,10 +499,6 @@ body {
         font-size: 15px;
         margin: 20px 0 15px;
     }
-    
-    .quick-insights-wrapper {
-        padding: 20px 15px;
-    }
 }
 
 /* ========================================
@@ -672,7 +647,3 @@ body {
 .content.dashboard {
     overflow-x: hidden;
 }
-
-
-
-

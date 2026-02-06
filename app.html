@@ -21,6 +21,9 @@
      <link rel="stylesheet" href="css-2026/pages/Dashboard/quick-insights.css">
      <link rel="stylesheet" href="css-2026/pages/Dashboard/bin-fluctuations.css">
   
+
+
+     
     
 </head>
 <body>
@@ -401,157 +404,126 @@
         </div>
     </div>
 
-    <!-- EXISTING: Quick Insights Content (Hidden by default) -->
-    <div class="quick-insights-wrapper" id="quickInsightsContent" style="display: none;">
-
-
+   <div class="quick-insights-wrapper" id="quickInsightsContent" style="display: none;">
+    
+    <div class="qi-layout-master">
+        
         <div class="cont-wrapper default">
-             
-
-         <div class="header-card">
-            <!-- Back Button -->
-
-         
+    
+            <div class="header-card">
                 <button class="back-btn" aria-label="Go back" id="backToDashboardFromQI">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                    <div class="header-content">
-                        <span class="breadcrumb">Dashboard &gt; Quick Insights</span>
-                        <h1 class="title">Quick Insights</h1>
-                    </div>
+                <div class="header-content">
+                    <span class="breadcrumb">Dashboard &gt; Quick Insights</span>
+                    <h1 class="title">Quick Insights</h1>
+                </div>
+            </div>
+
+            <div class="qi-content-layout">
                 
-            </div>
-
-               <!-- Top Bar: Date/Time + Bin Selector -->
-      <div class="content-wrapper" style="padding: 10px; display: flex; justify-content: center;">
-          <div class="qi-top-bar">
-            
-        <div class="qi-selection">
-            <div class="qi-bin-selector">
-                    <select id="qi-bin-dropdown" class="qi-dropdown">
-                        <option value="1">Bin 1</option>
-                        <option value="2">Bin 2</option>
-                    </select>
+                <div class="qi-left-panel">
+                    <div class="qi-bin-selector">
+                        <select id="qi-bin-dropdown" class="qi-dropdown">
+                            <option value="1">Bin 1</option>
+                            <option value="2">Bin 2</option>
+                        </select>
+                    </div>
+                    <div class="qi-sensor-tabs">
+                        <button class="qi-sensor-tab active" data-sensor="soilMoisture">
+                            <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
+                            <span>Soil Moisture</span>
+                        </button>
+                        <button class="qi-sensor-tab" data-sensor="temperature">
+                            <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
+                            <span>Temp</span>
+                        </button>
+                        <button class="qi-sensor-tab" data-sensor="humidity">
+                            <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
+                            <span>Humidity</span>
+                        </button>
+                        <button class="qi-sensor-tab" data-sensor="gasLevels">
+                            <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
+                            <span>Gas Levels</span>
+                        </button>
+                    </div>
                 </div>
-            
 
-        
+                <div class="qi-right-panel">
+                    <div class="qi-card-wrapper">
+                        <div class="qi-sensor-header">
+                            <div class="qi-sensor-title-block">
+                                <h2 class="qi-sensor-name" id="qi-sensor-name">Temperature</h2>
+                            </div>
+                            <div class="qi-date-info">
+                                <div class="qi-date">Date: <span id="qi-current-date">Feb 6, 2026</span> <strong>(Today)</strong></div>
+                                <div class="qi-last-updated">Last Updated: <span id="qi-last-updated">5:22PM</span></div>
+                            </div>
+                        </div>
 
-            <!-- Sensor Tabs (Expandable) -->
-            <div class="qi-sensor-tabs">
-                <button class="qi-sensor-tab active" data-sensor="soilMoisture">
-                    <img src="img/icons/sensorIcons/SoilMoistureIcon.svg" alt="Soil Moisture">
-                    Soil Moisture
-                </button>
-                <button class="qi-sensor-tab" data-sensor="temperature">
-                    <img src="img/icons/sensorIcons/TempIcon.svg" alt="Temperature">
-                    Temp
-                </button>
-                <button class="qi-sensor-tab" data-sensor="humidity">
-                    <img src="img/icons/sensorIcons/HumidityIcon.svg" alt="Humidity">
-                    Humidity
-                </button>
-                <button class="qi-sensor-tab" data-sensor="gasLevels">
-                    <img src="img/icons/sensorIcons/GasIcon.svg" alt="Gas Levels">
-                    Gas Levels
-                </button>
+                        <hr class="qi-divider">
+
+                        <div class="qi-stats-grid">
+                            <div class="qi-stat-card">
+                                <div class="qi-stat-label">Min</div>
+                                <div class="qi-stat-value">
+                                    <span class="value" id="qi-min-value">80.0</span>
+                                    <span class="unit" id="qi-min-unit">%</span>
+                                </div>
+                            </div>
+                            <div class="qi-stat-card">
+                                <div class="qi-stat-label">Average</div>
+                                <div class="qi-stat-value">
+                                    <span class="value" id="qi-avg-value">81.5</span>
+                                    <span class="unit" id="qi-avg-unit">%</span>
+                                </div>
+                            </div>
+                            <div class="qi-stat-card">
+                                <div class="qi-stat-label">Max</div>
+                                <div class="qi-stat-value">
+                                    <span class="value" id="qi-max-value">83.0</span>
+                                    <span class="unit" id="qi-max-unit">%</span>
+                                </div>
+                            </div>
+                            <div class="qi-insight-card">
+                                <div class="qi-insight-title">Insight</div>
+                                <p class="qi-insight-content" id="qi-insight-text">
+                                    Soil moisture is high<br>
+                                    Good hydration ✓<br>
+                                    Perfect cycle
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="qi-table-container">
+                            <table class="qi-log-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Reading</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="qi-table-body">
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                    <tr><td>Feb 1 07:01 PM</td><td>82.0%</td><td>Wet</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        </div>
-
- <div class="qi-wrapper" >
-    <div class="sensor">
-        <div class="icon"></div>
-        <div class="name">Temperature</div>
     </div>
-    <hr>
-    <!-- Main Content: Stats + Insight -->
-        <div class="qi-main-content">
-            <div class="qi-datetime">
-                <div class="qi-date">Date: <span id="qi-current-date">Aug 26, 2025</span> <strong>(Today)</strong></div>
-                <div class="qi-last-updated">Last Updated: <span id="qi-last-updated">10:30AM</span></div>
-            </div>
-            <!-- Left: Statistics Cards -->
-            <div class="qi-stats-container">
-                <div class="qi-stat-card">
-                    <div class="qi-stat-label">Min</div>
-                    <div class="qi-stat-value">
-                        <span class="value" id="qi-min-value">27.6</span>
-                        <span class="unit" id="qi-min-unit">°C</span>
-                    </div>
-                </div>
-
-                <div class="qi-stat-card">
-                    <div class="qi-stat-label">Average</div>
-                    <div class="qi-stat-value">
-                        <span class="value" id="qi-avg-value">31.6</span>
-                        <span class="unit" id="qi-avg-unit">°C</span>
-                    </div>
-                </div>
-
-                <div class="qi-stat-card">
-                    <div class="qi-stat-label">Max</div>
-                    <div class="qi-stat-value">
-                        <span class="value" id="qi-max-value">35.6</span>
-                        <span class="unit" id="qi-max-unit">°C</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Insight Card -->
-            <div class="qi-insight-card">
-                <div class="qi-insight-title">Insight</div>
-                <p class="qi-insight-content" id="qi-insight-text">
-                    Spikes above safe range occurred 2 times today
-                </p>
-            </div>
-        </div>
-
-        <!-- Data Table -->
-        <div class="qi-table-container">
-            <table class="qi-log-table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Reading</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="qi-table-body">
-                    <!-- Data will be populated by JavaScript -->
-                    <tr>
-                        <td>10:00 AM</td>
-                        <td>31.2°C</td>
-                        <td>Normal</td>
-                    </tr>
-                    <tr>
-                        <td>10:10 AM</td>
-                        <td>35.8°C</td>
-                        <td>High</td>
-                    </tr>
-                    <tr>
-                        <td>10:20 AM</td>
-                        <td>28.5°C</td>
-                        <td>Normal</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-      </div>
-       
-        </div>
-        
-
-
-
-
-        
-     
- </div>
+</div>
+<!-- END OF QUICK INSIGHTS -->
         
 
     <!-- EXISTING: Bin Fluctuations Wrapper (Hidden by default) -->
