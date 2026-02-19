@@ -74,29 +74,45 @@ function handleRouteChange() {
     }
 }
 
+// function handleBinPageLoad(route) {
+//     const hash = window.location.hash.slice(1);
+//     const params = new URLSearchParams(hash.split('?')[1]);
+//     const espID = params.get('espID');
+    
+//     if (!espID) {
+//         console.warn('⚠️ No espID provided, redirecting to home');
+//         window.location.hash = '#/';
+//         return;
+//     }
+    
+//     const binNumber = route === '/bin2' ? 2 : 1;
+//     const binPage = document.querySelector(route === '/bin2' ? '.content.bin2' : '.content.bin');
+    
+//     if (binPage) {
+//         binPage.dataset.currentEspId = espID;
+        
+//         const binNameElem = binPage.querySelector('.bin_name');
+//         if (binNameElem) {
+//             binNameElem.textContent = `Bin ${binNumber}`;
+//         }
+        
+//         console.log(`✅ Loaded Bin ${binNumber} for device: ${espID}`);
+        
+//         if (typeof fetchLatestSensorData === 'function') {
+//             fetchLatestSensorData();
+//         }
+//     }
+// }
+
 function handleBinPageLoad(route) {
-    const hash = window.location.hash.slice(1);
-    const params = new URLSearchParams(hash.split('?')[1]);
-    const espID = params.get('espID');
-    
-    if (!espID) {
-        console.warn('⚠️ No espID provided, redirecting to home');
-        window.location.hash = '#/';
-        return;
-    }
-    
     const binNumber = route === '/bin2' ? 2 : 1;
     const binPage = document.querySelector(route === '/bin2' ? '.content.bin2' : '.content.bin');
     
     if (binPage) {
-        binPage.dataset.currentEspId = espID;
+        const binNameElems = binPage.querySelectorAll('.bin_name');
+        binNameElems.forEach(el => el.textContent = `Bin ${binNumber}`);
         
-        const binNameElem = binPage.querySelector('.bin_name');
-        if (binNameElem) {
-            binNameElem.textContent = `Bin ${binNumber}`;
-        }
-        
-        console.log(`✅ Loaded Bin ${binNumber} for device: ${espID}`);
+        console.log(`✅ Loaded Bin ${binNumber}`);
         
         if (typeof fetchLatestSensorData === 'function') {
             fetchLatestSensorData();

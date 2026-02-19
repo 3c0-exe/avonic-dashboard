@@ -106,7 +106,7 @@ body {
     overflow-x: hidden;
     scroll-behavior: smooth;
     position: relative;
-    display: none;
+  display: none !important;
 }
 
 /* The class we will toggle via JavaScript */
@@ -115,7 +115,7 @@ body.collapsed {
 }
 
 .content.active {
-    display: block;
+display: block !important;
 }
 
 .content.home {
