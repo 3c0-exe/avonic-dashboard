@@ -5,15 +5,7 @@ console.log('✅ Integrated Settings.js loaded');
 
 // ====== 1. NAVIGATION ======
 window.settingsNav = {
-    navigateToAccount: () => {
-        window.location.hash = '#/settings/account';
-    },
-    navigateToClaim: () => {
-        window.location.hash = '#/settings/claim';
-    },
-    navigateToUserManual: () => {
-        window.open('/user-manual.pdf', '_blank');
-    },
+
     handleLogout: () => {
         openSaveChangesModal(() => {
             performLogout();

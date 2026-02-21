@@ -475,3 +475,206 @@ display: block !important;
     }
 }}
 
+/* Settings padding handled in settings-page.css */
+
+.settings-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.settings-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.settings-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  padding: 20px;
+}
+
+.card-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.card-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-input-row .input-field {
+  flex: 1;
+  background: #EBEBEB;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.card-input-row .input-field[readonly] {
+  cursor: default;
+  color: #aaa;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.bins-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.bins-list.expanded {
+  max-height: none;
+}
+
+.bin-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  min-width: 160px;
+}
+
+.bin-icon { width: 32px; }
+.bin-info h3 { font-size: 13px; font-weight: 600; }
+.bin-info p  { font-size: 11px; color: var(--text-muted); }
+
+.remove-bin {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.view-more-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.settings-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.wifi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wifi-label { font-size: 12px; color: var(--text-muted); }
+.wifi-value { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+.wifi-change-btn {
+  background: #EBEBEB;
+  color: #000;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.wifi-disconnect-btn {
+  background: #E53935;
+  color: white;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+}
+
+.manual-card {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.manual-link {
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.manual-placeholder {
+  flex: 1;
+  background: #EBEBEB;
+  border-radius: 8px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 32px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  background: #eee;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .settings-cards-grid,
+  .settings-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}

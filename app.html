@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVONIC</title>
     <!-- <link rel="stylesheet" href="styles.css"> -->
-    <link rel="stylesheet" href="settings.css">
+    <!-- <link rel="stylesheet" href="settings.css"> -->
     <!-- <link rel="stylesheet" href="styles-update.css"> -->
     <!-- <link rel="stylesheet" href="dashboard-module.css"> -->
     <!-- <link rel="stylesheet" href="quick-insights.css"> -->
@@ -20,6 +20,7 @@
      <link rel="stylesheet" href="css-2026/pages/Dashboard/front-selection.css">
      <link rel="stylesheet" href="css-2026/pages/Dashboard/quick-insights.css">
      <link rel="stylesheet" href="css-2026/pages/Dashboard/bin-fluctuations.css">
+     <link rel="stylesheet" href="css-2026/pages/Settings/settings-page.css">
   
 
 
@@ -745,266 +746,170 @@
 </div>
 <!-- END OF BIN FLUCTUATIONS -->
 <!-- END OF DASHBOARD PAGE -->
-
-   
-
-
-<!-- SETTINGS PAGE -->
-<!-- ====== SETTINGS HUB PAGE ====== -->
-<div class="content settings">
-<img class="main logo mobile" src="img/avonic-logo-text-drkgrn.svg" alt="">
-     <h1 class="page-header">Settings</h1>
-    <div class="settings-hub">
-        
-       
-        
-        <div class="settings-card-container">
-            <!-- My Account Card -->
-            <div class="settings-nav-card" onclick="window.settingsNav.navigateToAccount()">
-                <div class="icon">
-                    <img src="/settings-content/settings-img/user-account.png" alt="Account">
-                </div>
-                <div class="title">My Account</div>
-            </div>
-            
-            <!-- User Manual Card -->
-            <div class="settings-nav-card" onclick="window.settingsNav.navigateToUserManual()">
-                <div class="icon">
-                    <img src="/settings-content/settings-img/user-manual.png" alt="Manual">
-                </div>
-                <div class="title">User Manual</div>
-            </div>
-
-            <!-- WiFi Settings Card -->
-            <div class="settings-nav-card" onclick="window.settingsNav.navigateToClaim()">
-                <div class="icon">
-                    <span style="font-size: 24px;">🔗</span> 
-                </div>
-                <div class="title">Claim Device</div>
-            </div>
-
-            <!-- Logout Card -->
-            <div class="settings-nav-card" onclick="window.settingsNav.handleLogout()">
-                <div class="icon">
-                    <img src="/settings-content/settings-img/log-out.png" alt="Logout">
-                </div>
-                <div class="title">Log-out</div>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- ====== ACCOUNT SETTINGS PAGE ====== -->
-<div class="content settings-account">
-    <div class="account-settings-page">
-        <!-- Page Title with Back Button -->
-        <div class="page-title">
-            <button class="back-btn" onclick="window.location.hash='#/settings'">
-                <img src="/settings-content/settings-img/back-button.svg" alt="Back" class="back-icon">
-            </button>
-            <div class="title-text">
-                <p class="settings-label">Settings</p>
-                <h1>Account</h1>
-            </div>
+<!-- ========== SETTINGS PAGE ========== -->
+<div class="content settings" id="settings-page">
+  <p class="page-title">Settings</p>
+
+  <!-- ACCOUNTS SECTION -->
+  <section class="settings-section accounts-section">
+    <h2 class="section-title">Accounts</h2>
+
+    <div class="settings-cards-grid">
+
+      <!-- Username Card -->
+      <div class="settings-card">
+        <label class="card-label">Username</label>
+        <div class="card-input-row">
+          <input id="account-username" class="input-field" type="text" readonly placeholder="Username">
+          <button class="edit-btn icon-btn" onclick="toggleUsernameEdit()">
+            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
+          </button>
         </div>
+      </div>
 
-        <!-- Cards Grid -->
-        <div class="cards-grid">
-            <!-- Username Card (Read-only) -->
-            <div class="settings-card">
-                <div class="card-header">
-                    <h2>Username</h2>
-                </div>
-                <input type="text" id="account-username" class="input-field" placeholder="Loading..." readonly>
-            </div>
-
-            <!-- Email Card (Editable) -->
-            <div class="settings-card">
-                <div class="card-header">
-                    <h2>Email</h2>
-                    <button class="edit-btn" onclick="toggleEmailEdit()">Edit</button>
-                </div>
-                <input type="email" id="account-email" class="input-field" placeholder="Loading..." readonly>
-            </div>
-
-            <!-- Password Card -->
-            <div class="settings-card password-card">
-                <div class="card-header">
-                    <h2>Password</h2>
-                    <button class="edit-btn" onclick="togglePasswordEdit()">Edit</button>
-                </div>
-                <p class="card-description">Modify your current password</p>
-                
-                <div class="password-inputs">
-                    <div class="password-field-wrapper">
-                        <label>New Password</label>
-                        <div class="password-input-group">
-                            <img src="/settings-content/settings-img/Account/lock-icon.svg" alt="Lock" class="lock-icon">
-                            <input type="password" class="input-field password-input" placeholder="••••••••" readonly>
-                            <button class="toggle-password" onclick="togglePasswordVisibility(this)">
-                                <img src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show" class="eye-icon">
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="password-field-wrapper">
-                        <label>Repeat New Password</label>
-                        <div class="password-input-group">
-                            <img src="/settings-content/settings-img/Account/lock-icon.svg" alt="Lock" class="lock-icon">
-                            <input type="password" class="input-field password-input" placeholder="••••••••" readonly>
-                            <button class="toggle-password" onclick="togglePasswordVisibility(this)">
-                                <img src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show" class="eye-icon">
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Claimed Bins Card -->
-            
-            <div class="settings-card bins-card">
-                <h2>Claimed Bins</h2>
-                <p class="card-description">Manage your connected devices</p>
-                
-                <div class="bins-list" id="account-bins-list">
-                    <!-- Bins will be loaded dynamically -->
-                    <div style="text-align: center; padding: 20px; color: #808080;">
-                        Loading your devices...
-                    </div>
-                </div>
-
-                <button class="view-more-btn">View More</button>
-            </div>
+      <!-- Email Card -->
+      <div class="settings-card">
+        <label class="card-label">Username</label><!-- label says Username per reference image -->
+        <div class="card-input-row">
+          <input id="account-email" class="input-field" type="email" readonly placeholder="Email">
+          <button class="edit-btn icon-btn" onclick="toggleEmailEdit()">
+            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
+          </button>
         </div>
+      </div>
+
+      <!-- Password Card -->
+      <div class="settings-card password-card">
+        <label class="card-label">Password</label>
+        <div class="card-input-row">
+          <input class="input-field password-input" type="password" readonly placeholder="New password">
+          <button class="toggle-pass-btn" onclick="togglePasswordVisibility(this)">
+            <img class="eye-icon" src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show">
+          </button>
+        </div>
+        <div class="card-input-row">
+          <label class="card-label">Repeat password</label>
+          <input class="input-field password-input" type="password" readonly placeholder="Repeat password">
+          <button class="toggle-pass-btn" onclick="togglePasswordVisibility(this)">
+            <img class="eye-icon" src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show">
+          </button>
+          <button class="edit-btn icon-btn" onclick="togglePasswordEdit()">
+            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
+          </button>
+        </div>
+      </div>
+
+      <!-- Claimed Bins Card -->
+      <div class="settings-card bins-card">
+        <div class="card-header-row">
+          <label class="card-label">Claimed bins</label>
+          <button class="edit-btn icon-btn" onclick="settingsNav.navigateToClaim ? null : document.getElementById('claim-section').scrollIntoView()">
+            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
+          </button>
+        </div>
+        <div id="account-bins-list" class="bins-list">
+          <!-- Populated by loadClaimedBinsAccount() -->
+        </div>
+        <button class="view-more-btn" style="display:none;">View More</button>
+      </div>
+
     </div>
+  </section>
+
+  <!-- BOTTOM ROW: WiFi + User Manual -->
+  <div class="settings-bottom-grid">
+
+    <!-- WiFi Section -->
+    <section class="settings-section wifi-section">
+      <h2 class="section-title">WiFi</h2>
+      <div class="settings-card wifi-card">
+        <div class="wifi-info">
+          <p class="wifi-label">Network</p>
+          <p class="wifi-value" id="wifi-network">—</p>
+          <p class="wifi-label">IP Address</p>
+          <p class="wifi-value" id="wifi-ip">—</p>
+          <p class="wifi-label">Signal</p>
+          <p class="wifi-value" id="wifi-signal">—</p>
+        </div>
+        <button class="btn wifi-change-btn" onclick="changeWifi()">Change WiFi</button>
+        <button class="btn wifi-disconnect-btn" onclick="disconnectWifi()">Disconnect</button>
+      </div>
+    </section>
+
+    <!-- User Manual Section -->
+    <section class="settings-section manual-section" id="claim-section">
+      <h2 class="section-title">User Manual</h2>
+      <div class="settings-card manual-card">
+        <p class="manual-link" onclick="window.open('/user-manual.pdf','_blank')">Download user manual here</p>
+        <div class="manual-placeholder"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- CLAIM NEW DEVICE SECTION (unified, no separate page) -->
+  <section class="settings-section claim-section">
+    <h2 class="section-title">Claim a Device</h2>
+    <div class="settings-card">
+      <form onsubmit="settingsNav.handleClaimSubmit(event)">
+        <input id="settings-esp-id" class="input-field" type="text" placeholder="Enter ESP-ID (e.g. ESP-0000-0000)" required>
+        <div id="settings-claim-alert" class="alert" style="display:none;"></div>
+        <div id="settings-claim-loading" style="display:none;">Claiming...</div>
+        <div id="settings-claim-success" class="alert success" style="display:none;">Device claimed!</div>
+        <button type="submit" class="btn claim">Claim Device</button>
+      </form>
+    </div>
+  </section>
+
 </div>
 
+<!-- ========== MODALS ========== -->
 
-<!-- ====== CLAIM DEVICE PAGE ====== -->
-<div class="content settings-claim">
-    <div class="account-settings-page"> <div class="page-title">
-            <button class="back-btn" onclick="window.location.hash='#/settings'">
-                <img src="/settings-content/settings-img/back-button.svg" alt="Back" class="back-icon">
-            </button>
-            <div class="title-text">
-                <p class="settings-label">Settings</p>
-                <h1>Claim Device</h1>
-            </div>
-        </div>
-
-        <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
-            <div class="claim-header" style="text-align: center; margin-bottom: 20px;">
-                <h2 style="font-size: 20px; color: #2c3e50;">Link New Device</h2>
-                <p style="color: #7f8c8d; font-size: 14px;">Enter your ESP32 device ID</p>
-            </div>
-
-            <div id="settings-claim-alert" class="alert" style="display:none;"></div>
-
-            <form id="settings-claim-form" onsubmit="window.settingsNav.handleClaimSubmit(event)">
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">ESP Device ID</label>
-                    <input 
-                        type="text" 
-                        id="settings-esp-id" 
-                        class="input-field" 
-                        placeholder="e.g. AVONIC-A1B2C3" 
-                        maxlength="22" 
-                        style="text-transform: uppercase; font-family: monospace;"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="connect-btn" style="width: 100%; margin-top: 10px;">
-                    🎯 Claim Device
-                </button>
-            </form>
-
-            <div id="settings-claim-loading" style="display:none; text-align: center; margin-top: 20px;">
-                <div class="spinner"></div>
-                <p>Verifying device...</p>
-            </div>
-
-            <div id="settings-claim-success" style="display:none; background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #2e7d32; margin: 0;">✅ Success!</h3>
-                <p style="color: #1b5e20; margin: 5px 0 0 0;">Device linked successfully.</p>
-            </div>
-
-            <div class="help-text" style="margin-top: 25px; background: #fff3cd; padding: 15px; border-radius: 4px; font-size: 13px; color: #856404;">
-                <strong>Where to find your ID:</strong><br>
-                Check the LCD screen on your device for "ESP-ID".
-            </div>
-        </div>
+<!-- Save Changes Modal -->
+<div id="save-changes-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <p class="modal-description"></p>
+    <div class="modal-actions">
+      <button class="btn-primary">Confirm</button>
+      <button class="btn-secondary">Cancel</button>
     </div>
+  </div>
 </div>
 
-<!-- ====== CURRENT PASSWORD MODAL ====== -->
-<div id="current-password-modal" class="modal-overlay">
-    <div class="modal-card">
-        <h2 class="modal-title">Current Password</h2>
-        <p class="modal-description">Type your current password to change the existing password</p>
-        
-        <div class="password-input-group" style="margin-bottom: 24px;">
-            <img src="/settings-content/settings-img/Account/lock-icon.svg" alt="Lock" class="lock-icon">
-            <input type="password" class="input-field" placeholder="Enter current password" 
-                   style="padding-left: 44px; padding-right: 44px;">
-            <button class="toggle-password" onclick="togglePasswordVisibility(this)">
-                <img src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show" class="eye-icon">
-            </button>
-        </div>
-
-        <div class="modal-buttons">
-            <button class="modal-btn btn-primary" onclick="submitCurrentPassword()">Enter</button>
-            <button class="modal-btn btn-secondary" onclick="closeCurrentPasswordModal()">Cancel</button>
-        </div>
+<!-- Current Password Modal -->
+<div id="current-password-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <h3>Enter Current Password</h3>
+    <input class="input-field" type="password" placeholder="Current password">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="submitCurrentPassword()">Confirm</button>
+      <button class="btn-secondary" onclick="closeCurrentPasswordModal()">Cancel</button>
     </div>
-</div>
-
-<!-- ====== UNCLAIM DEVICE MODAL ====== -->
-<div id="unclaim-modal" class="modal-overlay">
-    <div class="modal-card">
-        <h2 class="modal-title">⚠️ Unclaim Device</h2>
-        <p class="modal-description">
-            Are you sure you want to unclaim <strong id="unclaim-device-name"></strong>?
-        </p>
-        <p class="modal-description" style="color: #D32F2F; font-weight: 600;">
-            This device will no longer sync data to your account.
-        </p>
-
-        <div class="modal-buttons">
-            <button class="modal-btn btn-primary" onclick="confirmUnclaim()">Yes, Unclaim</button>
-            <button class="modal-btn btn-secondary" onclick="closeUnclaimModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<!-- ====== SUCCESS MODAL (Optional) ====== -->
-<div id="save-changes-modal" class="modal-overlay">
-    <div class="modal-card">
-        <div class="illustration">
-            <img src="/settings-content/settings-img/are-you-sure.svg" alt="Success">
-        </div>
-        <h2 class="modal-title">Save changes?</h2>
-        <p class="modal-description">Your changes will be saved</p>
-        <div class="modal-buttons">
-            <button class="modal-btn btn-primary">Save</button>
-            <button class="modal-btn btn-secondary">Cancel</button>
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- Success Modal -->
-<div id="success-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-        <div class="illustration">
-            <img src="/img/form-icons/success-icon.svg" alt="Success" style="width: 80px; height: 80px;">
-        </div>
-        <h2 class="modal-title">Success!</h2>
-        <p class="modal-description" id="success-modal-msg">Changes saved successfully.</p>
-        <div class="modal-buttons">
-            <button class="modal-btn btn-primary" onclick="window.closeSuccessModal()">OK</button>
-        </div>
-    </div>
+<div id="success-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <p id="success-modal-msg"></p>
+    <button class="btn-primary" onclick="closeSuccessModal()">OK</button>
+  </div>
 </div>
+
+<!-- Unclaim Modal -->
+<div id="unclaim-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <p>Remove <strong id="unclaim-device-name"></strong>?</p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="confirmUnclaim()">Remove</button>
+      <button class="btn-secondary" onclick="closeUnclaimModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+
 
 <!-- ✅ CRITICAL: Load Chart.js FIRST (required by dashboard charts) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1106,9 +1011,10 @@
 <!-- 5. Main Entry Point -->
 <script src="js/quick-insights.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/url-router.js"></script>
+
 <script src="js/other_widgets.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/url-router.js"></script>
 
 <!-- ❌ REMOVED: These files don't exist -->
 <!-- <script src="js/dashboard_components.js"></script> -->

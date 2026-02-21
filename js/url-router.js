@@ -1,12 +1,8 @@
-
-
 // UPDATED URL Router with Settings Sub-routes
 const routes = {
     '/': '.content.home',
     '/dashboard': '.content.dashboard',
     '/settings': '.content.settings',
-    '/settings/account': '.content.settings-account',
-    '/settings/claim': '.content.settings-claim', // NEW ROUTE
     '/help': '.content.help',
     '/bin': '.content.bin',
     '/bin2': '.content.bin2'
@@ -131,7 +127,12 @@ function showPage(selector, route) {
     const targetPage = document.querySelector(selector);
     if (targetPage) {
         targetPage.classList.add('active');
-        targetPage.style.display = 'block';
+        // Bin pages need flex, all others block
+        const flexPages = ['.content.bin', '.content.bin2'];
+        targetPage.style.display = flexPages.includes(selector) ? 'flex' : 'block';
+        // Force height so grid row doesn't collapse
+        targetPage.style.minHeight = 'calc(100vh - 60px)';
+        targetPage.style.overflowY = 'auto';
         currentPage = route;
         updateActiveNav(route);
         window.scrollTo(0, 0);
@@ -141,23 +142,28 @@ function showPage(selector, route) {
             console.log('⚙️ Loading settings hub...');
         }
         
-        if (route === '/settings/account' && typeof loadAccountSettings === 'function') {
-            console.log('👤 Loading account settings...');
-            loadAccountSettings();
-        }
+        
         
 // CHANGED: Removed WiFi check, added optional logging for Claim
-        if (route === '/settings/claim') {
-            console.log('🔗 Loading claim settings...');
-            // Reset form UI if needed
+
+        if (route === '/settings') {
+            // Wait for settings.js to be ready in case of load order issues
+            const tryLoad = () => {
+                if (typeof loadAccountSettings === 'function') {
+                    loadAccountSettings();
+                } else {
+                    setTimeout(tryLoad, 100);
+                }
+            };
+            tryLoad();
             const alertBox = document.getElementById('settings-claim-alert');
             const successBox = document.getElementById('settings-claim-success');
             const input = document.getElementById('settings-esp-id');
-            if(alertBox) alertBox.style.display = 'none';
-            if(successBox) successBox.style.display = 'none';
-            if(input) input.value = '';
+            if (alertBox) alertBox.style.display = 'none';
+            if (successBox) successBox.style.display = 'none';
+            if (input) input.value = '';
         }
-        
+
         if (route === '/dashboard' && typeof loadDashboard === 'function') {
             console.log('📊 Loading dashboard data...');
             loadDashboard();
