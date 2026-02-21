@@ -97,17 +97,25 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
-    margin: 80px auto;
-    padding: 40px;
+    margin: 0;
+    padding: 20px;
+}
+
+.cont-wrapper.glass.dashboard{
+    max-height: 80vh;
+    height: 100%;
 }
 
 .dashboard-cards-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 10px;
     width: 100%;
-    max-width: 1000px;
+    margin: 20px 0;
+}
+
+.selection-wrapper{
+    display: flex;
 }
 
 /* ========================================
@@ -128,7 +136,7 @@ body {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0px 8px 0px #000000;
-    min-height: 450px;
+    min-height: 360px;
     overflow: visible;
 }
 

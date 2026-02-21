@@ -1,6 +1,6 @@
 /* 1. Add padding to the PARENT so the card doesn't touch the edges */
 .content.home.active {
-    padding: 40px 20px; /* Top/Bottom padding 40px, Left/Right 20px */
+    padding: 20px 20px; /* Top/Bottom padding 40px, Left/Right 20px */
     width: 100%;
     
     /* OPTIONAL: Ensure height accounts for scrolling if content is long */
@@ -27,6 +27,8 @@ border: solid 1px;
 overflow-y: hidden;
 }
 
+
+ 
 .cont-wrapper.glass{
      /* --- Glassmorphism Effect --- */
     
@@ -44,6 +46,7 @@ overflow-y: hidden;
     
     /* 4. Shadow: Soft drop shadow to separate the glass from the background */
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    padding:25px 45px;
 }
 .bin-wrapper {
     display: flex;

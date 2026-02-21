@@ -425,61 +425,76 @@
 
     <!-- NEW: Card Selection View (Landing Page) -->
     <div class="dashboard-card-selection" id="dashboardCardSelection">
-        <div class="dashboard-cards-container">
+        
             
-            <!-- Quick Insights Card -->
-            <div class="dashboard-selection-card quick-insights-card" data-page="quick-insights">
-                <div class="card-icon-wrapper">
-                    <div class="card-icon">
-                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Lightbulb Icon -->
-                            <path d="M30 10C23.3726 10 18 15.3726 18 22C18 26.4183 20.3643 30.2938 23.8571 32.3571V38.5714C23.8571 39.9091 24.948 41 26.2857 41H33.7143C35.052 41 36.1429 39.9091 36.1429 38.5714V32.3571C39.6357 30.2938 42 26.4183 42 22C42 15.3726 36.6274 10 30 10Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M26.2857 44.4286H33.7143" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M28.5714 47.8571H31.4286" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <!-- Lightning Bolt -->
-                            <path d="M30 16V28L34 24L30 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+            <div class="cont-wrapper glass dashboard">
+                <div class="page-title">Dashboard</div>
+                <hr>
+
+               
+                <div class="dashboard-cards-container">
+
+                     <!-- Quick Insights Card -->
+                    <div class="dashboard-selection-card quick-insights-card" data-page="quick-insights">
+                        <div class="card-icon-wrapper">
+                            <div class="card-icon">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Lightbulb Icon -->
+                                    <path d="M30 10C23.3726 10 18 15.3726 18 22C18 26.4183 20.3643 30.2938 23.8571 32.3571V38.5714C23.8571 39.9091 24.948 41 26.2857 41H33.7143C35.052 41 36.1429 39.9091 36.1429 38.5714V32.3571C39.6357 30.2938 42 26.4183 42 22C42 15.3726 36.6274 10 30 10Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M26.2857 44.4286H33.7143" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M28.5714 47.8571H31.4286" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <!-- Lightning Bolt -->
+                                    <path d="M30 16V28L34 24L30 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            
+                            <!-- Rays around icon -->
+                            <div class="icon-rays">
+                                <div class="ray ray-1"></div>
+                                <div class="ray ray-2"></div>
+                                <div class="ray ray-3"></div>
+                                <div class="ray ray-4"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-content">
+                            <h2 class="card-title">QUICK INSIGHTS</h2>
+                            <p class="card-description">
+                                Get instant snapshots of your bin's current conditions. View real-time sensor readings, daily averages, and quick status updates at a glance.
+                            </p>
+                        </div>
                     </div>
-                    
-                    <!-- Rays around icon -->
-                    <div class="icon-rays">
-                        <div class="ray ray-1"></div>
-                        <div class="ray ray-2"></div>
-                        <div class="ray ray-3"></div>
-                        <div class="ray ray-4"></div>
+
+                    <!-- Bin Fluctuations Card -->
+                    <div class="dashboard-selection-card bin-fluctuations-card" data-page="bin-fluctuations">
+                        <div class="card-icon-wrapper">
+                            <div class="card-icon">
+                                <!-- Bar Chart Icon -->
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="14" y="30" width="8" height="20" rx="2" fill="currentColor"/>
+                                    <rect x="26" y="20" width="8" height="30" rx="2" fill="currentColor"/>
+                                    <rect x="38" y="25" width="8" height="25" rx="2" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="card-content">
+                            <h2 class="card-title">BIN FLUCTUATIONS</h2>
+                            <p class="card-description">
+                                Track environmental changes over time with detailed graphs and historical data. Analyze trends, identify patterns, and monitor bin health across multiple sensors.
+                            </p>
+                        </div>
                     </div>
-                </div>
+
+                    </div>
                 
-                <div class="card-content">
-                    <h2 class="card-title">QUICK INSIGHTS</h2>
-                    <p class="card-description">
-                        Get instant snapshots of your bin's current conditions. View real-time sensor readings, daily averages, and quick status updates at a glance.
-                    </p>
-                </div>
+
+               
+
             </div>
 
-            <!-- Bin Fluctuations Card -->
-            <div class="dashboard-selection-card bin-fluctuations-card" data-page="bin-fluctuations">
-                <div class="card-icon-wrapper">
-                    <div class="card-icon">
-                        <!-- Bar Chart Icon -->
-                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="14" y="30" width="8" height="20" rx="2" fill="currentColor"/>
-                            <rect x="26" y="20" width="8" height="30" rx="2" fill="currentColor"/>
-                            <rect x="38" y="25" width="8" height="25" rx="2" fill="currentColor"/>
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="card-content">
-                    <h2 class="card-title">BIN FLUCTUATIONS</h2>
-                    <p class="card-description">
-                        Track environmental changes over time with detailed graphs and historical data. Analyze trends, identify patterns, and monitor bin health across multiple sensors.
-                    </p>
-                </div>
-            </div>
 
-        </div>
+            
     </div>
 
    <div class="quick-insights-wrapper" id="quickInsightsContent" style="display: none;">
@@ -748,121 +763,128 @@
 <!-- END OF DASHBOARD PAGE -->
 </div>
 
+
+
 <!-- ========== SETTINGS PAGE ========== -->
 <div class="content settings" id="settings-page">
-  <p class="page-title">Settings</p>
 
-  <!-- ACCOUNTS SECTION -->
-  <section class="settings-section accounts-section">
-    <h2 class="section-title">Accounts</h2>
+  <div class="cont-wrapper glass settings">
+    <p class="page-title settings">Settings</p>
 
-    <div class="settings-cards-grid">
+    <hr>
 
-      <!-- Username Card -->
-      <div class="settings-card">
-        <label class="card-label">Username</label>
-        <div class="card-input-row">
-          <input id="account-username" class="input-field" type="text" readonly placeholder="Username">
-          <button class="edit-btn icon-btn" onclick="toggleUsernameEdit()">
-            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
-          </button>
+
+        <div class="content-wrapper settings">
+            
+
+            <!-- ACCOUNTS SECTION -->
+            <div class="settings-card accounts-wrapper-card">
+                <h2 class="section-title">Accounts</h2>
+            <div class="accounts-inner-grid">
+
+                <!-- Row 1: Username | Email -->
+                <div class="account-inner-card">
+                   
+                <div class="card-header-row">
+                    <span class="card-field-label">Username</span>
+                    <button class="edit-btn icon-btn" onclick="toggleUsernameEdit()">
+                    <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'✏️'}))">
+                    </button>
+                </div>
+                <input id="account-username" class="input-field" type="text" readonly placeholder="Username">
+                </div>
+
+                <div class="account-inner-card">
+                <div class="card-header-row">
+                    <span class="card-field-label">Email</span>
+                    <button class="edit-btn icon-btn" onclick="toggleEmailEdit()">
+                    <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'✏️'}))">
+                    </button>
+                </div>
+                <input id="account-email" class="input-field" type="email" readonly placeholder="Email">
+                </div>
+
+                <!-- Row 2: Password (full width, two fields side by side) -->
+                <div class="account-inner-card password-card full-width">
+                <div class="password-inner-grid">
+                    <div>
+                    <div class="card-header-row">
+                        <span class="card-field-label">Password</span>
+                    </div>
+                    <input class="input-field password-input" type="password" readonly placeholder="New password">
+                    </div>
+                    <div>
+                    <div class="card-header-row">
+                        <span class="card-field-label">Repeat password</span>
+                        <button class="edit-btn icon-btn" onclick="togglePasswordEdit()">
+                        <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'✏️'}))">
+                        </button>
+                    </div>
+                    <input class="input-field password-input" type="password" readonly placeholder="Repeat password">
+                    </div>
+                </div>
+                </div>
+
+                <!-- Row 3: Claimed Bins (full width, horizontal scroll) -->
+                <div class="account-inner-card bins-card full-width">
+                <div class="card-header-row">
+                    <span class="card-field-label">Claimed bins</span>
+                    <button class="edit-btn icon-btn" onclick="document.getElementById('claim-section').scrollIntoView()">
+                    <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'✏️'}))">
+                    </button>
+                </div>
+                <div id="account-bins-list" class="bins-list-scroll">
+                    <!-- Populated dynamically -->
+                </div>
+                </div>
+
+            </div>
+            </div>
+
+            <!-- BOTTOM ROW: WiFi + User Manual -->
+            <div class="settings-bottom-grid">
+
+            <div class="settings-card wifi-card">
+                <h2 class="section-title">WiFi</h2>
+                <div class="wifi-info">
+                <p class="wifi-label">Network</p>
+                <p class="wifi-value" id="wifi-network">—</p>
+                <p class="wifi-label">IP Address</p>
+                <p class="wifi-value" id="wifi-ip">—</p>
+                <p class="wifi-label">Signal</p>
+                <p class="wifi-value" id="wifi-signal">—</p>
+                </div>
+                <button class="btn wifi-change-btn" onclick="changeWifi()">Change WiFi</button>
+                <button class="btn wifi-disconnect-btn" onclick="disconnectWifi()">Disconnect</button>
+            </div>
+
+            <div class="settings-card manual-card" id="claim-section">
+                <h2 class="section-title">User Manual</h2>
+                <p class="manual-link" onclick="window.open('/user-manual.pdf','_blank')">Download user manual here</p>
+                <div class="manual-placeholder"></div>
+            </div>
+
+            </div>
+
+            <!-- CLAIM NEW DEVICE SECTION (unified, no separate page) -->
+            <!-- <section class="settings-section claim-section">
+                <h2 class="section-title">Claim a Device</h2>
+                <div class="settings-card">
+                <form onsubmit="settingsNav.handleClaimSubmit(event)">
+                    <input id="settings-esp-id" class="input-field" type="text" placeholder="Enter ESP-ID (e.g. ESP-0000-0000)" required>
+                    <div id="settings-claim-alert" class="alert" style="display:none;"></div>
+                    <div id="settings-claim-loading" style="display:none;">Claiming...</div>
+                    <div id="settings-claim-success" class="alert success" style="display:none;">Device claimed!</div>
+                    <button type="submit" class="btn claim">Claim Device</button>
+                </form>
+                </div>
+            </section> -->
         </div>
-      </div>
 
-      <!-- Email Card -->
-      <div class="settings-card">
-        <label class="card-label">Username</label><!-- label says Username per reference image -->
-        <div class="card-input-row">
-          <input id="account-email" class="input-field" type="email" readonly placeholder="Email">
-          <button class="edit-btn icon-btn" onclick="toggleEmailEdit()">
-            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
-          </button>
-        </div>
-      </div>
 
-      <!-- Password Card -->
-      <div class="settings-card password-card">
-        <label class="card-label">Password</label>
-        <div class="card-input-row">
-          <input class="input-field password-input" type="password" readonly placeholder="New password">
-          <button class="toggle-pass-btn" onclick="togglePasswordVisibility(this)">
-            <img class="eye-icon" src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show">
-          </button>
-        </div>
-        <div class="card-input-row">
-          <label class="card-label">Repeat password</label>
-          <input class="input-field password-input" type="password" readonly placeholder="Repeat password">
-          <button class="toggle-pass-btn" onclick="togglePasswordVisibility(this)">
-            <img class="eye-icon" src="/settings-content/settings-img/Account/close-eyes.svg" alt="Show">
-          </button>
-          <button class="edit-btn icon-btn" onclick="togglePasswordEdit()">
-            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
-          </button>
-        </div>
-      </div>
-
-      <!-- Claimed Bins Card -->
-      <div class="settings-card bins-card">
-        <div class="card-header-row">
-          <label class="card-label">Claimed bins</label>
-          <button class="edit-btn icon-btn" onclick="settingsNav.navigateToClaim ? null : document.getElementById('claim-section').scrollIntoView()">
-            <img src="/settings-content/settings-img/Account/edit-icon.svg" alt="Edit">
-          </button>
-        </div>
-        <div id="account-bins-list" class="bins-list">
-          <!-- Populated by loadClaimedBinsAccount() -->
-        </div>
-        <button class="view-more-btn" style="display:none;">View More</button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- BOTTOM ROW: WiFi + User Manual -->
-  <div class="settings-bottom-grid">
-
-    <!-- WiFi Section -->
-    <section class="settings-section wifi-section">
-      <h2 class="section-title">WiFi</h2>
-      <div class="settings-card wifi-card">
-        <div class="wifi-info">
-          <p class="wifi-label">Network</p>
-          <p class="wifi-value" id="wifi-network">—</p>
-          <p class="wifi-label">IP Address</p>
-          <p class="wifi-value" id="wifi-ip">—</p>
-          <p class="wifi-label">Signal</p>
-          <p class="wifi-value" id="wifi-signal">—</p>
-        </div>
-        <button class="btn wifi-change-btn" onclick="changeWifi()">Change WiFi</button>
-        <button class="btn wifi-disconnect-btn" onclick="disconnectWifi()">Disconnect</button>
-      </div>
-    </section>
-
-    <!-- User Manual Section -->
-    <section class="settings-section manual-section" id="claim-section">
-      <h2 class="section-title">User Manual</h2>
-      <div class="settings-card manual-card">
-        <p class="manual-link" onclick="window.open('/user-manual.pdf','_blank')">Download user manual here</p>
-        <div class="manual-placeholder"></div>
-      </div>
-    </section>
 
   </div>
-
-  <!-- CLAIM NEW DEVICE SECTION (unified, no separate page) -->
-  <section class="settings-section claim-section">
-    <h2 class="section-title">Claim a Device</h2>
-    <div class="settings-card">
-      <form onsubmit="settingsNav.handleClaimSubmit(event)">
-        <input id="settings-esp-id" class="input-field" type="text" placeholder="Enter ESP-ID (e.g. ESP-0000-0000)" required>
-        <div id="settings-claim-alert" class="alert" style="display:none;"></div>
-        <div id="settings-claim-loading" style="display:none;">Claiming...</div>
-        <div id="settings-claim-success" class="alert success" style="display:none;">Device claimed!</div>
-        <button type="submit" class="btn claim">Claim Device</button>
-      </form>
-    </div>
-  </section>
-
+ 
 </div>
 
 <!-- ========== MODALS ========== -->

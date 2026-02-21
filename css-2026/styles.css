@@ -127,6 +127,7 @@ display: block !important;
 
 .content.bin,
 .content.bin2 {
+    margin-top: 20px;
     display: flex;
     padding: 0 24px;
     justify-content: center;

@@ -7,8 +7,27 @@
     height: auto;
     align-content: start;
     overflow-y: auto;
+    justify-content: center;
+    
 }
 
+.settings-card.accounts-wrapper-card{
+  margin: 20px 0;
+}
+
+.cont-wrapper.glass.settings{
+margin-top: 20px;
+
+}
+
+.content-wrapper.settings{
+  max-width: 1350px;
+  margin: 0 20px;
+}
+
+.page-title{
+  margin-left: 20px;
+}
 .settings-section {
   margin-bottom: 24px;
 }
@@ -115,28 +134,54 @@
   font-size: 13px;
 }
 
+/* Bottom grid cards consistent sizing */
 .settings-bottom-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-bottom: 24px;
+  margin: 18px 0;
+  align-items: start;
 }
 
-.wifi-card {
+.wifi-card,
+.manual-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  min-height: 280px;
 }
 
-.wifi-label { font-size: 12px; color: var(--text-muted); }
-.wifi-value { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+/* Section title inside cards */
+.wifi-card .section-title,
+.manual-card .section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
 
+/* WiFi info spacing */
+.wifi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+/* Buttons — no zoom on hover */
 .wifi-change-btn {
   background: #EBEBEB;
   color: #000;
   width: 100%;
   border-radius: 8px;
+  border: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
+
+.wifi-change-btn:hover { opacity: 0.8; transform: none; }
 
 .wifi-disconnect-btn {
   background: #E53935;
@@ -144,6 +189,21 @@
   width: 100%;
   border-radius: 8px;
   border: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.wifi-disconnect-btn:hover { opacity: 0.85; transform: none; }
+
+/* Manual card placeholder area */
+.manual-placeholder {
+  flex: 1;
+  background: #EBEBEB;
+  border-radius: 8px;
+  min-height: 160px;
 }
 
 .manual-card {
@@ -202,11 +262,145 @@
   cursor: pointer;
   font-weight: 600;
 }
+ 
 
-/* Mobile */
+.accounts-inner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.account-inner-card {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Spans both columns */
+.account-inner-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-field-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text, #111);
+}
+
+/* Password: two fields side by side within the card */
+.password-inner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Bins: horizontal swipe scroll */
+.bins-list-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bins-list-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bins-list-scroll::-webkit-scrollbar-track {
+  background: #eee;
+  border-radius: 4px;
+}
+
+.bins-list-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.bin-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #EBEBEB;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 200px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.bin-icon { width: 36px; height: auto; }
+.bin-info h3 { font-size: 13px; font-weight: 600; margin: 0; }
+.bin-info p  { font-size: 11px; color: var(--text-muted, #888); margin: 0; }
+
+.remove-bin {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+  font-size: 16px;
+  color: #aaa;
+}
+
+/* WiFi buttons (were missing full styles) */
+.wifi-change-btn {
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.wifi-disconnect-btn {
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 @media (max-width: 768px) {
-  .settings-cards-grid,
+  .accounts-inner-grid,
   .settings-bottom-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Inputs used outside of .card-input-row (standalone full-width) */
+.account-inner-card .input-field,
+.account-inner-card .password-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #EBEBEB;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #aaa;
+  cursor: default;
+}
+
+/* Outer wrapper card — no inner padding conflict */
+.accounts-wrapper-card {
+  padding: 20px;
+}
+
+/* Section title above the wrapper card */
+.accounts-section > .section-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.password-inner-grid {
+  align-items: end;
 }
