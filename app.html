@@ -2004,6 +2004,52 @@ document.addEventListener('DOMContentLoaded', () => {
     window.binFluctuations = new BinFluctuations();
 });
 </script>
+
+
+<script>
+  // Wire existing mode buttons to the mode-switcher logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const modeBtns = [
+      document.getElementById('bin1-mode-btn'),
+      document.getElementById('bin2-mode-btn')
+    ];
+
+    // Sync button text/color to current state
+    function syncBtn(btn) {
+      if (!btn) return;
+      btn.childNodes[0].textContent = isManualMode ? 'Manual ' : 'Auto ';
+      btn.style.backgroundColor = isManualMode
+        ? 'var(--manual-mode-clr, #c5b507)'
+        : 'var(--auto-mode-clr, #347900)';
+      btn.style.color = '#fff';
+    }
+
+    // Initial sync
+    modeBtns.forEach(syncBtn);
+
+    // Click handler
+    modeBtns.forEach(btn => {
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        confirmModeSwitch(btn);
+
+        // Re-sync all buttons after modal confirms
+        // Watch for mode change via MutationObserver on modal removal
+        const observer = new MutationObserver(() => {
+          modeBtns.forEach(syncBtn);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    });
+
+    // Also sync whenever isManualMode changes (after confirm)
+    const _origConfirm = window.confirmModeSwitch;
+    window.confirmModeSwitch = function(btn, help) {
+      _origConfirm(btn, help);
+      setTimeout(() => modeBtns.forEach(syncBtn), 100);
+    };
+  });
+</script>
     
 
 

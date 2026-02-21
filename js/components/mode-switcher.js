@@ -4,67 +4,40 @@
 
 let isManualMode = JSON.parse(localStorage.getItem("isManualMode")) || false;
 
-// 1. helper: update button label + color
+// ---- Sync a .mode-select button's text + color ----
+function syncModeBtn(btn) {
+  if (!btn) return;
+  // Safely find the text node (ignore SVG child)
+  let textNode = Array.from(btn.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+  if (textNode) textNode.textContent = isManualMode ? 'Manual ' : 'Auto ';
+  btn.style.backgroundColor = isManualMode
+    ? 'var(--manual-mode-clr)' : 'var(--auto-mode-clr)';
+  btn.style.color = '#fff';
+}
+
+// ---- Sync all .mode-select buttons on the page ----
+function syncAllModeBtns() {
+  document.querySelectorAll('.mode-select').forEach(syncModeBtn);
+}
+
+// ---- Sync web component buttons (mode-switcher custom element) ----
 function updateManualButton(btn) {
   if (!btn) return;
-  
-  // Update text
   btn.textContent = isManualMode ? "Mode: Manual" : "Mode: Auto";
-  
-  // Update styling
   btn.style.backgroundColor = isManualMode
-    ? "var(--manual-mode-clr, #FF5E5E)"
-    : "var(--auto-mode-clr, #4da6ff)";
-    
-  // Update accessibility state
+    ? "var(--manual-mode-clr, #c5b507)"
+    : "var(--auto-mode-clr, #347900)";
   btn.setAttribute("aria-pressed", isManualMode ? "true" : "false");
 }
 
-// 2. The Web Component
-class ModeSwitcher extends HTMLElement {
-  connectedCallback() {
-    // Prevent duplicate rendering if connectedCallback runs twice
-    if (this.querySelector('.btn.control.manual')) return;
-
-    // Grab help content if it exists
-    const helpTemplate = this.querySelector("template.help");
-    this._helpContent = helpTemplate ? helpTemplate.innerHTML.trim() : "";
-    if (helpTemplate) helpTemplate.remove();
-
-    // Create the button
-    const btn = document.createElement("div");
-    btn.className = "btn control manual";
-    btn.setAttribute("role", "button");
-    btn.style.cursor = "pointer"; 
-    btn.style.display = "flex";
-    btn.style.alignItems = "center";
-    btn.style.justifyContent = "center";
-    btn.style.padding = "10px 20px";
-    btn.style.borderRadius = "30px";
-    btn.style.color = "#FFF";
-    btn.style.fontWeight = "bold";
-
-    this.appendChild(btn);
-    this.button = btn;
-
-    // Set initial state immediately
-    updateManualButton(this.button);
-
-    // Attach click event
-    this.button.addEventListener("click", () => {
-      confirmModeSwitch(this.button, this._helpContent);
-    });
-  }
-}
-customElements.define("mode-switcher", ModeSwitcher);
-
-// 3. Global Mode Switch Logic (The Confirmation Modal)
+// ---- Confirmation Modal ----
 function confirmModeSwitch(manualBtn, helpContent = "") {
-  
+  // Prevent duplicate modals
+  if (document.getElementById('mode-switch-modal')) return;
+
   const targetMode = isManualMode ? "Auto" : "Manual";
 
-  // Content Configuration
-  const contentConfig = {
+  const config = {
     Manual: {
       title: "Activate Manual Mode?",
       desc: "Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.",
@@ -77,68 +50,146 @@ function confirmModeSwitch(manualBtn, helpContent = "") {
       img: "img/cliparts/auto-mode-illustration.png",
       btnText: "Activate for this bin"
     }
-  };
+  }[targetMode];
 
-  const config = contentConfig[targetMode];
-
-  // 1. Open Modal with New HTML Structure
-  const modal = openModal({
-    title: "Confirmation",
-    defaultContent: `
-      <div class="modal-card">
-        <div class="illustration">
-           <img src="${config.img}" alt="${targetMode} Mode" style="max-width:100%; height:auto;">
-        </div>
-        
-        <h2 class="modal-title" style="margin-top:10px;">${config.title}</h2>
-        <p class="modal-description">${config.desc}</p>
-        
-        <div class="modal-buttons">
-           <button class="modal-btn modalConfirm">${config.btnText}</button>
-           <button class="modal-btn btn-cancel modalCancel">Cancel</button>
-        </div>
-      </div>
-    `,
-    helpContent: "" 
-  });
-
-  // Critical: This class triggers the CSS to hide the header and bg
-  modal.classList.add('clean-modal-override');
-
-  // 2. Attach Logic
-  const confirmBtn = modal.querySelector(".modalConfirm");
-  const cancelBtn  = modal.querySelector(".modalCancel");
-
-  // Activate Button Logic
-  if (confirmBtn) {
-    confirmBtn.addEventListener("click", () => {
-      isManualMode = !isManualMode;
-      localStorage.setItem("isManualMode", JSON.stringify(isManualMode));
-
-      // Update the button that triggered this
-      updateManualButton(manualBtn);
-      
-      // Sync all other manual buttons
-      document.querySelectorAll('mode-switcher .btn.control.manual').forEach(btn => {
-          updateManualButton(btn);
-      });
-
-      // Update UI components (sliders, inputs, etc.)
-      if (typeof applyManualModeTo === "function") {
-          document.querySelectorAll(".status_modal").forEach(applyManualModeTo);
+  // Inject styles once
+  if (!document.getElementById('mode-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'mode-modal-styles';
+    style.textContent = `
+      #mode-switch-modal {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 99999;
+        animation: modeFadeIn 0.2s ease;
       }
-
-      modal.remove();
-      console.log(`Switched to ${isManualMode ? 'Manual' : 'Auto'} Mode`);
-    });
+      @keyframes modeFadeIn {
+        from { opacity: 0; } to { opacity: 1; }
+      }
+      .mode-modal-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 32px 28px;
+        max-width: 340px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        animation: modeSlideUp 0.25s ease;
+      }
+      @keyframes modeSlideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+      }
+      .mode-modal-img {
+        width: 100%; max-height: 200px; object-fit: contain;
+      }
+      .mode-modal-title {
+        font-size: 20px; font-weight: 700; margin: 0;
+        font-family: 'Quicksand', sans-serif;
+      }
+      .mode-modal-desc {
+        font-size: 14px; color: #555; margin: 0; line-height: 1.6;
+        font-family: 'Quicksand', sans-serif;
+      }
+      .mode-modal-btn {
+        width: 100%; padding: 14px;
+        background: #ebebeb; border: none;
+        border-radius: 50px; font-size: 15px;
+        font-weight: 600; cursor: pointer;
+        font-family: 'Quicksand', sans-serif;
+        transition: background 0.2s;
+      }
+      .mode-modal-btn:hover { background: #ddd; }
+      .mode-modal-btn.confirm:hover { background: #d4edda; }
+    `;
+    document.head.appendChild(style);
   }
 
-  // Cancel Button Logic
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-        modal.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'mode-switch-modal';
+  overlay.innerHTML = `
+    <div class="mode-modal-box">
+      <img class="mode-modal-img" src="${config.img}" alt="${targetMode} Mode"
+        onerror="this.style.display='none'">
+      <h2 class="mode-modal-title">${config.title}</h2>
+      <p class="mode-modal-desc">${config.desc}</p>
+      <button class="mode-modal-btn confirm" id="mode-confirm-btn">${config.btnText}</button>
+      <button class="mode-modal-btn" id="mode-cancel-btn">Cancel</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Close on backdrop click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  // Confirm
+  document.getElementById('mode-confirm-btn').addEventListener('click', () => {
+    isManualMode = !isManualMode;
+    localStorage.setItem("isManualMode", JSON.stringify(isManualMode));
+
+    // Sync all button types
+    syncAllModeBtns();
+    document.querySelectorAll('mode-switcher .btn.control.manual').forEach(updateManualButton);
+
+    if (typeof applyManualModeTo === "function") {
+      document.querySelectorAll(".status_modal").forEach(applyManualModeTo);
+    }
+
+    overlay.remove();
+  });
+
+  // Cancel
+  document.getElementById('mode-cancel-btn').addEventListener('click', () => {
+    overlay.remove();
+  });
+}
+
+// ---- Web Component ----
+class ModeSwitcher extends HTMLElement {
+  connectedCallback() {
+    if (this.querySelector('.btn.control.manual')) return;
+
+    const btn = document.createElement("div");
+    btn.className = "btn control manual";
+    btn.setAttribute("role", "button");
+    btn.style.cssText = `
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; padding: 10px 20px;
+      border-radius: 30px; color: #FFF; font-weight: bold;
+    `;
+
+    this.appendChild(btn);
+    this.button = btn;
+    updateManualButton(this.button);
+
+    this.button.addEventListener("click", () => {
+      confirmModeSwitch(this.button);
     });
   }
 }
+customElements.define("mode-switcher", ModeSwitcher);
 
-console.log('✅ Mode Switcher component loaded');
+// ---- Event delegation: catches ALL .mode-select buttons dynamically ----
+// Works for any number of bins, even ones added after page load
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.mode-select');
+  if (!btn) return;
+  confirmModeSwitch(btn);
+});
+
+// ---- MutationObserver: sync buttons whenever new bin content is injected ----
+const modeObserver = new MutationObserver(syncAllModeBtns);
+modeObserver.observe(document.body, { childList: true, subtree: true });
+
+// ---- Initial sync on load ----
+document.addEventListener('DOMContentLoaded', syncAllModeBtns);
+
+console.log('✅ Mode Switcher loaded');
