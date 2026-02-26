@@ -1,105 +1,474 @@
-/* 1. Add padding to the PARENT so the card doesn't touch the edges */
+/* ==========================================================================
+   AVONIC — home-page.css  (2026 Responsive Revision)
+   Scope: .content.home > .cont-wrapper.glass and all its children.
+   Strategy:
+     • 24"+ monitor  → wide glass card, cards sit side by side, plenty of breathing room.
+     • 14" monitor   → glass card shrinks gracefully, cards still side-by-side but proportional.
+     • Tablet        → glass card full-width, slight padding reduction.
+     • Mobile        → glass card full-width; Machine Status cards become a
+                       horizontal SCROLL ROW (zero-margin, bleeds edge); Bin
+                       cards stack full-width vertically; bottom-nav shown.
+   ========================================================================== */
+
+
+/* ─────────────────────────────────────────────
+   1. HOME CONTENT AREA — the scrollable stage
+   ─────────────────────────────────────────────
+   Desktop: 20px all-round padding.
+   Mobile: padding is set to 0 here so the glass
+   card and its bleed sections control spacing.  */
 .content.home.active {
-    padding: 20px 20px; /* Top/Bottom padding 40px, Left/Right 20px */
+    padding: 20px;
     width: 100%;
-    
-    /* OPTIONAL: Ensure height accounts for scrolling if content is long */
-    overflow-y: auto; 
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
-/* 2. Update the CHILD wrapper to center itself */
+
+/* ─────────────────────────────────────────────
+   2. GLASS CARD WRAPPER
+   ─────────────────────────────────────────────
+   This is the big frosted card that frames
+   everything on the Home page.
+
+   max-width caps it on ultra-wide displays.
+   On smaller monitors the 'width:100%' rule
+   lets it shrink naturally.                   */
 .cont-wrapper {
-    /* --- Layout (Keep Existing) --- */
     display: flex;
     flex-direction: column;
-    margin: 0 auto; 
-    max-width: 1200px;
+    margin: 0 auto;          /* horizontally centred */
+    max-width: 1200px;       /* comfortable cap on 24"+ */
     width: 100%;
     padding: 0;
     border-radius: 45px;
-    
-   
-}
- 
-.cont-wrapper.default{
-background:#FAFAFA;
-border: solid 1px;
-overflow-y: hidden;
+    box-sizing: border-box;
 }
 
+/* Default (opaque) variant used on inner pages */
+.cont-wrapper.default {
+    background: #FAFAFA;
+    border: solid 1px;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+}
 
- 
-.cont-wrapper.glass{
-     /* --- Glassmorphism Effect --- */
-    
-    /* 1. Background & Light: Mimics "Light -45deg" */
-    /* Creates a gradient from semi-opaque white (top-left) to transparent (bottom-right) */
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.1));
-    
-    /* 2. Frost: Mimics "Frost: 91" */
-    /* Blurs whatever is behind the container */
+/* Glassmorphism variant used on the Home page */
+.cont-wrapper.glass {
+    /* Light-angled gradient mimics the Figma "Light -45deg" layer */
+    background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
     backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px); /* Required for Safari */
-    
-    /* 3. Stroke: Mimics "Stroke: #FFFFFF 100%, Weight 4" */
+    -webkit-backdrop-filter: blur(40px);
     border: 2px solid #FFFFFF;
-    
-    /* 4. Shadow: Soft drop shadow to separate the glass from the background */
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    padding:25px 45px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.15);
+
+    /* Generous desktop padding inside the glass card */
+    padding: 25px 45px;
 }
+
+
+/* ─────────────────────────────────────────────
+   3. PAGE TITLE  (h1 "Home")
+   ───────────────────────────────────────────── */
+.page-title {
+    font-size: clamp(1.4rem, 2.5vw, 2rem); /* fluid: never tiny, never huge */
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+}
+
+/* Sub-titles: "Machine Status", "Vermicompost Bins" */
+.page-title.sub {
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 16px 0 12px;
+}
+
+/* Divider rule below the main title */
+.cont-wrapper.glass hr {
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    margin: 8px 0 16px;
+}
+
+
+/* ─────────────────────────────────────────────
+   4. MACHINE STATUS SECTION
+   ─────────────────────────────────────────────
+   Desktop  → flex row, cards side-by-side.
+   Mobile   → horizontal scroll strip that
+              intentionally bleeds past the
+              card edge (matching Figma mobile
+              reference).                       */
+.machine-status-card-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;        /* wraps gracefully on in-between sizes */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ── Battery card ── */
+.battery-card {
+    background: white;
+    border: solid 1px rgba(0,0,0,0.349);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+    /* Grow to fill available space; never shrink below 260px */
+    flex: 1 1 260px;
+    max-width: 340px;       /* stop growing on big screens */
+    box-sizing: border-box;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.battery-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* ── Battery header row ── */
+.battery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.battery-title,
+.battery-percentage-text {
+    font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* ── Battery circle ── */
+.battery-circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.battery-circle {
+    /* Fluid circle: scales between 120 px (mobile) and 160 px (desktop) */
+    width:  clamp(120px, 14vw, 160px);
+    height: clamp(120px, 14vw, 160px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.battery-circle.high {
+    background: linear-gradient(207.31deg, #0C342C 12.91%, #E3FBCE 102.83%);
+    box-shadow: 0 4px 16px rgba(123,168,142,0.4);
+}
+
+.battery-circle.medium {
+    background: radial-gradient(circle, #d4af5a 0%, #b8943d 100%);
+    box-shadow: 0 4px 16px rgba(212,175,90,0.4);
+}
+
+.battery-circle.low {
+    background: radial-gradient(circle, #c96565 0%, #a84444 100%);
+    box-shadow: 0 4px 16px rgba(201,101,101,0.4);
+}
+
+/* Battery body & fill */
+.battery-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.battery-body {
+    width: 90px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 4px;
+    background: transparent;
+}
+
+.battery-terminal {
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 20px;
+    background: white;
+    border-radius: 0 3px 3px 0;
+}
+
+.battery-fill {
+    height: 100%;
+    background: white;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+/* Charging indicator bubble */
+.charging-indicator {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border: solid 1px rgba(0,0,0,0.301);
+}
+
+.charging-indicator.active { opacity: 1; }
+
+.lightning-bolt { width: 14px; height: 18px; position: relative; }
+.lightning-bolt svg { width: 100%; height: 100%; fill: #6b7280; }
+
+/* Charging animation */
+@keyframes chargingPulse {
+    0%   { width: var(--current-level); }
+    100% { width: 100%; }
+}
+
+.battery-fill.charging {
+    background: #4ade80 !important;
+    animation: chargingPulse 2s ease-in-out infinite;
+}
+
+
+/* ── Water tank card ── */
+.water-tank-card {
+    background: white;
+    border: solid 1px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+    flex: 1 1 260px;
+    max-width: 340px;
+    box-sizing: border-box;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.water-tank-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.tank-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.tank-title,
+.tank-percentage-text {
+    font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* Semi-circular gauge */
+.gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.gauge-wrapper {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.gauge-background {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 200px; height: 100px;
+    border: 12px solid #e5e7eb;
+    border-bottom: none;
+    border-radius: 200px 200px 0 0;
+}
+
+.gauge-fill {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 200px; height: 100px;
+    border: 12px solid #3d5a4a;
+    border-bottom: none;
+    border-radius: 200px 200px 0 0;
+    transition: transform 0.4s ease, border-color 0.4s ease;
+    transform-origin: center bottom;
+}
+
+.gauge-fill.temp-normal  { border-color: #3d5a4a; }
+.gauge-fill.temp-high    { border-color: #c96565; }
+.gauge-fill.temp-low     { border-color: #3b82f6; }
+
+/* Droplet centred inside arc */
+.droplet-container {
+    position: absolute;
+    top: 55%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px; height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: background 0.4s ease;
+}
+
+.droplet-container.temp-normal { background: #1a3d3a; }
+.droplet-container.temp-high   { background: #7f1d1d; }
+.droplet-container.temp-low    { background: #1e3a8a; }
+
+.water-droplet {
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 0;
+    transform: none;
+}
+
+.water-droplet svg {
+    width: 100%; height: 100%;
+    fill: #ffffff;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Tank status text, divider, temperature row */
+.tank-status-text {
+    font-size: 14px;
+    color: #9ca3af;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.divider,
+.divider-section {
+    width: 100%;
+    height: 1px;
+    background: #e5e7eb;
+    margin-bottom: 16px;
+}
+
+.temperature-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.temp-icon {
+    width: 20px; height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: none;
+}
+
+.temp-icon svg { width: 100%; height: 100%; }
+
+.temperature-text {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.temperature-status {
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.temperature-status.temp-normal { color: #10b981; }
+.temperature-status.temp-high   { color: #ef4444; }
+.temperature-status.temp-low    { color: #3b82f6; }
+
+
+/* ─────────────────────────────────────────────
+   5. VERMICOMPOST BINS SECTION
+   ─────────────────────────────────────────────
+   Desktop → two cards side-by-side, equal width.
+   Mobile  → stacked full-width cards.           */
+.vermicompost-bins-card-container {
+    margin-top: 8px;
+}
+
 .bin-wrapper {
     display: flex;
     width: 100%;
-    gap: 24px; /* Adds space between the cards */
-    flex-wrap: wrap; /* Allows cards to wrap on smaller screens */
+    gap: 24px;
+    flex-wrap: wrap;        /* stacks on narrow viewports */
 }
 
 .bin-card {
-    /* 1. Allow the card to grow to fill empty space */
-    flex: 1; 
-    
-    /* 2. Set a minimum width so they don't get too squished */
-    min-width: 300px; 
-    
-    /* 3. OPTIONAL: Remove or increase max-width if you want them to TRULY fill the screen. 
-       If you keep max-width: 500px, they will stop growing at 500px. */
-    max-width: 100%; /* Change this from 500px to 100% (or remove it) */
-    
-    /* Keep your existing styles */
+    flex: 1 1 280px;        /* grow/shrink, min 280 px */
+    max-width: 100%;
+
     background-image: url('../../img/BG/Bin background.png');
     background-size: cover;
     background-position: center;
-    height: 400px;
+
+    /* Fluid height: generous on big monitors, compact on mobile */
+    height: clamp(200px, 28vw, 400px); /* desktop only — mobile overrides below */
+
     border-radius: 24px;
     padding: 30px;
     cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-sizing: border-box;
 
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.3s ease;
 }
 
-
-/* 1. Expand slightly when hovered */
 .bin-card:hover {
-    transform: scale(1.005); /* Scales up by 2% */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Adds a "lifted" shadow effect */
-    z-index: 10; /* Ensures it sits on top of other elements while expanded */
+    transform: scale(1.005);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    z-index: 10;
 }
 
-/* 2. Return to normal size when clicked (held down) */
 .bin-card:active {
-    transform: scale(1); /* Resets to original size */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Resets shadow */
-    transition-duration: 0.05s; /* Snaps back quickly for responsive feel */
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition-duration: 0.05s;
 }
 
-
-/* Ensure text is legible against the background */
 .bin-card .bin-title {
-    font-size: 56px;
+    font-size: clamp(2rem, 4vw, 3.5rem); /* "Bin 1" label scales */
     font-weight: 500;
-    color: #1a1a1a; /* Dark text usually works well with light backgrounds */
+    color: #1a1a1a;
     position: relative;
     z-index: 2;
 }
@@ -107,1006 +476,28 @@ overflow-y: hidden;
 .bin-card .mode-indicator {
     display: flex;
     align-items: center;
-    gap: 8px; /* Adds space between icon and text */
+    gap: 8px;
     position: relative;
     z-index: 2;
 }
 
 
-.battery-card {
-            background: white;
-            border: solid 1px rgba(0, 0, 0, 0.349);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 340px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .battery-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .battery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .battery-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .battery-percentage-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .battery-circle-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .battery-circle {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: background 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        /* High battery (> 60%) - Green gradient */
-        .battery-circle.high {
-           background: linear-gradient(207.31deg, #0C342C 12.91%, #E3FBCE 102.83%);
-            box-shadow: 0 4px 16px rgba(123, 168, 142, 0.4);
-        }
-
-        /* Medium battery (20-60%) - Yellow/Orange gradient */
-        .battery-circle.medium {
-            background: radial-gradient(circle, #d4af5a 0%, #b8943d 100%);
-            box-shadow: 0 4px 16px rgba(212, 175, 90, 0.4);
-        }
-
-        /* Low battery (< 20%) - Red gradient */
-        .battery-circle.low {
-            background: radial-gradient(circle, #c96565 0%, #a84444 100%);
-            box-shadow: 0 4px 16px rgba(201, 101, 101, 0.4);
-        }
-
-        /* HORIZONTAL BATTERY - ROTATED 90 DEGREES */
-        .battery-icon-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .battery-body {
-            width: 90px;
-            height: 50px;
-            border: 2px solid white;
-            border-radius: 6px;
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: stretch;
-            padding: 4px;
-            background: transparent;
-        }
-
-        /* Battery terminal on the RIGHT side */
-        .battery-terminal {
-            position: absolute;
-            top: 50%;
-            right: -10px;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 20px;
-            background: white;
-            border-radius: 0 3px 3px 0;
-        }
-
-        .battery-fill {
-            height: 100%;
-            background: white;
-            border-radius: 3px;
-            transition: width 0.4s ease;
-        }
-
-        /* Lightning bolt charging indicator - BELOW the battery */
-        .charging-indicator {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 32px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border: solid 1px rgba(0, 0, 0, 0.301);
-        }
-
-        .charging-indicator.active {
-            opacity: 1;
-        }
-
-        /* Flat lightning bolt icon - SVG style */
-        .lightning-bolt {
-            width: 14px;
-            height: 18px;
-            position: relative;
-        }
-
-        .lightning-bolt svg {
-            width: 100%;
-            height: 100%;
-            fill: #6b7280; /* Flat gray color like your reference */
-        }
-
-        /* Control Panel for Testing */
-        .control-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 100;
-            width: 250px;
-        }
-
-        .control-panel h3 {
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .control-panel input[type="range"] {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .control-panel .value-display {
-            margin-top: 8px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .control-panel .status-display {
-            margin-top: 8px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .status-high {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-low {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .charging-toggle {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-        }
-
-        .charging-toggle input {
-            cursor: pointer;
-        }
-
-
-        .water-tank-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 340px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .water-tank-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .tank-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .tank-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .tank-percentage-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        /* Semi-circular gauge container */
-        .gauge-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .gauge-wrapper {
-            position: relative;
-            width: 200px;
-            height: 100px;
-            margin-bottom: 8px;
-        }
-
-        /* Background gauge (gray) */
-        .gauge-background {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #e5e7eb;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-        }
-
-        /* Filled gauge (colored based on level) */
-        .gauge-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #3d5a4a;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-            transition: clip-path 0.4s ease, border-color 0.4s ease;
-            clip-path: inset(0 0 0 0);
-        }
-
-        /* Gauge color states */
-        .gauge-fill.high {
-            border-color: #3d5a4a; /* Green */
-        }
-
-        .gauge-fill.medium {
-            border-color: #d4af5a; /* Yellow/Orange */
-        }
-
-        .gauge-fill.low {
-            border-color: #c96565; /* Red */
-        }
-
-        /* Water droplet in center */
-        .droplet-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background: #1a3d3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .water-droplet {
-            width: 32px;
-            height: 38px;
-            background: linear-gradient(135deg, #f4d03f 0%, #c9a739 100%);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            position: relative;
-        }
-
-        /* Tank status text */
-        .tank-status-text {
-            font-size: 14px;
-            color: #9ca3af;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        /* Divider line */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: #e5e7eb;
-            margin-bottom: 16px;
-        }
-
-        /* Temperature section */
-        .temperature-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .temp-icon {
-            width: 20px;
-            height: 20px;
-            background: #9ca3af;
-            border-radius: 4px;
-            flex-shrink: 0;
-        }
-
-        .temperature-text {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .temperature-status {
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        /* Temperature status colors */
-        .temperature-status.normal {
-            color: #10b981; /* Green */
-        }
-
-        .temperature-status.high {
-            color: #ef4444; /* Red */
-        }
-
-        .temperature-status.low {
-            color: #3b82f6; /* Blue */
-        }
-
-        /* Control Panel for Testing */
-        .control-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 100;
-            width: 280px;
-        }
-
-        .control-panel h3 {
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .control-section {
-            margin-bottom: 16px;
-        }
-
-        .control-section label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .control-panel input[type="range"] {
-            width: 100%;
-            margin-bottom: 6px;
-        }
-
-        .control-panel .value-display {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .control-panel select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .status-display {
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .status-high {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-low {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-
-
-
-
-
-
-       /* Charging animation - battery fill goes to 100% and restarts */
-@keyframes chargingPulse {
-    0% {
-        width: var(--current-level);
-    }
-    100% {
-        width: 100%;
-    }
-}
-
-.battery-fill.charging {
-    animation: chargingPulse 2s ease-in-out infinite;
-}
-
-/* Green fill when charging */
-.battery-fill.charging {
-    background: #4ade80 !important; /* Green color */
-    animation: chargingPulse 2s ease-in-out infinite;
-}
-
-/* Corrected Selector */
-.machine-status-card-container {
-    display: flex;
-    flex-direction: row; /* Explicitly set row */
-    gap: 24px;
-    flex-wrap: wrap;
-    
-}
-
-        /* Water Tank Card */
-        .water-tank-card {
-            background: white;
-            border: solid 1px rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 340px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .water-tank-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Header */
-        .tank-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .tank-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .tank-percentage-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        /* Gauge Container */
-        .gauge-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .gauge-wrapper {
-            position: relative;
-            width: 200px;
-            height: 100px;
-            margin-bottom: 8px;
-        }
-
-        /* Background gauge (gray) */
-        .gauge-background {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #e5e7eb;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-        }
-
-        /* Filled gauge (colored based on level) */
-        .gauge-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #3d5a4a;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-            transition: clip-path 0.4s ease, border-color 0.4s ease;
-            clip-path: inset(0 0 0 0);
-        }
-
-        /* Temperature-based gauge colors */
-        .gauge-fill.temp-normal {
-            border-color: #3d5a4a; /* Green */
-        }
-
-        .gauge-fill.temp-high {
-            border-color: #c96565; /* Red */
-        }
-
-        .gauge-fill.temp-low {
-            border-color: #3b82f6; /* Blue */
-        }
-
-        /* Water droplet in center */
-        .droplet-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background: #1a3d3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: background 0.4s ease;
-        }
-
-        /* Temperature-based droplet container colors */
-        .droplet-container.temp-normal {
-            background: #1a3d3a; /* Dark green */
-        }
-
-        .droplet-container.temp-high {
-            background: #7f1d1d; /* Dark red */
-        }
-
-        .droplet-container.temp-low {
-            background: #1e3a8a; /* Dark blue */
-        }
-
-        .water-droplet {
-            width: 32px;
-            height: 38px;
-            background: linear-gradient(135deg, #f4d03f 0%, #c9a739 100%);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            position: relative;
-        }
-
-        /* Tank status text */
-        .tank-status-text {
-            font-size: 14px;
-            color: #9ca3af;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        /* Divider line */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: #e5e7eb;
-            margin-bottom: 16px;
-        }
-
-        /* Temperature section */
-        .temperature-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .temp-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .temp-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .temperature-text {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .temperature-status {
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        /* Temperature status colors */
-        .temperature-status.temp-normal {
-            color: #10b981; /* Green */
-        }
-
-        .temperature-status.temp-high {
-            color: #ef4444; /* Red */
-        }
-
-        .temperature-status.temp-low {
-            color: #3b82f6; /* Blue */
-        }
-
-        /* Battery Card (for reference) */
-        .battery-card {
-            background: white;
-            border: solid 1px rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 340px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .battery-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .battery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .battery-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .battery-percentage-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-       
-
-        .status-display {
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .status-high {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-low {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .divider-section {
-            width: 100%;
-            height: 1px;
-            background: #e5e7eb;
-            margin: 16px 0;
-        }
-
-        /* Water Tank Card - Matching home-page.css */
-        .water-tank-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 340px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .water-tank-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .tank-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .tank-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .tank-percentage-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        /* Semi-circular gauge container */
-        .gauge-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .gauge-wrapper {
-            position: relative;
-            width: 200px;
-            height: 100px;
-            margin-bottom: 8px;
-            overflow: hidden;
-        }
-
-        /* Background gauge (gray) */
-        .gauge-background {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #e5e7eb;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-        }
-
-        /* Filled gauge (colored based on level) */
-        .gauge-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            height: 100px;
-            border: 12px solid #3d5a4a;
-            border-bottom: none;
-            border-radius: 200px 200px 0 0;
-            transition: transform 0.4s ease, border-color 0.4s ease;
-            transform-origin: center bottom;
-        }
-
-        /* Temperature-based gauge colors */
-        .gauge-fill.temp-normal {
-            border-color: #3d5a4a; /* Green */
-        }
-
-        .gauge-fill.temp-high {
-            border-color: #c96565; /* Red */
-        }
-
-        .gauge-fill.temp-low {
-            border-color: #3b82f6; /* Blue */
-        }
-
-        /* Water droplet in center */
-        .droplet-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background: #1a3d3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: background 0.4s ease;
-        }
-
-        /* Temperature-based droplet container colors */
-        .droplet-container.temp-normal {
-            background: #1a3d3a; /* Dark green */
-        }
-
-        .droplet-container.temp-high {
-            background: #7f1d1d; /* Dark red */
-        }
-
-        .droplet-container.temp-low {
-            background: #1e3a8a; /* Dark blue */
-        }
-
-        .water-droplet {
-            width: 32px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .water-droplet svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Tank status text */
-        .tank-status-text {
-            font-size: 14px;
-            color: #9ca3af;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        /* Divider line */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: #e5e7eb;
-            margin-bottom: 16px;
-        }
-
-        /* Temperature section */
-        .temperature-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .temp-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .temp-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .temperature-text {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .temperature-status {
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        /* Temperature status colors */
-        .temperature-status.temp-normal {
-            color: #10b981; /* Green */
-        }
-
-        .temperature-status.temp-high {
-            color: #ef4444; /* Red */
-        }
-
-        .temperature-status.temp-low {
-            color: #3b82f6; /* Blue */
-        }
-
-        
-
-        .status-display {
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .status-high {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-low {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .divider-section {
-            width: 100%;
-            height: 1px;
-            background: #e5e7eb;
-            margin: 16px 0;
-        }
-
-
-        /* Unified Developer Controls */
+/* ─────────────────────────────────────────────
+   6. DEV CONTROLS (fixed overlay — unchanged)
+   ───────────────────────────────────────────── */
 .dev-controls-panel {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 20px; right: 20px;
     width: 300px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    z-index: 9999; /* Ensure it stays on top */
+    z-index: 9999;
     border: 1px solid #e5e7eb;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     overflow: hidden;
 }
 
-/* Header (Always visible) */
 .dev-header {
     background: #f3f4f6;
     padding: 12px 16px;
@@ -1120,11 +511,8 @@ overflow-y: hidden;
     user-select: none;
 }
 
-.dev-header:hover {
-    background: #e5e7eb;
-}
+.dev-header:hover { background: #e5e7eb; }
 
-/* Toggle Button Styling */
 .dev-header .toggle-btn {
     background: none;
     border: none;
@@ -1135,36 +523,23 @@ overflow-y: hidden;
     transition: transform 0.3s;
 }
 
-/* Minimized State */
-.dev-controls-panel.minimized {
-    width: 180px; /* Smaller width when closed */
-    height: 48px; /* Height of header only */
-}
+.dev-controls-panel.minimized { width: 180px; height: 48px; }
+.dev-controls-panel.minimized .dev-header { border-bottom: none; }
+.dev-controls-panel.minimized .toggle-btn { transform: rotate(45deg); }
 
-.dev-controls-panel.minimized .dev-header {
-    border-bottom: none;
-}
-
-.dev-controls-panel.minimized .toggle-btn {
-    transform: rotate(45deg); /* Turn X into + */
-}
-
-/* Content Area */
 .dev-content {
     padding: 16px;
-    max-height: 500px; /* Allow expansion */
+    max-height: 500px;
     overflow-y: auto;
     opacity: 1;
     transition: opacity 0.2s ease;
 }
 
-/* Hide content when minimized to prevent tabbing/clicking */
 .dev-controls-panel.minimized .dev-content {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Inner Section Styling */
 .dev-section h4 {
     margin: 0 0 10px 0;
     font-size: 14px;
@@ -1188,82 +563,284 @@ overflow-y: hidden;
     display: block;
 }
 
-.dev-controls-panel hr {
-    border: 0;
-    border-top: 1px solid #e5e7eb;
-    margin: 12px 0;
+.dev-controls-panel hr { border: 0; border-top: 1px solid #e5e7eb; margin: 12px 0; }
+
+.status-display { padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; }
+.status-high    { background: #d4edda; color: #155724; }
+.status-medium  { background: #fff3cd; color: #856404; }
+.status-low     { background: #f8d7da; color: #721c24; }
+
+.charging-toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.charging-toggle input { width: auto !important; margin: 0; }
+.charging-toggle label { margin: 0; }
+
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================================
+
+   Strategy overview:
+   ┌──────────────┬──────────────────────────────────────────────┐
+   │ ≥ 1440 px    │ Full desktop: generous padding, max-width cap │
+   │ 1024–1439 px │ 14" laptop: slightly reduced padding          │
+   │  768–1023 px │ Tablet: full-width glass card, tighter gaps   │
+   │    < 768 px  │ Mobile: scroll strip, stacked bins, bottom nav│
+   └──────────────┴──────────────────────────────────────────────┘
+   ================================================================ */
+
+
+/* ── 14" / Small Laptop  (1024 px – 1439 px) ─────────────────── */
+@media (max-width: 1439px) {
+    .cont-wrapper.glass {
+        /* Tighten horizontal padding so the card doesn't feel cramped */
+        padding: 20px 28px;
+    }
+
+    /* Allow machine status cards to grow a bit more */
+    .battery-card,
+    .water-tank-card {
+        max-width: 300px;
+    }
 }
 
-.status-display {
-    padding: 6px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
+
+/* ── Tablet  (768 px – 1023 px) ──────────────────────────────── */
+@media (max-width: 1023px) {
+    .content.home.active {
+        padding: 16px;
+    }
+
+    .cont-wrapper.glass {
+        border-radius: 30px;
+        padding: 20px 20px;
+    }
+
+    /* Let status cards grow side by side until they can't */
+    .machine-status-card-container {
+        gap: 16px;
+    }
+
+    .battery-card,
+    .water-tank-card {
+        flex: 1 1 220px;
+        max-width: none;    /* fill the row equally */
+    }
+
+    /* Bin cards stack earlier on tablet */
+    .bin-card {
+        flex: 1 1 100%;     /* each card takes full row */
+        height: clamp(180px, 40vw, 280px);
+    }
 }
 
-.charging-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-.charging-toggle input {
-    width: auto !important; /* Override full width */
-    margin: 0;
-}
-.charging-toggle label {
-    margin: 0;
-}
 
-.temp-icon{
-    background: none;
-}
+/* ── Mobile  (< 768 px) ──────────────────────────────────────── */
+@media (max-width: 768px) {
 
-.water-droplet {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* Kill ALL inherited/competing padding on the home stage.
+       !important needed because styles.css loads after this file
+       and also targets .content.home at the same breakpoint.    */
+    .content.home,
+    .content.home.active {
+        padding: 0 !important;
+        padding-top: 12px !important;
+        padding-bottom: 100px !important; /* clear bottom nav bar */
+    }
+
+    /* ── Glass card ─────────────────────────────────────────────────
+       !important on margin and padding because the base .cont-wrapper
+       rule sets margin:0 auto and .cont-wrapper.glass sets padding:25px 45px
+       — both outside any media query, so they need !important to lose. */
+    .cont-wrapper.glass {
+        border-radius: 28px   !important;
+        padding:       20px 16px 24px !important;
+        margin:        0 10px         !important;
+        max-width:     none           !important;
+        width:         calc(100% - 20px) !important;
+    }
+
+    /* ── Titles ── */
+    .page-title     { font-size: 1.6rem;  font-weight: 600; margin-bottom: 2px; }
+    .page-title.sub { font-size: 0.95rem; font-weight: 600; margin: 12px 0 10px; }
+
+    /* Divider under "Home" */
+    .cont-wrapper.glass hr {
+        margin: 6px 0 12px;
+    }
+
+    /* ── Machine Status section ──────────────────────────────────────
+       The TWO cards sit SIDE BY SIDE in one row — no scroll needed
+       for just 2 cards. The container bleeds via negative margin so
+       the cards can fill edge-to-edge within the glass card's padding.
+       If more cards are added later they will scroll horizontally.     */
+    .machine-status {
+        margin-left:  -16px !important;
+        margin-right: -16px !important;
+    }
+
+    /* Sub-title "Machine Status" stays inside the normal indent */
+    .machine-status > .page-title.sub {
+        margin-left: 16px !important;
+    }
+
+    .machine-status-card-container {
+        /* align-items:stretch → both cards share the same height.
+           Height is driven by the taller water-tank card naturally.    */
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        padding: 4px 16px 10px 16px;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+    .machine-status-card-container::-webkit-scrollbar { display: none; }
+
+    /* ── Battery card: ~44% width, column layout ─── */
+    .battery-card {
+        flex: 0 0 calc(44% - 5px);
+        min-width: 0;
+        max-width: none;
+        scroll-snap-align: start;
+        padding: 14px 12px 14px;
+        border-radius: 16px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .battery-header {
+        width: 100%;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .battery-title,
+    .battery-percentage-text { font-size: 0.82rem; font-weight: 600; }
+
+    /* Circle container grows to fill remaining card height             */
+    .battery-circle-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 90px circle — compact, matches reference                        */
+    .battery-circle { width: 90px; height: 90px; flex-shrink: 0; }
+
+    /* Battery body icon scaled to 90px circle                         */
+    .battery-body { width: 52px; height: 30px; }
+
+    /* ── Water Tank card: ~56% width ─── */
+    .water-tank-card {
+        flex: 0 0 calc(56% - 5px);
+        min-width: 0;
+        max-width: none;
+        scroll-snap-align: start;
+        padding: 14px 12px 12px;
+        border-radius: 16px;
+        box-sizing: border-box;
+    }
+
+    .tank-header { margin-bottom: 6px; }
+
+    .tank-title,
+    .tank-percentage-text { font-size: 0.82rem; font-weight: 600; }
+
+    .gauge-container { margin-bottom: 4px; }
+
+    /* Gauge arc: 120×60px                                             */
+    .gauge-wrapper { width: 120px; height: 60px; margin-bottom: 4px; }
+
+    .gauge-background,
+    .gauge-fill { width: 120px; height: 60px; border-width: 8px; }
+
+    /* Droplet scaled to 120px arc                                     */
+    .droplet-container { width: 40px; height: 40px; top: 52%; }
+    .water-droplet     { width: 18px; height: 18px; }
+
+    .tank-status-text { font-size: 0.68rem; margin-bottom: 6px; }
+    .divider          { margin-bottom: 6px; }
+    .temperature-text { font-size: 0.72rem; }
+    .temp-icon        { width: 14px; height: 14px; }
+
+    /* ── Vermicompost Bins: full-bleed, stacked ─────────────────────
+       Negative margin cancels the parent glass card's 16px side padding
+       so bin cards stretch fully edge-to-edge, matching the reference. */
+    .vermicompost-bins-card-container {
+        margin-top:   4px     !important;
+         
+    }
     
-    /* RESET: Remove the old CSS shape styles */
-    background: transparent;
-    border-radius: 0;
-    transform: none; /* CRITICAL: This fixes the orientation */
+
+    .bin-wrapper {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 0 4px 0;  /* small bottom trail */
+    }
+
+    .bin-card {
+        flex: 1 1 100%        !important;
+        width: 100%           !important;
+        max-width: none       !important;
+        height: 160px !important; min-height: 160px !important; max-height: 160px !important;
+        border-radius: 18px   !important;
+        padding: 22px 20px 22px 28px !important;
+        box-sizing: border-box;
+        background-position: right center;
+        background-size: cover;
+    }
+
+    .bin-card .bin-title {
+        font-size: 2rem;
+        line-height: 1.1;
+        font-weight: 500;
+    }
+
+    .bin-card .mode-indicator { font-size: 0.78rem; margin-top: 2px; }
+
+    /* ── Dev panel: hidden on mobile ── */
+    .dev-controls-panel { display: none; }
 }
 
-/* Color the SVG icon */
-.water-droplet svg {
-    width: 100%;
-    height: 100%;
-    /* Default color (will inherit from parent if needed, or set explicitly) */
-    fill: #ffffff; /* Bright Water Blue */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
 
-/* Optional: Update the container background if you want it cleaner */
-.droplet-container {
-    position: absolute;
-    top: 55%; /* Moved down slightly to center better visually in the arc */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px; /* Slightly smaller for better proportion */
-    height: 60px;
-    background: white; /* Clean white background like reference */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Soft shadow for depth */
-    transition: background 0.4s ease;
-}
+/* ── Very small phones  (< 390 px) ──────────────────────────── */
+@media (max-width: 389px) {
+    .content.home,
+    .content.home.active {
+        padding: 0 !important;
+        padding-top: 8px !important;
+        padding-bottom: 100px !important;
+    }
+    /* Cards stay side-by-side, just slightly narrower padding          */
+    .battery-card    { flex: 0 0 calc(44% - 4px); padding: 12px 10px; }
+    .water-tank-card { flex: 0 0 calc(56% - 4px); padding: 12px 10px; }
 
-/* Container Layout from your code */
-.cont-wrapper.default {
-    display: flex;
-    flex-direction: column;
+    /* Tighter circle and gauge on very small screens                   */
+    .battery-circle  { width: 78px; height: 78px; }
+    .battery-body    { width: 44px; height: 25px; }
 
-    background-color: #f5f5f5; /* Matching background */
+    .gauge-wrapper,
+    .gauge-background,
+    .gauge-fill      { width: 100px; height: 50px; }
+    .gauge-background,
+    .gauge-fill      { border-width: 7px; }
+    .droplet-container { width: 34px; height: 34px; }
+    .water-droplet   { width: 15px; height: 15px; }
+
+    .cont-wrapper.glass { margin: 0 6px; }
+
+    .bin-card        { height: 160px !important; min-height: 160px !important; max-height: 160px !important; }
+    .bin-card .bin-title { font-size: 1.75rem; }
 }

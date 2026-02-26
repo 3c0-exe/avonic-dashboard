@@ -118,6 +118,10 @@ body.collapsed {
 display: block !important;
 }
 
+/* Desktop: side padding on home content.
+   IMPORTANT: On mobile this must be overridden to 0 so
+   home-page.css can manage its own padding per section.
+   The override lives in the @media block below.        */
 .content.home {
     padding: 0 20px;
 }
@@ -135,14 +139,16 @@ display: block !important;
 }
 
 
- .page-title{
-    font-size: 32px;
+ /* Page titles — fluid sizing so they never stay 32px on a 390px screen.
+    Mobile breakpoint in home-page.css can still override further.        */
+.page-title {
+    font-size: clamp(1.4rem, 3vw, 2rem);
     font-weight: 500;
     margin: 16px 0;
 }
 
-.page-title.sub{
-    font-size: 26px;
+.page-title.sub {
+    font-size: clamp(0.95rem, 2.2vw, 1.6rem);
 }
  
 
@@ -459,22 +465,34 @@ display: block !important;
         position: relative;
     }
 
-   /* ZOOM EFFECT */
-    /* Since icons are bigger now, we reduce scale slightly (1.15 -> 1.1) 
-       so they don't hit the edges of the box */
+   /* ZOOM EFFECT — scale icon up slightly inside the active squircle */
     .horizontal.orientation.active .navIcon {
         transform: scale(1.1); 
         filter: none !important;
+    }
 
-    /* 8. ORDERING & CONTENT */
+    /* 8. NAV ITEM ORDERING */
     nav li:nth-child(1) { order: 2; } /* Dashboard (Center) */
     nav li:nth-child(2) { order: 1; } /* Home (Left) */
     nav li:nth-child(3) { order: 3; } /* Settings (Right) */
-    
+
+    /* CRITICAL: Push ALL page content above the 80px bottom nav bar.
+       Without this, the bottom of every page hides behind the nav.   */
     .content {
         padding-bottom: 100px !important;
     }
-}}
+
+    /* CRITICAL: Zero out all side padding on home page on mobile.
+       home-page.css handles its own padding per section.
+       Both selectors covered to beat any specificity fight.    */
+    .content.home,
+    .content.home.active {
+        padding-left:   0 !important;
+        padding-right:  0 !important;
+        padding-top:    12px !important;
+        padding-bottom: 100px !important;
+    }
+}
 
 /* Settings padding handled in settings-page.css */
 

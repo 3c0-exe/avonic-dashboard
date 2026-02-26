@@ -157,7 +157,7 @@ nav ul {
     color: white;
     opacity: 20%;
     height: 250px;
-    
+    margin-bottom: 15px;
     /* inside contents */
     h1{
         font-size: 18px;
@@ -181,7 +181,7 @@ body.collapsed .sidebar .message-box {
 /* 2. Hide the text inside the Log-out button */
 body.collapsed .sidebar .log-out  {
    border: none;
-
+   
    img{
      height: 25px;
    }
