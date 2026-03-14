@@ -143,53 +143,64 @@ window.toggleDummyWidget = function() {
   }
 };
 
-function generateDummyData() {
-  // Helper: Random float between min and max
-  const rnd = (min, max) => +(Math.random() * (max - min) + min).toFixed(1);
-  
+// Generate a unique sensor snapshot for a single bin
+function generateBinSensors(rnd) {
   return {
+    temp:        rnd(15, 35),
+    hum:         rnd(35, 95),
+    soil:        rnd(35, 95),
+    gas:         rnd(0, 250),
+    fan_in:      Math.random() > 0.5,
+    fan_out:     Math.random() > 0.5,
+    pump:        Math.random() > 0.5,
+    battery:     Math.floor(rnd(10, 100)),
+    water:       Math.floor(rnd(10, 100)),
+    water_temp:  rnd(15, 35),
+  };
+}
 
-    // --- Mock User Profile (Online Feature) ---
+function generateDummyData() {
+  const rnd = (min, max) => +(Math.random() * (max - min) + min).toFixed(1);
+
+  // Each claimed bin gets its own independent sensor snapshot
+  const binSensors = [
+    generateBinSensors(rnd), // AV-B92 Main Garden
+    generateBinSensors(rnd), // AV-X11 Kitchen Hub
+    generateBinSensors(rnd), // AV-L44 Garage Unit (offline — still has data)
+  ];
+
+  const b1 = binSensors[0], b2 = binSensors[1];
+
+  return {
     user_profile: {
       username: "DevUser_2026",
       email: "dev@avonic.online",
       last_login: new Date().toLocaleString()
     },
 
-   // Inside generateDummyData()
-claimed_bins: [
-  { bin_id: "AV-B92", name: "Main Garden", status: "online" },
-  { bin_id: "AV-X11", name: "Kitchen Hub", status: "online" },
-  { bin_id: "AV-L44", name: "Garage Unit", status: "offline" }
-],
-    battery_percent: Math.floor(rnd(10, 100)), 
-    water_level: Math.floor(rnd(10, 100)), 
-    ds18b20_temp: rnd(20, 35),
-    
-    // Bin 1 Data
-    temp1: rnd(15, 35), 
-    hum1: rnd(35, 95), 
-    soil1_percent: rnd(35, 95), 
-    gas1_ppm: rnd(0, 250),
-    bin1_intake_fan_state: Math.random() > 0.5, 
-    bin1_exhaust_fan_state: Math.random() > 0.5, 
-    bin1_pump_state: Math.random() > 0.5,
-    
-    // Bin 2 Data
-    temp2: rnd(15, 35), 
-    hum2: rnd(35, 95), 
-    soil2_percent: rnd(35, 95), 
-    gas2_ppm: rnd(0, 250),
-    bin2_intake_fan_state: Math.random() > 0.5, 
-    bin2_exhaust_fan_state: Math.random() > 0.5, 
-    bin2_pump_state: Math.random() > 0.5,
-    
-    peltier_main_state: Math.random() > 0.5, 
+    claimed_bins: [
+      { bin_id: "AV-B92", name: "Main Garden",  status: "online",  sensors: binSensors[0] },
+      { bin_id: "AV-X11", name: "Kitchen Hub",  status: "online",  sensors: binSensors[1] },
+      { bin_id: "AV-L44", name: "Garage Unit",  status: "offline", sensors: binSensors[2] },
+    ],
+
+    battery_percent:   Math.floor(rnd(10, 100)),
+    water_level:       Math.floor(rnd(10, 100)),
+    ds18b20_temp:      rnd(20, 35),
+
+    // Slot 1 — always mirrors the active bin (set by handleGlobalBinChange)
+    temp1: b1.temp,  hum1: b1.hum,  soil1_percent: b1.soil,  gas1_ppm: b1.gas,
+    bin1_intake_fan_state: b1.fan_in, bin1_exhaust_fan_state: b1.fan_out, bin1_pump_state: b1.pump,
+
+    // Slot 2 — secondary comparison bin
+    temp2: b2.temp,  hum2: b2.hum,  soil2_percent: b2.soil,  gas2_ppm: b2.gas,
+    bin2_intake_fan_state: b2.fan_in, bin2_exhaust_fan_state: b2.fan_out, bin2_pump_state: b2.pump,
+
+    peltier_main_state: Math.random() > 0.5,
     peltier_pump_state: Math.random() > 0.5,
-    
-    charging: false,
-    wifi_connected: true, 
-    lastUpdate: "T+" + Math.floor(Date.now() / 1000) + "s"
+    charging:           false,
+    wifi_connected:     true,
+    lastUpdate:         "T+" + Math.floor(Date.now() / 1000) + "s"
   };
 }
 
@@ -200,21 +211,29 @@ window.injectDummyData = function() {
     S.data = d;
     S.user = d.user_profile; // Set mock user
     S.bins = d.claimed_bins; // Set mock bins
+
+    // Push into history so Quick Insights & Bin Fluctuation charts have data
+    if (typeof pushHist === 'function') pushHist(d);
   }
 
-  // Update Settings UI specifically
-  if (Router.cur() === 'settings') {
-    setText('acc-username', S.user.username);
-    setText('acc-email', S.user.email);
-    setText('acc-last-login', S.user.last_login);
-    
-    // Call the function we created earlier for the side-scroll
-    if (typeof renderClaimedBins === 'function') {
+  // Always update the global topbar dropdown
+  if (typeof updateGlobalBinDropdown === 'function' && S.bins) {
+    updateGlobalBinDropdown(S.bins);
+  }
+
+  // Update Settings UI specifically when on settings page
+  if (typeof Router !== 'undefined' && Router.cur() === 'settings') {
+    if (typeof setText === 'function' && S.user) {
+      setText('acc-username', S.user.username);
+      setText('acc-email', S.user.email);
+      setText('acc-last-login', S.user.last_login);
+    }
+    if (typeof renderClaimedBins === 'function' && S.bins) {
       renderClaimedBins(S.bins);
     }
   }
 
-  // Existing render logic
+  // Always re-render the current page and update battery icon
   if (typeof renderPage === 'function' && typeof Router !== 'undefined') {
     renderPage(Router.cur(), d);
   }

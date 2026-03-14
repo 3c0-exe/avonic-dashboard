@@ -195,6 +195,115 @@ input, select {
   flex-shrink: 0;
 }
 
+/* --- TOPBAR ADDITIONS --- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes left and right sides apart */
+  padding: 0 20px;
+  height: var(--tb-h);
+  background: var(--topbar);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tb-conn-text {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+  display: none; /* Hidden on mobile by default */
+}
+
+/* The White Pill Dropdown Container */
+.tb-bin-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 4px 12px 4px 4px;
+  height: 36px;
+  min-width: 220px;
+  cursor: pointer;
+}
+
+/* Dark circle icon background inside the pill */
+.tb-bin-icon-bg {
+  width: 28px;
+  height: 28px;
+  background: #2e4f39; /* Dark green */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.tb-bin-icon-bg img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make it white */
+}
+
+/* The actual select element (invisible but clickable over the pill) */
+.tb-bin-dropdown {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: #111;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  z-index: 2; /* Sits above the chevron */
+  padding-right: 20px; /* Space for chevron */
+}
+
+.tb-chevron {
+  position: absolute;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  pointer-events: none; /* Let clicks pass through to the select */
+}
+
+/* Circular Edit Button */
+.tb-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: transparent;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--t);
+}
+
+.tb-icon-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: white;
+}
+
 .hamburger:hover {
   background: rgba(255, 255, 255, .1);
 }
@@ -3545,9 +3654,18 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
 @media (max-width: 768px) {
   :root { --sb-w: 0px; --gap: 12px; }
 
-  .topbar { padding: 0 12px; position: relative; }
+.topbar { 
+    padding: 0 12px; 
+    display: flex;
+    justify-content: space-between; /* Pushes logo left, controls right */
+    align-items: center;
+  }
   .hamburger { display: none; }
-  .topbar-logo { position: absolute; left: 50%; transform: translateX(-50%); }
+  .topbar-logo { 
+    position: static; 
+    transform: none; 
+    left: auto;
+  }
   .topbar-right { order: 1; }
   .refresh-label { display: none; }
 
@@ -3595,7 +3713,7 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   }
   
   .page { overflow: visible; }
-  .page-card { min-height: 0; border-radius: 16px;max-width: 500px; align-self: center; }
+  .page-card { min-height: 0; border-radius: 16px;max-width: 500px; align-self: center; margin-top: 16%; }
   .page-body { padding: 20px 20px;  }
   .bottom-nav { display: flex; }
 

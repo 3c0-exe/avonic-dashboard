@@ -144,13 +144,29 @@
 <!-- ── END AUTH SCREEN ── -->
 
 <header class="topbar">
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="topbar-logo">
-    <img src="/data/img/logo/AVONIC LOGO.svg" alt="AVONIC" class="logo-img">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-logo">
+      <img src="/data/img/logo/AVONIC LOGO.svg" alt="AVONIC" class="logo-img">
+    </div>
   </div>
 
+  <div class="topbar-right">
+    <span class="tb-conn-text">Connected to:</span>
+    <div class="tb-bin-selector">
+      <div class="tb-bin-icon-bg">
+        <img src="/data/img/claim-bin/ClaimBinIcon.svg" alt="Bin">
+      </div>
+      <select id="global-bin-select" class="tb-bin-dropdown" onchange="handleGlobalBinChange()">
+        <option value="" disabled selected>Loading Bins...</option>
+      </select>
+      <img src="/data/img/dropdownIcon.svg" alt="Drop" class="tb-chevron">
+    </div>
+    
+    
+  </div>
 </header>
 
 <div class="sidebar-overlay" id="sidebar-overlay"></div>

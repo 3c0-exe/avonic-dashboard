@@ -1332,8 +1332,20 @@ function renderSettings(d) {
   const badge = $('dev-conn');
   if(badge){ badge.textContent = d.wifi_connected ? 'Connected' : 'Offline'; badge.className = 'dev-badge' + (d.wifi_connected ? ' online' : ''); }
   setText('dev-last-update', d.lastUpdate || '--');
+  
   // Refresh WiFi Manager status bar whenever settings page is rendered
   wmLoadStatus();
+
+  // --- NEW: Load Profile and Bins when navigating to Settings ---
+  if (S.user) {
+    setText('acc-username', S.user.username);
+    setText('acc-email', S.user.email);
+    setText('acc-last-login', S.user.last_login);
+  }
+  
+  if (S.bins) {
+    renderClaimedBins(S.bins);
+  }
 }
 
 // ════════════════════════════════════
@@ -1888,53 +1900,39 @@ async function authLogout() {
 
 function renderClaimedBins(binsArray) {
   const container = document.getElementById('claimed-bins-list');
-  if(!container) return;
+  if (!container) return;
 
-  container.innerHTML = binsArray.map(bin => `
+  if (!binsArray || binsArray.length === 0) {
+    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
+    updateGlobalBinDropdown([]);
+    return;
+  }
+
+  container.innerHTML = binsArray.map(bin => {
+    // Safely escape name for use inside an onclick attribute single-quoted string
+    const safeName = (bin.name || 'Unnamed Bin').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `
     <div class="claimed-bin-card">
       <div class="bin-visual-header">
         <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">×</button>
         <img src="/data/img/claim-bin/ClaimBinIcon.svg" alt="Bin" class="bin-image">
       </div>
-
       <div class="bin-card-info">
-        <div class="claimed-bin-name" onclick="openRenameBinModal('${bin.bin_id}', '${bin.name}')">
+        <div class="claimed-bin-name" onclick="openRenameBinModal('${bin.bin_id}', '${safeName}')">
           ${bin.name || 'Unnamed Bin'}
         </div>
         <div class="claimed-bin-id">${bin.bin_id}</div>
-        
         <div class="bin-status-chip ${bin.status === 'online' ? 'online' : 'offline'}">
           ${bin.status === 'online' ? 'Connected' : 'Offline'}
         </div>
-
-        
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  // Keep the topbar bin selector in sync
+  updateGlobalBinDropdown(binsArray);
 }
-// Handler for claiming a new bin (Ref: Old settings.js)
-async function handleClaimBin() {
-  const code = document.getElementById('claim-code-input').value;
-  if(!code) return toast('Please enter a claim code', 'err');
-  
-  try {
-    const response = await fetch('/api/claim', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ claim_code: code })
-    });
-    const result = await response.json();
-    if(result.success) {
-      toast('Bin successfully linked!', 'ok');
-      closeTopModal();
-      location.reload(); // Refresh to see new bin in list
-    } else {
-      toast(result.error || 'Claiming failed', 'err');
-    }
-  } catch(e) {
-    toast('Server connection error', 'err');
-  }
-}
+// handleClaimBin is defined below alongside the other bin management handlers
 
 function makeEditable(el, binId) {
   const oldName = el.textContent.trim();
@@ -1951,12 +1949,7 @@ function makeEditable(el, binId) {
   const save = async () => {
     const newName = input.value.trim();
     if (newName && newName !== oldName) {
-      // Logic from old settings.js for updating nickname
-      const success = await updateBinNickname(binId, newName);
-      if (success) {
-        toast('Nickname updated!', 'ok');
-        location.reload(); 
-      }
+      updateBinNickname(binId, newName); // re-renders in place, no reload needed
     }
     // Revert to div if no change or finished
     input.replaceWith(el);
@@ -1972,20 +1965,13 @@ function makeEditable(el, binId) {
  * Triggers the Delete/Unclaim Confirmation
  */
 function confirmDeleteBin(binId) {
-  const modal = document.getElementById('confirm-action-modal');
   document.getElementById('confirm-modal-title').textContent = "Unclaim Bin";
   document.getElementById('confirm-modal-desc').textContent = `Are you sure you want to remove ${binId}? This cannot be undone.`;
   document.getElementById('rename-input-container').style.display = 'none';
   
   const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = async () => {
-    // Ported from online settings.js
-    const success = await handleUnclaimBin(binId); 
-    if(success) {
-      toast('Bin removed', 'ok');
-      closeTopModal();
-      location.reload(); 
-    }
+  confirmBtn.onclick = () => {
+    handleUnclaimBin(binId); // already re-renders + toasts + closes modal
   };
   
   openModal('confirm-action-modal');
@@ -1995,7 +1981,6 @@ function confirmDeleteBin(binId) {
  * Triggers the Rename Modal
  */
 function openRenameBinModal(binId, currentName) {
-  const modal = document.getElementById('confirm-action-modal');
   document.getElementById('confirm-modal-title').textContent = "Rename Bin";
   document.getElementById('confirm-modal-desc').textContent = "Enter a new nickname for this bin:";
   
@@ -2005,77 +1990,52 @@ function openRenameBinModal(binId, currentName) {
   inputField.value = currentName;
   
   const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = async () => {
+  confirmBtn.onclick = () => {
     const newName = inputField.value.trim();
-    if(!newName) return toast('Name cannot be empty', 'err');
-    
-    // API Call to update nickname
-    const success = await updateBinNickname(binId, newName);
-    if(success) {
-      toast('Nickname updated!', 'ok');
-      closeTopModal();
-      location.reload();
-    }
+    if (!newName) return toast('Name cannot be empty', 'err');
+    updateBinNickname(binId, newName); // already re-renders + toasts + closes modal
   };
   
   openModal('confirm-action-modal');
 }
 
 
-// --- Functional Dummy Logic for Renaming ---
-async function updateBinNickname(binId, newName) {
-  // Find the bin in our global state array
-  const binIndex = S.bins.findIndex(b => b.bin_id === binId);
-  
-  if (binIndex !== -1) {
-    S.bins[binIndex].name = newName; // Update the dummy data in memory
-    renderClaimedBins(S.bins); // Re-render the UI immediately
-    return true; 
-  }
-  return false;
-}
+// ── Bin management handlers (in-memory / dummy-safe) ──────────
 
-// Updated Delete Handler
-async function handleUnclaimBin(binId) {
-  // 1. Update the local dummy data array
-  S.bins = S.bins.filter(b => b.bin_id !== binId);
-  
-  // 2. Re-render the UI immediately (DON'T RELOAD)
-  renderClaimedBins(S.bins);
-  
-  // 3. Close modal and toast
-  closeTopModal();
-  toast(`Bin ${binId} removed (Local)`, 'ok');
-  
-  // REMOVE location.reload() to stay on the current page!
-}
-
-// Updated Rename Handler
-async function updateBinNickname(binId, newName) {
+function updateBinNickname(binId, newName) {
+  if (!S.bins) return;
   const bin = S.bins.find(b => b.bin_id === binId);
   if (bin) {
     bin.name = newName;
     renderClaimedBins(S.bins);
+    updateGlobalBinDropdown(S.bins);
     closeTopModal();
-    toast('Name updated (Local)', 'ok');
+    toast('Name updated', 'ok');
   }
 }
 
-// --- Functional Dummy Logic for Claiming ---
-async function handleClaimBin() {
-  const code = document.getElementById('claim-code-input').value;
-  if(!code) return toast('Please enter a code', 'err');
-
-  const newBin = {
-    bin_id: "AV-" + Math.floor(1000 + Math.random() * 9000), // Random ID
-    name: "New Bin " + (S.bins.length + 1),
-    status: "online"
-  };
-
-  S.bins.push(newBin); // Add to our dummy array
-  renderClaimedBins(S.bins); // Re-render
+function handleUnclaimBin(binId) {
+  if (!S.bins) return;
+  S.bins = S.bins.filter(b => b.bin_id !== binId);
+  renderClaimedBins(S.bins);
+  updateGlobalBinDropdown(S.bins);
   closeTopModal();
-  toast('Bin claimed (Dummy Mode)', 'ok');
+  toast(`Bin ${binId} removed`, 'ok');
+}
+
+async function handleClaimBin() {
+  const code = document.getElementById('claim-code-input')?.value?.trim();
+  if (!code) return toast('Please enter a claim code', 'err');
+  if (!S.bins) S.bins = [];
+  const newBin = {
+    bin_id: 'AV-' + Math.floor(1000 + Math.random() * 9000),
+    name: 'New Bin ' + (S.bins.length + 1),
+    status: 'online'
+  };
+  S.bins.push(newBin);
+  renderClaimedBins(S.bins);
+  closeTopModal();
+  toast('Bin claimed', 'ok');
 }
 
 
@@ -2189,4 +2149,75 @@ async function handleChangePassword() {
   };
   
   openModal('confirm-action-modal');
+}
+
+/**
+ * Populates the global topbar dropdown with the current bins
+ */
+function updateGlobalBinDropdown(binsArray) {
+  const select = document.getElementById('global-bin-select');
+  if(!select) return;
+
+  if (!binsArray || binsArray.length === 0) {
+    select.innerHTML = '<option value="" disabled>No bins connected</option>';
+    return;
+  }
+
+  // Generate options based on the bins array
+  select.innerHTML = binsArray.map(bin => {
+    // Format the name as "Nickname (ID)"
+    const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
+    return `<option value="${bin.bin_id}">${displayName}</option>`;
+  }).join('');
+
+  // Auto-select the active bin if one is stored in state, otherwise pick the first
+  const activeBinId = S.activeGlobalBin || binsArray[0].bin_id;
+  select.value = activeBinId;
+}
+
+function handleGlobalBinChange() {
+  const select = document.getElementById('global-bin-select');
+  const selectedId = select.value;
+  if (!selectedId || !S.bins || !S.data) return;
+
+  S.activeGlobalBin = selectedId;
+
+  // Find the selected bin and its sensor snapshot
+  const bin = S.bins.find(b => b.bin_id === selectedId);
+  if (!bin || !bin.sensors) {
+    toast('No sensor data for this bin yet — inject data first', 'err');
+    return;
+  }
+
+  const s = bin.sensors;
+
+  // Remap slot-1 (the "active" slot all pages read) to the selected bin's snapshot
+  S.data.temp1             = s.temp;
+  S.data.hum1              = s.hum;
+  S.data.soil1_percent     = s.soil;
+  S.data.gas1_ppm          = s.gas;
+  S.data.bin1_intake_fan_state  = s.fan_in;
+  S.data.bin1_exhaust_fan_state = s.fan_out;
+  S.data.bin1_pump_state        = s.pump;
+
+  // Remap per-bin globals so battery, water, and temp also reflect the selected bin
+  S.data.battery_percent = s.battery;
+  S.data.water_level     = s.water;
+  S.data.ds18b20_temp    = s.water_temp;
+
+  // Also push a new history point so QI / BF charts update immediately
+  if (typeof pushHist === 'function') pushHist(S.data);
+
+  // Sync QI / BF page dropdowns to Bin 1 (the active slot)
+  const qiSel = document.getElementById('qi-bin-select');
+  const bfSel = document.getElementById('bf-bin-select');
+  if (qiSel) { qiSel.value = 1; S.qiBin = 1; }
+  if (bfSel) { bfSel.value = 1; S.bfBin = 1; }
+
+  // Re-render the current page with the updated data
+  renderPage(Router.cur(), S.data);
+
+  // Toast with bin name, ID, and online/offline status
+  const icon = bin.status === 'offline' ? '🔴' : '🟢';
+  toast(icon + ' ' + bin.name + ' (' + selectedId + ')', 'ok');
 }
