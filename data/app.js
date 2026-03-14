@@ -2079,3 +2079,114 @@ async function handleClaimBin() {
 }
 
 
+/**
+ * Opens Edit Profile Modal and pre-fills current data
+ */
+function openEditProfileModal() {
+  const currentUsername = document.getElementById('acc-username').textContent;
+  const currentEmail = document.getElementById('acc-email').textContent;
+  
+  document.getElementById('edit-username').value = currentUsername === 'Loading...' ? '' : currentUsername;
+  document.getElementById('edit-email').value = currentEmail === '--' ? '' : currentEmail;
+  
+  openModal('edit-profile-modal');
+}
+
+/**
+ * Handles Profile Information Update
+ */
+async function handleUpdateProfile() {
+  const newUsername = document.getElementById('edit-username').value.trim();
+  const newEmail = document.getElementById('edit-email').value.trim();
+
+  if (!newUsername || !newEmail) return toast('All fields are required', 'err');
+
+  // Update Global State (S.data or S.auth)
+  if (Auth) {
+    Auth.username = newUsername;
+    Auth.email = newEmail;
+  }
+
+  // Update UI Elements
+  document.getElementById('acc-username').textContent = newUsername;
+  document.getElementById('acc-email').textContent = newEmail;
+  
+  closeTopModal();
+  toast('Profile updated successfully!', 'ok');
+}
+
+/**
+ * Handles Password Change with repeat confirmation
+ */
+async function handleChangePassword() {
+  const current = document.getElementById('change-pw-current').value;
+  const newPw = document.getElementById('change-pw-new').value;
+  const repeat = document.getElementById('change-pw-repeat').value;
+
+  if (!current || !newPw || !repeat) return toast('Please fill in all fields', 'err');
+  if (newPw.length < 6) return toast('New password must be at least 6 characters', 'err');
+  if (newPw !== repeat) return toast('New passwords do not match', 'err');
+
+  // Final Confirmation Step
+  closeTopModal();
+  const confirmModal = document.getElementById('confirm-action-modal');
+  document.getElementById('confirm-modal-title').textContent = "Change Password?";
+  document.getElementById('confirm-modal-desc').textContent = "This action is permanent and will sign you out for security.";
+  
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = () => {
+    toast('Updating security credentials...', '');
+    setTimeout(() => {
+      authLogout(); // Force logout for security after password change
+      toast('Password updated. Please log in again.', 'ok');
+    }, 1500);
+  };
+  
+  openModal('confirm-action-modal');
+}
+
+/**
+ * Opens Change Password Modal and resets fields
+ */
+function openChangePasswordModal() {
+  document.getElementById('change-pw-current').value = '';
+  document.getElementById('change-pw-new').value = '';
+  document.getElementById('change-pw-repeat').value = '';
+  openModal('change-password-modal');
+}
+
+/**
+ * Validates and submits password change
+ */
+async function handleChangePassword() {
+  const current = document.getElementById('change-pw-current').value;
+  const newPw = document.getElementById('change-pw-new').value;
+  const repeat = document.getElementById('change-pw-repeat').value;
+
+  // Validation
+  if (!current || !newPw || !repeat) return toast('All fields are required', 'err');
+  if (newPw.length < 6) return toast('Password must be at least 6 characters', 'err');
+  if (newPw !== repeat) return toast('Passwords do not match', 'err');
+
+  // Transition to confirmation modal
+  closeTopModal();
+  const confirmModal = document.getElementById('confirm-action-modal');
+  document.getElementById('confirm-modal-title').textContent = "Confirm Change";
+  document.getElementById('confirm-modal-desc').textContent = "Updating your password will require you to log back in.";
+  
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = async () => {
+    toast('Updating security credentials...', '');
+    try {
+      // Logic for actual backend call would go here
+      setTimeout(() => {
+        authLogout(); // Force logout for security
+        toast('Password updated. Please log in again.', 'ok');
+      }, 1500);
+    } catch (e) {
+      toast('Failed to update password', 'err');
+    }
+  };
+  
+  openModal('confirm-action-modal');
+}

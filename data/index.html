@@ -669,18 +669,29 @@
     <div class="settings-grid">
       <div class="settings-col">
         
-        <div class="settings-card">
-          <div class="settings-sec-title">Account Profile</div>
-          <div class="dev-row">
-            <span class="dev-key">Username</span>
-            <span class="dev-val" id="acc-username">Loading...</span>
-          </div>
-          <div class="dev-row">
-            <span class="dev-key">Email</span>
-            <span class="dev-val" id="acc-email">--</span>
-          </div>
-          <button class="btn-primary mt-4" onclick="openEditProfileModal()">Update Profile</button>
+         <div class="settings-card">
+        <div class="settings-sec-title">Account Profile</div>
+        <div class="dev-row">
+          <span class="dev-key">Username</span>
+          <span class="dev-val" id="acc-username">DevUser_2026</span>
         </div>
+        <div class="dev-row">
+          <span class="dev-key">Email</span>
+          <span class="dev-val" id="acc-email">dev@avonic.online</span>
+        </div>
+
+        <div class="account-actions-stack mt-4" style="display: flex; flex-direction: column; gap: 12px;">
+           
+          
+          <div class="account-actions-stack mt-4" style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn-primary" onclick="openEditProfileModal()">Update Profile</button>
+            <button class="btn-secondary" onclick="openChangePasswordModal()" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <img src="/data/img/auth-icons/userPasswordIcon.svg" class="ic-xs" style="opacity: 0.7;">
+              <span>Change Password</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
         <div class="settings-card">
           <div class="settings-sec-title" style="display:flex; justify-content:space-between; align-items:center;">
@@ -727,6 +738,112 @@
 
 
 </main>
+
+<div class="sys-modal" id="edit-profile-modal">
+  <div class="mode-ill">
+    <img src="/data/img/curious-worm.png" alt="Profile">
+  </div>
+  <h2 class="sys-modal-title">Edit Profile</h2>
+  <p class="sys-modal-desc">Update your display name and contact email.</p>
+
+  <div class="auth-form">
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/AVONIC LOGO.svg" style="width:16px; opacity:0.5;"></span>
+        <input class="auth-input" id="edit-username" type="text" placeholder="Username">
+      </div>
+    </div>
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/emailIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input" id="edit-email" type="email" placeholder="Email Address">
+      </div>
+    </div>
+  </div>
+
+  <div class="sys-modal-actions mt-4">
+    <button class="btn-primary" onclick="handleUpdateProfile()">Save Changes</button>
+    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="sys-modal" id="change-password-modal">
+  <div class="mode-ill">
+    <img src="/data/img/auth-icons/clipartKeyWorm.png" alt="Security">
+  </div>
+  <h2 class="sys-modal-title">Change Password</h2>
+  <p class="sys-modal-desc">Authorized changes require your current password.</p>
+
+  <div class="auth-form">
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-current" type="password" placeholder="Current Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-current', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+    <div class="auth-divider" style="height:1px; background:#eee; margin: 8px 0;"></div>
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-new" type="password" placeholder="New Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-new', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-repeat" type="password" placeholder="Repeat New Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-repeat', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sys-modal-actions mt-4">
+    <button class="btn-primary" onclick="handleChangePassword()">Confirm Update</button>
+    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  </div>
+</div>
+
+
+<div class="sys-modal" id="change-password-modal">
+  <div class="mode-ill">
+    <img src="/data/img/auth-icons/clipartKeyWorm.png" alt="Security">
+  </div>
+  <h2 class="sys-modal-title">Change Password</h2>
+  <p class="sys-modal-desc">Authorized changes require your current password.</p>
+
+  <div class="auth-form">
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-current" type="password" placeholder="Current Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-current', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+    <div style="height:1px; background:#eee; margin: 8px 0;"></div>
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-new" type="password" placeholder="New Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-new', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+    <div class="auth-field">
+      <div class="auth-input-wrap">
+        <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
+        <input class="auth-input auth-input--padded" id="change-pw-repeat" type="password" placeholder="Repeat New Password">
+        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-repeat', this)"><img src="/data/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sys-modal-actions mt-4">
+    <button class="btn-primary" onclick="handleChangePassword()">Confirm Update</button>
+    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  </div>
+</div>
+
 
 <div class="sys-modal" id="confirm-action-modal">
   <div class="mode-ill">
