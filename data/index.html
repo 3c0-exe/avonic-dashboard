@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AVONIC</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH SCREEN  (shown before dashboard)
+     ══════════════════════════════════════ -->
+<div class="auth-overlay visible" id="auth-overlay">
+
+  <!-- LEFT: Illustration panel -->
+  <div class="auth-illus">
+    <div class="auth-illus-inner">
+      
+    
+      <!-- Main illustration image -->
+      <div class="auth-illus-main">
+        <img src="/data/img/Login-Clipart.png" alt="AVONIC illustration" class="auth-illus-img">
+      </div>
+       
+    </div>
+  </div>
+
+  <!-- RIGHT: Form panel -->
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <img src="/data/img/auth-icons/AVONIC LOGO.svg" alt="AVONIC" class="auth-logo-img">
+    </div>
+
+    <!-- Heading -->
+    <div class="auth-heading">
+      <h2 class="auth-title" id="auth-heading-title">Log in to your Account</h2>
+      <p class="auth-subtitle" id="auth-heading-sub">Welcome back, please enter your details</p>
+    </div>
+
+    <!-- Keyhole icon placeholder -->
+    <div class="auth-keyhole-wrap">
+      <img src="img/auth-icons/clipartKeyWorm.png" alt="">
+    </div>
+
+    
+
+    <!-- Tab switcher -->
+    <!-- <div class="auth-tabs" id="auth-tabs">
+      <button class="auth-tab active" data-tab="login"  onclick="authTab('login')">Log In</button>
+      <button class="auth-tab"        data-tab="register" onclick="authTab('register')">Sign Up</button>
+    </div> -->
+
+    <!-- Error / success banner -->
+    <div class="auth-banner" id="auth-banner" style="display:none;"></div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div class="auth-form" id="auth-form-login">
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-icon-img"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+          <input class="auth-input" id="login-username" type="text" placeholder="Username" autocomplete="username">
+        </div>
+      </div>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input auth-input--padded" id="login-password" type="password" placeholder="Password" autocomplete="current-password">
+          <button class="auth-pw-eye" onclick="authTogglePw('login-password', this)" tabindex="-1"><img src="/data/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/data/img/auth-icons/openEyePassIcon.png" data-hidden="/data/img/auth-icons/hiddenPassIcon.svg"></button>
+        </div>
+        <button class="auth-forgot-link" onclick="authTab('forgot')">Forgot password?</button>
+      </div>
+      <button class="auth-submit" id="login-submit" onclick="authLogin()">Login →</button>
+      <p class="auth-switch-text">Don't have an account? <button class="auth-switch-link" onclick="authTab('register')">Sign up</button></p>
+    </div>
+
+    <!-- ── REGISTER FORM ── -->
+    <div class="auth-form" id="auth-form-register" style="display:none;">
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-icon-img"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+          <input class="auth-input" id="reg-username" type="text" placeholder="Username (3–20 alphanumeric)" autocomplete="username">
+        </div>
+      </div>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/emailIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input" id="reg-email" type="email" placeholder="Email address" autocomplete="email">
+        </div>
+      </div>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input auth-input--padded" id="reg-password" type="password" placeholder="Password (min 6 characters)" autocomplete="new-password">
+          <button class="auth-pw-eye" onclick="authTogglePw('reg-password', this)" tabindex="-1"><img src="/data/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/data/img/auth-icons/openEyePassIcon.png" data-hidden="/data/img/auth-icons/hiddenPassIcon.svg"></button>
+        </div>
+      </div>
+      <button class="auth-submit" id="register-submit" onclick="authRegister()">Create Account →</button>
+      <p class="auth-switch-text">Already have an account? <button class="auth-switch-link" onclick="authTab('login')">Log in</button></p>
+    </div>
+
+    <!-- ── FORGOT PASSWORD FORM ── -->
+    <div class="auth-form" id="auth-form-forgot" style="display:none;">
+      <p class="auth-desc">Enter your registered email and we'll send a reset link to your device via MQTT.</p>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/emailIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input" id="forgot-email" type="email" placeholder="you@example.com">
+        </div>
+      </div>
+      <button class="auth-submit" id="forgot-submit" onclick="authForgot()">Send Reset Link →</button>
+      <button class="auth-link" onclick="authTab('login')">← Back to Login</button>
+    </div>
+
+    <!-- ── RESET PASSWORD FORM ── -->
+    <div class="auth-form" id="auth-form-reset" style="display:none;">
+      <p class="auth-desc">Enter the token sent to your device and choose a new password.</p>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input" id="reset-token" type="text" placeholder="Paste token here">
+        </div>
+      </div>
+      <div class="auth-field">
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon"><img src="/data/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
+          <input class="auth-input auth-input--padded" id="reset-password" type="password" placeholder="New password">
+          <button class="auth-pw-eye" onclick="authTogglePw('reset-password', this)" tabindex="-1"><img src="/data/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/data/img/auth-icons/openEyePassIcon.png" data-hidden="/data/img/auth-icons/hiddenPassIcon.svg"></button>
+        </div>
+      </div>
+      <button class="auth-submit" id="reset-submit" onclick="authReset()">Reset Password →</button>
+      <button class="auth-link" onclick="authTab('login')">← Back to Login</button>
+    </div>
+
+    <!-- ── DEV BYPASS ── -->
+    <div class="auth-dev-bypass">
+      <button onclick="devBypassLogin()">⚡ Dev Bypass</button>
+    </div>
+
+  </div>
+</div>
+<!-- ── END AUTH SCREEN ── -->
+
+<header class="topbar">
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="topbar-logo">
+    <img src="/data/img/logo/AVONIC LOGO.svg" alt="AVONIC" class="logo-img">
+  </div>
+
+</header>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <a href="#/home" class="nav-item active" data-route="home" title="Home">
+      <img src="/data/img/nav/HomeIcon.svg" alt="" class="nav-ic">
+      <span class="nav-label">Home</span>
+    </a>
+    <a href="#/dashboard" class="nav-item" data-route="dashboard" title="Dashboard">
+      <img src="/data/img/nav/DashboardIcon.svg" alt="" class="nav-ic">
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="#/settings" class="nav-item" data-route="settings" title="Settings">
+      <img src="/data/img/nav/SettingsIcon.svg" alt="" class="nav-ic">
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="support-card">
+      <div class="support-title">Support 24/7</div>
+      <div class="support-sub">Contact us anytime.</div>
+    </div>
+    <button class="nav-item nav-logout" title="Logout" onclick="openLogoutModal()">
+      <img src="/data/img/nav/LogoutIcon.svg" alt="" class="nav-ic">
+      <span class="nav-label">Log-out</span>
+    </button>
+  </div>
+</aside>
+
+<main class="main">
+
+  <section class="page active" id="page-home">
+    <div class="page-card">
+      <div class="page-body">
+        <div class="home-header">
+          <h1 class="home-title">Home</h1>
+          <div class="status-pills">
+            <div class="spill spill-clickable" id="spill-bat" onclick="openStatusModal('battery')" title="Battery Status">
+              <!-- Dynamic battery icon: fill + charging bolt -->
+              <svg id="bat-svg-icon" viewBox="0 0 28 14" width="28" height="14" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:block;">
+                <!-- Outer shell -->
+                <rect x="0.75" y="0.75" width="23.5" height="12.5" rx="2.5" ry="2.5"
+                      fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <!-- Terminal nub -->
+                <rect x="24.5" y="4" width="3" height="6" rx="1.2" ry="1.2" fill="currentColor"/>
+                <!-- Fill bar (width animated via JS) -->
+                <rect id="bat-fill-bar" x="2" y="2" width="0" height="10" rx="1.5" ry="1.5" fill="currentColor"/>
+                <!-- Charging bolt (hidden by default) -->
+                <g id="bat-bolt" style="display:none;">
+                  <polygon points="15,2 11,7.5 14,7.5 13,12 17,6.5 14,6.5" fill="#fff" opacity="0.92"/>
+                </g>
+              </svg>
+              <span id="bat-pct-text">--%</span>
+            </div>
+            <div class="spill spill-group">
+              <div class="spill-half spill-clickable" id="spill-water" onclick="openStatusModal('water')" title="Water Tank Status">
+                <img src="/data/img/sensors/WaterIcon.svg" alt="" class="ic-sm">
+                <span id="water-pct-text">--%</span>
+              </div>
+              <div class="spill-divider"></div>
+              <div class="spill-half spill-clickable" id="spill-temp" onclick="openStatusModal('temp')" title="Water Temperature">
+                <span id="home-temp-val">-- C°</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-divider"></div>
+        <div class="section-label">Vermicompost Bins</div>
+
+        <div class="bins-grid">
+          <a href="#/bin1" class="bin-card" data-route="bin1">
+            <div class="bin-name">Bin 1</div>
+            <div class="bin-mode" id="home-b1-mode">
+              <span class="bin-dot"></span> Auto Mode
+            </div>
+          </a>
+          <a href="#/bin2" class="bin-card" data-route="bin2">
+            <div class="bin-name">Bin 2</div>
+            <div class="bin-mode" id="home-b2-mode">
+              <span class="bin-dot"></span> Auto Mode
+            </div>
+          </a>
+        </div>
+ 
+
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-bin1">
+    <div class="page-card">
+      <div class="page-body bin-body">
+        <div class="bin-crumb">
+          <button class="back-btn" onclick="window.location.hash='#/home'">
+            <img src="/data/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+          </button>
+          <div>
+            <span class="crumb-path">Home &gt; Monitoring</span>
+            <span class="crumb-name">Monitoring</span>
+          </div>
+        </div>
+
+        <div class="bin-banner">
+          <div class="banner-left">
+            <div class="banner-title">Bin 1</div>
+            <div class="banner-sub" id="b1-updated">Updated just now</div>
+             
+          </div>
+          <div class="mode-selector-wrap" onclick="openModeModal(1)">
+            <span class="mode-lbl">Mode:</span>
+            <div class="mode-btn auto" id="b1-mode-btn">
+              Auto  
+            </div>
+          </div>
+        </div>
+
+        <div class="sensor-grid">
+          <div class="sensor-card" id="b1-soil-card" onclick="openSensorModal(1, 'soilMoisture', 'Soil Moisture', '/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Soil Moisture</div>
+              <div class="sc-status" id="b1-soilMoisture-status">Optimal</div>
+              <div class="sc-value"><span id="b1-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b1-soilMoisture-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b1-temp-card" onclick="openSensorModal(1, 'temperature', 'Temperature', '/data/img/monitoring/Sensor Icons/Temperature Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Temperature</div>
+              <div class="sc-status" id="b1-temperature-status">Optimal</div>
+              <div class="sc-value"><span id="b1-temperature-val">--</span><span class="sc-unit">°C</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b1-temperature-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b1-hum-card" onclick="openSensorModal(1, 'humidity', 'Humidity', '/data/img/monitoring/Sensor Icons/Humidity Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Humidity</div>
+              <div class="sc-status" id="b1-humidity-status">Optimal</div>
+              <div class="sc-value"><span id="b1-humidity-val">--</span><span class="sc-unit">%</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b1-humidity-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b1-gas-card" onclick="openSensorModal(1, 'gasLevels', 'Gas Levels', '/data/img/monitoring/Sensor Icons/Gas Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Gas Levels</div>
+              <div class="sc-status" id="b1-gasLevels-status">Optimal</div>
+              <div class="sc-value"><span id="b1-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b1-gasLevels-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-bin2">
+    <div class="page-card">
+      <div class="page-body bin-body">
+        <div class="bin-crumb">
+          <button class="back-btn" onclick="window.location.hash='#/home'">
+            <img src="/data/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+          </button>
+          <div>
+            <span class="crumb-path">Home &gt; Monitoring</span>
+            <span class="crumb-name">Monitoring</span>
+          </div>
+        </div>
+
+        <div class="bin-banner">
+          <div class="banner-left">
+            <div class="banner-title">Bin 2</div>
+            <div class="banner-sub" id="b2-updated">Updated just now</div>
+             
+          </div>
+          <div class="mode-selector-wrap" onclick="openModeModal(2)">
+            <span class="mode-lbl">Mode:</span>
+            <div class="mode-btn auto" id="b2-mode-btn">
+              Auto  
+            </div>
+          </div>
+        </div>
+
+        <div class="sensor-grid">
+          <div class="sensor-card" id="b2-soil-card" onclick="openSensorModal(2, 'soilMoisture', 'Soil Moisture', '/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Soil Moisture</div>
+              <div class="sc-status" id="b2-soilMoisture-status">Optimal</div>
+              <div class="sc-value"><span id="b2-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b2-soilMoisture-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b2-temp-card" onclick="openSensorModal(2, 'temperature', 'Temperature', '/data/img/monitoring/Sensor Icons/Temperature Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Temperature</div>
+              <div class="sc-status" id="b2-temperature-status">Optimal</div>
+              <div class="sc-value"><span id="b2-temperature-val">--</span><span class="sc-unit">°C</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b2-temperature-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b2-hum-card" onclick="openSensorModal(2, 'humidity', 'Humidity', '/data/img/monitoring/Sensor Icons/Humidity Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Humidity</div>
+              <div class="sc-status" id="b2-humidity-status">Optimal</div>
+              <div class="sc-value"><span id="b2-humidity-val">--</span><span class="sc-unit">%</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b2-humidity-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+
+          <div class="sensor-card" id="b2-gas-card" onclick="openSensorModal(2, 'gasLevels', 'Gas Levels', '/data/img/monitoring/Sensor Icons/Gas Icon.svg')">
+            <div class="sc-info">
+              <div class="sc-name">Gas Levels</div>
+              <div class="sc-status" id="b2-gasLevels-status">Optimal</div>
+              <div class="sc-value"><span id="b2-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 68 68">
+                <circle class="ring-track" cx="34" cy="34" r="28"/>
+                <circle class="ring-arc" id="b2-gasLevels-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <div class="ring-icon"><img src="/data/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="page page-fill" id="page-dashboard">
+    <div class="page-card">
+      <div class="page-body">
+        <div class="home-header"><h1 class="home-title">Dashboard</h1></div>
+        <div class="home-divider"></div>
+        <div class="dash-grid">
+          <div class="dash-card yellow" id="go-qi">
+            <img src="/data/img/nav/QuickInsights.svg" alt="" class="dash-icon">
+            <div class="dash-title">QUICK INSIGHTS</div>
+            <div class="dash-desc">Get instant snapshots of your bin's current conditions.</div>
+          </div>
+          <div class="dash-card green" id="go-bf">
+            <img src="/data/img/nav/BinFluctuations.svg" alt="" class="dash-icon">
+            <div class="dash-title">BIN FLUCTUATIONS</div>
+            <div class="dash-desc">Track environmental changes over time with detailed graphs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page page-fill" id="page-quick-insights">
+    <div class="page-card">
+      <div class="page-body qi-page-body">
+        <div class="bin-crumb">
+          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
+            <img src="/data/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+          </button>
+          <div>
+            <span class="crumb-path">Dashboard &gt; Quick Insights</span>
+            <span class="crumb-name">Quick Insights</span>
+          </div>
+        </div>
+
+        <div class="qi-layout">
+
+          <!-- LEFT SIDEBAR -->
+          <div class="qi-sidebar">
+            <select class="bin-dd" id="qi-bin-select">
+              <option value="1">Bin 1</option>
+              <option value="2">Bin 2</option>
+            </select>
+            <div class="qi-sidebar-btns">
+              <button class="qi-sens-btn active" data-qi-sensor="soilMoisture">
+                <img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md">
+                <span>Soil Moisture</span>
+              </button>
+              <button class="qi-sens-btn" data-qi-sensor="temperature">
+                <img src="/data/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md">
+                <span>Temperature</span>
+              </button>
+              <button class="qi-sens-btn" data-qi-sensor="humidity">
+                <img src="/data/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md">
+                <span>Humidity</span>
+              </button>
+              <button class="qi-sens-btn" data-qi-sensor="gasLevels">
+                <img src="/data/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md">
+                <span>Gas Levels</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL -->
+           <div class="qi-panel">
+
+            <div class="qi-panel-top">
+              <div class="bf-sensor-row">
+                <img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-sm" id="qi-sensor-icon">
+                <span class="bf-sensor-name" id="qi-sensor-heading">Soil Moisture</span>
+              </div>
+              <div class="qi-date-info" id="qi-date-block">Loading...</div>
+            </div>
+
+            <div class="qi-stats-row">
+              <div class="qi-stat-box"><div class="qi-lbl">Min</div><div class="qi-val"><span id="qi-min">--</span><span class="u"> %</span></div></div>
+              <div class="qi-stat-box"><div class="qi-lbl">Average</div><div class="qi-val"><span id="qi-avg">--</span><span class="u"> %</span></div></div>
+              <div class="qi-stat-box"><div class="qi-lbl">Max</div><div class="qi-val"><span id="qi-max">--</span><span class="u"> %</span></div></div>
+              <div class="qi-stat-box"><div class="qi-lbl">Recent</div><div class="qi-val"><span id="qi-recent">--</span><span class="u"> %</span></div></div>
+            </div>
+
+            <div class="qi-tbl-wrap">
+              <table class="qi-tbl">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Reading</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="qi-tbody"><tr><td class="qi-empty" colspan="3">Waiting for data...</td></tr></tbody>
+              </table>
+            </div>
+
+            <div class="qi-insight-bottom">
+              <div class="qi-ins-header-row">
+                <div class="qi-lbl">Insight <span class="qi-ins-dot" id="qi-ins-dot"></span></div>
+                <button class="bf-action-btn qi-action-btn" id="qi-action-btn" onclick="openQIActionsModal()" disabled title="No actions needed">
+                  <span class="bf-action-dot" id="qi-action-dot"></span>
+                  <img src="/data/img/actuators/WrenchIcon.svg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Actions">
+                  <span class="bf-wrench-fallback" style="display:none">🔧</span>
+                </button>
+              </div>
+              <div class="qi-val qi-ins-val" id="qi-insight">No data yet</div>
+            </div>
+
+          </div>
+
+            <!-- Scrollable table with sticky header -->
+            <!-- <div class="qi-tbl-wrap">
+              <table class="qi-tbl">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Reading</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="qi-tbody"><tr><td class="qi-empty" colspan="3">Waiting for data...</td></tr></tbody>
+              </table>
+            </div> -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page page-fill" id="page-bin-fluctuation">
+    <div class="page-card">
+      <div class="page-body">
+        <div class="bin-crumb">
+          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
+            <img src="/data/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+          </button>
+          <div>
+            <span class="crumb-path">Dashboard &gt; Bin Fluctuation</span>
+            <span class="crumb-name">Bin Fluctuation</span>
+          </div>
+        </div>
+
+        <div class="bf-layout">
+
+          <!-- LEFT SIDEBAR -->
+          <div class="bf-sidebar">
+            <select class="bin-dd" id="bf-bin-select">
+              <option value="1">Bin 1</option>
+              <option value="2">Bin 2</option>
+            </select>
+            <div class="bf-sidebar-btns">
+              <button class="bf-sens-btn active" data-bf-sensor="soilMoisture">
+                <img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md">
+                <span>Soil Moisture</span>
+              </button>
+              <button class="bf-sens-btn" data-bf-sensor="temperature">
+                <img src="/data/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md">
+                <span>Temperature</span>
+              </button>
+              <button class="bf-sens-btn" data-bf-sensor="humidity">
+                <img src="/data/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md">
+                <span>Humidity</span>
+              </button>
+              <button class="bf-sens-btn" data-bf-sensor="gasLevels">
+                <img src="/data/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md">
+                <span>Gas Levels</span>
+              </button>
+            </div>
+            <!-- Date row shown on mobile inside sidebar -->
+            <div class="bf-sidebar-date">
+              <span class="date-label">Date Reported:</span>
+              <div class="date-pill">
+                <input type="date" class="date-in" id="bf-date-from-m">
+                <span>to</span>
+                <input type="date" class="date-in" id="bf-date-to-m">
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL -->
+          <div class="bf-panel">
+
+            <!-- Top bar: sensor + date -->
+            <div class="bf-panel-top">
+              <div class="bf-sensor-row">
+                <img src="/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-sm" id="bf-sensor-icon">
+                <span class="bf-sensor-name" id="bf-sensor-heading">Soil Moisture</span>
+              </div>
+              <div class="date-row">
+                <span class="date-label">Date Reported:</span>
+                <div class="date-pill">
+                  <input type="date" class="date-in" id="bf-date-from">
+                  <span>to</span>
+                  <input type="date" class="date-in" id="bf-date-to">
+                </div>
+              </div>
+            </div>
+
+            <!-- Mid: avg+worm | insights+action -->
+            <div class="bf-mid">
+              <div class="bf-avg-box">
+                <div class="bf-avg-lbl">Average</div>
+                <div class="bf-avg-valrow">
+                  <span class="bf-avg-num" id="bf-avg-val">--</span><span class="bf-avg-unit" id="bf-avg-unit"> %</span>
+                </div>
+                <img src="/data/img/worm-conditions/Normal.png" alt="Worm" id="bf-worm-img" class="bf-worm">
+              </div>
+              <div class="bf-ins-box">
+                <div class="bf-ins-header">
+                  <span class="bf-ins-title">Insights</span>
+                  <button class="bf-action-btn" id="bf-action-btn" onclick="openBFActionsModal()" disabled title="No actions needed">
+                    <span class="bf-action-dot" id="bf-action-dot"></span>
+                    <img src="/data/img/actuators/WrenchIcon.svg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Actions">
+                    <span class="bf-wrench-fallback" style="display:none">🔧</span>
+                  </button>
+                </div>
+                <div class="bf-ins-text" id="bf-insights-text">Loading...</div>
+              </div>
+            </div>
+
+            <!-- Scrollable chart -->
+            <div class="chart-scroll-wrap">
+              <div class="chart-scroll-inner">
+                <canvas id="bf-chart"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-settings">
+    <div class="page-card">
+      <div class="page-body">
+        <div class="home-header"><h1 class="home-title">Settings</h1></div>
+        <div class="home-divider"></div>
+          <div class="settings-grid">
+  
+          <div class="settings-col">
+            
+            <div class="settings-card">
+              <div class="settings-sec-title">Connected Device</div>
+              <div class="dev-row-top">
+                <div class="dev-ic"><img src="/data/img/BinIcon.svg" alt="" class="ic-md"></div>
+                <div><div class="dev-name" id="dev-name">AVONIC Unit</div><div class="dev-id" id="dev-id">ESP32-S3 · ID: --</div></div>
+              </div>
+              <div class="dev-row"><span class="dev-key">Connection</span><span class="dev-val"><span class="dev-badge online" id="dev-conn">Connected</span></span></div>
+              <div class="dev-row"><span class="dev-key">WiFi Network</span><span class="dev-val" id="dev-wifi">--</span></div>
+              <div class="dev-row"><span class="dev-key">IP Address</span><span class="dev-val" id="dev-ip">--</span></div>
+              <div class="dev-row"><span class="dev-key">Firmware</span><span class="dev-val" id="dev-fw">v2.0.0</span></div>
+              <div class="dev-row"><span class="dev-key">Platform</span><span class="dev-val">ESP32-S3 N16R8</span></div>
+              <div class="dev-row"><span class="dev-key">Poll Rate</span><span class="dev-val">5 seconds</span></div>
+              <div class="dev-row"><span class="dev-key">UI Version</span><span class="dev-val">2.1 Local</span></div>
+              <div class="dev-row"><span class="dev-key">Last Update</span><span class="dev-val" id="dev-last-update">--</span></div>
+            </div>
+
+          </div> <div class="settings-col">
+            
+            <div class="settings-card">
+              <div class="settings-sec-title wm-sec-header" style="margin-top: 0;">
+                <span>WiFi Manager</span>
+                <button class="wm-scan-btn" id="wm-scan-btn" onclick="wmScan()">
+                  <span class="wm-scan-icon" id="wm-scan-icon">⟳</span> Scan
+                </button>
+              </div>
+
+              <div class="wm-status-bar" id="wm-status-bar">
+                <div class="wm-status-left">
+                  <div class="wm-signal-icon" id="wm-signal-icon">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 7c2.5-2.5 5.9-4 9-4s6.5 1.5 9 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.3" id="wm-bar-1"/>
+                      <path d="M4 10.5c1.6-1.6 3.7-2.5 6-2.5s4.4.9 6 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.5" id="wm-bar-2"/>
+                      <path d="M7 14c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" id="wm-bar-3"/>
+                      <circle cx="10" cy="17" r="1.2" fill="currentColor" id="wm-dot"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="wm-ssid" id="wm-current-ssid">Not connected</div>
+                    <div class="wm-ip" id="wm-current-ip">--</div>
+                  </div>
+                </div>
+                <div class="wm-status-actions" id="wm-status-actions"></div>
+              </div>
+
+              <div class="wm-net-list" id="wm-net-list">
+                <div class="wm-placeholder" id="wm-placeholder">
+                  Tap <strong>Scan</strong> to discover nearby networks.
+                </div>
+              </div>
+
+              <div class="wm-connect-form" id="wm-connect-form" style="display:none;">
+                <div class="wm-cf-header">
+                  <span class="wm-cf-ssid" id="wm-cf-ssid">Network Name</span>
+                  <button class="wm-cf-close" onclick="wmCloseForm()">✕</button>
+                </div>
+                <div class="wm-cf-body">
+                  <input class="wm-pw-input" id="wm-pw-input" type="password" placeholder="Password (leave blank if open)">
+                  <button class="wm-connect-submit" id="wm-connect-submit" onclick="wmConnect()">Connect</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-sec-title">Device Management</div>
+              <div class="dev-row">
+                <span class="dev-key">Logged in as</span>
+                <span class="dev-val" id="dev-loggedin-user">--</span>
+              </div>
+              <div class="dev-row">
+                <span class="dev-key">Reset Registration</span>
+                <button class="settings-danger-btn" onclick="settingsResetReg()">Reset</button>
+              </div>
+              <div class="dev-row">
+                <span class="dev-key">Factory Reset</span>
+                <button class="settings-danger-btn settings-danger-btn--hard" onclick="settingsFactoryReset()">Factory Reset</button>
+              </div>
+            </div>
+
+            <div class="settings-card mobile-logout-card">
+              <button class="settings-danger-btn settings-danger-btn--hard w-100" onclick="openLogoutModal()" style="padding: 14px; font-size: 15px; border-radius: 12px;">
+                Log Out
+              </button>
+            </div>
+
+          </div> 
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+
+<div class="toast-container" id="toast-container"></div>
+
+<div class="sys-modal-overlay" id="sys-modal-overlay" onclick="closeAllModals()"></div>
+
+<div class="sys-modal" id="mode-switch-modal">
+  <div class="mode-ill">
+    <img id="mode-ill-img" src="" alt="Mode">
+  </div>
+  <h2 class="sys-modal-title" id="mode-modal-title">Activate Mode?</h2>
+  <p class="sys-modal-desc" id="mode-modal-desc">Changing modes affects the bin.</p>
+  <div class="sys-modal-actions">
+    <button class="btn-primary" id="mode-confirm-btn">Activate for this bin</button>
+    <button class="btn-secondary" onclick="closeAllModals()">Cancel</button>
+  </div>
+</div>
+
+<div class="sys-modal" id="sensor-detail-modal">
+  <div class="sens-modal-header">
+    <div class="sm-head-left">
+      <img src="" alt="" class="ic-sm" id="sm-icon">
+      <span class="sm-title" id="sm-title">Sensor</span>
+    </div>
+    <img src="/data/img/nav/RefreshIcon.svg" alt="refresh" class="ic-sm refresh-spin" onclick="fetchAndRender()" style="cursor:pointer; opacity: 0.5;">
+  </div>
+  
+  <hr class="sm-divider">
+
+  <p class="sm-subtitle">Current Reading</p>
+  <div class="sm-reading-card">
+    <div class="sm-rc-left">
+      <div class="sm-val-lrg"><span id="sm-val">--</span><span class="sm-unit" id="sm-unit">%</span></div>
+      <div class="sm-status-ind" id="sm-status-ind"><span class="dot"></span><span id="sm-status-text">Optimal</span></div>
+    </div>
+    <div class="sm-rc-right">
+      <img src="" alt="Worm" id="sm-worm-img" class="sm-worm-clipart">
+    </div>
+  </div>
+
+  <div id="sm-manual-area" style="display:none;">
+    <p class="sm-subtitle mt-4">Manual Actions</p>
+    <div class="sm-actuator-grid" id="sm-actuator-grid">
+      </div>
+  </div>
+
+  <div class="sys-modal-actions" style="margin-top: 24px;">
+    <button class="btn-cancel w-100" onclick="closeAllModals()">Cancel</button>
+  </div>
+</div>
+
+<nav class="bottom-nav" id="bottom-nav">
+  <a href="#/dashboard" class="bnav-item" data-route="dashboard">
+    <img src="/data/img/nav/DashboardIcon.svg" alt="" class="bnav-ic">
+  </a>
+  <a href="#/home" class="bnav-item active" data-route="home">
+    <img src="/data/img/nav/HomeIcon.svg" alt="" class="bnav-ic">
+  </a>
+  <a href="#/settings" class="bnav-item" data-route="settings">
+    <img src="/data/img/nav/SettingsIcon.svg" alt="" class="bnav-ic">
+  </a>
+</nav>
+
+<div class="act-modal" id="bf-actions-modal">
+  <button class="act-modal-close" onclick="closeTopModal()" aria-label="Close">✕</button>
+  <div class="act-modal-sensor" id="bf-act-sensor">
+    <img src="" alt="" class="act-modal-icon" id="bf-act-icon">
+    <span id="bf-act-title">Actions</span>
+  </div>
+  <div class="act-modal-body" id="bf-actuator-grid"></div>
+</div>
+
+<div class="act-modal" id="qi-actions-modal">
+  <button class="act-modal-close" onclick="closeTopModal()" aria-label="Close">✕</button>
+  <div class="act-modal-sensor" id="qi-act-sensor">
+    <img src="" alt="" class="act-modal-icon" id="qi-act-icon">
+    <span id="qi-act-title">Actions</span>
+  </div>
+  <div class="act-modal-body" id="qi-actuator-grid"></div>
+</div>
+
+<div class="sys-modal" id="logout-confirm-modal">
+  <div class="mode-ill">
+    <img src="/data/img/curious-worm.png" alt="Curious Worm">
+  </div>
+  <h2 class="sys-modal-title">Log Out?</h2>
+  <p class="sys-modal-desc">Are you sure you wanna logout?</p>
+  <div class="sys-modal-actions">
+    <button class="btn-primary" onclick="authLogout()" style="background: var(--danger); color: #fff;">Yes, log me out</button>
+    <button class="btn-secondary" onclick="closeAllModals()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Status Pill Modals ─────────────────────────────── -->
+<div class="sys-modal" id="status-modal-battery">
+  <div class="mode-ill" style="margin-bottom:8px;">
+    <div id="bat-modal-ill" style="display:flex;align-items:center;justify-content:center;">
+      <svg id="bat-modal-svg" viewBox="0 0 160 160" width="130" height="130" xmlns="http://www.w3.org/2000/svg">
+        <circle id="bat-modal-circle" cx="80" cy="80" r="72" fill="#2E6B47"/>
+        <!-- Battery body — centred in circle -->
+        <rect x="26" y="62" width="96" height="38" rx="7" ry="7" fill="none" stroke="white" stroke-width="4"/>
+        <!-- Terminal nub -->
+        <rect x="122" y="74" width="10" height="14" rx="3" ry="3" fill="white"/>
+        <!-- Fill clip -->
+        <clipPath id="bat-modal-clip">
+          <rect x="30" y="66" width="88" height="30" rx="4" ry="4"/>
+        </clipPath>
+        <rect id="bat-modal-fill" x="30" y="66" width="0" height="30" rx="4" ry="4"
+              fill="white" clip-path="url(#bat-modal-clip)"/>
+        <!-- chargingIcon.svg — centred over battery -->
+        <image id="bat-modal-bolt"
+          href="/data/img/bin-status/chargingIcon.svg"
+          x="65" y="60" width="22" height="40" fill="white"
+          style="display:none"/>
+      </svg>
+    </div>
+  </div>
+  <h2 class="sys-modal-title" id="status-modal-bat-title">Battery</h2>
+  <p class="sys-modal-desc" id="status-modal-bat-desc">Checking battery level…</p>
+  <div class="sys-modal-actions">
+    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
+    <button class="btn-secondary" id="status-bat-dontshow" onclick="dismissStatusModal('battery')">Don't show this again</button>
+  </div>
+</div>
+
+<div class="sys-modal" id="status-modal-water">
+  <div class="mode-ill">
+    <div id="water-modal-ill" style="display:flex;align-items:center;justify-content:center;">
+      <svg id="water-modal-svg" viewBox="14 12 132 158" width="124" height="148" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Drop silhouette used as both clip + outline -->
+          <clipPath id="water-drop-clip">
+            <path d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"/>
+          </clipPath>
+          <!-- Ripple gradient for fill surface -->
+          <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7dd3fc"/>
+            <stop offset="100%" stop-color="#2563eb" stop-opacity="0.85"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Drop background (empty = light grey) -->
+        <path id="water-drop-bg"
+          d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"
+          fill="#e8f4fd"/>
+
+        <!-- Water fill — clipped to drop shape, height driven by JS -->
+        <rect id="water-modal-fill"
+          x="22" y="164" width="116" height="0"
+          fill="url(#water-grad)"
+          clip-path="url(#water-drop-clip)"/>
+
+        <!-- Surface wave on top of fill -->
+        <g id="water-wave-group" clip-path="url(#water-drop-clip)" style="display:none">
+          <ellipse id="water-wave" cx="80" cy="164" rx="60" ry="7"
+            fill="#93c5fd" opacity="0.55">
+          </ellipse>
+        </g>
+
+        <!-- Drop outline (always on top) -->
+        <path
+          d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"
+          fill="none" stroke="#1e3a5f" stroke-width="5" stroke-linejoin="round"/>
+
+      </svg>
+    </div>
+  </div>
+  <h2 class="sys-modal-title" id="status-modal-water-title">Water Tank</h2>
+  <p class="sys-modal-desc" id="status-modal-water-desc">Checking water level…</p>
+  <div class="sys-modal-actions">
+    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
+    <button class="btn-secondary" id="status-water-dontshow" onclick="dismissStatusModal('water')">Don't show this again</button>
+  </div>
+</div>
+
+<div class="sys-modal" id="status-modal-temp">
+  <div class="mode-ill">
+    <div id="temp-modal-ill" style="display:flex;align-items:center;justify-content:center;">
+      <!--
+        Thermometer geometry (viewBox 30 8 100 158):
+        Tube: x=70–90 (width 20), top cap centre cx=80 cy=22 r=10
+        Bulb: cx=80 cy=128 r=22
+        Left side:  x=70, from y=22 down to where bulb tangent meets → y=128
+        Right side: x=90, same
+        Single path traces: top-cap arc → right side → bulb arc (CW bottom) → left side → close
+      -->
+      <svg id="temp-modal-svg" viewBox="30 8 100 158" width="88" height="138" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Clip = exact same shape as the outline path -->
+          <clipPath id="therm-body-clip">
+            <path d="
+              M80,12
+              A10,10 0 0 1 90,22
+              L90,113
+              A22,22 0 1 1 70,113
+              L70,22
+              A10,10 0 0 1 80,12
+              Z"/>
+          </clipPath>
+
+          <linearGradient id="therm-grad-cold"   x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#93c5fd"/>
+            <stop offset="100%" stop-color="#2563eb"/>
+          </linearGradient>
+          <linearGradient id="therm-grad-warm"   x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fde68a"/>
+            <stop offset="100%" stop-color="#f59e0b"/>
+          </linearGradient>
+          <linearGradient id="therm-grad-hot"    x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fca5a5"/>
+            <stop offset="100%" stop-color="#ef4444"/>
+          </linearGradient>
+          <linearGradient id="therm-grad-normal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6ee7b7"/>
+            <stop offset="100%" stop-color="#10b981"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Body background (empty/grey) -->
+        <path d="
+          M80,12
+          A10,10 0 0 1 90,22
+          L90,113
+          A22,22 0 1 1 70,113
+          L70,22
+          A10,10 0 0 1 80,12
+          Z"
+          fill="#efefed"/>
+
+        <!-- Mercury fill — single rect clipped to body shape, rises from bottom -->
+        <!-- Total clippable height: from y=12 (top) to y=150 (bulb bottom) = 138px -->
+        <rect id="therm-tube-fill"
+          x="56" y="101" width="48" height="50"
+          fill="url(#therm-grad-normal)"
+          clip-path="url(#therm-body-clip)"/>
+
+        <!-- Outline — single unified stroke, no seam -->
+        <path d="
+          M80,12
+          A10,10 0 0 1 90,22
+          L90,113
+          A22,22 0 1 1 70,113
+          L70,22
+          A10,10 0 0 1 80,12
+          Z"
+          fill="none" stroke="#1e293b" stroke-width="3.5"
+          stroke-linejoin="round"/>
+
+        <!-- Tick marks -->
+        <line x1="90" y1="38"  x2="96" y2="38"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="58"  x2="98" y2="58"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="78"  x2="96" y2="78"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="98"  x2="98" y2="98"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <h2 class="sys-modal-title" id="status-modal-temp-title">Water Temperature</h2>
+  <p class="sys-modal-desc" id="status-modal-temp-desc">Checking temperature…</p>
+  <div class="sys-modal-actions">
+    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
+  </div>
+</div>
+</div>
+<!-- ── End Status Pill Modals ─────────────────────────── -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/chart.umd.min.js"></script>
+<script src="LoadingState.js"></script>
+<script src="app.js"></script>
+<script src="dummy-data-injector.js"></script>
+</body>
+</html>
