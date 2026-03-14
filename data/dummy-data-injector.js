@@ -148,6 +148,20 @@ function generateDummyData() {
   const rnd = (min, max) => +(Math.random() * (max - min) + min).toFixed(1);
   
   return {
+
+    // --- Mock User Profile (Online Feature) ---
+    user_profile: {
+      username: "DevUser_2026",
+      email: "dev@avonic.online",
+      last_login: new Date().toLocaleString()
+    },
+
+   // Inside generateDummyData()
+claimed_bins: [
+  { bin_id: "AV-B92", name: "Main Garden", status: "online" },
+  { bin_id: "AV-X11", name: "Kitchen Hub", status: "online" },
+  { bin_id: "AV-L44", name: "Garage Unit", status: "offline" }
+],
     battery_percent: Math.floor(rnd(10, 100)), 
     water_level: Math.floor(rnd(10, 100)), 
     ds18b20_temp: rnd(20, 35),
@@ -182,21 +196,31 @@ function generateDummyData() {
 window.injectDummyData = function() {
   const d = generateDummyData();
   
-  // Connects to global variables defined in app.js
-  if (typeof S !== 'undefined') S.data = d; 
-  if (typeof pushHist === 'function') pushHist(d);
-  if (typeof renderPage === 'function' && typeof Router !== 'undefined') renderPage(Router.cur(), d);
-  
-  // Update battery icon directly in case renderHome isn't called
-  if (typeof updateBatteryIcon === 'function') updateBatteryIcon(d.battery_percent, d.charging || false);
-  
-  // Updates modals if currently open
-  const modal = document.getElementById('sensor-detail-modal');
-  if (modal && modal.classList.contains('show') && typeof updateSensorModalData === 'function') {
-    updateSensorModalData(S.activeModalBin, S.activeModalSensor, d);
-    if (S.mode[S.activeModalBin] === 'manual' && typeof populateManualActions === 'function') {
-      populateManualActions(S.activeModalBin, S.activeModalSensor, document.getElementById('sm-actuator-grid'), d);
+  if (typeof S !== 'undefined') {
+    S.data = d;
+    S.user = d.user_profile; // Set mock user
+    S.bins = d.claimed_bins; // Set mock bins
+  }
+
+  // Update Settings UI specifically
+  if (Router.cur() === 'settings') {
+    setText('acc-username', S.user.username);
+    setText('acc-email', S.user.email);
+    setText('acc-last-login', S.user.last_login);
+    
+    // Call the function we created earlier for the side-scroll
+    if (typeof renderClaimedBins === 'function') {
+      renderClaimedBins(S.bins);
     }
+  }
+
+  // Existing render logic
+  if (typeof renderPage === 'function' && typeof Router !== 'undefined') {
+    renderPage(Router.cur(), d);
+  }
+  
+  if (typeof updateBatteryIcon === 'function') {
+    updateBatteryIcon(d.battery_percent, d.charging || false);
   }
 };
 

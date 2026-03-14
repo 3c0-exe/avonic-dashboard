@@ -661,106 +661,108 @@
   </section>
 
   <section class="page" id="page-settings">
-    <div class="page-card">
-      <div class="page-body">
-        <div class="home-header"><h1 class="home-title">Settings</h1></div>
-        <div class="home-divider"></div>
-          <div class="settings-grid">
-  
-          <div class="settings-col">
-            
-            <div class="settings-card">
-              <div class="settings-sec-title">Connected Device</div>
-              <div class="dev-row-top">
-                <div class="dev-ic"><img src="/data/img/BinIcon.svg" alt="" class="ic-md"></div>
-                <div><div class="dev-name" id="dev-name">AVONIC Unit</div><div class="dev-id" id="dev-id">ESP32-S3 · ID: --</div></div>
-              </div>
-              <div class="dev-row"><span class="dev-key">Connection</span><span class="dev-val"><span class="dev-badge online" id="dev-conn">Connected</span></span></div>
-              <div class="dev-row"><span class="dev-key">WiFi Network</span><span class="dev-val" id="dev-wifi">--</span></div>
-              <div class="dev-row"><span class="dev-key">IP Address</span><span class="dev-val" id="dev-ip">--</span></div>
-              <div class="dev-row"><span class="dev-key">Firmware</span><span class="dev-val" id="dev-fw">v2.0.0</span></div>
-              <div class="dev-row"><span class="dev-key">Platform</span><span class="dev-val">ESP32-S3 N16R8</span></div>
-              <div class="dev-row"><span class="dev-key">Poll Rate</span><span class="dev-val">5 seconds</span></div>
-              <div class="dev-row"><span class="dev-key">UI Version</span><span class="dev-val">2.1 Local</span></div>
-              <div class="dev-row"><span class="dev-key">Last Update</span><span class="dev-val" id="dev-last-update">--</span></div>
+     <div class="page-card ">
+  <div class="page-body settings">
+    <div class="home-header"><h1 class="home-title">Settings</h1></div>
+    <div class="home-divider"></div>
+    
+    <div class="settings-grid">
+      <div class="settings-col">
+        
+        <div class="settings-card">
+          <div class="settings-sec-title">Account Profile</div>
+          <div class="dev-row">
+            <span class="dev-key">Username</span>
+            <span class="dev-val" id="acc-username">Loading...</span>
+          </div>
+          <div class="dev-row">
+            <span class="dev-key">Email</span>
+            <span class="dev-val" id="acc-email">--</span>
+          </div>
+          <button class="btn-primary mt-4" onclick="openEditProfileModal()">Update Profile</button>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-sec-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Claimed Bins</span>
+            <button class="wm-scan-btn" onclick="openModal('claim-bin-modal')">+ Claim</button>
+          </div>
+          <div class="bins-scroll-container" id="claimed-bins-list">
+             <div class="wm-placeholder">Fetching your bins...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-col">
+        
+        <div class="settings-card">
+          <div class="settings-sec-title">Resources</div>
+          <div class="dash-card green" style="padding: 20px; min-height: auto; flex-direction: row; gap: 15px; border-radius: 12px; border:none;">
+            <img src="/data/img/nav/QuickInsights.svg" alt="" style="width:40px; height:40px;">
+            <div style="text-align:left;">
+              <div class="dev-name">User Manual</div>
+              <div class="dev-id" style="color: rgba(255,255,255,0.8);">Learn how to maintain your bin.</div>
             </div>
+            <a href="/manual" target="_blank" class="back-btn" style="margin-left:auto; background:white;">
+               <img src="/data/img/nav/BackIcon.svg" style="transform: rotate(180deg);">
+            </a>
+          </div>
+        </div>
 
-          </div> <div class="settings-col">
-            
-            <div class="settings-card">
-              <div class="settings-sec-title wm-sec-header" style="margin-top: 0;">
-                <span>WiFi Manager</span>
-                <button class="wm-scan-btn" id="wm-scan-btn" onclick="wmScan()">
-                  <span class="wm-scan-icon" id="wm-scan-icon">⟳</span> Scan
-                </button>
-              </div>
-
-              <div class="wm-status-bar" id="wm-status-bar">
-                <div class="wm-status-left">
-                  <div class="wm-signal-icon" id="wm-signal-icon">
-                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 7c2.5-2.5 5.9-4 9-4s6.5 1.5 9 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.3" id="wm-bar-1"/>
-                      <path d="M4 10.5c1.6-1.6 3.7-2.5 6-2.5s4.4.9 6 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.5" id="wm-bar-2"/>
-                      <path d="M7 14c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" id="wm-bar-3"/>
-                      <circle cx="10" cy="17" r="1.2" fill="currentColor" id="wm-dot"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="wm-ssid" id="wm-current-ssid">Not connected</div>
-                    <div class="wm-ip" id="wm-current-ip">--</div>
-                  </div>
-                </div>
-                <div class="wm-status-actions" id="wm-status-actions"></div>
-              </div>
-
-              <div class="wm-net-list" id="wm-net-list">
-                <div class="wm-placeholder" id="wm-placeholder">
-                  Tap <strong>Scan</strong> to discover nearby networks.
-                </div>
-              </div>
-
-              <div class="wm-connect-form" id="wm-connect-form" style="display:none;">
-                <div class="wm-cf-header">
-                  <span class="wm-cf-ssid" id="wm-cf-ssid">Network Name</span>
-                  <button class="wm-cf-close" onclick="wmCloseForm()">✕</button>
-                </div>
-                <div class="wm-cf-body">
-                  <input class="wm-pw-input" id="wm-pw-input" type="password" placeholder="Password (leave blank if open)">
-                  <button class="wm-connect-submit" id="wm-connect-submit" onclick="wmConnect()">Connect</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="settings-card">
-              <div class="settings-sec-title">Device Management</div>
-              <div class="dev-row">
-                <span class="dev-key">Logged in as</span>
-                <span class="dev-val" id="dev-loggedin-user">--</span>
-              </div>
-              <div class="dev-row">
-                <span class="dev-key">Reset Registration</span>
-                <button class="settings-danger-btn" onclick="settingsResetReg()">Reset</button>
-              </div>
-              <div class="dev-row">
-                <span class="dev-key">Factory Reset</span>
-                <button class="settings-danger-btn settings-danger-btn--hard" onclick="settingsFactoryReset()">Factory Reset</button>
-              </div>
-            </div>
-
-            <div class="settings-card mobile-logout-card">
-              <button class="settings-danger-btn settings-danger-btn--hard w-100" onclick="openLogoutModal()" style="padding: 14px; font-size: 15px; border-radius: 12px;">
-                Log Out
-              </button>
-            </div>
-
-          </div> 
+        <div class="settings-card">
+          <div class="settings-sec-title">Session</div>
+          <div class="dev-row">
+            <span class="dev-key">Last Login</span>
+            <span class="dev-val" id="acc-last-login">--</span>
+          </div>
+          <button class="settings-danger-btn settings-danger-btn--hard w-100 mt-4" onclick="openLogoutModal()">
+            Log Out
+          </button>
         </div>
       </div>
     </div>
+  </div>
+</div>
   </section>
 
 
 </main>
+
+<div class="sys-modal" id="confirm-action-modal">
+  <div class="mode-ill">
+    <img src="/data/img/curious-worm.png" alt="Confirm" id="confirm-modal-img">
+  </div>
+  <h2 class="sys-modal-title" id="confirm-modal-title">Confirm Action</h2>
+  <p class="sys-modal-desc" id="confirm-modal-desc">Are you sure you want to proceed?</p>
+  
+  <div class="auth-field" id="rename-input-container" style="display:none; margin-bottom: 20px;">
+    <input class="auth-input" id="new-bin-nickname" type="text" placeholder="Enter new nickname" style="padding-left:12px;">
+  </div>
+
+  <div class="sys-modal-actions">
+    <button class="btn-primary" id="confirm-modal-btn">Confirm</button>
+    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  </div>
+</div>
+
+
+<div class="sys-modal" id="claim-bin-modal">
+  <div class="mode-ill">
+    <img src="/data/img/photos/AutoMode.png" alt="Claim">
+  </div>
+  <h2 class="sys-modal-title">Claim New Bin</h2>
+  <p class="sys-modal-desc">Enter the unique 6-digit claim code found on your AVONIC device.</p>
+  
+  <div class="auth-field" style="margin-bottom: 20px;">
+    <input class="auth-input" id="claim-code-input" type="text" placeholder="Enter Claim Code" style="padding-left:12px;">
+  </div>
+
+  <div class="sys-modal-actions">
+    <button class="btn-primary" onclick="handleClaimBin()">Claim Device</button>
+    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  </div>
+</div>
+
 
 <div class="toast-container" id="toast-container"></div>
 

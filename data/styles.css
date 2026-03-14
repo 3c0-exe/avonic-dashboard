@@ -2664,7 +2664,7 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
 /* Desktop: Switch to 2 columns */
 @media (min-width: 900px) {
   .settings-grid {
-    grid-template-columns: 1fr 1fr;
+   grid-template-columns: minmax(min(400px, 100%), 630px) 1fr;
   }
 }
 
@@ -3506,9 +3506,7 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   .page-body { padding: 28px 32px; }
   .bins-grid { gap: 20px; }
 
- .settings-grid {
-    grid-template-columns: 1fr;
-  }
+  
 }
 
 /* Fix for Massive 1080p/4k Monitors */
@@ -3994,5 +3992,210 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   .wm-status-actions {
     width: 100% !important;
     justify-content: flex-start !important;
+  }
+}
+
+ 
+ /* Card Container */
+.bins-scroll-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;     /* Forces all bins into a single horizontal line */
+    gap: 16px;             /* Space between cards */
+    overflow-x: auto;      /* Enables horizontal scrollbar */
+    overflow-y: hidden;    /* Prevents vertical expansion */
+    padding: 10px 4px 20px 4px; 
+    
+    /* CRITICAL FIX: Match the parent's width exactly and prevent stretching */
+    width: 100%;           
+    max-width: calc(100% - 8px); /* Account for side borders/padding */
+    box-sizing: border-box; 
+    
+    /* Modern Scrollbar Styling */
+    scrollbar-width: thin; 
+    scrollbar-color: var(--green-mid) transparent;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile */
+}
+/* Status Chip */
+.bin-status-chip {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  border: 1px solid #111;
+}
+.bin-status-chip.online { background: #dcfce7; color: #166534; }
+.bin-status-chip.offline { background: #fee2e2; color: #991b1b; }
+
+/* Central Illustration */
+.bin-card-illus {
+  width: 90px;
+  height: 90px;
+  background: var(--green-pale);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border: 1px solid #111;
+}
+.bin-card-illus img { width: 50px; height: 50px; }
+
+ 
+.claimed-bin-name { font-size: 16px; font-weight: 700; color: #111; }
+.claimed-bin-id { font-size: 12px; color: #888; font-family: monospace; }
+
+/* Actions Bar */
+.bin-card-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+.bin-card-actions .btn-icon-sm {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #111;
+  border-radius: 10px;
+  box-shadow: 0px 2px 0px #111;
+}
+.bin-card-actions .btn-icon-sm:active { transform: translateY(2px); box-shadow: none; }
+.bin-card-actions .btn-icon-sm img { width: 18px; height: 18px; }
+.bin-card-actions .btn-icon-sm.delete:hover { background: #fee2e2; }
+ 
+/* --- FINAL FIXED CLAIMED BINS STYLING --- */
+
+.claimed-bin-card {
+    flex: 0 0 180px;       /* Fixed 180px width: Do not grow, do not shrink */
+    width: 180px;          /* Fallback fixed width */
+    position: relative;
+    background: #ffffff;
+    border: 1.5px solid #111;
+    border-radius: 20px;
+    overflow: hidden; 
+    box-shadow: 0px 4px 0px #111;
+    display: flex;
+    flex-direction: column;
+}
+
+.bin-visual-header {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    background: #f1f8d4; /* AVONIC light green */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1.5px solid #111;
+}
+
+.bin-image {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+}
+
+/* Red X Button anchored to the top-right of the green header */
+.bin-delete-x {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 1.5px solid #111;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+   
+    cursor: pointer;
+}
+
+/* Info section: Uses Flexbox to stack items vertically */
+.bin-card-info {
+    padding: 12px 10px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.claimed-bin-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+    cursor: pointer;
+}
+
+/* Status Chip: Now follows natural document flow (no absolute position) */
+.bin-status-chip {
+    position: static !important; /* Forces it out of absolute mode from old styles */
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #111;
+    display: inline-block;
+    margin: 4px 0;
+    text-transform: uppercase;
+}
+
+.bin-status-chip.online { background: #dcfce7; color: #166534; }
+.bin-status-chip.offline { background: #fee2e2; color: #991b1b; }
+
+.claimed-bin-id {
+    font-size: 11px;
+    color: #888;
+    font-family: monospace;
+}
+
+/* --- ISOLATED SETTINGS WIDTH & SCROLL FIX --- */
+@media (min-width: 769px) and (max-width: 899px) {
+  /* 1. Ensure the main container doesn't restrict horizontal growth */
+  .main {
+    height: auto !important;
+    overflow-y: auto !important;
+    padding: 24px 16px !important; /* Give more breathing room for the cards */
+  }
+
+  /* 2. Force the Settings page to allow content expansion */
+  #page-settings {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* 3. Force the grid and columns to maximize width */
+  #page-settings .settings-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important; /* Breaks the 630px desktop limit */
+    gap: 20px !important;
+  }
+
+  #page-settings .settings-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0; /* Standard fix for flexbox children overflow */
+  }
+
+  /* 4. Ensure individual cards stretch to fill the column */
+  #page-settings .settings-card {
+    width: 100% !important;
+    box-sizing: border-box;
   }
 }

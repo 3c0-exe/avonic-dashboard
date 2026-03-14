@@ -1885,3 +1885,197 @@ async function authLogout() {
   authShow();
   toast('Logged out', '');
 }
+
+function renderClaimedBins(binsArray) {
+  const container = document.getElementById('claimed-bins-list');
+  if(!container) return;
+
+  container.innerHTML = binsArray.map(bin => `
+    <div class="claimed-bin-card">
+      <div class="bin-visual-header">
+        <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">×</button>
+        <img src="/data/img/claim-bin/ClaimBinIcon.svg" alt="Bin" class="bin-image">
+      </div>
+
+      <div class="bin-card-info">
+        <div class="claimed-bin-name" onclick="openRenameBinModal('${bin.bin_id}', '${bin.name}')">
+          ${bin.name || 'Unnamed Bin'}
+        </div>
+        <div class="claimed-bin-id">${bin.bin_id}</div>
+        
+        <div class="bin-status-chip ${bin.status === 'online' ? 'online' : 'offline'}">
+          ${bin.status === 'online' ? 'Connected' : 'Offline'}
+        </div>
+
+        
+      </div>
+    </div>
+  `).join('');
+}
+// Handler for claiming a new bin (Ref: Old settings.js)
+async function handleClaimBin() {
+  const code = document.getElementById('claim-code-input').value;
+  if(!code) return toast('Please enter a claim code', 'err');
+  
+  try {
+    const response = await fetch('/api/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ claim_code: code })
+    });
+    const result = await response.json();
+    if(result.success) {
+      toast('Bin successfully linked!', 'ok');
+      closeTopModal();
+      location.reload(); // Refresh to see new bin in list
+    } else {
+      toast(result.error || 'Claiming failed', 'err');
+    }
+  } catch(e) {
+    toast('Server connection error', 'err');
+  }
+}
+
+function makeEditable(el, binId) {
+  const oldName = el.textContent.trim();
+  const input = document.createElement('input');
+  
+  input.type = 'text';
+  input.className = 'inline-edit-input';
+  input.value = oldName;
+  
+  // Replace text with input
+  el.replaceWith(input);
+  input.focus();
+
+  const save = async () => {
+    const newName = input.value.trim();
+    if (newName && newName !== oldName) {
+      // Logic from old settings.js for updating nickname
+      const success = await updateBinNickname(binId, newName);
+      if (success) {
+        toast('Nickname updated!', 'ok');
+        location.reload(); 
+      }
+    }
+    // Revert to div if no change or finished
+    input.replaceWith(el);
+    el.textContent = newName || oldName;
+  };
+
+  input.onblur = save;
+  input.onkeydown = (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') input.replaceWith(el); };
+}
+
+
+/**
+ * Triggers the Delete/Unclaim Confirmation
+ */
+function confirmDeleteBin(binId) {
+  const modal = document.getElementById('confirm-action-modal');
+  document.getElementById('confirm-modal-title').textContent = "Unclaim Bin";
+  document.getElementById('confirm-modal-desc').textContent = `Are you sure you want to remove ${binId}? This cannot be undone.`;
+  document.getElementById('rename-input-container').style.display = 'none';
+  
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = async () => {
+    // Ported from online settings.js
+    const success = await handleUnclaimBin(binId); 
+    if(success) {
+      toast('Bin removed', 'ok');
+      closeTopModal();
+      location.reload(); 
+    }
+  };
+  
+  openModal('confirm-action-modal');
+}
+
+/**
+ * Triggers the Rename Modal
+ */
+function openRenameBinModal(binId, currentName) {
+  const modal = document.getElementById('confirm-action-modal');
+  document.getElementById('confirm-modal-title').textContent = "Rename Bin";
+  document.getElementById('confirm-modal-desc').textContent = "Enter a new nickname for this bin:";
+  
+  const inputContainer = document.getElementById('rename-input-container');
+  const inputField = document.getElementById('new-bin-nickname');
+  inputContainer.style.display = 'block';
+  inputField.value = currentName;
+  
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = async () => {
+    const newName = inputField.value.trim();
+    if(!newName) return toast('Name cannot be empty', 'err');
+    
+    // API Call to update nickname
+    const success = await updateBinNickname(binId, newName);
+    if(success) {
+      toast('Nickname updated!', 'ok');
+      closeTopModal();
+      location.reload();
+    }
+  };
+  
+  openModal('confirm-action-modal');
+}
+
+
+// --- Functional Dummy Logic for Renaming ---
+async function updateBinNickname(binId, newName) {
+  // Find the bin in our global state array
+  const binIndex = S.bins.findIndex(b => b.bin_id === binId);
+  
+  if (binIndex !== -1) {
+    S.bins[binIndex].name = newName; // Update the dummy data in memory
+    renderClaimedBins(S.bins); // Re-render the UI immediately
+    return true; 
+  }
+  return false;
+}
+
+// Updated Delete Handler
+async function handleUnclaimBin(binId) {
+  // 1. Update the local dummy data array
+  S.bins = S.bins.filter(b => b.bin_id !== binId);
+  
+  // 2. Re-render the UI immediately (DON'T RELOAD)
+  renderClaimedBins(S.bins);
+  
+  // 3. Close modal and toast
+  closeTopModal();
+  toast(`Bin ${binId} removed (Local)`, 'ok');
+  
+  // REMOVE location.reload() to stay on the current page!
+}
+
+// Updated Rename Handler
+async function updateBinNickname(binId, newName) {
+  const bin = S.bins.find(b => b.bin_id === binId);
+  if (bin) {
+    bin.name = newName;
+    renderClaimedBins(S.bins);
+    closeTopModal();
+    toast('Name updated (Local)', 'ok');
+  }
+}
+
+// --- Functional Dummy Logic for Claiming ---
+async function handleClaimBin() {
+  const code = document.getElementById('claim-code-input').value;
+  if(!code) return toast('Please enter a code', 'err');
+
+  const newBin = {
+    bin_id: "AV-" + Math.floor(1000 + Math.random() * 9000), // Random ID
+    name: "New Bin " + (S.bins.length + 1),
+    status: "online"
+  };
+
+  S.bins.push(newBin); // Add to our dummy array
+  renderClaimedBins(S.bins); // Re-render
+  closeTopModal();
+  toast('Bin claimed (Dummy Mode)', 'ok');
+}
+
+
