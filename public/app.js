@@ -1,8 +1,12 @@
 /* ═══════════════════════════════════
-   AVONIC  –  app.js  v5.0
-   Optimized: Evaluator & Configs Bundled
+   AVONIC  –  app.js  v6.0  (Online)
+   Connected to Railway + MongoDB backend
    ═══════════════════════════════════ */
 'use strict';
+
+// ── Backend URL ───────────────────────────────────────────────
+// Change this to your Railway URL once deployed
+const BASE_URL = 'https://avonic-dashboard-production.up.railway.app';
 
 // ── Sensor Configs & Worm Conditions ──────────────────────────
 const WORM_CONFIGS = {
@@ -13,7 +17,7 @@ const WORM_CONFIGS = {
 };
 
 const CFG = {
-  POLL: 5000,
+  POLL: 10000, // 10s — less aggressive for cloud polling vs local
   HIST: 48,
   OPT: WORM_CONFIGS
 };
@@ -30,8 +34,11 @@ const S = {
   bfChart: null,
   qiBin:1, qiSens:'soilMoisture',
   bfBin:1, bfSens:'soilMoisture',
-  activeModalBin: 1,      // Added for Modals
-  activeModalSensor: null // Added for Modals
+  activeModalBin: 1,
+  activeModalSensor: null,
+  activeEspID: null,    // currently selected device ESP ID
+  bins: [],             // list of claimed devices
+  user: null            // logged-in user profile
 };
 
 // ── DOM helpers ─────────────────────
@@ -40,79 +47,53 @@ const setText = (id, v) => { const e = $(id); if(e) e.textContent = v; };
 const fmt = (v) => v != null ? parseFloat(v).toFixed(1) : '--';
 
 // ════════════════════════════════════
-// 🎨 EVALUATE CONDITION LOGIC (From Legacy)
+// AUTH TOKEN HELPERS
+// ════════════════════════════════════
+const Token = {
+  get() { return localStorage.getItem('avonic_token'); },
+  set(t) { localStorage.setItem('avonic_token', t); },
+  clear() { localStorage.removeItem('avonic_token'); },
+  headers() {
+    const t = this.get();
+    return t ? { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }
+             : { 'Content-Type': 'application/json' };
+  }
+};
+
+// ════════════════════════════════════
+// 🎨 EVALUATE CONDITION LOGIC
 // ════════════════════════════════════
 function evaluateCondition(sensorType, value) {
-    // Safety check: if sensor type doesn't exist, return default
     if (!WORM_CONFIGS[sensorType]) {
         return { status: 'Unknown', statusClass: 'warning', wormImage: 'Normal.png' };
     }
-
     const ranges = WORM_CONFIGS[sensorType];
     let status = 'Optimal';
-    let statusClass = 'optimal'; // optimal (green), warning (orange), critical (red)
+    let statusClass = 'optimal';
     let wormImage = 'Normal.png';
 
     switch(sensorType) {
-        // --- TEMPERATURE ---
         case 'temperature':
-            if (value < ranges.critical_min) {
-                status = 'Critically Cold';
-                statusClass = 'critical';
-                wormImage = 'Too Dry.png'; // Using provided mapping for cold
-            } else if (value < ranges.optimal_min) {
-                status = 'Too Cold';
-                statusClass = 'warning';
-                wormImage = 'Too Dry.png';
-            } else if (value > ranges.critical_max) {
-                status = 'Critically Hot';
-                statusClass = 'critical';
-                wormImage = 'Too Hot.png';
-            } else if (value > ranges.optimal_max) {
-                status = 'Too Hot';
-                statusClass = 'warning';
-                wormImage = 'Too Hot.png';
-            }
+            if (value < ranges.critical_min) { status = 'Critically Cold'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = 'Too Cold'; statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = 'Critically Hot'; statusClass = 'critical'; wormImage = 'Too Hot.png'; }
+            else if (value > ranges.optimal_max) { status = 'Too Hot'; statusClass = 'warning'; wormImage = 'Too Hot.png'; }
             break;
-
-        // --- SOIL MOISTURE & HUMIDITY ---
         case 'soilMoisture':
         case 'humidity':
-            if (value < ranges.critical_min) {
-                status = 'Critically Dry';
-                statusClass = 'critical';
-                wormImage = 'Too Dry.png';
-            } else if (value < ranges.optimal_min) {
-                status = 'Dry';
-                statusClass = 'warning';
-                wormImage = 'Too Dry.png';
-            } else if (value > ranges.critical_max) {
-                status = 'Critically Wet';
-                statusClass = 'critical';
-                wormImage = 'Too Wet.png';
-            } else if (value > ranges.optimal_max) {
-                status = 'Wet';
-                statusClass = 'warning';
-                wormImage = 'Too Wet.png';
-            }
+            if (value < ranges.critical_min) { status = 'Critically Dry'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = 'Dry'; statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = 'Critically Wet'; statusClass = 'critical'; wormImage = 'Too Wet.png'; }
+            else if (value > ranges.optimal_max) { status = 'Wet'; statusClass = 'warning'; wormImage = 'Too Wet.png'; }
             break;
-
-        // --- GAS LEVELS ---
         case 'gasLevels':
-            if (value > ranges.critical_max) {
-                status = 'Toxic Gas';
-                statusClass = 'critical';
-                wormImage = 'Gas Too High.png';
-            } else if (value > ranges.optimal_max) {
-                status = 'High Gas';
-                statusClass = 'warning';
-                wormImage = 'Gas Too High.png';
-            }
+            if (value > ranges.critical_max) { status = 'Toxic Gas'; statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
+            else if (value > ranges.optimal_max) { status = 'High Gas'; statusClass = 'warning'; wormImage = 'Gas Too High.png'; }
             break;
     }
-
     return { status, statusClass, wormImage };
 }
+
 // ════════════════════════════════════
 // ROUTER & SIDEBAR
 // ════════════════════════════════════
@@ -156,9 +137,7 @@ const Router = (() => {
 function setupSidebar() {
   const ham = $('hamburger'), ov = $('sidebar-overlay'), sb = document.querySelector('.sidebar');
   if(ham) ham.addEventListener('click', () => {
-  
       document.body.classList.toggle('sidebar-expanded');
-    
   });
   if(ov) ov.addEventListener('click', closeSidebar);
 }
@@ -168,35 +147,227 @@ function closeSidebar() {
 }
 
 // ════════════════════════════════════
-// API & POLLING
+// API — Online Backend
 // ════════════════════════════════════
 const API = {
-  async get() { 
-    const r = await fetch('/data', { cache: 'no-store' }); 
-    if(!r.ok) throw new Error('HTTP ' + r.status); 
-    return r.json(); 
+  // Fetch latest sensor data from the active device
+  async get() {
+    if (!S.activeEspID) throw new Error('NO_DEVICE');
+    const r = await fetch(`${BASE_URL}/api/sensors/${S.activeEspID}/latest`, {
+      headers: Token.headers(),
+      cache: 'no-store'
+    });
+    if (r.status === 401) throw new Error('401');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const json = await r.json();
+    // Flatten the nested MongoDB structure into the flat format the UI expects
+    return flattenSensorData(json);
   },
-  async cmd(ep, val) { 
-    // Fix: Sends as form-urlencoded so ESP32 server.hasArg("state") correctly receives it
-    const r = await fetch(ep, {
+
+  // Send actuator command via backend → MQTT → ESP32
+  async cmd(ep, val) {
+    const r = await fetch(`${BASE_URL}/api${ep}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `state=${val}`
-    }); 
-    if(!r.ok) throw new Error('HTTP ' + r.status); 
-    return r.json(); 
+      headers: Token.headers(),
+      body: JSON.stringify({ state: val })
+    });
+    if (r.status === 401) throw new Error('401');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Get all claimed devices for the logged-in user
+  async getDevices() {
+    const r = await fetch(`${BASE_URL}/api/devices/claimed`, {
+      headers: Token.headers()
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Claim a device by espID
+  async claimDevice(espID) {
+    const r = await fetch(`${BASE_URL}/api/devices/claim`, {
+      method: 'POST',
+      headers: Token.headers(),
+      body: JSON.stringify({ espID })
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.error || 'Claim failed');
+    }
+    return r.json();
+  },
+
+  // Unclaim a device
+  async unclaimDevice(espID) {
+    const r = await fetch(`${BASE_URL}/api/devices/${espID}/unclaim`, {
+      method: 'DELETE',
+      headers: Token.headers()
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Rename a device
+  async renameDevice(espID, nickname) {
+    const r = await fetch(`${BASE_URL}/api/devices/${espID}/nickname`, {
+      method: 'PUT',
+      headers: Token.headers(),
+      body: JSON.stringify({ nickname })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Get user profile
+  async getProfile() {
+    const r = await fetch(`${BASE_URL}/api/user/profile`, {
+      headers: Token.headers()
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Update user profile
+  async updateProfile(username, email) {
+    const r = await fetch(`${BASE_URL}/api/user/profile`, {
+      method: 'PUT',
+      headers: Token.headers(),
+      body: JSON.stringify({ username, email })
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.error || 'Update failed');
+    }
+    return r.json();
+  },
+
+  // Change password
+  async changePassword(currentPassword, newPassword) {
+    const r = await fetch(`${BASE_URL}/api/user/change-password`, {
+      method: 'POST',
+      headers: Token.headers(),
+      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.error || 'Password change failed');
+    }
+    return r.json();
   }
 };
 
+// ── Flatten MongoDB sensor doc → flat UI format ───────────────
+// The backend stores data as { bin1: {temp, humidity, soil, gas,...}, bin2: {...}, system: {...} }
+// The UI expects flat keys like temp1, hum1, soil1_percent, gas1_ppm etc.
+function flattenSensorData(json) {
+  const d = json.data || json; // handle both wrapped and unwrapped
+  if (!d) return null;
+
+  const b1 = d.bin1 || {};
+  const b2 = d.bin2 || {};
+  const sys = d.system || {};
+
+  return {
+    // Bin 1
+    temp1:                  b1.temp,
+    hum1:                   b1.humidity,
+    soil1_percent:          b1.soil,
+    gas1_ppm:               b1.gas,
+    ds18b20_temp:           b1.ds18b20,
+    water_level:            b1.ultrasonic,
+    bin1_exhaust_fan_state: b1.fan,
+    bin1_intake_fan_state:  b1.fan,
+    bin1_pump_state:        b1.pump,
+
+    // Bin 2
+    temp2:                  b2.temp,
+    hum2:                   b2.humidity,
+    soil2_percent:          b2.soil,
+    gas2_ppm:               b2.gas,
+    bin2_exhaust_fan_state: b2.fan,
+    bin2_intake_fan_state:  b2.fan,
+    bin2_pump_state:        b2.pump,
+
+    // System
+    battery_percent:        sys.battery_level,
+    charging:               sys.battery_charging,
+    wifi_connected:         sys.wifi_rssi != null,
+    wifi_rssi:              sys.wifi_rssi,
+    uptime:                 sys.uptime,
+
+    // Meta
+    lastUpdate:             d.timestamp ? new Date(d.timestamp).toLocaleTimeString() : '--',
+    espID:                  d.espID || S.activeEspID
+  };
+}
+
+// ── Load devices and populate state ──────────────────────────
+async function loadDevices() {
+  try {
+    const res = await API.getDevices();
+    const devices = res.devices || res;
+    if (!devices || devices.length === 0) {
+      S.bins = [];
+      S.activeEspID = null;
+      renderClaimedBins([]);
+      return;
+    }
+
+    S.bins = devices.map(d => ({
+      bin_id: d.espID,
+      name: d.nickname || d.espID,
+      status: d.mqtt_connected ? 'online' : 'offline',
+      last_seen: d.last_seen
+    }));
+
+    // Set first device as active if none selected
+    if (!S.activeEspID) {
+      S.activeEspID = S.bins[0].bin_id;
+    }
+
+    renderClaimedBins(S.bins);
+    updateGlobalBinDropdown(S.bins);
+  } catch(e) {
+    console.error('Failed to load devices:', e);
+  }
+}
+
+// ── Load user profile ─────────────────────────────────────────
+async function loadProfile() {
+  try {
+    const res = await API.getProfile();
+    S.user = res.user || res;
+    if (S.user) {
+      setText('acc-username', S.user.username || '--');
+      setText('acc-email', S.user.email || '--');
+      setText('acc-last-login', S.user.last_login
+        ? new Date(S.user.last_login).toLocaleString()
+        : '--');
+      setText('dev-loggedin-user', S.user.username);
+    }
+  } catch(e) {
+    console.error('Failed to load profile:', e);
+  }
+}
+
+// ════════════════════════════════════
+// POLLING
+// ════════════════════════════════════
 async function fetchAndRender() {
   document.querySelectorAll('.refresh-btn, .refresh-spin').forEach(b => b.classList.add('spinning'));
   try {
+    if (!S.activeEspID) {
+      // No device selected — just show empty state
+      return;
+    }
     const d = await API.get();
+    if (!d) return;
     S.data = d;
     pushHist(d);
     renderPage(Router.cur(), d);
-    
-    // Refresh modal data if it is currently open
+
     if ($('sensor-detail-modal') && $('sensor-detail-modal').classList.contains('show')) {
       updateSensorModalData(S.activeModalBin, S.activeModalSensor, d);
       if (S.mode[S.activeModalBin] === 'manual') {
@@ -204,11 +375,15 @@ async function fetchAndRender() {
       }
     }
   } catch(e) {
-    // Fix #3: If the ESP32 returns 401 (session expired / rebooted), show login screen
     if (e.message && e.message.includes('401')) {
+      Token.clear();
       Auth.loggedIn = false;
       authShow();
       toast('Session expired — please log in again', 'err');
+    } else if (e.message === 'NO_DEVICE') {
+      // Silently skip — no device claimed yet
+    } else {
+      console.error('Fetch error:', e.message);
     }
   } finally {
     document.querySelectorAll('.refresh-btn, .refresh-spin').forEach(b => b.classList.remove('spinning'));
@@ -253,10 +428,8 @@ function renderHome(d) {
   setText('bat-pct-text', pct + '%');
   setText('water-pct-text', (d.water_level != null ? d.water_level : '--') + '%');
 
-  // Update dynamic battery SVG
   updateBatteryIcon(pct, d.charging || false);
 
-  // Only show temperature if at least one sensor has reported
   if (d.ds18b20_temp != null) {
     setText('home-temp-val', fmt(d.ds18b20_temp) + ' C°');
   } else if (d.temp1 != null || d.temp2 != null) {
@@ -285,9 +458,8 @@ function renderBin(n, d) {
   for (const [k, s] of Object.entries(map)) {
     const v = s.val;
     let stText = 'Optimal';
-    let stClass = 'optimal'; // Defaults to green background
-    
-    // Sync UI with the legacy evaluator logic
+    let stClass = 'optimal';
+
     if (v != null && typeof evaluateCondition === 'function') {
       const res = evaluateCondition(k, v);
       stText = res.status;
@@ -299,15 +471,11 @@ function renderBin(n, d) {
     setText(`b${n}-${k}-val`, v != null ? fmt(v) : '--');
     const sEl = $(`b${n}-${k}-status`);
     if(sEl) sEl.textContent = stText;
-    
-    // Try the exact ID, then fallback to your specific HTML abbreviated IDs
+
     const idMap = { soilMoisture: 'soil', temperature: 'temp', humidity: 'hum', gasLevels: 'gas' };
     let cEl = $(`b${n}-${k}-card`) || $(`b${n}-${idMap[k]}-card`);
-
-    // Apply the class, which triggers your CSS colors!
     if(cEl) cEl.className = 'sensor-card ' + stClass;
 
-    // Update Progress Ring Arc
     const ring = $(`b${n}-${k}-ring`);
     if (ring && v != null) {
       const maxVal = k === 'gasLevels' ? 250 : 100;
@@ -316,12 +484,10 @@ function renderBin(n, d) {
     }
   }
 
-  // Update last-updated timestamp on bin banner
   const now = new Date();
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
   setText(`b${n}-updated`, 'Updated at ' + timeStr);
 
-  // Update dynamic Mode button text and visual style on Bin page
   const mb = $(`b${n}-mode-btn`);
   if(mb){
     const isAuto = S.mode[n] === 'auto';
@@ -329,15 +495,13 @@ function renderBin(n, d) {
     mb.className = `mode-btn ${isAuto ? 'auto' : 'manual'}`;
   }
 }
- 
+
 // ════════════════════════════════════
-// ════════════════════════════════════
-// MODAL MANAGER  — prevents stacking,
-// queues overlapping open() calls
+// MODAL MANAGER
 // ════════════════════════════════════
 const ModalManager = (() => {
-  let _queue   = [];   // pending modal IDs
-  let _current = null; // currently visible modal ID
+  let _queue   = [];
+  let _current = null;
 
   function _show(id) {
     const el = $(id);
@@ -347,27 +511,23 @@ const ModalManager = (() => {
     el.classList.add('show');
   }
 
-  // Open a modal. If one is already open, queue it.
   function open(id) {
     if (_current) { _queue.push(id); return; }
     _show(id);
   }
 
-  // Close the currently visible modal, then show the next queued one.
   function close() {
     if (_current) { $(_current)?.classList.remove('show'); _current = null; }
-    // Safety: clear any stray visible modals
     document.querySelectorAll('.sys-modal.show, .act-modal.show')
       .forEach(m => m.classList.remove('show'));
 
     if (_queue.length > 0) {
-      setTimeout(() => _show(_queue.shift()), 120); // brief gap between modals
+      setTimeout(() => _show(_queue.shift()), 120);
     } else {
       $('sys-modal-overlay').classList.remove('show');
     }
   }
 
-  // Nuclear option — wipe queue and close everything immediately.
   function closeAll() {
     _queue   = [];
     _current = null;
@@ -378,7 +538,6 @@ const ModalManager = (() => {
 
   function current() { return _current; }
 
-  // Esc key closes whichever modal is on top
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && _current) close();
   });
@@ -386,50 +545,44 @@ const ModalManager = (() => {
   return { open, close, closeAll, current };
 })();
 
-// ── Legacy aliases (all existing call-sites unchanged) ────────
-function openModal(id)    { ModalManager.open(id);     }
-function closeTopModal()  { ModalManager.close();      }
-function closeAllModals() { ModalManager.closeAll();   }
+function openModal(id)    { ModalManager.open(id);   }
+function closeTopModal()  { ModalManager.close();    }
+function closeAllModals() { ModalManager.closeAll(); }
 
 // 1. Mode Confirmation Modal
 function openModeModal(binNum) {
   const targetMode = S.mode[binNum] === 'auto' ? 'manual' : 'auto';
-  
+
   $('mode-modal-title').textContent = targetMode === 'auto' ? 'Activate Auto Mode?' : 'Activate Manual Mode?';
-  $('mode-modal-desc').textContent = targetMode === 'auto' 
-    ? 'Turning on auto-mode makes the system operate by itself.' 
+  $('mode-modal-desc').textContent = targetMode === 'auto'
+    ? 'Turning on auto-mode makes the system operate by itself.'
     : 'Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.';
-  
+
   const ill = $('mode-ill-img');
-  if (ill) ill.src = targetMode === 'auto' ? '/data/img/photos/AutoMode.png' : '/data/img/photos/ManualMode.png';
-  
+  if (ill) ill.src = targetMode === 'auto' ? '/img/photos/AutoMode.png' : '/img/photos/ManualMode.png';
+
   const btn = $('mode-confirm-btn');
   btn.onclick = () => {
     S.mode[binNum] = targetMode;
 
-    // --- FORCE UI UPDATE IMMEDIATELY ---
-    // Updates the button on the Bin page
     const mb = $(`b${binNum}-mode-btn`);
     if(mb) {
       const isAuto = targetMode === 'auto';
       mb.innerHTML = `${isAuto ? 'Auto' : 'Manual'}`;
       mb.className = `mode-btn ${isAuto ? 'auto' : 'manual'}`;
     }
-    
-    // Updates the sub-text on the Home page
+
     const hmb = $(`home-b${binNum}-mode`);
     if(hmb) {
       hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode === 'auto' ? 'Auto Mode' : 'Manual Mode'}`;
     }
-    // -----------------------------------
 
-    if(S.data) renderBin(binNum, S.data); 
-    
-    // Re-render modal contents if it happens to be open in the background
+    if(S.data) renderBin(binNum, S.data);
+
     if($('sensor-detail-modal') && $('sensor-detail-modal').classList.contains('show')) {
       openSensorModal(S.activeModalBin, S.activeModalSensor, $('sm-title').textContent, $('sm-icon').src);
     }
-    
+
     closeAllModals();
     toast(`Bin ${binNum} switched to ${targetMode.toUpperCase()} mode`, 'ok');
   };
@@ -437,26 +590,24 @@ function openModeModal(binNum) {
   openModal('mode-switch-modal');
 }
 
-// 2. Sensor Modal (Clickable anytime, Manual only shows actuators)
+// 2. Sensor Detail Modal
 function openSensorModal(binNum, sensorType, title, iconPath) {
   S.activeModalBin = binNum;
   S.activeModalSensor = sensorType;
 
   $('sm-title').textContent = title;
   $('sm-icon').src = iconPath;
-  
-  // Set unit from CFG
+
   if (CFG.OPT[sensorType] && CFG.OPT[sensorType].unit) {
     $('sm-unit').textContent = CFG.OPT[sensorType].unit;
   }
 
   const safeData = S.data || {};
   updateSensorModalData(binNum, sensorType, safeData);
-  
+
   const manualArea = $('sm-manual-area');
   const actGrid = $('sm-actuator-grid');
-  
-  // Magic happens here: Actuators ONLY show if mode is manual
+
   if (S.mode[binNum] === 'manual') {
     manualArea.style.display = 'block';
     populateManualActions(binNum, sensorType, actGrid, safeData);
@@ -475,17 +626,16 @@ function updateSensorModalData(bin, sensor, d) {
     humidity:     b1 ? d.hum1 : d.hum2,
     gasLevels:    b1 ? d.gas1_ppm : d.gas2_ppm
   };
-  
+
   const v = map[sensor];
   $('sm-val').textContent = v != null ? fmt(v) : '--';
 
   let conditionStr = 'Optimal', color = '#6aab7a', clipart = 'Normal.png';
-  
+
   if (v != null && typeof evaluateCondition === 'function') {
     const res = evaluateCondition(sensor, v);
-    clipart = res.wormImage; 
+    clipart = res.wormImage;
     conditionStr = res.status;
-    
     if (res.statusClass === 'critical') color = 'var(--danger)';
     else if (res.statusClass === 'warning') color = 'var(--warn)';
     else color = 'var(--green-accent)';
@@ -494,32 +644,29 @@ function updateSensorModalData(bin, sensor, d) {
   $('sm-status-text').textContent = conditionStr;
   const dot = $('sm-status-ind').querySelector('.dot');
   if(dot) dot.style.background = color;
-  
-  // Encodes spaces safely (e.g., "Too Hot.png" -> "Too%20Hot.png"). 
-  // No need to add .png since your legacy code already includes it!
-  $('sm-worm-img').src = `/data/img/worm-conditions/${encodeURIComponent(clipart)}`;
+
+  $('sm-worm-img').src = `/img/worm-conditions/${encodeURIComponent(clipart)}`;
 }
 
 function populateManualActions(bin, sensor, container, d) {
   const b1 = bin === 1;
   let actuators = [];
-  
- if (sensor === 'temperature') actuators = [
-    {id:`b${bin}-exh`, name:'Fan', icon:'/data/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/api/bin${bin}/exhaust-fan`},
-    {id:`b${bin}-int`, name:'Mist', icon:'/data/img/actuators/MistIcon.svg', state: b1 ? d.bin1_intake_fan_state : d.bin2_intake_fan_state, ep:`/api/bin${bin}/intake-fan`}
+
+  if (sensor === 'temperature') actuators = [
+    {id:`b${bin}-exh`, name:'Fan', icon:'/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/bin${bin}/exhaust-fan`},
+    {id:`b${bin}-int`, name:'Mist', icon:'/img/actuators/MistIcon.svg', state: b1 ? d.bin1_intake_fan_state : d.bin2_intake_fan_state, ep:`/bin${bin}/intake-fan`}
   ];
   else if (sensor === 'soilMoisture') actuators = [
-    {id:`b${bin}-pmp`, name:'Mist', icon:'/data/img/actuators/MistIcon.svg', state: b1 ? d.bin1_pump_state : d.bin2_pump_state, ep:`/api/bin${bin}/pump`}
+    {id:`b${bin}-pmp`, name:'Mist', icon:'/img/actuators/MistIcon.svg', state: b1 ? d.bin1_pump_state : d.bin2_pump_state, ep:`/bin${bin}/pump`}
   ];
   else if (sensor === 'humidity') actuators = [
-    {id:`b${bin}-exh`, name:'Fan', icon:'/data/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/api/bin${bin}/exhaust-fan`},
-    {id:`b${bin}-pmp`, name:'Mist', icon:'/data/img/actuators/MistIcon.svg', state: b1 ? d.bin1_pump_state : d.bin2_pump_state, ep:`/api/bin${bin}/pump`}
+    {id:`b${bin}-exh`, name:'Fan', icon:'/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/bin${bin}/exhaust-fan`},
+    {id:`b${bin}-pmp`, name:'Mist', icon:'/img/actuators/MistIcon.svg', state: b1 ? d.bin1_pump_state : d.bin2_pump_state, ep:`/bin${bin}/pump`}
   ];
   else if (sensor === 'gasLevels') actuators = [
-    {id:`b${bin}-exh`, name:'Fan', icon:'/data/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/api/bin${bin}/exhaust-fan`}
+    {id:`b${bin}-exh`, name:'Fan', icon:'/img/actuators/FanIcon.svg', state: b1 ? d.bin1_exhaust_fan_state : d.bin2_exhaust_fan_state, ep:`/bin${bin}/exhaust-fan`}
   ];
 
- // Draw pill layout toggles
   container.innerHTML = actuators.map(a => `
     <div class="sm-act-box">
       <div class="sm-act-left">
@@ -543,17 +690,16 @@ function populateManualActions(bin, sensor, container, d) {
       try {
         await API.cmd(a.ep, on ? 'on' : 'off');
         toast(`${a.name} turned ${on ? 'ON' : 'OFF'}`, 'ok');
-        setTimeout(fetchAndRender, 1000); 
+        setTimeout(fetchAndRender, 1000);
       } catch(e) {
-        el.checked = !on; 
+        el.checked = !on;
         toast('Failed to trigger command', 'err');
       }
     });
   });
 }
 
-// ── Dynamic Battery SVG Icon ─────────────────────────────────
-// BAT_FILL_W: inner fill area is 20px wide (x=2 to x=22, inside 23.5px shell)
+// ── Battery SVG ──────────────────────────────────────────────
 const BAT_FILL_W = 20;
 
 function updateBatteryIcon(pct, charging) {
@@ -567,30 +713,19 @@ function updateBatteryIcon(pct, charging) {
 
   fillBar.setAttribute('width', fillW.toFixed(1));
 
-  // Color class
   svg.classList.remove('bat-low','bat-medium','bat-good','bat-charging');
-  if (charging) {
-    svg.classList.add('bat-charging');
-  } else if (p <= 20) {
-    svg.classList.add('bat-low');
-  } else if (p <= 50) {
-    svg.classList.add('bat-medium');
-  } else {
-    svg.classList.add('bat-good');
-  }
+  if (charging) { svg.classList.add('bat-charging'); }
+  else if (p <= 20) { svg.classList.add('bat-low'); }
+  else if (p <= 50) { svg.classList.add('bat-medium'); }
+  else { svg.classList.add('bat-good'); }
 
-  // Fill bar color matches svg icon color via CSS inheritance
   fillBar.setAttribute('fill', 'currentColor');
-
-  // Bolt visibility
   if (bolt) bolt.style.display = charging ? '' : 'none';
 }
 
-// Expose for dummy injector
 window.updateBatteryIcon = updateBatteryIcon;
 
-// ── Battery Modal SVG Illustration ──────────────────────────
-// MAX_FILL_W must match the clipPath rect width in index.html (82px)
+// ── Battery Modal SVG ────────────────────────────────────────
 const BAT_MODAL_MAX_W = 88;
 
 function updateBatteryModalSVG(pct, charging, state) {
@@ -601,7 +736,6 @@ function updateBatteryModalSVG(pct, charging, state) {
 
   const p = Math.min(100, Math.max(0, pct || 0));
 
-  // Circle background color by state
   const circleColor = state === 'low'  ? '#c0392b'
                     : state === 'full' ? '#1a5c38'
                     : charging         ? '#22c55e'
@@ -623,11 +757,10 @@ function updateBatteryModalSVG(pct, charging, state) {
 
 window.updateBatteryModalSVG = updateBatteryModalSVG;
 
-// ── Water Modal SVG Illustration ─────────────────────────────
-// Drop interior spans y=18 (tip) to y=164 (base) = 146px total height
-const WATER_DROP_TOP  = 22;   // topmost y the fill can reach (leave tip empty)
-const WATER_DROP_BASE = 164;  // base y of drop interior
-const WATER_DROP_H    = WATER_DROP_BASE - WATER_DROP_TOP; // 142px
+// ── Water Modal SVG ──────────────────────────────────────────
+const WATER_DROP_TOP  = 22;
+const WATER_DROP_BASE = 164;
+const WATER_DROP_H    = WATER_DROP_BASE - WATER_DROP_TOP;
 
 function updateWaterModalSVG(pct, state) {
   const fill      = $('water-modal-fill');
@@ -638,27 +771,19 @@ function updateWaterModalSVG(pct, state) {
   if (!fill) return;
 
   const p = Math.min(100, Math.max(0, pct || 0));
-
-  // Fill height from bottom: p% of the interior height
   const fillH = (p / 100) * WATER_DROP_H;
   const fillY = WATER_DROP_BASE - fillH;
 
-  // Animate fill rising smoothly
   fill.setAttribute('y', fillY.toFixed(1));
   fill.setAttribute('height', fillH.toFixed(1));
 
-  // Wave sits on top surface of fill
-  if (wave) {
-    wave.setAttribute('cy', fillY.toFixed(1));
-  }
+  if (wave) { wave.setAttribute('cy', fillY.toFixed(1)); }
   if (waveGroup) waveGroup.style.display = p > 4 ? '' : 'none';
 
-  // Fill color by state
   const fillColor = state === 'low'  ? 'url(#water-grad-low)'
                   : state === 'full' ? 'url(#water-grad-full)'
                   :                    'url(#water-grad)';
 
-  // Inject state-specific gradients if not present
   const svgDefs = document.querySelector('#water-modal-svg defs');
   if (svgDefs && !document.getElementById('water-grad-low')) {
     svgDefs.insertAdjacentHTML('beforeend', `
@@ -674,30 +799,24 @@ function updateWaterModalSVG(pct, state) {
   }
   fill.setAttribute('fill', fillColor);
 
-  // Background tint
   if (bg) {
     bg.setAttribute('fill', state === 'low'  ? '#fff0f0'
                           : state === 'full' ? '#f0fdf4'
                           :                    '#e8f4fd');
   }
 
-  // Percentage label — white when fill is behind it, dark when not
   if (label) {
     label.textContent = p + '%';
-    // Label sits at y=128; fill starts covering it when fillY < 128
     label.setAttribute('fill', fillY < 118 ? 'white' : '#1e3a5f');
   }
 }
 
 window.updateWaterModalSVG = updateWaterModalSVG;
 
-// ── Temp Modal SVG Thermometer ────────────────────────────────
-// Unified path: top y=12, bulb bottom y=150 → total fill height = 138px
+// ── Temp Modal SVG ───────────────────────────────────────────
 const THERM_TUBE_BASE = 151;
 const THERM_TUBE_H    = 139;
-// Bulb always filled — arc entry at y=113, bulb bottom y=150 → 38px min, use 50 for safety
 const BULB_MIN_H      = 50;
-
 const THERM_MIN = 15;
 const THERM_MAX = 35;
 
@@ -710,11 +829,9 @@ function updateTempModalSVG(tempVal) {
     ? Math.min(1, Math.max(0, (v - THERM_MIN) / (THERM_MAX - THERM_MIN)))
     : 0;
 
-  // Always fill at least the bulb (even when pct=0 / no data), so no empty-grey shows
   const fillH = Math.max(BULB_MIN_H, pct * THERM_TUBE_H);
   const fillY = THERM_TUBE_BASE - fillH;
 
-  // Reset → reflow → animate rise
   tubeFill.setAttribute('height', '0');
   tubeFill.setAttribute('y', THERM_TUBE_BASE);
   tubeFill.getBoundingClientRect();
@@ -733,21 +850,12 @@ function updateTempModalSVG(tempVal) {
 
 window.updateTempModalSVG = updateTempModalSVG;
 
-
-
-// Per-session dismissed flags (reset on page load; "Don't show again" persists via S)
+// ── Status Pills ─────────────────────────────────────────────
 const StatusModal = {
   dismissed: { battery: false, water: false },
-
-  // Thresholds
-  BATTERY_LOW:   20,
-  BATTERY_FULL:  95,
-  WATER_LOW:     20,
-  WATER_FULL:    90,
-
-  // Last known state (to detect transitions)
-  _lastBatState:   null,
-  _lastWaterState: null
+  BATTERY_LOW: 20, BATTERY_FULL: 95,
+  WATER_LOW: 20, WATER_FULL: 90,
+  _lastBatState: null, _lastWaterState: null
 };
 
 function getStatusPillState(type, d) {
@@ -770,21 +878,14 @@ function getStatusPillState(type, d) {
 function updateStatusPillAlerts(d) {
   if (!d) return;
 
-  // ── Battery pill ──
   const batState = getStatusPillState('battery', d);
   const batEl = $('spill-bat');
-  if (batEl) {
-    batEl.classList.toggle('spill-alert', batState === 'low');
-  }
+  if (batEl) { batEl.classList.toggle('spill-alert', batState === 'low'); }
 
-  // ── Water pill ──
   const waterState = getStatusPillState('water', d);
   const waterEl = $('spill-water');
-  if (waterEl) {
-    waterEl.classList.toggle('spill-alert', waterState === 'low');
-  }
+  if (waterEl) { waterEl.classList.toggle('spill-alert', waterState === 'low'); }
 
-  // ── Auto-show modals on state transition (only if not dismissed) ──
   if (batState !== StatusModal._lastBatState) {
     StatusModal._lastBatState = batState;
     if ((batState === 'low' || batState === 'full') && !StatusModal.dismissed.battery) {
@@ -857,17 +958,17 @@ function openStatusModal(type) {
   }
 }
 
-// "Don't show again" — dismissed for this session only
 function dismissStatusModal(type) {
   StatusModal.dismissed[type] = true;
   closeTopModal();
 }
 
-// Expose for dummy injector
 window.openStatusModal = openStatusModal;
 window.StatusModal = StatusModal;
 
-
+// ════════════════════════════════════
+// DASHBOARD / CHARTS
+// ════════════════════════════════════
 function setupDash() {
   if($('go-qi')) $('go-qi').addEventListener('click', () => window.location.hash = '#/quick-insights');
   if($('go-bf')) $('go-bf').addEventListener('click', () => window.location.hash = '#/bin-fluctuation');
@@ -877,15 +978,14 @@ function renderQI() {
   const h = S.hist, bin = 'b' + S.qiBin, data = h[bin][S.qiSens] || [], lbs = h.labels;
   const NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
   const ICONS = {
-    soilMoisture: '/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
-    temperature:  '/data/img/monitoring/Sensor Icons/Temperature Icon.svg',
-    humidity:     '/data/img/monitoring/Sensor Icons/Humidity Icon.svg',
-    gasLevels:    '/data/img/monitoring/Sensor Icons/Gas Icon.svg'
+    soilMoisture: '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
+    temperature:  '/img/monitoring/Sensor Icons/Temperature Icon.svg',
+    humidity:     '/img/monitoring/Sensor Icons/Humidity Icon.svg',
+    gasLevels:    '/img/monitoring/Sensor Icons/Gas Icon.svg'
   };
   const R = CFG.OPT[S.qiSens];
   setText('qi-sensor-heading', NM[S.qiSens]);
 
-  // Update top-bar sensor icon
   const iconEl = $('qi-sensor-icon');
   if(iconEl) iconEl.src = ICONS[S.qiSens];
 
@@ -895,15 +995,14 @@ function renderQI() {
 
   if(data.length){
     const mn = Math.min(...data), mx = Math.max(...data), av = data.reduce((a,b)=>a+b,0) / data.length;
-    const recent = data[data.length - 1]; // <-- Get the most recent reading
-    
+    const recent = data[data.length - 1];
+
     setText('qi-min', fmt(mn)); setText('qi-avg', fmt(av)); setText('qi-max', fmt(mx)); setText('qi-recent', fmt(recent));
     ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => { const u = $(id)?.nextElementSibling; if(u) u.textContent = ' ' + R.unit; });
 
     const res = evaluateCondition(S.qiSens, av);
     setText('qi-insight', res.status + ' conditions detected.');
 
-    // Update insight dot color
     const dot = $('qi-ins-dot');
     if(dot) {
       dot.className = 'qi-ins-dot';
@@ -912,7 +1011,6 @@ function renderQI() {
       else dot.classList.add('warn');
     }
 
-    // Enable wrench button when action is needed
     const actionBtn = $('qi-action-btn');
     const actionDot = $('qi-action-dot');
     const needsAction = res.status !== 'Normal' && res.status !== 'Optimal';
@@ -938,7 +1036,6 @@ function renderQI() {
   }).join('');
 }
 
-// Render the Recent Quick Insights card on home page
 function renderRecentQI() {
   const h = S.hist;
   if(!h) return;
@@ -980,7 +1077,6 @@ function setupQI() {
       b.classList.add('active'); S.qiSens = b.dataset.qiSensor; renderQI();
     });
   });
-
 }
 
 function initBFChart() {
@@ -1002,7 +1098,6 @@ function initBFChart() {
     }
   });
 
-  // Observe wrap for height changes and resize canvas accordingly
   const wrap = canvas.closest('.chart-scroll-wrap');
   if(wrap && window.ResizeObserver) {
     S.bfChartObserver = new ResizeObserver(() => { if(S.bfChart) resizeBFCanvas(); });
@@ -1039,14 +1134,12 @@ function updateBF() {
   const h = S.hist, bin = 'b' + S.bfBin, data = h[bin][S.bfSens] || [], lbs = h.labels;
   const R = CFG.OPT[S.bfSens];
 
-  // 1. Only attempt to update the Chart if it successfully loaded
   if(S.bfChart) {
     S.bfChart.data.labels = [...lbs];
     S.bfChart.data.datasets[0].data = [...data];
-    resizeBFCanvas(); // handles resize + update
+    resizeBFCanvas();
   }
 
-  // 2. 🚨 CONTINUES UPDATING THE UI EVEN IF CHART FAILS 🚨
   const av = data.length ? data.reduce((a,b)=>a+b,0) / data.length : 0;
   setText('bf-avg-val', fmt(av));
   const ue = $('bf-avg-unit'); if(ue) ue.textContent = ' ' + R.unit;
@@ -1058,7 +1151,7 @@ function updateBF() {
   if (data.length) {
     const res = evaluateCondition(S.bfSens, av);
     setText('bf-insights-text', res.status + ' conditions detected on average.');
-    if (wormEl) wormEl.src = `/data/img/worm-conditions/${encodeURIComponent(res.wormImage)}`;
+    if (wormEl) wormEl.src = `/img/worm-conditions/${encodeURIComponent(res.wormImage)}`;
     const needsAction = res.statusClass !== 'optimal';
     if (actionBtn) { actionBtn.disabled = !needsAction; actionBtn.title = needsAction ? 'View recommended actions' : 'No actions needed'; }
     if (actionDot) actionDot.classList.toggle('visible', needsAction);
@@ -1068,160 +1161,45 @@ function updateBF() {
     if (actionDot) actionDot.classList.remove('visible');
   }
 }
+
 // ─────────────────────────────────────────────────────────────
-// WORM INSIGHT RECOMMENDATIONS  (extracted from worm-evaluator)
+// WORM INSIGHTS
 // ─────────────────────────────────────────────────────────────
 function getWormInsight(sensorType, value) {
   const R = CFG.OPT[sensorType];
   if (!R) return { severity: 'ok', title: 'No data', steps: [] };
 
   const v = +value;
-  const fV = v.toFixed(1); // 🚨 Formats the value to 1 decimal place for the text!
+  const fV = v.toFixed(1);
   let severity, title, steps = [];
 
   switch (sensorType) {
-
     case 'temperature':
-      if (v < R.critical_min) {
-        severity = 'critical'; title = `⚠️ CRITICAL — Temperature too low (${fV}°C)`;
-        steps = [
-          'Move worms to a warmer location immediately',
-          'Add insulation or a heating mat under the bin',
-          `Keep temperature between ${R.optimal_min}–${R.optimal_max}°C`,
-          'Monitor every hour until stable'
-        ];
-      } else if (v < R.optimal_min) {
-        severity = 'warning'; title = `⚠️ Temperature below optimal (${fV}°C)`;
-        steps = [
-          'Consider adding a gentle heat source nearby',
-          'Reduce ventilation to retain warmth',
-          `Target range: ${R.optimal_min}–${R.optimal_max}°C`
-        ];
-      } else if (v > R.critical_max) {
-        severity = 'critical'; title = `🔥 CRITICAL — Temperature too high (${fV}°C)`;
-        steps = [
-          'Move bin to a cooler location NOW',
-          'Add ventilation or point a fan at the bin',
-          'Remove any heat sources nearby',
-          'Never expose bin to direct sunlight',
-          `Target range: ${R.optimal_min}–${R.optimal_max}°C`
-        ];
-      } else if (v > R.optimal_max) {
-        severity = 'warning'; title = `⚠️ Temperature above optimal (${fV}°C)`;
-        steps = [
-          'Improve ventilation around the bin',
-          'Move to a cooler area or shade',
-          'Avoid direct heat sources',
-          `Target range: ${R.optimal_min}–${R.optimal_max}°C`
-        ];
-      } else {
-        severity = 'ok'; title = `✅ Temperature is perfect (${fV}°C)`;
-        steps = [`Optimal range ${R.optimal_min}–${R.optimal_max}°C maintained. Keep it up!`];
-      }
+      if (v < R.critical_min) { severity = 'critical'; title = `⚠️ CRITICAL — Temperature too low (${fV}°C)`; steps = ['Move worms to a warmer location immediately','Add insulation or a heating mat under the bin',`Keep temperature between ${R.optimal_min}–${R.optimal_max}°C`,'Monitor every hour until stable']; }
+      else if (v < R.optimal_min) { severity = 'warning'; title = `⚠️ Temperature below optimal (${fV}°C)`; steps = ['Consider adding a gentle heat source nearby','Reduce ventilation to retain warmth',`Target range: ${R.optimal_min}–${R.optimal_max}°C`]; }
+      else if (v > R.critical_max) { severity = 'critical'; title = `🔥 CRITICAL — Temperature too high (${fV}°C)`; steps = ['Move bin to a cooler location NOW','Add ventilation or point a fan at the bin','Remove any heat sources nearby','Never expose bin to direct sunlight',`Target range: ${R.optimal_min}–${R.optimal_max}°C`]; }
+      else if (v > R.optimal_max) { severity = 'warning'; title = `⚠️ Temperature above optimal (${fV}°C)`; steps = ['Improve ventilation around the bin','Move to a cooler area or shade','Avoid direct heat sources',`Target range: ${R.optimal_min}–${R.optimal_max}°C`]; }
+      else { severity = 'ok'; title = `✅ Temperature is perfect (${fV}°C)`; steps = [`Optimal range ${R.optimal_min}–${R.optimal_max}°C maintained. Keep it up!`]; }
       break;
-
     case 'soilMoisture':
-      if (v < R.critical_min) {
-        severity = 'critical'; title = `⚠️ CRITICAL — Soil too dry (${fV}%)`;
-        steps = [
-          'Add water to the bedding immediately',
-          'Spray evenly — avoid pooling in one spot',
-          'Check and repair any drainage issues',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v < R.optimal_min) {
-        severity = 'warning'; title = `⚠️ Soil moisture low (${fV}%)`;
-        steps = [
-          'Gradually add moisture using a spray bottle',
-          'Distribute water evenly across the bedding',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v > R.critical_max) {
-        severity = 'critical'; title = `💧 CRITICAL — Soil too wet (${fV}%)`;
-        steps = [
-          'Stop all watering immediately',
-          'Add dry bedding material (shredded cardboard or paper)',
-          'Improve drainage — check for blockages',
-          'Turn bedding to increase airflow',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v > R.optimal_max) {
-        severity = 'warning'; title = `⚠️ Soil moisture high (${fV}%)`;
-        steps = [
-          'Reduce watering frequency',
-          'Mix in dry bedding to absorb excess moisture',
-          'Improve ventilation',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else {
-        severity = 'ok'; title = `✅ Soil moisture is perfect (${fV}%)`;
-        steps = [`Ideal bedding consistency ${R.optimal_min}–${R.optimal_max}% maintained. Worms are happy!`];
-      }
+      if (v < R.critical_min) { severity = 'critical'; title = `⚠️ CRITICAL — Soil too dry (${fV}%)`; steps = ['Add water to the bedding immediately','Spray evenly — avoid pooling in one spot','Check and repair any drainage issues',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v < R.optimal_min) { severity = 'warning'; title = `⚠️ Soil moisture low (${fV}%)`; steps = ['Gradually add moisture using a spray bottle','Distribute water evenly across the bedding',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v > R.critical_max) { severity = 'critical'; title = `💧 CRITICAL — Soil too wet (${fV}%)`; steps = ['Stop all watering immediately','Add dry bedding material (shredded cardboard or paper)','Improve drainage — check for blockages','Turn bedding to increase airflow',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v > R.optimal_max) { severity = 'warning'; title = `⚠️ Soil moisture high (${fV}%)`; steps = ['Reduce watering frequency','Mix in dry bedding to absorb excess moisture','Improve ventilation',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else { severity = 'ok'; title = `✅ Soil moisture is perfect (${fV}%)`; steps = [`Ideal bedding consistency ${R.optimal_min}–${R.optimal_max}% maintained. Worms are happy!`]; }
       break;
-
     case 'humidity':
-      if (v < R.critical_min) {
-        severity = 'critical'; title = `⚠️ CRITICAL — Humidity too low (${fV}%)`;
-        steps = [
-          'Mist the bin surface regularly',
-          'Cover the bin to retain moisture',
-          'Check ventilation — may be too aggressive',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v < R.optimal_min) {
-        severity = 'warning'; title = `⚠️ Humidity below optimal (${fV}%)`;
-        steps = [
-          'Increase misting frequency',
-          'Reduce ventilation slightly',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v > R.critical_max) {
-        severity = 'critical'; title = `💧 CRITICAL — Humidity too high (${fV}%)`;
-        steps = [
-          'Increase ventilation immediately',
-          'Add dry bedding material',
-          'Check for pooling water inside the bin',
-          'Reduce misting until stable',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else if (v > R.optimal_max) {
-        severity = 'warning'; title = `⚠️ Humidity above optimal (${fV}%)`;
-        steps = [
-          'Improve air circulation around and inside the bin',
-          'Reduce watering frequency',
-          `Target range: ${R.optimal_min}–${R.optimal_max}%`
-        ];
-      } else {
-        severity = 'ok'; title = `✅ Humidity is perfect (${fV}%)`;
-        steps = [`Ideal air moisture ${R.optimal_min}–${R.optimal_max}% maintained. Conditions are excellent!`];
-      }
+      if (v < R.critical_min) { severity = 'critical'; title = `⚠️ CRITICAL — Humidity too low (${fV}%)`; steps = ['Mist the bin surface regularly','Cover the bin to retain moisture','Check ventilation — may be too aggressive',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v < R.optimal_min) { severity = 'warning'; title = `⚠️ Humidity below optimal (${fV}%)`; steps = ['Increase misting frequency','Reduce ventilation slightly',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v > R.critical_max) { severity = 'critical'; title = `💧 CRITICAL — Humidity too high (${fV}%)`; steps = ['Increase ventilation immediately','Add dry bedding material','Check for pooling water inside the bin','Reduce misting until stable',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else if (v > R.optimal_max) { severity = 'warning'; title = `⚠️ Humidity above optimal (${fV}%)`; steps = ['Improve air circulation around and inside the bin','Reduce watering frequency',`Target range: ${R.optimal_min}–${R.optimal_max}%`]; }
+      else { severity = 'ok'; title = `✅ Humidity is perfect (${fV}%)`; steps = [`Ideal air moisture ${R.optimal_min}–${R.optimal_max}% maintained. Conditions are excellent!`]; }
       break;
-
     case 'gasLevels':
-      if (v > R.critical_max) {
-        severity = 'critical'; title = `☠️ CRITICAL — Ammonia toxic (${fV} ppm)`;
-        steps = [
-          'Stop feeding the bin immediately',
-          'Turn the bedding to release trapped gases',
-          'Add carbon-rich material (shredded paper or cardboard)',
-          'Increase ventilation right away',
-          'Remove any rotting food from the bin',
-          `Safe level: below ${R.optimal_max} ppm`
-        ];
-      } else if (v > R.optimal_max) {
-        severity = 'warning'; title = `⚠️ Ammonia levels elevated (${fV} ppm)`;
-        steps = [
-          'Reduce protein-rich food in feedings',
-          'Add more carbon material to balance',
-          'Aerate by turning the bedding',
-          `Safe level: below ${R.optimal_max} ppm`
-        ];
-      } else {
-        severity = 'ok'; title = `✅ Gas levels are safe (${fV} ppm)`;
-        steps = [`Ammonia well-controlled below ${R.optimal_max} ppm. Bin chemistry is balanced!`];
-      }
+      if (v > R.critical_max) { severity = 'critical'; title = `☠️ CRITICAL — Ammonia toxic (${fV} ppm)`; steps = ['Stop feeding the bin immediately','Turn the bedding to release trapped gases','Add carbon-rich material (shredded paper or cardboard)','Increase ventilation right away','Remove any rotting food from the bin',`Safe level: below ${R.optimal_max} ppm`]; }
+      else if (v > R.optimal_max) { severity = 'warning'; title = `⚠️ Ammonia levels elevated (${fV} ppm)`; steps = ['Reduce protein-rich food in feedings','Add more carbon material to balance','Aerate by turning the bedding',`Safe level: below ${R.optimal_max} ppm`]; }
+      else { severity = 'ok'; title = `✅ Gas levels are safe (${fV} ppm)`; steps = [`Ammonia well-controlled below ${R.optimal_max} ppm. Bin chemistry is balanced!`]; }
       break;
-
     default:
       severity = 'ok'; title = 'No insight available'; steps = [];
   }
@@ -1229,18 +1207,15 @@ function getWormInsight(sensorType, value) {
   return { severity, title, steps };
 }
 
-// Render worm insight card into a container element
 function renderWormInsightInto(container, sensorType, value) {
   const { severity, title, steps } = getWormInsight(sensorType, value);
-
   const C = {
     critical: { bg: '#fff4f4', border: '#f5c6c6', dot: '#ef4444', badge: '#ef4444', label: 'CRITICAL' },
     warning:  { bg: '#fffbf0', border: '#f0dda0', dot: '#d97706', badge: '#d97706', label: 'WARNING'  },
     ok:       { bg: '#f2faf4', border: '#b5d9be', dot: '#3a6b35', badge: '#3a6b35', label: 'OPTIMAL'  }
   }[severity];
 
-  // Strip the emoji prefix from title for cleaner display
-  const cleanTitle = title.replace(/^[⚠️🔥💧☠️✅]+\s*(CRITICAL[:\s—–-]*)?(WARNING[:\s—–-]*)?(URGENT[:\s—–-]*)?/i, '').trim();
+  const cleanTitle = title.replace(/^[⚠️🔥💧☠️✅]+\s*(CRITICAL[\s—–-]*)?(WARNING[\s—–-]*)?(URGENT[\s—–-]*)?/i, '').trim();
 
   container.innerHTML = `
     <div class="wi-card" style="background:${C.bg}; border-color:${C.border};">
@@ -1260,14 +1235,11 @@ function renderWormInsightInto(container, sensorType, value) {
   `;
 }
 
-// ─────────────────────────────────────────────────────────────
-// ACTIONS MODALS  (BF + QI — text recommendations)
-// ─────────────────────────────────────────────────────────────
 const MODAL_ICON_PATHS = {
-  soilMoisture: '/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
-  temperature:  '/data/img/monitoring/Sensor Icons/Temperature Icon.svg',
-  humidity:     '/data/img/monitoring/Sensor Icons/Humidity Icon.svg',
-  gasLevels:    '/data/img/monitoring/Sensor Icons/Gas Icon.svg'
+  soilMoisture: '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
+  temperature:  '/img/monitoring/Sensor Icons/Temperature Icon.svg',
+  humidity:     '/img/monitoring/Sensor Icons/Humidity Icon.svg',
+  gasLevels:    '/img/monitoring/Sensor Icons/Gas Icon.svg'
 };
 const MODAL_NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
 
@@ -1312,16 +1284,9 @@ function setupBF() {
       b.classList.add('active'); S.bfSens = b.dataset.bfSensor;
       setText('bf-sensor-heading', { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' }[S.bfSens]);
       const ue = $('bf-avg-unit'); if(ue) ue.textContent = ' ' + CFG.OPT[S.bfSens].unit;
-
       const bfSensorIcon = $('bf-sensor-icon');
       if(bfSensorIcon) {
-        const iconPaths = {
-          soilMoisture: '/data/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
-          temperature:  '/data/img/monitoring/Sensor Icons/Temperature Icon.svg',
-          humidity:     '/data/img/monitoring/Sensor Icons/Humidity Icon.svg',
-          gasLevels:    '/data/img/monitoring/Sensor Icons/Gas Icon.svg'
-        };
-        bfSensorIcon.src = iconPaths[S.bfSens];
+        bfSensorIcon.src = MODAL_ICON_PATHS[S.bfSens];
       }
       updateBF();
     });
@@ -1332,17 +1297,16 @@ function renderSettings(d) {
   const badge = $('dev-conn');
   if(badge){ badge.textContent = d.wifi_connected ? 'Connected' : 'Offline'; badge.className = 'dev-badge' + (d.wifi_connected ? ' online' : ''); }
   setText('dev-last-update', d.lastUpdate || '--');
-  
-  // Refresh WiFi Manager status bar whenever settings page is rendered
-  wmLoadStatus();
+  setText('dev-id', S.activeEspID ? `ESP32-S3 · ID: ${S.activeEspID}` : '--');
 
-  // --- NEW: Load Profile and Bins when navigating to Settings ---
   if (S.user) {
-    setText('acc-username', S.user.username);
-    setText('acc-email', S.user.email);
-    setText('acc-last-login', S.user.last_login);
+    setText('acc-username', S.user.username || '--');
+    setText('acc-email', S.user.email || '--');
+    setText('acc-last-login', S.user.last_login
+      ? new Date(S.user.last_login).toLocaleString()
+      : '--');
   }
-  
+
   if (S.bins) {
     renderClaimedBins(S.bins);
   }
@@ -1356,7 +1320,6 @@ const Auth = {
   username: ''
 };
 
-// ── Show / hide auth overlay ─────────
 function authShow() {
   const ov = $('auth-overlay');
   if (ov) ov.classList.add('visible');
@@ -1367,13 +1330,11 @@ function authHide() {
   if (ov) ov.classList.remove('visible');
 }
 
-// ── Tab switching ────────────────────
 function authTab(tab) {
   ['login','register','forgot','reset'].forEach(t => {
     const f = $('auth-form-' + t);
     if (f) f.style.display = t === tab ? '' : 'none';
   });
-  // Only show tab buttons for login/register
   document.querySelectorAll('.auth-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
@@ -1382,7 +1343,6 @@ function authTab(tab) {
   authClearBanner();
 }
 
-// ── Banner ───────────────────────────
 function authBanner(msg, type='err') {
   const b = $('auth-banner');
   if (!b) return;
@@ -1396,7 +1356,6 @@ function authClearBanner() {
   if (b) b.style.display = 'none';
 }
 
-// ── Password visibility toggle ───────
 function authTogglePw(inputId, btn) {
   const inp = $(inputId);
   if (!inp) return;
@@ -1404,15 +1363,12 @@ function authTogglePw(inputId, btn) {
   inp.type = show ? 'text' : 'password';
   const eyeImg = btn.querySelector('.auth-eye-img');
   if (eyeImg) {
-    eyeImg.src = show
-      ? '/data/img/auth-icons/openEyePassIcon.png'
-      : '/data/img/auth-icons/hiddenPassIcon.svg';
+    eyeImg.src = show ? '/img/auth-icons/openEyePassIcon.png' : '/img/auth-icons/hiddenPassIcon.svg';
   } else {
     btn.textContent = show ? '🙈' : '👁';
   }
 }
 
-// ── Set button loading state ─────────
 function authSetLoading(btnId, loading, label) {
   const btn = $(btnId);
   if (!btn) return;
@@ -1431,24 +1387,28 @@ async function authLogin() {
   authClearBanner();
 
   try {
-    const r = await fetch('/login', {
+    const r = await fetch(`${BASE_URL}/api/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
     });
     const d = await r.json();
-    if (d.success) {
+    if (d.success && d.token) {
+      Token.set(d.token);
       Auth.loggedIn = true;
-      Auth.username = d.username || username;
+      Auth.username = d.user?.username || username;
       authHide();
       setText('dev-loggedin-user', Auth.username);
+      // Load devices then start polling
+      await loadProfile();
+      await loadDevices();
       startPolling();
       toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     } else {
       authBanner(d.error || 'Invalid credentials.');
     }
   } catch(e) {
-    authBanner('Could not reach device. Are you on the AVONIC network?');
+    authBanner('Could not reach server. Check your connection.');
   } finally {
     authSetLoading('login-submit', false, 'Log In');
   }
@@ -1466,20 +1426,33 @@ async function authRegister() {
   authClearBanner();
 
   try {
-    const r = await fetch('/register', {
+    const r = await fetch(`${BASE_URL}/api/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password })
     });
     const d = await r.json();
     if (d.success) {
-      authBanner('Account created! Please log in.', 'ok');
-      setTimeout(() => authTab('login'), 1500);
+      // Auto-login after register
+      if (d.token) {
+        Token.set(d.token);
+        Auth.loggedIn = true;
+        Auth.username = d.user?.username || username;
+        authHide();
+        setText('dev-loggedin-user', Auth.username);
+        await loadProfile();
+        await loadDevices();
+        startPolling();
+        toast('Account created! Add a device to get started.', 'ok');
+      } else {
+        authBanner('Account created! Please log in.', 'ok');
+        setTimeout(() => authTab('login'), 1500);
+      }
     } else {
       authBanner(d.error || 'Registration failed.');
     }
   } catch(e) {
-    authBanner('Could not reach device. Are you on the AVONIC network?');
+    authBanner('Could not reach server. Check your connection.');
   } finally {
     authSetLoading('register-submit', false, 'Create Account');
   }
@@ -1494,20 +1467,20 @@ async function authForgot() {
   authClearBanner();
 
   try {
-    const r = await fetch('/api/forgot-password', {
+    const r = await fetch(`${BASE_URL}/api/password/reset-request`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
     const d = await r.json();
     if (d.success) {
-      authBanner('Request sent! Note: this requires the device to be connected to the internet via MQTT. Enter your token below once received.', 'ok');
+      authBanner('Reset email sent! Check your inbox and enter the token below.', 'ok');
       setTimeout(() => authTab('reset'), 3000);
     } else {
       authBanner(d.error || 'Request failed.');
     }
   } catch(e) {
-    authBanner('Could not reach device.');
+    authBanner('Could not reach server.');
   } finally {
     authSetLoading('forgot-submit', false, 'Send Reset Link');
   }
@@ -1523,308 +1496,261 @@ async function authReset() {
   authClearBanner();
 
   try {
-    const r = await fetch('/api/reset-password', {
+    const r = await fetch(`${BASE_URL}/api/password/reset`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, new_password: newPassword })
     });
     const d = await r.json();
     if (d.success) {
-      authBanner('Reset submitted! This requires an active internet connection on the device. If it works, log in with your new password.', 'ok');
-      setTimeout(() => authTab('login'), 3500);
+      authBanner('Password reset! Please log in with your new password.', 'ok');
+      setTimeout(() => authTab('login'), 3000);
     } else {
-      authBanner(d.error || 'Reset failed. Make sure the device is connected to the internet.');
+      authBanner(d.error || 'Reset failed. Token may have expired.');
     }
   } catch(e) {
-    authBanner('Could not reach device.');
+    authBanner('Could not reach server.');
   } finally {
     authSetLoading('reset-submit', false, 'Reset Password');
   }
 }
 
 // ── LOGOUT ───────────────────────────
+function openLogoutModal() {
+  openModal('logout-confirm-modal');
+}
+
 async function authLogout() {
-  try {
-    await fetch('/logout');
-  } catch(e) {}
+  Token.clear();
   Auth.loggedIn = false;
   Auth.username = '';
+  S.data = null;
+  S.bins = [];
+  S.activeEspID = null;
+  S.user = null;
+  closeAllModals();
   authTab('login');
   authShow();
   toast('Logged out', '');
 }
 
-// ── DEV BYPASS ───────────────────────
-function devBypassLogin() {
-  Auth.loggedIn = true;
-  Auth.username = 'dev';
-  authHide();
-  const el = $('dev-loggedin-user');
-  if (el) el.textContent = 'dev (bypassed)';
-  startPolling();
-  toast('⚡ Dev bypass — skipped login', 'ok');
-}
-
-// ── Settings: Reset Registration ─────
-async function settingsResetReg() {
-  const pw = prompt('Enter your current password to reset registration:');
-  if (!pw) return;
-  try {
-    const r = await fetch('/api/reset-registration', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `password=${encodeURIComponent(pw)}`
-    });
-    const d = await r.json();
-    if (d.success) {
-      toast('Registration reset. Device restarting…', 'ok');
-      setTimeout(() => { authLogout(); }, 3000);
-    } else {
-      toast(d.error || 'Reset failed', 'err');
-    }
-  } catch(e) { toast('Request failed', 'err'); }
-}
-
-// ── Settings: Factory Reset ──────────
-async function settingsFactoryReset() {
-  const confirmed = prompt('Type FACTORY RESET to confirm. This wipes everything.');
-  if (confirmed !== 'FACTORY RESET') { toast('Cancelled', ''); return; }
-  const pw = prompt('Enter your password:');
-  if (!pw) return;
-  try {
-    const r = await fetch('/api/factory-reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `password=${encodeURIComponent(pw)}&confirm=FACTORY%20RESET`
-    });
-    const d = await r.json();
-    if (d.success) {
-      toast('Factory reset complete. Device restarting…', 'ok');
-      setTimeout(() => authLogout(), 3000);
-    } else {
-      toast(d.error || 'Factory reset failed', 'err');
-    }
-  } catch(e) { toast('Request failed', 'err'); }
-}
-
-// ── Fetch device ID on load ──────────
-async function fetchDeviceID() {
-  try {
-    const r = await fetch('/api/device-id');
-    if (!r.ok) return;
-    const d = await r.json();
-    setText('dev-id', `ESP32-S3 · ID: ${d.device_id || '--'}`);
-  } catch(e) {}
-}
-
 // ════════════════════════════════════
-// WIFI MANAGER
+// SETTINGS — Device Management
 // ════════════════════════════════════
-const WM = {
-  selectedSSID: '',
-  scanning: false
-};
 
-async function wmLoadStatus() {
-  try {
-    const r = await fetch('/api/wifi/status', { cache: 'no-store' });
-    if (!r.ok) return;
-    const d = await r.json();
-    wmRenderStatus(d);
-  } catch(e) {
-    // Silent fail — device may be offline
-  }
-}
+function renderClaimedBins(binsArray) {
+  const container = document.getElementById('claimed-bins-list');
+  if (!container) return;
 
-function wmRenderStatus(d) {
-  const ssidEl = $('wm-current-ssid');
-  const ipEl   = $('wm-current-ip');
-  const actEl  = $('wm-status-actions');
-  const iconEl = $('wm-signal-icon');
-
-  if (d.connected) {
-    if (ssidEl) ssidEl.textContent = d.ssid || '--';
-    if (ipEl)   ipEl.textContent   = d.ip   || '--';
-    if (iconEl) iconEl.style.color = 'var(--green-mid)';
-
-    // Fix #5: also populate the settings device info rows
-    setText('dev-wifi', d.ssid || '--');
-    setText('dev-ip',   d.ip   || '--');
-
-    if (actEl) {
-      actEl.innerHTML = `
-        <button class="wm-btn-disconnect" onclick="wmDisconnect()">Disconnect</button>
-        <button class="wm-btn-forget" onclick="wmForget()">Forget</button>
-      `;
-    }
-  } else {
-    if (ssidEl) ssidEl.textContent = 'Not connected';
-    if (ipEl)   ipEl.textContent   = '--';
-    if (iconEl) iconEl.style.color = 'var(--text-muted)';
-    setText('dev-wifi', 'Not connected');
-    setText('dev-ip',   '--');
-    if (actEl)  actEl.innerHTML    = '';
-  }
-}
-
-function wmSignalBars(rssi) {
-  // Returns 1–4 based on RSSI
-  if (rssi >= -55) return 4;
-  if (rssi >= -67) return 3;
-  if (rssi >= -78) return 2;
-  return 1;
-}
-
-async function wmScan() {
-  if (WM.scanning) return;
-  WM.scanning = true;
-
-  const icon = $('wm-scan-icon');
-  const list = $('wm-net-list');
-  const ph   = $('wm-placeholder');
-
-  if (icon) icon.classList.add('spinning');
-  if (list) list.innerHTML = '<div class="wm-placeholder">Scanning...</div>';
-  wmCloseForm();
-
-  try {
-    const r = await fetch('/api/wifi/scan', { cache: 'no-store' });
-    if (!r.ok) throw new Error('Scan failed');
-    const d = await r.json();
-
-    // Also refresh status to know current SSID
-    let status = { connected: false, ssid: '' };
-    try {
-      const sr = await fetch('/api/wifi/status', { cache: 'no-store' });
-      if (sr.ok) status = await sr.json();
-    } catch(e) {}
-
-    wmRenderStatus(status);
-    wmRenderNetworks(d.networks || [], status.ssid || '');
-  } catch(e) {
-    if (list) list.innerHTML = '<div class="wm-placeholder">Scan failed. Try again.</div>';
-    toast('WiFi scan failed', 'err');
-  } finally {
-    WM.scanning = false;
-    if (icon) icon.classList.remove('spinning');
-  }
-}
-
-function wmRenderNetworks(networks, connectedSSID) {
-  const list = $('wm-net-list');
-  if (!list) return;
-
-  if (!networks.length) {
-    list.innerHTML = '<div class="wm-placeholder">No networks found.</div>';
+  if (!binsArray || binsArray.length === 0) {
+    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
+    updateGlobalBinDropdown([]);
     return;
   }
 
-  // Sort: connected first, then by signal strength
-  networks.sort((a, b) => {
-    if (a.ssid === connectedSSID) return -1;
-    if (b.ssid === connectedSSID) return 1;
-    return b.rssi - a.rssi;
-  });
-
-  list.innerHTML = networks.map(n => {
-    const isConnected = n.ssid === connectedSSID;
-    const bars = wmSignalBars(n.rssi);
-    const lock  = n.encryption !== 'open' ? '🔒' : '🔓';
-
-    const barsHtml = [1,2,3,4].map(i =>
-      `<span style="height:${i * 3 + 2}px" class="${i <= bars ? 'active' : ''}"></span>`
-    ).join('');
-
+  container.innerHTML = binsArray.map(bin => {
+    const safeName = (bin.name || 'Unnamed Bin').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     return `
-      <div class="wm-net-item ${isConnected ? 'is-connected' : ''}"
-           onclick="${isConnected ? '' : `wmSelectNetwork('${n.ssid.replace(/'/g, "\\'")}')`}">
-        <div class="wm-net-left">
-          <div class="wm-net-icon">${lock}</div>
-          <div>
-            <div class="wm-net-name">${n.ssid || '(Hidden)'}</div>
-            <div class="wm-net-enc">${n.encryption} · ch${n.channel}</div>
-          </div>
+    <div class="claimed-bin-card">
+      <div class="bin-visual-header">
+        <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">×</button>
+        <img src="/img/claim-bin/ClaimBinIcon.svg" alt="Bin" class="bin-image">
+      </div>
+      <div class="bin-card-info">
+        <div class="claimed-bin-name" onclick="openRenameBinModal('${bin.bin_id}', '${safeName}')">
+          ${bin.name || 'Unnamed Bin'}
         </div>
-        <div class="wm-net-right">
-          <div class="wm-rssi-bars">${barsHtml}</div>
-          ${isConnected ? '<span class="wm-connected-badge">Connected</span>' : ''}
+        <div class="claimed-bin-id">${bin.bin_id}</div>
+        <div class="bin-status-chip ${bin.status === 'online' ? 'online' : 'offline'}">
+          ${bin.status === 'online' ? 'Connected' : 'Offline'}
         </div>
       </div>
-    `;
+    </div>`;
   }).join('');
+
+  updateGlobalBinDropdown(binsArray);
 }
 
-function wmSelectNetwork(ssid) {
-  WM.selectedSSID = ssid;
-  const form  = $('wm-connect-form');
-  const label = $('wm-cf-ssid');
-  const input = $('wm-pw-input');
-  if (form)  form.style.display = 'block';
-  if (label) label.textContent   = ssid;
-  if (input) { input.value = ''; input.focus(); }
+function confirmDeleteBin(binId) {
+  document.getElementById('confirm-modal-title').textContent = "Unclaim Bin";
+  document.getElementById('confirm-modal-desc').textContent = `Are you sure you want to remove ${binId}? This cannot be undone.`;
+  document.getElementById('rename-input-container').style.display = 'none';
+
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = () => { handleUnclaimBin(binId); };
+
+  openModal('confirm-action-modal');
 }
 
-function wmCloseForm() {
-  const form = $('wm-connect-form');
-  if (form) form.style.display = 'none';
-  WM.selectedSSID = '';
+function openRenameBinModal(binId, currentName) {
+  document.getElementById('confirm-modal-title').textContent = "Rename Bin";
+  document.getElementById('confirm-modal-desc').textContent = "Enter a new nickname for this bin:";
+
+  const inputContainer = document.getElementById('rename-input-container');
+  const inputField = document.getElementById('new-bin-nickname');
+  inputContainer.style.display = 'block';
+  inputField.value = currentName;
+
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = () => {
+    const newName = inputField.value.trim();
+    if (!newName) return toast('Name cannot be empty', 'err');
+    updateBinNickname(binId, newName);
+  };
+
+  openModal('confirm-action-modal');
 }
 
-async function wmConnect() {
-  const ssid  = WM.selectedSSID;
-  const pw    = ($('wm-pw-input') || {}).value || '';
-  const btn   = $('wm-connect-submit');
-
-  if (!ssid) return;
-
-  if (btn) { btn.disabled = true; btn.textContent = 'Connecting...'; }
-
+async function updateBinNickname(binId, newName) {
   try {
-    const r = await fetch('/api/wifi/connect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ssid, password: pw })
-    });
-    const d = await r.json();
-    if (d.success) {
-      toast(`Connecting to ${ssid}…`, 'ok');
-      wmCloseForm();
-      // Poll status after a delay to let the ESP32 connect
-      setTimeout(() => wmLoadStatus(), 5000);
-      setTimeout(() => wmLoadStatus(), 10000);
-    } else {
-      toast(d.error || 'Connection failed', 'err');
-    }
+    await API.renameDevice(binId, newName);
+    const bin = S.bins.find(b => b.bin_id === binId);
+    if (bin) bin.name = newName;
+    renderClaimedBins(S.bins);
+    updateGlobalBinDropdown(S.bins);
+    closeTopModal();
+    toast('Name updated', 'ok');
   } catch(e) {
-    toast('Connection request failed', 'err');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Connect'; }
+    toast(e.message || 'Failed to rename bin', 'err');
   }
 }
 
-async function wmDisconnect() {
+async function handleUnclaimBin(binId) {
   try {
-    const r = await fetch('/api/wifi/disconnect', { method: 'POST' });
-    const d = await r.json();
-    if (d.success) {
-      toast('Disconnected from WiFi', 'ok');
-      setTimeout(wmLoadStatus, 1000);
-    } else {
-      toast(d.error || 'Failed to disconnect', 'err');
+    await API.unclaimDevice(binId);
+    S.bins = S.bins.filter(b => b.bin_id !== binId);
+    if (S.activeEspID === binId) {
+      S.activeEspID = S.bins.length > 0 ? S.bins[0].bin_id : null;
     }
+    renderClaimedBins(S.bins);
+    updateGlobalBinDropdown(S.bins);
+    closeTopModal();
+    toast(`Bin ${binId} removed`, 'ok');
   } catch(e) {
-    toast('Disconnect failed', 'err');
+    toast(e.message || 'Failed to unclaim bin', 'err');
   }
 }
 
-async function wmForget() {
-  const ssid = ($('wm-current-ssid') || {}).textContent || 'this network';
-  const confirmed = confirm(`Forget "${ssid}"? The device will disconnect and you'll need to reconnect manually.`);
-  if (!confirmed) return;
+async function handleClaimBin() {
+  const code = document.getElementById('claim-code-input')?.value?.trim();
+  if (!code) return toast('Please enter a device ID (e.g. ESP-ABCD1234)', 'err');
 
-  // Forget = disconnect + erase credentials (same endpoint — ESP32 calls WiFi.disconnect(true, true))
-  await wmDisconnect();
-  toast(`Forgot ${ssid}`, '');
+  try {
+    await API.claimDevice(code.toUpperCase());
+    await loadDevices(); // Refresh device list
+    closeTopModal();
+    toast('Bin claimed successfully!', 'ok');
+  } catch(e) {
+    toast(e.message || 'Failed to claim bin', 'err');
+  }
+}
+
+function updateGlobalBinDropdown(binsArray) {
+  const select = document.getElementById('global-bin-select');
+  if(!select) return;
+
+  if (!binsArray || binsArray.length === 0) {
+    select.innerHTML = '<option value="" disabled>No bins connected</option>';
+    return;
+  }
+
+  select.innerHTML = binsArray.map(bin => {
+    const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
+    return `<option value="${bin.bin_id}">${displayName}</option>`;
+  }).join('');
+
+  const activeBinId = S.activeEspID || binsArray[0].bin_id;
+  select.value = activeBinId;
+}
+
+function handleGlobalBinChange() {
+  const select = document.getElementById('global-bin-select');
+  const selectedId = select.value;
+  if (!selectedId) return;
+
+  S.activeEspID = selectedId;
+
+  // Clear old history when switching bins
+  S.hist = {
+    labels:[],
+    b1:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] },
+    b2:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] }
+  };
+
+  fetchAndRender(); // Immediately fetch the selected device's data
+
+  const bin = S.bins.find(b => b.bin_id === selectedId);
+  const icon = bin?.status === 'offline' ? '🔴' : '🟢';
+  toast(icon + ' ' + (bin?.name || selectedId), 'ok');
+}
+
+// ════════════════════════════════════
+// SETTINGS — Profile Management
+// ════════════════════════════════════
+function openEditProfileModal() {
+  const currentUsername = document.getElementById('acc-username').textContent;
+  const currentEmail = document.getElementById('acc-email').textContent;
+
+  document.getElementById('edit-username').value = currentUsername === 'Loading...' ? '' : currentUsername;
+  document.getElementById('edit-email').value = currentEmail === '--' ? '' : currentEmail;
+
+  openModal('edit-profile-modal');
+}
+
+async function handleUpdateProfile() {
+  const newUsername = document.getElementById('edit-username').value.trim();
+  const newEmail = document.getElementById('edit-email').value.trim();
+
+  if (!newUsername || !newEmail) return toast('All fields are required', 'err');
+
+  try {
+    await API.updateProfile(newUsername, newEmail);
+    if (S.user) { S.user.username = newUsername; S.user.email = newEmail; }
+    Auth.username = newUsername;
+    document.getElementById('acc-username').textContent = newUsername;
+    document.getElementById('acc-email').textContent = newEmail;
+    setText('dev-loggedin-user', newUsername);
+    closeTopModal();
+    toast('Profile updated successfully!', 'ok');
+  } catch(e) {
+    toast(e.message || 'Failed to update profile', 'err');
+  }
+}
+
+function openChangePasswordModal() {
+  document.getElementById('change-pw-current').value = '';
+  document.getElementById('change-pw-new').value = '';
+  document.getElementById('change-pw-repeat').value = '';
+  openModal('change-password-modal');
+}
+
+async function handleChangePassword() {
+  const current = document.getElementById('change-pw-current').value;
+  const newPw = document.getElementById('change-pw-new').value;
+  const repeat = document.getElementById('change-pw-repeat').value;
+
+  if (!current || !newPw || !repeat) return toast('All fields are required', 'err');
+  if (newPw.length < 6) return toast('Password must be at least 6 characters', 'err');
+  if (newPw !== repeat) return toast('Passwords do not match', 'err');
+
+  closeTopModal();
+  document.getElementById('confirm-modal-title').textContent = "Confirm Change";
+  document.getElementById('confirm-modal-desc').textContent = "Updating your password will require you to log back in.";
+  document.getElementById('rename-input-container').style.display = 'none';
+
+  const confirmBtn = document.getElementById('confirm-modal-btn');
+  confirmBtn.onclick = async () => {
+    try {
+      await API.changePassword(current, newPw);
+      toast('Password updated. Please log in again.', 'ok');
+      setTimeout(() => authLogout(), 1500);
+    } catch (e) {
+      toast(e.message || 'Failed to update password', 'err');
+    }
+    closeTopModal();
+  };
+
+  openModal('confirm-action-modal');
 }
 
 // ════════════════════════════════════
@@ -1842,8 +1768,7 @@ function toast(msg, type='') {
 // INIT
 // ════════════════════════════════════
 
-// Show auth screen immediately — don't wait for DOMContentLoaded
-// This prevents any flash of the dashboard before login
+// Show auth screen early to prevent dashboard flash
 (function() {
   function showAuthEarly() {
     const ov = document.getElementById('auth-overlay');
@@ -1856,7 +1781,7 @@ function toast(msg, type='') {
   }
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   Router.init();
   setupSidebar();
   setupDash();
@@ -1864,7 +1789,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBF();
   $('refresh-btn')?.addEventListener('click', fetchAndRender);
 
-  // Allow Enter key to submit login / register
+  // Enter key bindings
   ['login-password', 'login-username'].forEach(id => {
     $(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') authLogin(); });
   });
@@ -1874,350 +1799,35 @@ document.addEventListener('DOMContentLoaded', () => {
   $('forgot-email')?.addEventListener('keydown', e => { if (e.key === 'Enter') authForgot(); });
   $('reset-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') authReset(); });
 
-  fetchDeviceID();
-});
-
-
-// ── LOGOUT MODAL ─────────────────────
-function openLogoutModal() {
-  openModal('logout-confirm-modal');
-}
-
-// ── LOGOUT ───────────────────────────
-async function authLogout() {
-  try {
-    await fetch('/logout');
-  } catch(e) {}
-  Auth.loggedIn = false;
-  Auth.username = '';
-  
-  closeAllModals(); // <-- Added to hide the modal on success
-  
-  authTab('login');
-  authShow();
-  toast('Logged out', '');
-}
-
-function renderClaimedBins(binsArray) {
-  const container = document.getElementById('claimed-bins-list');
-  if (!container) return;
-
-  if (!binsArray || binsArray.length === 0) {
-    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
-    updateGlobalBinDropdown([]);
-    return;
-  }
-
-  container.innerHTML = binsArray.map(bin => {
-    // Safely escape name for use inside an onclick attribute single-quoted string
-    const safeName = (bin.name || 'Unnamed Bin').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    return `
-    <div class="claimed-bin-card">
-      <div class="bin-visual-header">
-        <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">×</button>
-        <img src="/data/img/claim-bin/ClaimBinIcon.svg" alt="Bin" class="bin-image">
-      </div>
-      <div class="bin-card-info">
-        <div class="claimed-bin-name" onclick="openRenameBinModal('${bin.bin_id}', '${safeName}')">
-          ${bin.name || 'Unnamed Bin'}
-        </div>
-        <div class="claimed-bin-id">${bin.bin_id}</div>
-        <div class="bin-status-chip ${bin.status === 'online' ? 'online' : 'offline'}">
-          ${bin.status === 'online' ? 'Connected' : 'Offline'}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Keep the topbar bin selector in sync
-  updateGlobalBinDropdown(binsArray);
-}
-// handleClaimBin is defined below alongside the other bin management handlers
-
-function makeEditable(el, binId) {
-  const oldName = el.textContent.trim();
-  const input = document.createElement('input');
-  
-  input.type = 'text';
-  input.className = 'inline-edit-input';
-  input.value = oldName;
-  
-  // Replace text with input
-  el.replaceWith(input);
-  input.focus();
-
-  const save = async () => {
-    const newName = input.value.trim();
-    if (newName && newName !== oldName) {
-      updateBinNickname(binId, newName); // re-renders in place, no reload needed
-    }
-    // Revert to div if no change or finished
-    input.replaceWith(el);
-    el.textContent = newName || oldName;
-  };
-
-  input.onblur = save;
-  input.onkeydown = (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') input.replaceWith(el); };
-}
-
-
-/**
- * Triggers the Delete/Unclaim Confirmation
- */
-function confirmDeleteBin(binId) {
-  document.getElementById('confirm-modal-title').textContent = "Unclaim Bin";
-  document.getElementById('confirm-modal-desc').textContent = `Are you sure you want to remove ${binId}? This cannot be undone.`;
-  document.getElementById('rename-input-container').style.display = 'none';
-  
-  const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = () => {
-    handleUnclaimBin(binId); // already re-renders + toasts + closes modal
-  };
-  
-  openModal('confirm-action-modal');
-}
-
-/**
- * Triggers the Rename Modal
- */
-function openRenameBinModal(binId, currentName) {
-  document.getElementById('confirm-modal-title').textContent = "Rename Bin";
-  document.getElementById('confirm-modal-desc').textContent = "Enter a new nickname for this bin:";
-  
-  const inputContainer = document.getElementById('rename-input-container');
-  const inputField = document.getElementById('new-bin-nickname');
-  inputContainer.style.display = 'block';
-  inputField.value = currentName;
-  
-  const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = () => {
-    const newName = inputField.value.trim();
-    if (!newName) return toast('Name cannot be empty', 'err');
-    updateBinNickname(binId, newName); // already re-renders + toasts + closes modal
-  };
-  
-  openModal('confirm-action-modal');
-}
-
-
-// ── Bin management handlers (in-memory / dummy-safe) ──────────
-
-function updateBinNickname(binId, newName) {
-  if (!S.bins) return;
-  const bin = S.bins.find(b => b.bin_id === binId);
-  if (bin) {
-    bin.name = newName;
-    renderClaimedBins(S.bins);
-    updateGlobalBinDropdown(S.bins);
-    closeTopModal();
-    toast('Name updated', 'ok');
-  }
-}
-
-function handleUnclaimBin(binId) {
-  if (!S.bins) return;
-  S.bins = S.bins.filter(b => b.bin_id !== binId);
-  renderClaimedBins(S.bins);
-  updateGlobalBinDropdown(S.bins);
-  closeTopModal();
-  toast(`Bin ${binId} removed`, 'ok');
-}
-
-async function handleClaimBin() {
-  const code = document.getElementById('claim-code-input')?.value?.trim();
-  if (!code) return toast('Please enter a claim code', 'err');
-  if (!S.bins) S.bins = [];
-  const newBin = {
-    bin_id: 'AV-' + Math.floor(1000 + Math.random() * 9000),
-    name: 'New Bin ' + (S.bins.length + 1),
-    status: 'online'
-  };
-  S.bins.push(newBin);
-  renderClaimedBins(S.bins);
-  closeTopModal();
-  toast('Bin claimed', 'ok');
-}
-
-
-/**
- * Opens Edit Profile Modal and pre-fills current data
- */
-function openEditProfileModal() {
-  const currentUsername = document.getElementById('acc-username').textContent;
-  const currentEmail = document.getElementById('acc-email').textContent;
-  
-  document.getElementById('edit-username').value = currentUsername === 'Loading...' ? '' : currentUsername;
-  document.getElementById('edit-email').value = currentEmail === '--' ? '' : currentEmail;
-  
-  openModal('edit-profile-modal');
-}
-
-/**
- * Handles Profile Information Update
- */
-async function handleUpdateProfile() {
-  const newUsername = document.getElementById('edit-username').value.trim();
-  const newEmail = document.getElementById('edit-email').value.trim();
-
-  if (!newUsername || !newEmail) return toast('All fields are required', 'err');
-
-  // Update Global State (S.data or S.auth)
-  if (Auth) {
-    Auth.username = newUsername;
-    Auth.email = newEmail;
-  }
-
-  // Update UI Elements
-  document.getElementById('acc-username').textContent = newUsername;
-  document.getElementById('acc-email').textContent = newEmail;
-  
-  closeTopModal();
-  toast('Profile updated successfully!', 'ok');
-}
-
-/**
- * Handles Password Change with repeat confirmation
- */
-async function handleChangePassword() {
-  const current = document.getElementById('change-pw-current').value;
-  const newPw = document.getElementById('change-pw-new').value;
-  const repeat = document.getElementById('change-pw-repeat').value;
-
-  if (!current || !newPw || !repeat) return toast('Please fill in all fields', 'err');
-  if (newPw.length < 6) return toast('New password must be at least 6 characters', 'err');
-  if (newPw !== repeat) return toast('New passwords do not match', 'err');
-
-  // Final Confirmation Step
-  closeTopModal();
-  const confirmModal = document.getElementById('confirm-action-modal');
-  document.getElementById('confirm-modal-title').textContent = "Change Password?";
-  document.getElementById('confirm-modal-desc').textContent = "This action is permanent and will sign you out for security.";
-  
-  const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = () => {
-    toast('Updating security credentials...', '');
-    setTimeout(() => {
-      authLogout(); // Force logout for security after password change
-      toast('Password updated. Please log in again.', 'ok');
-    }, 1500);
-  };
-  
-  openModal('confirm-action-modal');
-}
-
-/**
- * Opens Change Password Modal and resets fields
- */
-function openChangePasswordModal() {
-  document.getElementById('change-pw-current').value = '';
-  document.getElementById('change-pw-new').value = '';
-  document.getElementById('change-pw-repeat').value = '';
-  openModal('change-password-modal');
-}
-
-/**
- * Validates and submits password change
- */
-async function handleChangePassword() {
-  const current = document.getElementById('change-pw-current').value;
-  const newPw = document.getElementById('change-pw-new').value;
-  const repeat = document.getElementById('change-pw-repeat').value;
-
-  // Validation
-  if (!current || !newPw || !repeat) return toast('All fields are required', 'err');
-  if (newPw.length < 6) return toast('Password must be at least 6 characters', 'err');
-  if (newPw !== repeat) return toast('Passwords do not match', 'err');
-
-  // Transition to confirmation modal
-  closeTopModal();
-  const confirmModal = document.getElementById('confirm-action-modal');
-  document.getElementById('confirm-modal-title').textContent = "Confirm Change";
-  document.getElementById('confirm-modal-desc').textContent = "Updating your password will require you to log back in.";
-  
-  const confirmBtn = document.getElementById('confirm-modal-btn');
-  confirmBtn.onclick = async () => {
-    toast('Updating security credentials...', '');
+  // ── Auto-login if token exists ──────────────────────────────
+  const existingToken = Token.get();
+  if (existingToken) {
     try {
-      // Logic for actual backend call would go here
-      setTimeout(() => {
-        authLogout(); // Force logout for security
-        toast('Password updated. Please log in again.', 'ok');
-      }, 1500);
-    } catch (e) {
-      toast('Failed to update password', 'err');
+      // Verify token is still valid by fetching profile
+      const r = await fetch(`${BASE_URL}/api/user/profile`, {
+        headers: { 'Authorization': 'Bearer ' + existingToken }
+      });
+      if (r.ok) {
+        const profileData = await r.json();
+        Auth.loggedIn = true;
+        Auth.username = profileData.user?.username || profileData.username || '';
+        S.user = profileData.user || profileData;
+        setText('dev-loggedin-user', Auth.username);
+        setText('acc-username', S.user.username || '--');
+        setText('acc-email', S.user.email || '--');
+        authHide();
+        await loadDevices();
+        startPolling();
+      } else {
+        // Token expired — clear it and show login
+        Token.clear();
+        authShow();
+      }
+    } catch(e) {
+      Token.clear();
+      authShow();
     }
-  };
-  
-  openModal('confirm-action-modal');
-}
-
-/**
- * Populates the global topbar dropdown with the current bins
- */
-function updateGlobalBinDropdown(binsArray) {
-  const select = document.getElementById('global-bin-select');
-  if(!select) return;
-
-  if (!binsArray || binsArray.length === 0) {
-    select.innerHTML = '<option value="" disabled>No bins connected</option>';
-    return;
+  } else {
+    authShow();
   }
-
-  // Generate options based on the bins array
-  select.innerHTML = binsArray.map(bin => {
-    // Format the name as "Nickname (ID)"
-    const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
-    return `<option value="${bin.bin_id}">${displayName}</option>`;
-  }).join('');
-
-  // Auto-select the active bin if one is stored in state, otherwise pick the first
-  const activeBinId = S.activeGlobalBin || binsArray[0].bin_id;
-  select.value = activeBinId;
-}
-
-function handleGlobalBinChange() {
-  const select = document.getElementById('global-bin-select');
-  const selectedId = select.value;
-  if (!selectedId || !S.bins || !S.data) return;
-
-  S.activeGlobalBin = selectedId;
-
-  // Find the selected bin and its sensor snapshot
-  const bin = S.bins.find(b => b.bin_id === selectedId);
-  if (!bin || !bin.sensors) {
-    toast('No sensor data for this bin yet — inject data first', 'err');
-    return;
-  }
-
-  const s = bin.sensors;
-
-  // Remap slot-1 (the "active" slot all pages read) to the selected bin's snapshot
-  S.data.temp1             = s.temp;
-  S.data.hum1              = s.hum;
-  S.data.soil1_percent     = s.soil;
-  S.data.gas1_ppm          = s.gas;
-  S.data.bin1_intake_fan_state  = s.fan_in;
-  S.data.bin1_exhaust_fan_state = s.fan_out;
-  S.data.bin1_pump_state        = s.pump;
-
-  // Remap per-bin globals so battery, water, and temp also reflect the selected bin
-  S.data.battery_percent = s.battery;
-  S.data.water_level     = s.water;
-  S.data.ds18b20_temp    = s.water_temp;
-
-  // Also push a new history point so QI / BF charts update immediately
-  if (typeof pushHist === 'function') pushHist(S.data);
-
-  // Sync QI / BF page dropdowns to Bin 1 (the active slot)
-  const qiSel = document.getElementById('qi-bin-select');
-  const bfSel = document.getElementById('bf-bin-select');
-  if (qiSel) { qiSel.value = 1; S.qiBin = 1; }
-  if (bfSel) { bfSel.value = 1; S.bfBin = 1; }
-
-  // Re-render the current page with the updated data
-  renderPage(Router.cur(), S.data);
-
-  // Toast with bin name, ID, and online/offline status
-  const icon = bin.status === 'offline' ? '🔴' : '🟢';
-  toast(icon + ' ' + bin.name + ' (' + selectedId + ')', 'ok');
-}
+});
