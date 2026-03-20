@@ -1534,6 +1534,17 @@ async function authLogout() {
   toast('Logged out', '');
 }
 
+// ── DEV BYPASS ───────────────────────
+async function devBypassLogin() {
+  Auth.loggedIn = true;
+  Auth.username = 'dev';
+  authHide();
+  setText('dev-loggedin-user', 'dev (bypassed)');
+  await loadDevices();
+  startPolling();
+  toast('⚡ Dev bypass — skipped login', 'ok');
+}
+
 // ════════════════════════════════════
 // SETTINGS — Device Management
 // ════════════════════════════════════
