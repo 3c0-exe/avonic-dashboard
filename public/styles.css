@@ -3665,6 +3665,27 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   .topbar-right { order: 1; }
   .refresh-label { display: none; }
 
+  /* Shrink bin selector pill on mobile */
+  .tb-bin-selector {
+    min-width: unset;
+    max-width: 160px;
+    padding: 4px 10px 4px 4px;
+  }
+
+  /* Truncate long device names with ellipsis */
+  .tb-bin-dropdown {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  /* Slightly smaller logo to give it room */
+  .logo-img {
+    height: 20px;
+  }
+
   .sidebar {
     width: 240px;
     transform: translateX(-100%);
