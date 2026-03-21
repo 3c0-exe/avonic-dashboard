@@ -3665,25 +3665,38 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   .topbar-right { order: 1; }
   .refresh-label { display: none; }
 
-  /* Shrink bin selector pill on mobile */
+  /* Bigger logo on mobile */
+  .logo-img {
+    height: 24px;
+  }
+
+  /* Tighter pill on mobile */
   .tb-bin-selector {
     min-width: unset;
-    max-width: 160px;
+    max-width: 180px;
     padding: 4px 10px 4px 4px;
+    height: 32px;
   }
 
-  /* Truncate long device names with ellipsis */
+  .tb-bin-icon-bg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .tb-bin-icon-bg img {
+    width: 13px;
+    height: 13px;
+  }
+
   .tb-bin-dropdown {
-    max-width: 110px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 12px;
+    padding-right: 16px;
   }
 
-  /* Slightly smaller logo to give it room */
-  .logo-img {
-    height: 20px;
+  .tb-chevron {
+    right: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   .sidebar {
