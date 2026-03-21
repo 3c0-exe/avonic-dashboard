@@ -1665,12 +1665,10 @@ function updateGlobalBinDropdown(binsArray) {
     return;
   }
 
-  const isMobile = window.innerWidth <= 768;
+  const maxLen = window.innerWidth <= 768 ? 18 : 28;
   select.innerHTML = binsArray.map(bin => {
     let displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
-    if (isMobile && displayName.length > 18) {
-      displayName = displayName.substring(0, 18) + '…';
-    }
+    if (displayName.length > maxLen) displayName = displayName.substring(0, maxLen) + '…';
     return `<option value="${bin.bin_id}">${displayName}</option>`;
   }).join('');
 
