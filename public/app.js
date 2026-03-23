@@ -287,44 +287,50 @@ const API = {
 // The backend stores data as { bin1: {temp, humidity, soil, gas,...}, bin2: {...}, system: {...} }
 // The UI expects flat keys like temp1, hum1, soil1_percent, gas1_ppm etc.
 function flattenSensorData(json) {
-  const d = json.data || json; // handle both wrapped and unwrapped
+  const d = json.data || json;
   if (!d) return null;
 
-  const b1 = d.bin1 || {};
-  const b2 = d.bin2 || {};
+  const b1  = d.bin1   || {};
+  const b2  = d.bin2   || {};
   const sys = d.system || {};
+  const pel = d.peltier || {};
 
   return {
     // Bin 1
-    temp1:                  b1.temp,
-    hum1:                   b1.humidity,
-    soil1_percent:          b1.soil,
-    gas1_ppm:               b1.gas,
-    ds18b20_temp:           b1.ds18b20,
-    water_level:            b1.ultrasonic,
-    bin1_exhaust_fan_state: b1.fan,
-    bin1_intake_fan_state:  b1.fan,
-    bin1_pump_state:        b1.pump,
+    temp1:                  b1.temp         ?? null,
+    hum1:                   b1.humidity     ?? null,
+    soil1_percent:          b1.soil         ?? null,
+    gas1_ppm:               b1.gas          ?? null,
+    ds18b20_temp:           b1.ds18b20      ?? null,
+    ultrasonic:             b1.ultrasonic   ?? null,
+    bin1_exhaust_fan_state: b1.exhaust_fan  ?? false,
+    bin1_intake_fan_state:  b1.intake_fan   ?? false,
+    bin1_pump_state:        b1.pump         ?? false,
 
     // Bin 2
-    temp2:                  b2.temp,
-    hum2:                   b2.humidity,
-    soil2_percent:          b2.soil,
-    gas2_ppm:               b2.gas,
-    bin2_exhaust_fan_state: b2.fan,
-    bin2_intake_fan_state:  b2.fan,
-    bin2_pump_state:        b2.pump,
+    temp2:                  b2.temp         ?? null,
+    hum2:                   b2.humidity     ?? null,
+    soil2_percent:          b2.soil         ?? null,
+    gas2_ppm:               b2.gas          ?? null,
+    water_level:            b2.water_level  ?? null,
+    bin2_exhaust_fan_state: b2.exhaust_fan  ?? false,
+    bin2_intake_fan_state:  b2.intake_fan   ?? false,
+    bin2_pump_state:        b2.pump         ?? false,
+
+    // Peltier
+    peltier_main_state:     pel.main        ?? false,
+    peltier_pump_state:     pel.pump        ?? false,
 
     // System
-    battery_percent:        sys.battery_level,
-    charging:               sys.battery_charging,
+    battery_percent:        sys.battery_level    ?? null,
+    charging:               sys.battery_charging ?? false,
     wifi_connected:         sys.wifi_rssi != null,
-    wifi_rssi:              sys.wifi_rssi,
-    uptime:                 sys.uptime,
+    uptime:                 sys.uptime      ?? null,
 
-    // Meta
-    lastUpdate:             d.timestamp ? new Date(d.timestamp).toLocaleTimeString() : '--',
-    espID:                  d.espID || S.activeEspID
+    lastUpdate: d.timestamp
+      ? new Date(d.timestamp).toLocaleTimeString()
+      : '--',
+    espID: d.espID || S.activeEspID
   };
 }
 
