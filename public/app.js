@@ -6,7 +6,7 @@
 
 // ── Backend URL ───────────────────────────────────────────────
 // Change this to your Railway URL once deployed
-const BASE_URL = 'https://avonic-main-hub-production.up.railway.app';
+const BASE_URL = 'https://avonic-dashboard-production.up.railway.app';
 
 // ── Sensor Configs & Worm Conditions ──────────────────────────
 const WORM_CONFIGS = {
@@ -239,6 +239,31 @@ const API = {
     if (!r.ok) {
       const d = await r.json();
       throw new Error(d.error || 'Update failed');
+    }
+    return r.json();
+  },
+
+  // Get mode state for active device
+  async getMode() {
+    if (!S.activeEspID) return null;
+    const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/mode`, {
+      headers: Token.headers()
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  },
+
+  // Set mode for a bin
+  async setMode(bin, mode) {
+    if (!S.activeEspID) return;
+    const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/mode`, {
+      method: 'POST',
+      headers: Token.headers(),
+      body: JSON.stringify({ bin, mode })
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.error || 'Mode change failed');
     }
     return r.json();
   },
@@ -549,6 +574,20 @@ function openModal(id)    { ModalManager.open(id);   }
 function closeTopModal()  { ModalManager.close();    }
 function closeAllModals() { ModalManager.closeAll(); }
 
+// ── Load mode state from backend on login ────────────────────
+async function loadMode() {
+  try {
+    const res = await API.getMode();
+    if (res && res.bin_modes) {
+      S.mode[1] = res.bin_modes.bin1 || 'auto';
+      S.mode[2] = res.bin_modes.bin2 || 'auto';
+      console.log(`✅ Mode loaded: Bin1=${S.mode[1]}, Bin2=${S.mode[2]}`);
+    }
+  } catch(e) {
+    console.error('Failed to load mode:', e);
+  }
+}
+
 // 1. Mode Confirmation Modal
 function openModeModal(binNum) {
   const targetMode = S.mode[binNum] === 'auto' ? 'manual' : 'auto';
@@ -562,7 +601,8 @@ function openModeModal(binNum) {
   if (ill) ill.src = targetMode === 'auto' ? '/img/photos/AutoMode.png' : '/img/photos/ManualMode.png';
 
   const btn = $('mode-confirm-btn');
-  btn.onclick = () => {
+  btn.onclick = async () => {
+    // Optimistically update UI
     S.mode[binNum] = targetMode;
 
     const mb = $(`b${binNum}-mode-btn`);
@@ -584,7 +624,18 @@ function openModeModal(binNum) {
     }
 
     closeAllModals();
-    toast(`Bin ${binNum} switched to ${targetMode.toUpperCase()} mode`, 'ok');
+    toast(`Bin ${binNum} switching to ${targetMode.toUpperCase()} mode...`, 'ok');
+
+    // Sync to backend → MQTT → ESP32 → Slave
+    try {
+      await API.setMode(`bin${binNum}`, targetMode);
+      toast(`Bin ${binNum} is now in ${targetMode.toUpperCase()} mode`, 'ok');
+    } catch(e) {
+      // Revert UI on failure
+      S.mode[binNum] = targetMode === 'auto' ? 'manual' : 'auto';
+      if(S.data) renderBin(binNum, S.data);
+      toast(`Failed to set mode: ${e.message}`, 'err');
+    }
   };
 
   openModal('mode-switch-modal');
@@ -1402,6 +1453,7 @@ async function authLogin() {
       // Load devices then start polling
       await loadProfile();
       await loadDevices();
+      await loadMode();
       startPolling();
       toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     } else {
@@ -1541,6 +1593,7 @@ async function devBypassLogin() {
   authHide();
   setText('dev-loggedin-user', 'dev (bypassed)');
   await loadDevices();
+  await loadMode();
   startPolling();
   toast('⚡ Dev bypass — skipped login', 'ok');
 }
@@ -1665,10 +1718,8 @@ function updateGlobalBinDropdown(binsArray) {
     return;
   }
 
-  const maxLen = window.innerWidth <= 768 ? 18 : 28;
   select.innerHTML = binsArray.map(bin => {
-    let displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
-    if (displayName.length > maxLen) displayName = displayName.substring(0, maxLen) + '…';
+    const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
     return `<option value="${bin.bin_id}">${displayName}</option>`;
   }).join('');
 
@@ -1691,6 +1742,7 @@ function handleGlobalBinChange() {
   };
 
   fetchAndRender(); // Immediately fetch the selected device's data
+  loadMode();       // Reload mode state for new device
 
   const bin = S.bins.find(b => b.bin_id === selectedId);
   const icon = bin?.status === 'offline' ? '🔴' : '🟢';
@@ -1830,6 +1882,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setText('acc-email', S.user.email || '--');
         authHide();
         await loadDevices();
+        await loadMode();
         startPolling();
       } else {
         // Token expired — clear it and show login
