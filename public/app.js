@@ -629,12 +629,12 @@ function openModeModal(binNum) {
       openSensorModal(S.activeModalBin, S.activeModalSensor, $('sm-title').textContent, $('sm-icon').src);
     }
 
-    closeAllModals();
     toast(`Bin ${binNum} switching to ${targetMode.toUpperCase()} mode...`, 'ok');
 
     // Sync to backend → MQTT → ESP32 → Slave
     try {
       await API.setMode(`bin${binNum}`, targetMode);
+      closeAllModals(); // ← FIX: moved here, was before the try block
       toast(`Bin ${binNum} is now in ${targetMode.toUpperCase()} mode`, 'ok');
     } catch(e) {
       // Revert UI on failure
