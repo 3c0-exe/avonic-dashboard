@@ -6,7 +6,7 @@
 
 // ── Backend URL ───────────────────────────────────────────────
 // Change this to your Railway URL once deployed
-const BASE_URL = 'https://avonic-dashboard-production.up.railway.app';
+const BASE_URL = 'https://avonic-main-hub-production.up.railway.app';
 
 // ── Sensor Configs & Worm Conditions ──────────────────────────
 const WORM_CONFIGS = {
