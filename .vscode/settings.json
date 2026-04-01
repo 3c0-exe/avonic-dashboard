@@ -1,3 +1,8 @@
+// {
+//     "liveServer.settings.port": 5501
+// }
+
+// makes images and elements show on live server
 {
-    "liveServer.settings.port": 5501
+  "liveServer.settings.root": "/public"
 }
