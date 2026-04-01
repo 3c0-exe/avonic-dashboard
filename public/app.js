@@ -1903,3 +1903,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     authShow();
   }
 });
+
+
+/* ── Language Preference ───────────────────────────────────── */
+(function initLanguageSelect() {
+  const saved = localStorage.getItem('avonic_language') || 'en';
+  const sel = document.getElementById('app-language-select');
+  if (sel) sel.value = saved;
+  document.documentElement.setAttribute('lang', saved === 'tl' ? 'tl' : 'en');
+})();
+ 
+function applyLanguage(langCode) {
+  localStorage.setItem('avonic_language', langCode);
+  document.documentElement.setAttribute('lang', langCode === 'tl' ? 'tl' : 'en');
+  // Optionally: reload page or swap i18n strings here
+  // window.location.reload();
+}
+ 
+/* ── Manual PDF redirect guard ─────────────────────────────── */
+/*
+  When the user clicks a User Manual link, it opens the PDF in a
+  new tab. The PDF files should live at:
+    /manuals/user-manual-en.pdf
+    /manuals/user-manual-tl.pdf
+ 
+  If the PDF is not yet uploaded you can swap in a hosted URL:
+    href="https://your-cdn.example.com/avonic-user-manual-en.pdf"
+ 
+  The links already have target="_blank" and rel="noopener" so no
+  extra JS is needed for normal navigation.
+ 
+  If you want to log download events, attach a click listener:
+*/
+document.querySelectorAll('.resource-manual-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const lang = btn.href.includes('-tl.') ? 'Tagalog' : 'English';
+    console.log('[AVONIC] User Manual opened:', lang);
+    // Optional: send analytics ping here
+  });
+});
