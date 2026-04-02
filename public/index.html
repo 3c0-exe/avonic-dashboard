@@ -286,37 +286,53 @@
     <div class="max-w-7xl mx-auto">
       <div class="grid md:grid-cols-2 items-stretch min-h-[520px] md:min-h-[580px]">
 
-        <!-- Left: Farmer photo -->
-        <div class="relative overflow-hidden min-h-[380px] md:min-h-0">
-          <!-- Replace src with your farmer image -->
+        <!-- Left: Farmer photo - floating -->
+      <div class="relative flex items-center justify-center py-14 px-8 md:px-12 lg:px-16 min-h-[380px] md:min-h-0">
+
+        <!-- Soft glow behind -->
+        <div class="absolute w-80 h-80 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.07;filter:blur(60px);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+        <!-- Floating image -->
+        <div style="animation: floatCard 5s ease-in-out infinite;
+                    filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
           <img
-            src="./images/farmer.jpg"
-            alt="Filipino Farmer in the field"
-            class="w-full h-full object-cover object-center"
-            onerror="this.outerHTML = `<div class='w-full h-full min-h-[380px] flex flex-col items-center justify-center bg-brand-greenAccent/10 border-r border-brand-beige text-brand-greenAccent/40 text-center p-8'><svg width=56 height=56 viewBox='0 0 24 24' fill=none stroke=currentColor stroke-width=1 class='mb-3'><circle cx=12 cy=8 r=4/><path d='M4 20c0-4 3.6-7 8-7s8 3 8 7'/></svg><p class='text-sm font-medium'>farmer.jpg</p><p class='text-xs mt-1 opacity-60'>Your farmer photo here</p></div>`"
+            src="/img/landing-page/filipino-farmers-picture.png"
+            alt="Filipino Farmers"
+            class="relative z-10 w-full object-contain rounded-2xl"
+            style="max-width: 420px;"
+            onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
           />
-          <!-- subtle right-edge gradient blend -->
-          <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-r from-transparent to-brand-cream pointer-events-none hidden md:block"></div>
         </div>
+
+        <style>
+          @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+          }
+        </style>
+      </div>
 
         <!-- Right: Copy -->
         <div class="flex flex-col justify-center py-14 px-8 md:px-12 lg:px-16">
 
-          <!-- Eyebrow -->
-          <div class="flex items-center gap-2 mb-5">
-            <div class="w-6 h-0.5 bg-brand-greenAccent rounded-full"></div>
-            <p class="text-brand-greenAccent text-xs font-bold tracking-[0.2em] uppercase">Our Mission</p>
-          </div>
-
+        
+            <!-- Eyebrow -->
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+        <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">THIS PROJECT IS DEDICATED FOR OUR HARDWORKING</p>
+      </div>
+          <!-- <p class="text-brand-textMuted text-base font-semibold mb-5 font-body">
+            is to make
+          </p> -->
           <!-- Headline -->
           <h2 class="font-serif leading-[1.05] mb-3">
-            <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-text font-normal">Filipino</span>
-            <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-greenAccent font-normal italic">Farmers</span>
+            <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-text font-normal">Filipino Farmers</span>
+            <!-- <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-greenAccent font-normal italic">Farmers</span> -->
           </h2>
 
           <!-- Stat call-out -->
           <p class="text-brand-textMuted text-base font-semibold mb-5 font-body">
-            Become <span class="text-brand-text underline decoration-brand-greenAccent underline-offset-4 decoration-2">more productive</span> than ever
+            it's our mission to make them become <span class="text-brand-text underline decoration-brand-greenAccent underline-offset-4 decoration-2">more productive</span> than ever
           </p>
 
           <!-- Body -->
