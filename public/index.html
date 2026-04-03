@@ -112,6 +112,69 @@
       50%       { box-shadow: 0 0 0 8px rgba(232,184,75,0); }
     }
     .ring-pulse { animation: ringPulse 2.5s ease-in-out infinite; }
+
+ /* ── Stack container — same size as SVGs ── */
+  .sdg-stack {
+    position: relative;
+    width: 168.9px;
+    height: 168.9px;
+    flex-shrink: 0;
+  }
+
+  /* Logo sits at center, static */
+  .sdg-logo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Arc overlaid exactly on top, rotates from center */
+  .sdg-arc {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center center;
+    animation: sdg-spin 12s linear infinite;
+  }
+
+  @keyframes sdg-spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ── Card flip logic ── */
+  .sdg-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .sdg-card-inner {
+    position: relative;
+    width: 100%;
+  }
+  .sdg-img-face {
+    width: 100%;
+    transition: opacity 0.4s ease;
+  }
+  .sdg-text-face {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .sdg-card:hover .sdg-text-face,
+  .sdg-card.active .sdg-text-face {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .sdg-card:hover .sdg-img-face,
+  .sdg-card.active .sdg-img-face {
+    opacity: 0;
+  }
   </style>
 </head>
 <body class="bg-white overflow-x-hidden">
@@ -969,67 +1032,74 @@
         </p>
       </div>
 
+      
       <!-- SDG Cards grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14 max-w-5xl mx-auto">
 
-        <!-- SDG 2: Zero Hunger -->
-        <div class="anim-hidden rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 hover:border-opacity-40 group" style="animation:fadeUp 0.7s ease 0.05s forwards;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);">
-          <!-- SDG badge -->
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 font-bold text-white text-xl shadow-lg" style="background:#DDA63A;">
-            <span class="font-serif" style="font-size:0.75rem;line-height:1;text-align:center;">SDG<br>2</span>
-          </div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-lg">🌾</span>
-            <h3 class="font-semibold text-sm" style="color:#ffffff;">Zero Hunger</h3>
-          </div>
-          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,0.5);">
-            Helps Filipino farmers improve soil quality and crop yields through nutrient-rich organic compost, supporting food security at the community level.
-          </p>
-        </div>
+  <!-- SDG 2 -->
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
 
-        <!-- SDG 9: Industry & Innovation -->
-        <div class="anim-hidden rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 group" style="animation:fadeUp 0.7s ease 0.12s forwards;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 font-bold text-white shadow-lg" style="background:#F36D25;">
-            <span class="font-serif" style="font-size:0.75rem;line-height:1;text-align:center;">SDG<br>9</span>
-          </div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-lg">⚙️</span>
-            <h3 class="font-semibold text-sm" style="color:#ffffff;">Industry & Innovation</h3>
-          </div>
-          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,0.5);">
-            Bridges the gap between modern IoT technology and grassroots agriculture, making smart farming accessible even without technical expertise.
-          </p>
-        </div>
-
-        <!-- SDG 12: Responsible Consumption -->
-        <div class="anim-hidden rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 group" style="animation:fadeUp 0.7s ease 0.19s forwards;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 font-bold text-white shadow-lg" style="background:#BF8B2E;">
-            <span class="font-serif" style="font-size:0.75rem;line-height:1;text-align:center;">SDG<br>12</span>
-          </div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-lg">♻️</span>
-            <h3 class="font-semibold text-sm" style="color:#ffffff;">Responsible Consumption</h3>
-          </div>
-          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,0.5);">
-            Turns organic household and farm waste into valuable compost, reducing landfill contribution and promoting a circular, zero-waste agricultural cycle.
-          </p>
-        </div>
-
-        <!-- SDG 13: Climate Action -->
-        <div class="anim-hidden rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 group" style="animation:fadeUp 0.7s ease 0.26s forwards;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 font-bold text-white shadow-lg" style="background:#3F7E44;">
-            <span class="font-serif" style="font-size:0.75rem;line-height:1;text-align:center;">SDG<br>13</span>
-          </div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-lg">🌍</span>
-            <h3 class="font-semibold text-sm" style="color:#ffffff;">Climate Action</h3>
-          </div>
-          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,0.5);">
-            Promotes organic farming practices that reduce chemical fertilizer dependence, lowering carbon emissions and preserving soil biodiversity long-term.
-          </p>
-        </div>
-
+    <!-- Front: stacked logo + rotating arc -->
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_logo.svg"    class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_text_arc.svg" class="sdg-arc"  alt="">
       </div>
+    </div>
+
+    <!-- Hover: text -->
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 2: Zero Hunger</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+        AVONIC supports sustainable agriculture by improving compost quality and plant health, helping local farmers grow more nutritious crops with fewer resources.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- SDG 12 -->
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
+
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_logo.svg"    class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_text_arc.svg" class="sdg-arc"  alt="">
+      </div>
+    </div>
+
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 12: Responsible Consumption and Production</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+        By recycling organic waste through vermicomposting, AVONIC promotes responsible production and consumption, reducing landfill waste and closing the nutrient loop in farming.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- SDG 15 -->
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
+
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_logo.svg"    class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_text_arc.svg" class="sdg-arc"  alt="">
+      </div>
+    </div>
+
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 15: Life on Land</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+        AVONIC supports the restoration and sustainable management of land ecosystems by improving soil health and promoting sustainable agriculture, helping local farmers cultivate crops responsibly while protecting biodiversity and preventing land degradation.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+ 
+ 
+
+ 
 
       <!-- Bottom quote bar -->
       <div class="anim-hidden rounded-2xl px-8 py-6 border flex flex-col md:flex-row items-center gap-4 md:gap-8" style="animation:fadeUp 0.7s ease 0.35s forwards;background:rgba(255,255,255,0.04);border-color:rgba(232,184,75,0.2);">
@@ -1438,5 +1508,13 @@
   setInterval(lpRandomize, 3000);
 })();
 </script>
+
+<script>
+  /* tap toggle for mobile */
+ document.querySelectorAll('.sdg-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('active'));
+  });
+</script>
+
 </body>
 </html>
