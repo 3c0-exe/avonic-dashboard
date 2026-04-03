@@ -474,134 +474,115 @@
         </p>
       </div>
 
-      <!-- 2×2 metric cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+     <!-- 2×2 metric cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
 
-        <!-- Card 1: Soil Moisture -->
-        <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200 group" style="background:#FAFAF8;border-color:#E8E0D0;">
-          <div class="flex items-start justify-between mb-5">
-            <div>
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;">Soil Moisture</p>
-              <p class="text-xs" style="color:#5A5A5A;">Optimal range</p>
-            </div>
-            <!-- Gauge -->
-            <div class="relative w-16 h-16 flex-shrink-0">
-              <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#4A7C3F" stroke-width="6"
-                  stroke-dasharray="163.36" stroke-dashoffset="81.68"
-                  stroke-linecap="round" class="gauge-stroke" style="transition:stroke-dashoffset 1.2s ease;"/>
-              </svg>
-              <span class="absolute inset-0 flex items-center justify-center text-xs font-bold" style="color:#1A1A1A;">50%</span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">50</span>
-            <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
-          </div>
-          <div class="mt-3 flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full" style="background:#4A7C3F;"></span>
-            <span class="text-xs font-medium" style="color:#4A7C3F;">Optimal</span>
-          </div>
-        </div>
-
-        <!-- Card 2: Temperature -->
-        <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200 group" style="background:#FAFAF8;border-color:#E8E0D0;">
-          <div class="flex items-start justify-between mb-5">
-            <div>
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#C89B3C;">Temperature</p>
-              <p class="text-xs" style="color:#5A5A5A;">Optimal range</p>
-            </div>
-            <!-- Thermometer icon gauge -->
-            <div class="relative w-16 h-16 flex-shrink-0">
-              <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#C89B3C" stroke-width="6"
-                  stroke-dasharray="163.36" stroke-dashoffset="81.68"
-                  stroke-linecap="round"/>
-              </svg>
-              <span class="absolute inset-0 flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" fill="#C89B3C" opacity="0.9"/>
-                </svg>
-              </span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">50</span>
-            <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
-          </div>
-          <div class="mt-3 flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full" style="background:#C89B3C;"></span>
-            <span class="text-xs font-medium" style="color:#C89B3C;">Optimal</span>
-          </div>
-        </div>
-
-        <!-- Card 3: Humidity -->
-        <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200 group" style="background:#FAFAF8;border-color:#E8E0D0;">
-          <div class="flex items-start justify-between mb-5">
-            <div>
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#2E6E8E;">Humidity</p>
-              <p class="text-xs" style="color:#5A5A5A;">Optimal range</p>
-            </div>
-            <div class="relative w-16 h-16 flex-shrink-0">
-              <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#2E6E8E" stroke-width="6"
-                  stroke-dasharray="163.36" stroke-dashoffset="81.68"
-                  stroke-linecap="round"/>
-              </svg>
-              <span class="absolute inset-0 flex items-center justify-center text-xs font-bold" style="color:#1A1A1A;">50%</span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">50</span>
-            <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
-          </div>
-          <div class="mt-3 flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full" style="background:#2E6E8E;"></span>
-            <span class="text-xs font-medium" style="color:#2E6E8E;">Optimal</span>
-          </div>
-        </div>
-
-        <!-- Card 4: Gas Levels -->
-        <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200 group" style="background:#FAFAF8;border-color:#E8E0D0;">
-          <div class="flex items-start justify-between mb-5">
-            <div>
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#7A5C3A;">Gas Levels</p>
-              <p class="text-xs" style="color:#5A5A5A;">Indoor reading</p>
-            </div>
-            <div class="relative w-16 h-16 flex-shrink-0">
-              <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
-                <circle cx="32" cy="32" r="26" fill="none" stroke="#7A5C3A" stroke-width="6"
-                  stroke-dasharray="163.36" stroke-dashoffset="81.68"
-                  stroke-linecap="round"/>
-              </svg>
-              <span class="absolute inset-0 flex items-center justify-center">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5C3A" stroke-width="2" stroke-linecap="round">
-                  <path d="M8 3v3M12 3v3M16 3v3M5 8h14M6 11c0 5 3 8 6 8s6-3 6-8"/>
-                </svg>
-              </span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">50</span>
-            <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
-          </div>
-          <div class="mt-3 flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full" style="background:#7A5C3A;"></span>
-            <span class="text-xs font-medium" style="color:#7A5C3A;">Optimal</span>
-          </div>
-        </div>
-
+  <!-- Card 1: Soil Moisture -->
+  <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200" style="background:#FAFAF8;border-color:#E8E0D0;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;">Soil Moisture</p>
+        <p id="lp-status-soilMoisture" class="text-xs font-semibold" style="color:#4A7C3F;">Optimal</p>
       </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-soilMoisture" cx="32" cy="32" r="26" fill="none" stroke="#4A7C3F" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="Soil Moisture" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-soilMoisture" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
+    </div>
+  </div>
 
-      <!-- Bottom note -->
-      <p class="text-center text-xs mt-8" style="color:#5A5A5A;opacity:0.7;">
-        These are live sensor values that update automatically
-      </p>
+  <!-- Card 2: Temperature -->
+  <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200" style="background:#FAFAF8;border-color:#E8E0D0;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#C89B3C;">Temperature</p>
+        <p id="lp-status-temperature" class="text-xs font-semibold" style="color:#C89B3C;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-temperature" cx="32" cy="32" r="26" fill="none" stroke="#C89B3C" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="Temperature" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-temperature" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">°C</span>
+    </div>
+  </div>
 
+  <!-- Card 3: Humidity -->
+  <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200" style="background:#FAFAF8;border-color:#E8E0D0;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#2E6E8E;">Humidity</p>
+        <p id="lp-status-humidity" class="text-xs font-semibold" style="color:#2E6E8E;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-humidity" cx="32" cy="32" r="26" fill="none" stroke="#2E6E8E" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="Humidity" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-humidity" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
+    </div>
+  </div>
+
+  <!-- Card 4: Gas Levels -->
+  <div class="metric-card rounded-3xl p-6 border shadow-sm hover:shadow-md transition-shadow duration-200" style="background:#FAFAF8;border-color:#E8E0D0;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#7A5C3A;">Gas Levels</p>
+        <p id="lp-status-gasLevels" class="text-xs font-semibold" style="color:#7A5C3A;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-gasLevels" cx="32" cy="32" r="26" fill="none" stroke="#7A5C3A" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="Gas Levels" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-gasLevels" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">ppm</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom note -->
+<p class="text-center text-xs mt-8" style="color:#5A5A5A;opacity:0.7;">
+  These are live sensor values that update automatically
+</p>
     </div>
   </section>
 
@@ -1386,5 +1367,70 @@
       });
     });
   </script>
+   
+ <script>
+(function () {
+  const LP_CONFIGS = {
+    soilMoisture: { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, randomMin: 20,  randomMax: 100, defaultColor: '#4A7C3F' },
+    temperature:  { optimal_min: 22, optimal_max: 28, critical_min: 15, critical_max: 35, randomMin: 10,  randomMax: 42,  defaultColor: '#C89B3C' },
+    humidity:     { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, randomMin: 20,  randomMax: 100, defaultColor: '#2E6E8E' },
+    gasLevels:    { optimal_min: 0,  optimal_max: 100, critical_min: 0, critical_max: 200, randomMin: 0,  randomMax: 250, defaultColor: '#7A5C3A' }
+  };
+
+  const COLOR_MAP = { optimal: null, warning: '#D97706', critical: '#EF4444' };
+
+  function lpEvaluate(sensorType, value) {
+    let status = 'Optimal', cls = 'optimal';
+    switch (sensorType) {
+      case 'temperature':
+        if      (value < 15) { status = 'Critically Cold'; cls = 'critical'; }
+        else if (value < 22) { status = 'Too Cold';        cls = 'warning';  }
+        else if (value > 35) { status = 'Critically Hot';  cls = 'critical'; }
+        else if (value > 28) { status = 'Too Hot';         cls = 'warning';  }
+        break;
+      case 'soilMoisture':
+      case 'humidity':
+        if      (value < 40) { status = 'Critically Dry';  cls = 'critical'; }
+        else if (value < 60) { status = 'Dry';             cls = 'warning';  }
+        else if (value > 90) { status = 'Critically Wet';  cls = 'critical'; }
+        else if (value > 80) { status = 'Wet';             cls = 'warning';  }
+        break;
+      case 'gasLevels':
+        if      (value > 200) { status = 'Toxic Gas';  cls = 'critical'; }
+        else if (value > 100) { status = 'High Gas';   cls = 'warning';  }
+        break;
+    }
+    return { status, cls };
+  }
+
+  function lpUpdateCard(sensorType, value) {
+    const cfg    = LP_CONFIGS[sensorType];
+    const result = lpEvaluate(sensorType, value);
+    const maxVal = sensorType === 'gasLevels' ? 250 : 100;
+    const pct    = Math.min(1, Math.max(0, value / maxVal));
+    const offset = 163.36 - (pct * 163.36);
+    const color  = COLOR_MAP[result.cls] || cfg.defaultColor;
+
+    const ring   = document.getElementById('lp-ring-'   + sensorType);
+    const valEl  = document.getElementById('lp-val-'    + sensorType);
+    const statEl = document.getElementById('lp-status-' + sensorType);
+
+    if (ring)   { ring.style.strokeDashoffset = offset.toFixed(2); ring.style.stroke = color; }
+    if (valEl)  { valEl.textContent = parseFloat(value).toFixed(1); }
+    if (statEl) { statEl.textContent = result.status; statEl.style.color = color; }
+  }
+
+  function lpRandomize() {
+    Object.keys(LP_CONFIGS).forEach(sensor => {
+      const cfg = LP_CONFIGS[sensor];
+      const val = cfg.randomMin + Math.random() * (cfg.randomMax - cfg.randomMin);
+      lpUpdateCard(sensor, val);
+    });
+  }
+
+  lpRandomize();
+  setInterval(lpRandomize, 3000);
+})();
+</script>
 </body>
 </html>
