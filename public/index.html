@@ -237,79 +237,104 @@
     <div class="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-brand-greenAccent opacity-15 blur-[60px] pointer-events-none"></div>
     <div class="absolute top-1/2 right-1/4 w-40 h-40 rounded-full bg-brand-gold opacity-10 blur-[40px] pointer-events-none"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-2 gap-12 items-center py-10 md:py-14">
+   <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-2 gap-12 items-center py-10 md:py-14">
 
-      <!-- ── Left: copy ── -->
-      <div>
-        <!-- Badge -->
-        <div class="anim-hidden animate-fade-up stagger-1 inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-white/80 font-medium mb-7 backdrop-blur-sm">
-          
-         LOCALIZED  •  AUTOMATED  •  SUSTAINABLE
-        </div>
+  <!-- ── Left: copy ── -->
+  <div class="flex flex-col">
 
-        <!-- Headline -->
-        <h1 class="anim-hidden animate-fade-up stagger-2 font-serif text-white leading-[1.08] mb-6">
-          <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Smarter</span>
-          <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Worm Health.</span>
-          <span class="block text-[clamp(2.4rem,5vw,3.75rem)] text-brand-goldLight italic">Better Compost.</span>
-        </h1>
+    <!-- Badge -->
+    <div class="anim-hidden animate-fade-up stagger-1 inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-white/80 font-medium mb-7 backdrop-blur-sm self-start">
+      LOCALIZED  •  AUTOMATED  •  SUSTAINABLE
+    </div>
 
-        <!-- Body -->
-        <p class="anim-hidden animate-fade-up stagger-3 text-white/65 text-base md:text-lg leading-relaxed max-w-md mb-8 font-body">
-          AVONIC monitors your vermicomposting bin in real-time — tracking soil moisture,
-          temperature, humidity, and gas levels so your worms always thrive.
-        </p>
+    <!-- Headline -->
+    <h1 class="anim-hidden animate-fade-up stagger-2 font-serif text-white leading-[1.08] mb-6">
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Smarter</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Worm Health.</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] text-brand-goldLight italic">Better Compost.</span>
+    </h1>
 
-        <!-- CTAs -->
-        <div class="anim-hidden animate-fade-up stagger-4 flex flex-wrap gap-3 mb-10">
-          <!-- <a href="#"
-             class="bg-brand-gold hover:bg-brand-goldLight text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-sm">
-            Get Started Free
-          </a> -->
-          <a href="#"
-             class="border border-white/25 hover:border-white/50 hover:bg-white/8 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 text-sm backdrop-blur-sm">
-            Get Started →
-          </a>
-        </div>
-
-        <!-- Stats strip -->
-        <div class="anim-hidden animate-fade-up stagger-4 flex items-center gap-8 pt-8 border-t border-white/10">
-          <div>
-            <p class="font-serif text-white text-2xl font-bold">4</p>
-            <p class="text-white/45 text-xs mt-0.5 font-body">Sensors Tracked</p>
-          </div>
-          <div class="w-px h-10 bg-white/15"></div>
-          <div>
-            <p class="font-serif text-white text-2xl font-bold">2</p>
-            <p class="text-white/45 text-xs mt-0.5 font-body">Smart Modes</p>
-          </div>
-          <div class="w-px h-10 bg-white/15"></div>
-          <div>
-            <p class="font-serif text-white text-xl font-bold">Live</p>
-            <p class="text-white/45 text-xs mt-0.5 font-body">Real-time Data</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Right: product video ── -->
-      <div class="relative flex justify-center items-center -mr-6 md:-mr-12 lg:-mr-20">
-
-        <!-- Glow ring behind video -->
+    <!-- Mobile: video + stats below bin -->
+    <div class="md:hidden flex flex-col items-center mb-8 -mx-6">
+      <!-- Video -->
+      <div class="relative flex justify-center items-center w-full">
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-brand-greenAccent opacity-20 blur-3xl"></div>
+          <div class="w-64 h-64 rounded-full bg-brand-greenAccent opacity-20 blur-3xl"></div>
         </div>
-
-        <!-- Product Video — autoplay loop with fade-in on load -->
         <video
-          id="hero-video"
           src="./vid/bin-loop.mp4"
           autoplay loop muted playsinline
-          class="relative z-10 w-full object-contain "
-          style="opacity:0;transition:opacity 1.1s ease;mix-blend-mode:screen;max-width:min(720px, 55vw);"
+          class="relative z-10 w-full object-contain"
+          style="mix-blend-mode:screen;max-width:300px;opacity:1;"
         ></video>
-
+      </div>
+      <!-- Stats under the bin -->
+      <div class="flex items-center justify-center gap-8 pt-6 border-t border-white/10 w-full px-6">
+        <div class="text-center">
+          <p class="font-serif text-white text-2xl font-bold">4</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body">Sensors Tracked</p>
+        </div>
+        <div class="w-px h-10 bg-white/15"></div>
+        <div class="text-center">
+          <p class="font-serif text-white text-2xl font-bold">2</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body">Smart Modes</p>
+        </div>
+        <div class="w-px h-10 bg-white/15"></div>
+        <div class="text-center">
+          <p class="font-serif text-white text-xl font-bold">Live</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body">Real-time Data</p>
+        </div>
       </div>
     </div>
+
+    <!-- Body -->
+    <p class="anim-hidden animate-fade-up stagger-3 text-white/65 text-base md:text-lg leading-relaxed max-w-md mb-8 font-body">
+      AVONIC monitors your vermicomposting bin in real-time — tracking soil moisture,
+      temperature, humidity, and gas levels so your worms always thrive.
+    </p>
+
+    <!-- CTAs -->
+    <div class="anim-hidden animate-fade-up stagger-4 flex flex-wrap gap-3 mb-10 justify-center md:justify-start">
+      <a href="#"
+         class="border border-white/25 hover:border-white/50 hover:bg-white/8 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 text-sm backdrop-blur-sm">
+        Get Started →
+      </a>
+    </div>
+
+    <!-- Stats strip: desktop only -->
+    <div class="anim-hidden animate-fade-up stagger-4 hidden md:flex items-center gap-8 pt-8 border-t border-white/10">
+      <div>
+        <p class="font-serif text-white text-2xl font-bold">4</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body">Sensors Tracked</p>
+      </div>
+      <div class="w-px h-10 bg-white/15"></div>
+      <div>
+        <p class="font-serif text-white text-2xl font-bold">2</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body">Smart Modes</p>
+      </div>
+      <div class="w-px h-10 bg-white/15"></div>
+      <div>
+        <p class="font-serif text-white text-xl font-bold">Live</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body">Real-time Data</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right: product video (desktop only) ── -->
+  <div class="hidden md:flex relative justify-center items-center -mr-6 md:-mr-12 lg:-mr-20">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-brand-greenAccent opacity-20 blur-3xl"></div>
+    </div>
+    <video
+      id="hero-video"
+      src="./vid/bin-loop.mp4"
+      autoplay loop muted playsinline
+      class="relative z-10 w-full object-contain"
+      style="opacity:0;transition:opacity 1.1s ease;mix-blend-mode:screen;max-width:min(720px, 55vw);"
+    ></video>
+  </div>
+
+</div>
 
     <!-- Wave transition into next section -->
     <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
@@ -336,31 +361,20 @@
     <div class="max-w-7xl mx-auto">
       <div class="grid md:grid-cols-2 items-stretch min-h-[520px] md:min-h-[580px]">
 
-        <!-- Left: Farmer photo - floating -->
-      <div class="relative flex items-center justify-center py-14 px-8 md:px-12 lg:px-16 min-h-[380px] md:min-h-0">
-
-        <!-- Soft glow behind -->
-        <div class="absolute w-80 h-80 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.07;filter:blur(60px);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-
-        <!-- Floating image -->
-        <div style="animation: floatCard 5s ease-in-out infinite;
-                    filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
-          <img
-            src="/img/landing-page/filipino-farmers-picture.png"
-            alt="Filipino Farmers"
-            class="relative z-10 w-full object-contain rounded-2xl"
-            style="max-width: 420px;"
-            onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
-          />
-        </div>
-
-        <style>
-          @keyframes floatCard {
-            0%, 100% { transform: translateY(0px); }
-            50%       { transform: translateY(-12px); }
-          }
-        </style>
-      </div>
+      <!-- Left: Farmer photo — hidden on mobile, visible on desktop -->
+<div class="hidden md:flex relative items-center justify-center py-14 px-8 md:px-12 lg:px-16 min-h-[380px] md:min-h-0">
+  <div class="absolute w-80 h-80 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.07;filter:blur(60px);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div style="animation: floatCard 5s ease-in-out infinite;
+              filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
+    <img
+      src="/img/landing-page/filipino-farmers-picture.png"
+      alt="Filipino Farmers"
+      class="relative z-10 w-full object-contain rounded-2xl"
+      style="max-width: 420px;"
+      onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
+    />
+  </div>
+</div>
 
         <!-- Right: Copy -->
         <div class="flex flex-col justify-center py-14 px-8 md:px-12 lg:px-16">
@@ -380,10 +394,24 @@
             <!-- <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-greenAccent font-normal italic">Farmers</span> -->
           </h2>
 
+          
+
           <!-- Stat call-out -->
           <p class="text-brand-textMuted text-base font-semibold mb-5 font-body">
             it's our mission to make them become <span class="text-brand-text underline decoration-brand-greenAccent underline-offset-4 decoration-2">more productive</span> than ever
           </p>
+
+          <!-- Farmer photo: mobile only -->
+  <div class="md:hidden mb-5" style="animation: floatCard 5s ease-in-out infinite;
+              filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
+    <img
+      src="/img/landing-page/filipino-farmers-picture.png"
+      alt="Filipino Farmers"
+      class="relative z-10 w-full object-contain rounded-2xl"
+      style="max-width: 420px;"
+      onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
+    />
+  </div>
 
           <!-- Body -->
           <p class="text-brand-textMuted text-base leading-relaxed max-w-md mb-7 font-body">
