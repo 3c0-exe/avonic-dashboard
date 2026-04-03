@@ -75,13 +75,7 @@
     #navbar {
       transition: background 0.35s ease, box-shadow 0.35s ease;
     }
-    #navbar.scrolled {
-      background: rgba(30, 58, 40, 0.96) !important;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 2px 24px rgba(0,0,0,0.25);
-    }
-
+  
     /* ── Staggered fade-up ── */
     .anim-hidden { opacity: 0; }
     .stagger-1 { animation-delay: 0.05s; }
@@ -182,62 +176,55 @@
   <!-- ════════════════════════════════════════════
        NAV
   ════════════════════════════════════════════ -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+  <!-- NAV -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-8 transition-all duration-300 ease-in-out">
+  <div id="nav-inner" class="mx-auto flex items-center justify-between transition-all duration-300 ease-in-out max-w-[1405px]">
 
-      <!-- Logo -->
-       <a href="index.html" class="flex items-center gap-2.5 group">
-          <img src="./img/logo/AVONIC LOGO.svg" alt="AVONIC" 
-              onerror="this.style.display='none'"
-              class="h-8 w-auto" />
-        </a>
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2.5">
+      <img id="nav-logo" src="./img/logo/AVONIC LOGO.svg" alt="AVONIC"
+        onerror="this.style.display='none'"
+        class="h-8 w-auto transition-all duration-300" />
+    </a>
 
-      <!-- Desktop links -->
-      <ul class="hidden md:flex items-center gap-7 text-sm font-medium text-white/75">
-        <li><a href="#" class="hover:text-white transition-colors duration-200 py-1">About</a></li>
-        <li><a href="#" class="hover:text-white transition-colors duration-200 py-1">Features</a></li>
-        <li><a href="#" class="hover:text-white transition-colors duration-200 py-1">How It Works</a></li>
-        <li><a href="#" class="hover:text-white transition-colors duration-200 py-1">Tutorials</a></li>
-        <li><a href="#" class="hover:text-white transition-colors duration-200 py-1">Contact</a></li>
-      </ul>
-
-      <!-- Desktop CTA -->
-      <div class="hidden md:flex items-center gap-4">
-        <a href="app.html" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">
-          Login
-        </a>
-        <a href="#"
-           class="bg-brand-gold hover:bg-brand-goldLight text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-          Get Started
-        </a>
-      </div>
-
-      <!-- Hamburger -->
-      <button id="hamburger" class="md:hidden text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors" aria-label="Toggle menu">
-        <svg id="icon-open"  width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6"  x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        <svg id="icon-close" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+    <!-- Desktop CTA -->
+    <div class="hidden md:flex items-center gap-4">
+      <a href="app.html" id="nav-login" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">Login</a>
+      <a href="app.html" id="nav-cta"
+        class="text-sm font-bold px-5 py-2 rounded-full transition-all duration-200"
+        style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
+        Sign-up
+      </a>
     </div>
 
-    <!-- Mobile menu dropdown -->
-    <div id="mobile-menu">
-      <div class="bg-brand-green/95 backdrop-blur-md rounded-2xl mt-3 border border-white/10">
-        <ul class="flex flex-col px-6 py-5 gap-4 text-white/85 text-sm font-medium">
-          <li><a href="#" class="block hover:text-white transition-colors">About</a></li>
-          <li><a href="#" class="block hover:text-white transition-colors">Features</a></li>
-          <li><a href="#" class="block hover:text-white transition-colors">How It Works</a></li>
-          <li><a href="#" class="block hover:text-white transition-colors">Tutorials</a></li>
-          <li><a href="#" class="block hover:text-white transition-colors">Contact</a></li>
-          <li class="pt-3 border-t border-white/10 flex flex-col gap-3">
-            <a href="app.html" class="text-white/60 hover:text-white transition-colors">Login</a>
-            <a href="#" class="bg-brand-gold text-white font-bold text-center px-5 py-3 rounded-full hover:bg-brand-goldLight transition-colors">
-              Get Started
+    <!-- Hamburger -->
+    <button id="hamburger" class="md:hidden p-1.5 rounded-lg transition-colors text-white" aria-label="Toggle menu">
+      <svg id="icon-open" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg id="icon-close" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
+      <div class="mt-3 rounded-[24px] border border-black overflow-hidden" style="background:#D4D4D8;">
+        <ul class="flex flex-col px-6 py-5 gap-4 text-sm font-semibold" style="color:#1E3A28;">
+          <li><a href="#farmers-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Filipino Farmers</a></li>
+          <li><a href="#watches-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Features</a></li>
+          <li><a href="#modes-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">How It Works</a></li>
+          <li><a href="#get-started-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Get Started</a></li>
+          <li><a href="#tutorials-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Tutorials</a></li>
+          <li><a href="#faq-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">FAQ</a></li>
+          <li class="pt-3 border-t flex flex-col gap-3" style="border-color:rgba(30,58,40,0.2);">
+            <a href="app.html" class="font-semibold" style="color:#1E3A28;">Login</a>
+            <a href="app.html" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+              style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
+              Sign-up
             </a>
           </li>
         </ul>
       </div>
     </div>
-  </nav>
+</nav>
 
 
   <!-- ════════════════════════════════════════════
@@ -275,13 +262,13 @@
 
         <!-- CTAs -->
         <div class="anim-hidden animate-fade-up stagger-4 flex flex-wrap gap-3 mb-10">
-          <a href="#"
+          <!-- <a href="#"
              class="bg-brand-gold hover:bg-brand-goldLight text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-sm">
             Get Started Free
-          </a>
+          </a> -->
           <a href="#"
              class="border border-white/25 hover:border-white/50 hover:bg-white/8 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 text-sm backdrop-blur-sm">
-            See How It Works →
+            Get Started →
           </a>
         </div>
 
@@ -1336,27 +1323,75 @@
   <!-- ════════════════════════════════════════════
        SCRIPTS
   ════════════════════════════════════════════ -->
-  <script>
-    /* ── Sticky nav ── */
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 50);
-    }, { passive: true });
+<script>
+/* ── Sticky nav ── */
+const navbar    = document.getElementById('navbar');
+const navInner  = document.getElementById('nav-inner');
+const navLogin  = document.getElementById('nav-login');
+const navLogo   = document.getElementById('nav-logo');
+const navCta    = document.getElementById('nav-cta');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const iconOpen   = document.getElementById('icon-open');
+const iconClose  = document.getElementById('icon-close');
+let menuOpen = false;
 
-    /* ── Mobile menu ── */
-    const hamburger  = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const iconOpen   = document.getElementById('icon-open');
-    const iconClose  = document.getElementById('icon-close');
-    let open = false;
+// Set initial nav-inner state
+navInner.style.transition   = 'background 0.3s ease, border-radius 0.3s ease, outline 0.3s ease, padding 0.3s ease';
+navInner.style.borderRadius = '46px';
+navInner.style.outline      = '2px solid transparent';
+navInner.style.padding      = '10px 0px';
 
-    hamburger.addEventListener('click', () => {
-      open = !open;
-      mobileMenu.classList.toggle('open', open);
-      iconOpen.classList.toggle('hidden', open);
-      iconClose.classList.toggle('hidden', !open);
-    });
+// Sign-up button hover
+navCta.addEventListener('mouseenter', () => {
+  navCta.style.background = '#EAB308';
+  navCta.style.boxShadow  = '1px 3px 0px 0px rgba(0,0,0,1)';
+  navCta.style.transform  = 'translateY(-1px)';
+});
+navCta.addEventListener('mouseleave', () => {
+  navCta.style.background = '#ECBD01';
+  navCta.style.boxShadow  = 'none';
+  navCta.style.transform  = 'translateY(0)';
+});
 
+// Scroll pill effect
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navInner.style.background   = '#E8E8E8';
+    navInner.style.borderRadius = '46px';
+    navInner.style.outline      = '2px solid black';
+    navInner.style.padding      = '10px 32px';
+    navLogin.style.color        = '#1a1a1a';
+    hamburger.style.color       = '#1E3A28';
+    navLogo.src = './img/logo/AVONIC LOGO GREEN.svg';
+  } else {
+    navInner.style.background   = 'transparent';
+    navInner.style.borderRadius = '46px';
+    navInner.style.outline      = '2px solid transparent';
+    navInner.style.padding      = '10px 0px';
+    navLogin.style.color        = 'rgba(255,255,255,0.75)';
+    hamburger.style.color       = 'white';
+    navLogo.src = './img/logo/AVONIC LOGO.svg';
+  }
+}, { passive: true });
+
+// Mobile menu toggle
+hamburger.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  mobileMenu.style.maxHeight = menuOpen ? mobileMenu.scrollHeight + 'px' : '0';
+  iconOpen.classList.toggle('hidden', menuOpen);
+  iconClose.classList.toggle('hidden', !menuOpen);
+});
+
+// Close menu on nav link click
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuOpen = false;
+    mobileMenu.style.maxHeight = '0';
+    iconOpen.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+  });
+});
     /* ── Scroll-triggered fade-up animations ── */
     const animEls = document.querySelectorAll('.anim-hidden');
     const io = new IntersectionObserver((entries) => {
