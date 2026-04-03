@@ -1128,14 +1128,37 @@
     <div class="relative z-10 max-w-3xl mx-auto px-6 md:px-12">
 
       <!-- Header -->
-      <div class="text-center mb-14 anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
-        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-5 border" style="background:rgba(74,124,63,0.08);color:#4A7C3F;border-color:rgba(74,124,63,0.2);">
-          Got Questions?
-        </div>
-        <h2 class="font-serif" style="font-size:clamp(2rem,4vw,3rem);font-weight:400;color:#1A1A1A;">
-          Frequently Asked<br><span style="color:#4A7C3F;font-style:italic;">Questions</span>
-        </h2>
-      </div>
+<!-- Header -->
+<div class="mb-14 anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
+
+  <!-- Badge — centered above -->
+  <div class="flex justify-center mb-6">
+    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase border" style="background:rgba(74,124,63,0.08);color:#4A7C3F;border-color:rgba(74,124,63,0.2);">
+      Got Questions?
+    </div>
+  </div>
+
+  <!-- Illustration + Heading side by side, centered as a unit -->
+  <div class="flex items-center justify-evenly gap-5">
+
+    <!-- Illustration -->
+    <img
+      src="/img/landing-page/FAQ-illustration.svg"
+      alt="FAQ Illustration"
+      style="width:clamp(90px,12vw,140px);height:auto;object-fit:contain;flex-shrink:0;"
+    />
+
+    <!-- Heading text -->
+    <div>
+      <h2 class="font-serif" style="font-weight:400;color:#1A1A1A;line-height:1.08;">
+        <span class="block" style="font-size:clamp(1.8rem,3.5vw,2.6rem);">Frequently&nbsp; Asked</span>
+        <span class="block italic" style="font-size:clamp(2.8rem,5vw,5rem);color:#4A7C3F;">Questions</span>
+      </h2>
+    </div>
+
+  </div>
+
+</div>
 
       <!-- Accordion -->
       <div id="faq-accordion" class="flex flex-col gap-3 anim-hidden" style="animation:fadeUp 0.7s ease 0.1s forwards;">
