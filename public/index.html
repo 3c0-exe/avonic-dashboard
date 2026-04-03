@@ -189,10 +189,15 @@
 
     <!-- Desktop CTA -->
     <div class="hidden md:flex items-center gap-4">
-      <a href="app.html" id="nav-login" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">Login</a>
+      <!-- Language Toggle -->
+      <button id="lang-btn-desktop" class="lang-toggle-btn flex items-center gap-1.5 text-sm font-semibold text-white/70 hover:text-white transition-colors duration-200" aria-label="Switch language" style="cursor:pointer;background:none;border:none;padding:0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span class="lang-display-label">EN</span>
+      </button>
+      <a href="app.html" id="nav-login" data-i18n="nav-login" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">Login</a>
       <a href="app.html" id="nav-cta"
         class="text-sm font-bold px-5 py-2 rounded-full transition-all duration-200"
-        style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
+        style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;" data-i18n="nav-signup">
         Sign-up
       </a>
     </div>
@@ -208,15 +213,25 @@
   <div id="mobile-menu" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
       <div class="mt-3 rounded-[24px] border border-black overflow-hidden" style="background:#D4D4D8;">
         <ul class="flex flex-col px-6 py-5 gap-4 text-sm font-semibold" style="color:#1E3A28;">
-          <li><a href="#farmers-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Filipino Farmers</a></li>
-          <li><a href="#watches-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Features</a></li>
-          <li><a href="#modes-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">How It Works</a></li>
-          <li><a href="#get-started-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Get Started</a></li>
-          <li><a href="#tutorials-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Tutorials</a></li>
-          <li><a href="#faq-section" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">FAQ</a></li>
+          <li><a href="#farmers-section" data-i18n="nav-farmers" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Filipino Farmers</a></li>
+          <li><a href="#watches-section" data-i18n="nav-features" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Features</a></li>
+          <li><a href="#modes-section" data-i18n="nav-hiw" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">How It Works</a></li>
+          <li><a href="#get-started-section" data-i18n="nav-gs" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Get Started</a></li>
+          <li><a href="#tutorials-section" data-i18n="nav-tutorials" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Tutorials</a></li>
+          <li><a href="#faq-section" data-i18n="nav-faq" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">FAQ</a></li>
+          <!-- Language Toggle -->
+          <li class="pt-2">
+            <button class="lang-toggle-btn flex items-center gap-2 py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;cursor:pointer;background:none;border:none;padding:4px 0;font-size:0.875rem;font-weight:600;font-family:inherit;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span class="lang-display-label">EN</span>
+            </button>
+          </li>
           <li class="pt-3 border-t flex flex-col gap-3" style="border-color:rgba(30,58,40,0.2);">
-            <a href="app.html" class="font-semibold" style="color:#1E3A28;">Login</a>
-            <a href="app.html" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+            <a href="app.html" data-i18n="nav-login" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+              style="background:#808080;color:#ffffff;outline:1px solid black;">
+              Login
+            </a>
+            <a href="app.html" data-i18n="nav-signup" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
               style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
               Sign-up
             </a>
@@ -243,15 +258,15 @@
   <div class="flex flex-col">
 
     <!-- Badge -->
-    <div class="anim-hidden animate-fade-up stagger-1 inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-white/80 font-medium mb-7 backdrop-blur-sm self-start">
+    <div class="anim-hidden animate-fade-up stagger-1 inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-white/80 font-medium mb-7 backdrop-blur-sm self-start" data-i18n="hero-badge">
       LOCALIZED  •  AUTOMATED  •  SUSTAINABLE
     </div>
 
     <!-- Headline -->
     <h1 class="anim-hidden animate-fade-up stagger-2 font-serif text-white leading-[1.08] mb-6">
-      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Smarter</span>
-      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal">Worm Health.</span>
-      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] text-brand-goldLight italic">Better Compost.</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal" data-i18n="hero-h1-1">Smarter</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal" data-i18n="hero-h1-2">Worm Health.</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] text-brand-goldLight italic" data-i18n="hero-h1-3">Better Compost.</span>
     </h1>
 
     <!-- Mobile: video + stats below bin -->
@@ -272,30 +287,30 @@
       <div class="flex items-center justify-center gap-8 pt-6 border-t border-white/10 w-full px-6">
         <div class="text-center">
           <p class="font-serif text-white text-2xl font-bold">4</p>
-          <p class="text-white/45 text-xs mt-0.5 font-body">Sensors Tracked</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-1">Sensors Tracked</p>
         </div>
         <div class="w-px h-10 bg-white/15"></div>
         <div class="text-center">
           <p class="font-serif text-white text-2xl font-bold">2</p>
-          <p class="text-white/45 text-xs mt-0.5 font-body">Smart Modes</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-2">Smart Modes</p>
         </div>
         <div class="w-px h-10 bg-white/15"></div>
         <div class="text-center">
           <p class="font-serif text-white text-xl font-bold">Live</p>
-          <p class="text-white/45 text-xs mt-0.5 font-body">Real-time Data</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-3">Real-time Data</p>
         </div>
       </div>
     </div>
 
     <!-- Body -->
-    <p class="anim-hidden animate-fade-up stagger-3 text-white/65 text-base md:text-lg leading-relaxed max-w-md mb-8 font-body">
+    <p class="anim-hidden animate-fade-up stagger-3 text-white/65 text-base md:text-lg leading-relaxed max-w-md mb-8 font-body" data-i18n="hero-body">
       AVONIC monitors your vermicomposting bin in real-time — tracking soil moisture,
       temperature, humidity, and gas levels so your worms always thrive.
     </p>
 
     <!-- CTAs -->
     <div class="anim-hidden animate-fade-up stagger-4 flex flex-wrap gap-3 mb-10 justify-center md:justify-start">
-      <a href="#"
+      <a href="#" data-i18n="hero-cta"
          class="border border-white/25 hover:border-white/50 hover:bg-white/8 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 text-sm backdrop-blur-sm">
         Get Started →
       </a>
@@ -305,17 +320,17 @@
     <div class="anim-hidden animate-fade-up stagger-4 hidden md:flex items-center gap-8 pt-8 border-t border-white/10">
       <div>
         <p class="font-serif text-white text-2xl font-bold">4</p>
-        <p class="text-white/45 text-xs mt-0.5 font-body">Sensors Tracked</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-1">Sensors Tracked</p>
       </div>
       <div class="w-px h-10 bg-white/15"></div>
       <div>
         <p class="font-serif text-white text-2xl font-bold">2</p>
-        <p class="text-white/45 text-xs mt-0.5 font-body">Smart Modes</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-2">Smart Modes</p>
       </div>
       <div class="w-px h-10 bg-white/15"></div>
       <div>
         <p class="font-serif text-white text-xl font-bold">Live</p>
-        <p class="text-white/45 text-xs mt-0.5 font-body">Real-time Data</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-3">Real-time Data</p>
       </div>
     </div>
   </div>
@@ -337,8 +352,8 @@
 </div>
 
     <!-- Wave transition into next section -->
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-      <svg viewBox="0 0 1440 72" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-14 md:h-[72px]">
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+      <svg viewBox="0 0 1440 72" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-14 md:h-[72px]" style="display:block;overflow:visible;">
         <path d="M0 72 Q180 20 360 48 Q540 76 720 36 Q900 -4 1080 32 Q1260 68 1440 24 L1440 72 Z" fill="#F2EDE3"/>
       </svg>
     </div>
@@ -379,29 +394,19 @@
         <!-- Right: Copy -->
         <div class="flex flex-col justify-center py-14 px-8 md:px-12 lg:px-16">
 
-        
-            <!-- Eyebrow -->
-      <div class="flex items-center gap-2 mb-2">
-        <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
-        <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">THIS PROJECT IS DEDICATED FOR OUR HARDWORKING</p>
-      </div>
-          <!-- <p class="text-brand-textMuted text-base font-semibold mb-5 font-body">
-            is to make
-          </p> -->
-          <!-- Headline -->
-          <h2 class="font-serif leading-[1.05] mb-3">
-            <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-text font-normal">Filipino Farmers</span>
-            <!-- <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-greenAccent font-normal italic">Farmers</span> -->
-          </h2>
+  <div class="flex items-center gap-2 mb-2 justify-center md:justify-start">
+    <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+    <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="farmers-eyebrow">THIS PROJECT IS DEDICATED FOR OUR HARDWORKING</p>
+  </div>
+  
+  <h2 class="font-serif leading-[1.05] mb-3 text-center md:text-left">
+    <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-text font-normal" data-i18n="farmers-h2">Filipino Farmers</span>
+  </h2>
 
-          
+  <p class="text-brand-textMuted text-base font-semibold mb-5 font-body text-center md:text-left" data-i18n="farmers-mission">
+    it's our mission to make them become more productive than ever
+  </p>
 
-          <!-- Stat call-out -->
-          <p class="text-brand-textMuted text-base font-semibold mb-5 font-body">
-            it's our mission to make them become <span class="text-brand-text underline decoration-brand-greenAccent underline-offset-4 decoration-2">more productive</span> than ever
-          </p>
-
-          <!-- Farmer photo: mobile only -->
   <div class="md:hidden mb-5" style="animation: floatCard 5s ease-in-out infinite;
               filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
     <img
@@ -413,46 +418,43 @@
     />
   </div>
 
-          <!-- Body -->
-          <p class="text-brand-textMuted text-base leading-relaxed max-w-md mb-7 font-body">
-            Vermicomposting is transforming agriculture across the Philippines, but managing
-            worm bins effectively remains a challenge. AVONIC gives every Filipino farmer
-            the smart tools they need — no expertise required.
-          </p>
+  <p class="text-brand-textMuted text-base leading-relaxed max-w-md mb-7 font-body" data-i18n="farmers-body">
+    Vermicomposting is transforming agriculture across the Philippines, but managing
+    worm bins effectively remains a challenge. AVONIC gives every Filipino farmer
+    the smart tools they need — no expertise required.
+  </p>
 
-          <!-- Tag pills -->
-          <div class="flex flex-wrap gap-2.5 mb-8">
-            <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.5 2 2 6.5 2 12"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="1"/>
-                <path d="M7 17c1-2 3-3 5-3s4 1 5 3"/><path d="M5 20c1-1 2-2 3-3"/>
-              </svg>
-              Boosts soil quality
-            </span>
+  <div class="flex flex-wrap gap-2.5 mb-8 justify-center md:justify-start">
+    <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.5 2 2 6.5 2 12"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="1"/>
+        <path d="M7 17c1-2 3-3 5-3s4 1 5 3"/><path d="M5 20c1-1 2-2 3-3"/>
+      </svg>
+      <span data-i18n="farmers-tag-1">Boosts soil quality</span>
+    </span>
 
-            <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
-              </svg>
-              Mobile monitoring
-            </span>
+    <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+      </svg>
+      <span data-i18n="farmers-tag-2">Mobile monitoring</span>
+    </span>
 
-            <span class="bg-white rounded-full px-4 py-1.5 border border-brand-greenAccent/25 text-xs font-semibold text-brand-greenAccent inline-flex items-center gap-1.5">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
-              </svg>
-              Zero-waste farming
-            </span>
-          </div>
+    <span class="bg-white rounded-full px-4 py-1.5 border border-brand-greenAccent/25 text-xs font-semibold text-brand-greenAccent inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
+      </svg>
+      <span data-i18n="farmers-tag-3">Zero-waste farming</span>
+    </span>
+  </div>
 
-          <!-- Learn more link -->
-          <a href="#" class="inline-flex items-center gap-2 text-brand-greenAccent font-bold text-sm group hover:gap-3 transition-all duration-200">
-            Learn about our impact
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform duration-200">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
+  <a href="#" class="inline-flex items-center gap-2 text-brand-greenAccent font-bold text-sm group hover:gap-3 transition-all duration-200 self-center md:self-start">
+    <span data-i18n="farmers-learn">Learn about our impact</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform duration-200">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </a>
+</div>
       </div>
     </div>
   </section>
@@ -468,7 +470,7 @@
 
   <div class="max-w-7xl mx-auto px-6 md:px-12">
 
-    <div class="flex items-center gap-2 mb-12">
+    <div class="flex items-center gap-2 mb-12 justify-center md:justify-start">
       <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
       <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">What is AVONIC?</p>
     </div>
@@ -476,62 +478,59 @@
     <div class="grid md:grid-cols-2 gap-14 lg:gap-20 items-center">
 
       <!-- Left: copy -->
-      <div class="anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
-        <h2 class="font-serif leading-[1.08] mb-8" style="color:#1A1A1A;">
-          <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;">A Vermicomposting</span>
-          <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;">System That</span>
-          <span class="block italic" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;color:#4A7C3F;">Thinks For You</span>
-        </h2>
+       <div class="anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
+  <h2 class="font-serif leading-[1.08] mb-8 text-center md:text-left" style="color:#1A1A1A;">
+    <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;" data-i18n="system-h2-1">A Vermicomposting</span>
+    <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;" data-i18n="system-h2-2">System That</span>
+    <span class="block italic" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;color:#4A7C3F;" data-i18n="system-h2-3">Thinks For You</span>
+  </h2>
 
-        <!-- Illustration: mobile only -->
-        <div class="md:hidden flex justify-center items-center relative mb-6 -mx-6">
-          <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.1;filter:blur(50px);"></div>
-          <img
-            src="./img/Login-Clipart.png"
-            alt="AVONIC Smart Vermicomposting Illustration"
-            class="relative z-10 w-full object-contain"
-            style="max-width:300px;filter:drop-shadow(0 20px 40px rgba(30,58,40,0.18));"
-          />
-        </div>
+  <div class="md:hidden flex justify-center items-center relative mb-6 -mx-6">
+    <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.1;filter:blur(50px);"></div>
+    <img
+      src="./img/Login-Clipart.png"
+      alt="AVONIC Smart Vermicomposting Illustration"
+      class="relative z-10 w-full object-contain"
+      style="max-width:300px;filter:drop-shadow(0 20px 40px rgba(30,58,40,0.18));"
+    />
+  </div>
 
-        <!-- Feature checklist -->
-        <ul class="space-y-3 mb-8">
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="text-sm" style="color:#5A5A5A;">Real-time soil moisture tracking and alerts</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="text-sm" style="color:#5A5A5A;">Automatic temperature and humidity regulation</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="text-sm" style="color:#5A5A5A;">Harmful gas level detection before damage occurs</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="text-sm" style="color:#5A5A5A;">Mobile alerts so you never miss a critical change</span>
-          </li>
-        </ul>
+  <ul class="space-y-3 mb-8">
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-1">Real-time soil moisture tracking and alerts</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-2">Automatic temperature and humidity regulation</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-3">Harmful gas level detection before damage occurs</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-4">Mobile alerts so you never miss a critical change</span>
+    </li>
+  </ul>
 
-        <!-- Failure callout card -->
-        <div class="rounded-2xl p-6 border" style="background:#1E3A28;border-color:#2E5E3A;">
-          <p class="text-xs font-bold tracking-[0.18em] uppercase mb-3" style="color:#E8B84B;">Why traditional vermicomposting keeps failing</p>
-          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.7);">
-            Most farmers rely on guesswork — checking moisture by feel, eyeballing temperature,
-            missing early warning signs. Without real data, worm colonies crash silently.
-            AVONIC replaces guesswork with precision monitoring, 24/7.
-          </p>
-        </div>
-      </div>
+  <div class="rounded-2xl p-6 border" style="background:#1E3A28;border-color:#2E5E3A;">
+    <p class="text-xs font-bold tracking-[0.18em] uppercase mb-3" style="color:#E8B84B;" data-i18n="system-callout-label">Why traditional vermicomposting keeps failing</p>
+    <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.7);" data-i18n="system-callout-body">
+      Most farmers rely on guesswork — checking moisture by feel, eyeballing temperature,
+      missing early warning signs. Without real data, worm colonies crash silently.
+      AVONIC replaces guesswork with precision monitoring, 24/7.
+    </p>
+  </div>
+</div>
 
       <!-- Right: illustration -->
       <div class="hidden md:flex relative items-center justify-center anim-hidden" style="animation: floatCard 5s ease-in-out infinite;">
@@ -551,8 +550,8 @@
        
 
       </div>
-      <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+      <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 56 Q200 16 440 36 Q680 56 900 20 Q1140 -8 1440 32 L1440 56 Z" fill="#ffffff"/>
   </svg>
 </div>
@@ -573,17 +572,17 @@
     <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 
       <!-- Header -->
-      <div class="text-center mb-14">
-        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-4 border" style="background:#F2EDE3;color:#4A7C3F;border-color:#4A7C3F;border-opacity:0.2;">
-          Sensor Data
-        </div>
-        <h2 class="font-serif" style="font-size:clamp(2rem,4vw,3rem);color:#1A1A1A;font-weight:400;">
-          What <span style="color:#4A7C3F;font-style:italic;">AVONIC</span> Watches
-        </h2>
-        <p class="mt-3 text-sm max-w-md mx-auto" style="color:#5A5A5A;">
-          Four critical parameters — monitored continuously so your worms always have the perfect environment.
-        </p>
-      </div>
+       <div class="text-center mb-14">
+  <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-4 border" style="background:#F2EDE3;color:#4A7C3F;border-color:#4A7C3F;border-opacity:0.2;" data-i18n="watches-eyebrow">
+    Sensor Data
+  </div>
+  <h2 class="font-serif" style="font-size:clamp(2rem,4vw,3rem);color:#1A1A1A;font-weight:400;" data-i18n-html="watches-h2">
+  What <span style="color:#4A7C3F;font-style:italic;">AVONIC</span> Watches
+</h2>
+  <p class="mt-3 text-sm max-w-md mx-auto" style="color:#5A5A5A;" data-i18n="watches-subhead">
+    Four critical parameters — monitored continuously so your worms always have the perfect environment.
+  </p>
+</div>
 
      <!-- 2×2 metric cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
@@ -592,7 +591,7 @@
 <div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#080808;transition:box-shadow 0.2s ease;">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;">Soil Moisture</p>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-soil">Soil Moisture</p>
         <p id="lp-status-soilMoisture" class="text-xs font-semibold" style="color:#4A7C3F;">Optimal</p>
       </div>
       <div class="relative w-16 h-16 flex-shrink-0">
@@ -617,7 +616,7 @@
 <div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;">Temperature</p>
+         <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-temp">Temperature</p>
         <p id="lp-status-temperature" class="text-xs font-semibold" style="color:#C89B3C;">Optimal</p>
       </div>
       <div class="relative w-16 h-16 flex-shrink-0">
@@ -642,7 +641,7 @@
 <div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;">Humidity</p>
+         <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-hum">Humidity</p>
         <p id="lp-status-humidity" class="text-xs font-semibold" style="color:#2E6E8E;">Optimal</p>
       </div>
       <div class="relative w-16 h-16 flex-shrink-0">
@@ -667,7 +666,7 @@
 <div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
     <div class="flex items-start justify-between mb-5">
       <div>
-        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;">Gas Levels</p>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-gas">Gas Levels</p>
         <p id="lp-status-gasLevels" class="text-xs font-semibold" style="color:#7A5C3A;">Optimal</p>
       </div>
       <div class="relative w-16 h-16 flex-shrink-0">
@@ -691,14 +690,13 @@
 </div>
 
 <!-- Bottom note -->
-<p class="text-center text-xs mt-8" style="color:#5A5A5A;opacity:0.7;">
+<p class="text-center text-xs mt-8 pb-16 md:pb-4" style="color:#5A5A5A;opacity:0.7;" data-i18n="watches-note">
   These are live sensor values that update automatically
 </p>
 
-
     </div>
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 28 Q300 -4 600 36 Q900 72 1200 16 Q1320 6 1440 34 L1440 56 L0 56 Z" fill="#F2EDE3"/>
   </svg>
 </div>
@@ -719,13 +717,13 @@
     <div class="text-center mb-12">
       <div class="flex items-center justify-center gap-2 mb-4">
         <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
-        <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">Smart Control</p>
+        <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="modes-eyebrow">Smart Control</p>
         <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
       </div>
       <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#1A1A1A;font-weight:400;">
-        What's Your <span style="color:#4A7C3F;font-style:italic;">Mode?</span>
+        <span data-i18n="modes-h2-plain">What's Your </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="modes-h2-em">Mode?</span>
       </h2>
-      <p class="text-sm max-w-md mx-auto" style="color:#5A5A5A;">
+      <p class="text-sm max-w-md mx-auto" style="color:#5A5A5A;" data-i18n="modes-subhead">
         Choose how AVONIC manages your bin — let it think for you, or take full control yourself.
       </p>
     </div>
@@ -736,13 +734,15 @@
         <button
           data-mode="auto"
           class="mode-btn font-body text-sm font-semibold px-6 py-2.5 rounded-xl transition-all duration-250 cursor-pointer"
-          style="background:#1E3A28;color:#ffffff;box-shadow:0 2px 12px rgba(30,58,40,0.25);">
+          style="background:#1E3A28;color:#ffffff;box-shadow:0 2px 12px rgba(30,58,40,0.25);"
+          data-i18n="modes-tab-auto">
           Auto Mode
         </button>
         <button
           data-mode="manual"
           class="mode-btn font-body text-sm font-semibold px-6 py-2.5 rounded-xl transition-all duration-250 cursor-pointer"
-          style="background:transparent;color:#5A5A5A;">
+          style="background:transparent;color:#5A5A5A;"
+          data-i18n="modes-tab-manual">
           Manual Mode
         </button>
       </div>
@@ -763,36 +763,36 @@
       </div>
 
       <!-- Copy -->
-      <div class="flex-1 max-w-lg">
-        <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide mb-4" style="background:#1E3A28;color:#E8B84B;">
+      <div class="flex-1 max-w-lg flex flex-col items-center md:items-start text-center md:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide mb-4" style="background:#1E3A28;color:#E8B84B;" data-i18n="modes-auto-badge">
           ✦ Recommended
         </div>
         <h3 class="font-serif mb-4" style="font-size:clamp(1.5rem,2.5vw,2rem);color:#1A1A1A;font-weight:400;">
-          Auto Mode — <span style="color:#4A7C3F;font-style:italic;">Set it & forget it</span>
+          <span data-i18n="modes-auto-h3-plain">Auto Mode — </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="modes-auto-h3-em">Set it & forget it</span>
         </h3>
-        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;">
+        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;" data-i18n="modes-auto-body">
           The system continuously monitors all four parameters and automatically adjusts
           conditions to keep your worms in the perfect environment. AVONIC reacts in real-time
           — so you can focus on your farm, not your bin.
         </p>
-        <div class="space-y-3">
+        <div class="space-y-3 w-full">
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Real-time automated adjustments</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-1">Real-time automated adjustments</span>
           </div>
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Smart alerts only when action is needed</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-2">Smart alerts only when action is needed</span>
           </div>
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Learns optimal patterns over time</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-3">Learns optimal patterns over time</span>
           </div>
         </div>
       </div>
@@ -813,38 +813,38 @@
       </div>
 
       <!-- Copy -->
-      <div class="flex-1 max-w-lg">
+      <div class="flex-1 max-w-lg flex flex-col items-center md:items-start text-center md:text-left">
         <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide mb-4" style="background:#F2EDE3;color:#7A5C3A;border:1px solid #E8E0D0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
-            </svg> Full Control
+            </svg> <span data-i18n="modes-manual-badge">Full Control</span>
         </div>
         <h3 class="font-serif mb-4" style="font-size:clamp(1.5rem,2.5vw,2rem);color:#1A1A1A;font-weight:400;">
-          Manual Mode — <span style="color:#C89B3C;font-style:italic;">You call the shots</span>
+          <span data-i18n="modes-manual-h3-plain">Manual Mode — </span><span style="color:#C89B3C;font-style:italic;" data-i18n="modes-manual-h3-em">You call the shots</span>
         </h3>
-        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;">
+        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;" data-i18n="modes-manual-body">
           Take complete control of your vermicomposting system. Manually adjust moisture,
           temperature, and ventilation from the app — ideal for experienced farmers who
           know exactly what their worms need.
         </p>
-        <div class="space-y-3">
+        <div class="space-y-3 w-full">
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Full manual override from the app</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-1">Full manual override from the app</span>
           </div>
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Adjust any parameter remotely, anytime</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-2">Adjust any parameter remotely, anytime</span>
           </div>
           <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
               <path d="M1 6l11 7L23 6"/><path d="M1 6v12a1 1 0 0 0 1 1h20a1 1 0 0 0 1-1V6"/>
             </svg>
-            <span class="text-sm font-medium" style="color:#1A1A1A;">Live sensor data always visible</span>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-3">Live sensor data always visible</span>
           </div>
         </div>
       </div>
@@ -852,8 +852,8 @@
 
   </div>
 
-  <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+  <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 56 Q240 10 480 38 Q720 66 960 22 Q1200 -8 1440 28 L1440 56 Z" fill="#ffffff"/>
   </svg>
 </div>
@@ -874,11 +874,11 @@
           <!-- Eyebrow -->
           <div class="flex items-center gap-2 mb-8">
             <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
-            <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">Onboarding</p>
+            <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="gs-eyebrow">Onboarding</p>
           </div>
 
-          <h2 class="font-serif mb-10" style="font-size:clamp(1.9rem,3.5vw,2.8rem);color:#1A1A1A;font-weight:400;line-height:1.1;">
-            How to get <span style="color:#4A7C3F;font-style:italic;">started</span>
+          <h2 class="font-serif mb-10 text-center md:text-left" style="font-size:clamp(1.9rem,3.5vw,2.8rem);color:#1A1A1A;font-weight:400;line-height:1.1;">
+            <span data-i18n="gs-h2-plain">How to get </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="gs-h2-em">started</span>
           </h2>
 
           <!-- Illustration: mobile only -->
@@ -901,9 +901,9 @@
               <div class="w-px flex-1 my-2" style="background:#E8E0D0;min-height:32px;"></div>
             </div>
             <div class="pb-8">
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;">Step 1</p>
-              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;">Register your AVONIC account</h4>
-              <p class="text-sm leading-relaxed" style="color:#5A5A5A;">Create your free account in seconds. No credit card needed — just your email and you're in.</p>
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;" data-i18n="gs-step1-label">Step 1</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step1-title">Register your AVONIC account</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step1-body">Create your free account in seconds. No credit card needed — just your email and you're in.</p>
             </div>
           </div>
 
@@ -916,9 +916,9 @@
               <div class="w-px flex-1 my-2" style="background:#E8E0D0;min-height:32px;"></div>
             </div>
             <div class="pb-8">
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;">Step 2</p>
-              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;">Log in to your account</h4>
-              <p class="text-sm leading-relaxed" style="color:#5A5A5A;">Sign in on any device — mobile, tablet, or desktop. Your dashboard is always in sync.</p>
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;" data-i18n="gs-step2-label">Step 2</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step2-title">Log in to your account</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step2-body">Sign in on any device — mobile, tablet, or desktop. Your dashboard is always in sync.</p>
             </div>
           </div>
 
@@ -930,17 +930,17 @@
               </div>
             </div>
             <div class="pb-2">
-              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#C89B3C;">Step 3</p>
-              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;">Connect to your ESP ID</h4>
-              <p class="text-sm leading-relaxed" style="color:#5A5A5A;">Pair your AVONIC sensor module by entering your unique ESP ID. Live data starts flowing immediately.</p>
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#C89B3C;" data-i18n="gs-step3-label">Step 3</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step3-title">Connect to your ESP ID</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step3-body">Pair your AVONIC sensor module by entering your unique ESP ID. Live data starts flowing immediately.</p>
             </div>
           </div>
 
           <!-- CTA -->
-          <div class="mt-10">
+          <div class="mt-10 flex justify-center md:justify-start">
             <a href="#"
                class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
-               style="background:#ECBD01; border: solid black 1px;">
+               style="background:#ECBD01; border: solid black 1px;" data-i18n="gs-cta">
               Register Now
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -963,8 +963,8 @@
       </div>
     </div>
 
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 24 Q360 56 720 12 Q1080 -24 1440 32 L1440 56 L0 56 Z" fill="#3B2208"/>
   </svg>
 </div>
@@ -982,104 +982,79 @@
 
       <!-- Header -->
       <div class="text-center mb-12">
-        <div class="flex items-center justify-center gap-2 mb-4">
-          <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
-          <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#C89B3C;">Learn AVONIC</p>
-          <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
+  <div class="flex items-center justify-center gap-2 mb-4">
+    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
+    <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#C89B3C;" data-i18n="tutorials-eyebrow">Learn AVONIC</p>
+    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
+  </div>
+  <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#ffffff;font-weight:400;" data-i18n="tutorials-h2">
+    Watch the Tutorials
+  </h2>
+  <p class="text-sm max-w-md mx-auto" style="color:rgba(255,255,255,0.55);" data-i18n="tutorials-subhead">
+    Get up and running fast with our step-by-step video guides.
+  </p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
+
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-1.jpg" alt="Tutorial 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
-        <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#ffffff;font-weight:400;">
-          Watch the <span style="color:#E8B84B;font-style:italic;">Tutorials</span>
-        </h2>
-        <p class="text-sm max-w-md mx-auto" style="color:rgba(255,255,255,0.55);">
-          Get up and running fast with our step-by-step video guides.
-        </p>
       </div>
+    </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card1-tag">Getting Started</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card1-title">Setting up your AVONIC device</p>
+    </div>
+  </div>
 
-      <!-- 3 video cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
-
-        <!-- Card 1 -->
-        <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-          <!-- Thumbnail -->
-          <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-            <img
-              src="./images/tutorial-1.jpg"
-              alt="Tutorial 1"
-              class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200"
-              onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"
-            />
-            <!-- Play button overlay -->
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-            </div>
-          </div>
-          <!-- Info -->
-          <div class="p-4">
-            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;">Getting Started</p>
-            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);">Setting up your AVONIC device</p>
-          </div>
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-2.jpg" alt="Tutorial 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
-
-        <!-- Card 2 -->
-        <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-          <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-            <img
-              src="./images/tutorial-2.jpg"
-              alt="Tutorial 2"
-              class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200"
-              onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"
-            />
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-            </div>
-          </div>
-          <div class="p-4">
-            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;">Dashboard</p>
-            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);">Reading your sensor data live</p>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-          <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-            <img
-              src="./images/tutorial-3.jpg"
-              alt="Tutorial 3"
-              class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200"
-              onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"
-            />
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-            </div>
-          </div>
-          <div class="p-4">
-            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;">Advanced</p>
-            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);">Auto vs Manual mode explained</p>
-          </div>
-        </div>
-
       </div>
+    </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card2-tag">Dashboard</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card2-title">Reading your sensor data live</p>
+    </div>
+  </div>
 
-      <!-- Watch More CTA -->
-      <div class="text-center">
-        <a href="#"
-           class="inline-flex items-center gap-2 font-body font-bold text-sm px-8 py-3.5 rounded-full border transition-all duration-200 hover:-translate-y-0.5"
-           style="background:transparent;border-color:#C89B3C;color:#E8B84B;">
-          Watch More
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-3.jpg" alt="Tutorial 3" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
       </div>
+    </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card3-tag">Advanced</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card3-title">Auto vs Manual mode explained</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="text-center">
+  <a href="#" class="inline-flex items-center gap-2 font-body font-bold text-sm px-8 py-3.5 rounded-full border transition-all duration-200 hover:-translate-y-0.5" style="background:transparent;border-color:#C89B3C;color:#E8B84B;">
+    <span data-i18n="tutorials-watch-more">Watch More</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
 
     </div>
 
-<div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+<div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 56 Q180 16 420 40 Q660 64 900 18 Q1140 -18 1440 26 L1440 56 Z" fill="#1E3A28"/>
   </svg>
 </div>
@@ -1103,101 +1078,80 @@
 
       <!-- Header -->
       <div class="text-center mb-16 anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
-        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-5 border" style="background:rgba(255,255,255,0.06);color:#E8B84B;border-color:rgba(232,184,75,0.25);">
-          Sustainability Impact
-        </div>
-        <h2 class="font-serif mb-4" style="font-size:clamp(2rem,4vw,3rem);font-weight:400;color:#ffffff;">
-          This Project<br><span style="color:#E8B84B;font-style:italic;">Contributes To</span>
-        </h2>
-        <p class="text-sm max-w-xl mx-auto leading-relaxed" style="color:rgba(255,255,255,0.55);">
-          AVONIC aligns with the United Nations Sustainable Development Goals, bringing technology to farming communities that need it most.
-        </p>
-      </div>
+  <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-5 border" style="background:rgba(255,255,255,0.06);color:#E8B84B;border-color:rgba(232,184,75,0.25);" data-i18n="contributes-eyebrow">
+    Sustainability Impact
+  </div>
+  <h2 class="font-serif mb-4" style="font-size:clamp(2rem,4vw,3rem);font-weight:400;color:#ffffff;">
+    <span data-i18n="contributes-h2-plain">This Project</span><br><span style="color:#E8B84B;font-style:italic;" data-i18n="contributes-h2-em">Contributes To</span>
+  </h2>
+  <p class="text-sm max-w-xl mx-auto leading-relaxed" style="color:rgba(255,255,255,0.55);" data-i18n="contributes-subhead">
+    AVONIC aligns with the United Nations Sustainable Development Goals, bringing technology to farming communities that need it most.
+  </p>
+</div>
 
-      
-      <!-- SDG Cards grid -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14 max-w-5xl mx-auto">
 
-  <!-- SDG 2 -->
   <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
-
-    <!-- Front: stacked logo + rotating arc -->
     <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
       <div class="sdg-stack">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_logo.svg"    class="sdg-logo" alt="">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_text_arc.svg" class="sdg-arc"  alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_text_arc.svg" class="sdg-arc" alt="">
       </div>
     </div>
-
-    <!-- Hover: text -->
     <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
-      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 2: Zero Hunger</p>
-      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg2-title">SDG 2: Zero Hunger</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg2-body">
         AVONIC supports sustainable agriculture by improving compost quality and plant health, helping local farmers grow more nutritious crops with fewer resources.
       </p>
     </div>
-
   </div>
 
-  <!-- SDG 12 -->
   <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
-
     <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
       <div class="sdg-stack">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_logo.svg"    class="sdg-logo" alt="">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_text_arc.svg" class="sdg-arc"  alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_text_arc.svg" class="sdg-arc" alt="">
       </div>
     </div>
-
     <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
-      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 12: Responsible Consumption and Production</p>
-      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg12-title">SDG 12: Responsible Consumption and Production</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg12-body">
         By recycling organic waste through vermicomposting, AVONIC promotes responsible production and consumption, reducing landfill waste and closing the nutrient loop in farming.
       </p>
     </div>
-
   </div>
 
-  <!-- SDG 15 -->
   <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
-
     <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
       <div class="sdg-stack">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_logo.svg"    class="sdg-logo" alt="">
-        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_text_arc.svg" class="sdg-arc"  alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_text_arc.svg" class="sdg-arc" alt="">
       </div>
     </div>
-
     <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
-      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;">SDG 15: Life on Land</p>
-      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg15-title">SDG 15: Life on Land</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg15-body">
         AVONIC supports the restoration and sustainable management of land ecosystems by improving soil health and promoting sustainable agriculture, helping local farmers cultivate crops responsibly while protecting biodiversity and preventing land degradation.
       </p>
     </div>
-
   </div>
 
 </div>
- 
- 
 
- 
-
-      <!-- Bottom quote bar -->
-      <div class="anim-hidden rounded-2xl px-8 py-6 border flex flex-col md:flex-row items-center gap-4 md:gap-8" style="animation:fadeUp 0.7s ease 0.35s forwards;background:rgba(255,255,255,0.04);border-color:rgba(232,184,75,0.2);">
-        <div class="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center" style="background:rgba(232,184,75,0.15);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/></svg>
-        </div>
-        <p class="text-center md:text-left text-sm italic leading-relaxed" style="color:rgba(255,255,255,0.6);">
-          "By putting smart technology in the hands of Filipino farmers, we're not just improving harvests — we're building a more sustainable future for agriculture."
-        </p>
-        <p class="flex-shrink-0 text-xs font-bold tracking-wide uppercase" style="color:#E8B84B;">— AVONIC Team</p>
-      </div>
+<div class="anim-hidden rounded-2xl px-8 py-6 border flex flex-col md:flex-row items-center gap-4 md:gap-8" style="animation:fadeUp 0.7s ease 0.35s forwards;background:rgba(255,255,255,0.04);border-color:rgba(232,184,75,0.2);">
+  <div class="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center" style="background:rgba(232,184,75,0.15);">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/></svg>
+  </div>
+  <p class="text-center md:text-left text-sm italic leading-relaxed" style="color:rgba(255,255,255,0.6);" data-i18n="contributes-quote">
+    "By putting smart technology in the hands of Filipino farmers, we're not just improving harvests — we're building a more sustainable future for agriculture."
+  </p>
+  <p class="flex-shrink-0 text-xs font-bold tracking-wide uppercase" style="color:#E8B84B;" data-i18n="contributes-quote-attr">— AVONIC Team</p>
+</div>
 
     </div>
 
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14">
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
     <path d="M0 28 Q280 60 560 18 Q840 -16 1080 38 Q1260 66 1440 12 L1440 56 L0 56 Z" fill="#F2EDE3"/>
   </svg>
 </div>
@@ -1221,13 +1175,13 @@
 
   <!-- Badge — centered above -->
   <div class="flex justify-center mb-6">
-    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase border" style="background:rgba(74,124,63,0.08);color:#4A7C3F;border-color:rgba(74,124,63,0.2);">
+    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase border" style="background:rgba(74,124,63,0.08);color:#4A7C3F;border-color:rgba(74,124,63,0.2);" data-i18n="faq-badge">
       Got Questions?
     </div>
   </div>
 
   <!-- Illustration + Heading side by side, centered as a unit -->
-  <div class="flex items-center justify-evenly gap-5">
+  <div class="flex items-center justify-evenly gap-5 flex-col sm:flex-row">
 
     <!-- Illustration -->
     <img
@@ -1237,10 +1191,10 @@
     />
 
     <!-- Heading text -->
-    <div>
+    <div class="text-center sm:text-left">
       <h2 class="font-serif" style="font-weight:400;color:#1A1A1A;line-height:1.08;">
-        <span class="block" style="font-size:clamp(1.8rem,3.5vw,2.6rem);">Frequently&nbsp; Asked</span>
-        <span class="block italic" style="font-size:clamp(2.8rem,5vw,5rem);color:#4A7C3F;">Questions</span>
+        <span class="block" style="font-size:clamp(1.8rem,3.5vw,2.6rem);" data-i18n="faq-h2-line1">Frequently&nbsp; Asked</span>
+        <span class="block italic" style="font-size:clamp(2.8rem,5vw,5rem);color:#4A7C3F;" data-i18n="faq-h2-em">Questions</span>
       </h2>
     </div>
 
@@ -1254,13 +1208,13 @@
         <!-- FAQ Item 1 -->
         <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
           <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
-            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;">What sensors does AVONIC use?</span>
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q1">What sensors does AVONIC use?</span>
             <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
               <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </button>
           <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
-            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a1">
               AVONIC uses four precision sensors: a soil moisture sensor, a DHT22 temperature and humidity sensor, and an MQ-4 gas sensor to detect harmful methane or ammonia levels. All readings are captured in real-time and transmitted to your AVONIC dashboard via Wi-Fi.
             </p>
           </div>
@@ -1269,13 +1223,13 @@
         <!-- FAQ Item 2 -->
         <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
           <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
-            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;">Do I need technical knowledge to use AVONIC?</span>
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q2">Do I need technical knowledge to use AVONIC?</span>
             <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
               <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </button>
           <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
-            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a2">
               Not at all. AVONIC is designed with Filipino farmers in mind — no coding or tech experience required. Simply plug in your device, connect it to your Wi-Fi, and follow the step-by-step setup tutorial in the app. The dashboard uses simple visuals and plain language to show you exactly what your bin needs.
             </p>
           </div>
@@ -1284,13 +1238,13 @@
         <!-- FAQ Item 3 -->
         <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
           <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
-            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;">What is the difference between Auto Mode and Manual Mode?</span>
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q3">What is the difference between Auto Mode and Manual Mode?</span>
             <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
               <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </button>
           <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
-            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n-html="faq-a3">
               In <strong style="color:#1A1A1A;">Auto Mode</strong>, AVONIC continuously monitors your bin and automatically activates pumps, fans, or alerts when values go out of the optimal range — a true set-it-and-forget-it experience. In <strong style="color:#1A1A1A;">Manual Mode</strong>, you receive all the same real-time data but control every action yourself, giving you full visibility and hands-on management of your bin.
             </p>
           </div>
@@ -1299,13 +1253,13 @@
         <!-- FAQ Item 4 -->
         <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
           <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
-            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;">Is AVONIC suitable for large-scale farms?</span>
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q4">Is AVONIC suitable for large-scale farms?</span>
             <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
               <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </button>
           <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
-            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a4">
               AVONIC works great for both home gardeners and larger operations. Each unit monitors one bin independently, and multiple units can be registered to a single account — giving you a unified dashboard view across all your bins from one screen.
             </p>
           </div>
@@ -1347,7 +1301,7 @@
               class="h-12 w-auto" />
           </a>
 
-          <p class="text-sm leading-relaxed mb-6" style="color:rgba(255,255,255,0.5);">
+          <p class="text-sm leading-relaxed mb-6" style="color:rgba(255,255,255,0.5);" data-i18n="footer-tagline">
             Smart vermicomposting IoT for Filipino farmers. Monitor, automate, and grow — from anywhere.
           </p>
           <!-- Social icons -->
@@ -1369,35 +1323,35 @@
 
         <!-- Nav col: Product -->
         <div>
-          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;">Product</h4>
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-product">Product</h4>
           <ul class="space-y-3">
-            <li><a href="#watches-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">Features</a></li>
-            <li><a href="#modes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">How It Works</a></li>
-            <li><a href="#get-started-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">Get Started</a></li>
-            <li><a href="#tutorials-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">Tutorials</a></li>
+            <li><a href="#watches-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-features">Features</a></li>
+            <li><a href="#modes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-hiw">How It Works</a></li>
+            <li><a href="#get-started-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-gs">Get Started</a></li>
+            <li><a href="#tutorials-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-tutorials">Tutorials</a></li>
           </ul>
         </div>
 
         <!-- Nav col: Learn -->
         <div>
-          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;">Learn</h4>
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-learn">Learn</h4>
           <ul class="space-y-3">
-            <li><a href="#farmers-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">Filipino Farmers</a></li>
-            <li><a href="#system-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">Vermicomposting</a></li>
-            <li><a href="#contributes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">SDG Impact</a></li>
-            <li><a href="#faq-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);">FAQ</a></li>
+            <li><a href="#farmers-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-farmers">Filipino Farmers</a></li>
+            <li><a href="#system-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-vermi">Vermicomposting</a></li>
+            <li><a href="#contributes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-sdg">SDG Impact</a></li>
+            <li><a href="#faq-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-faq">FAQ</a></li>
           </ul>
         </div>
 
         <!-- CTA col -->
         <div>
-          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;">Get Started</h4>
-          <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.5);">
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-gs">Get Started</h4>
+          <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.5);" data-i18n="footer-gs-body">
             Ready to put your vermicomposting bin on autopilot? Register your AVONIC account today.
           </p>
           <a href="#"
                class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
-               style="background:#ECBD01; border: solid black 1px;">
+               style="background:#ECBD01; border: solid black 1px;" data-i18n="footer-gs-cta">
               Register Now
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -1407,13 +1361,13 @@
 
       <!-- Bottom bar -->
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-7">
-        <p class="text-xs" style="color:rgba(255,255,255,0.3);">
+        <p class="text-xs" style="color:rgba(255,255,255,0.3);" data-i18n="footer-copyright">
           © 2025 AVONIC. All rights reserved. Built for Filipino farmers. 🇵🇭
         </p>
         <div class="flex items-center gap-6">
-          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);">Privacy Policy</a>
-          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);">Terms of Service</a>
-          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);">Contact</a>
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-privacy">Privacy Policy</a>
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-terms">Terms of Service</a>
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-contact">Contact</a>
         </div>
       </div>
 
@@ -1437,16 +1391,16 @@ const iconOpen   = document.getElementById('icon-open');
 const iconClose  = document.getElementById('icon-close');
 let menuOpen = false;
 
-// Set initial nav-inner state
 navInner.style.transition   = 'background 0.3s ease, border-radius 0.3s ease, outline 0.3s ease, padding 0.3s ease';
 navInner.style.borderRadius = '46px';
 navInner.style.outline      = '1px solid transparent';
 navInner.style.padding      = '10px 0px';
 
- 
-
 // Scroll pill effect
 window.addEventListener('scroll', () => {
+  // Query inside the event so it catches the newly injected dropdown from lang.js!
+  const langBtn = document.getElementById('lang-btn-desktop');
+  
   if (window.scrollY > 50) {
     navInner.style.background   = '#E8E8E8';
     navInner.style.borderRadius = '46px';
@@ -1455,6 +1409,7 @@ window.addEventListener('scroll', () => {
     navLogin.style.color        = '#1a1a1a';
     hamburger.style.color       = '#1E3A28';
     navLogo.src = './img/logo/AVONIC LOGO GREEN.svg';
+    if (langBtn) langBtn.style.color = '#1a1a1a';
   } else {
     navInner.style.background   = 'transparent';
     navInner.style.borderRadius = '46px';
@@ -1463,6 +1418,7 @@ window.addEventListener('scroll', () => {
     navLogin.style.color        = 'rgba(255,255,255,0.75)';
     hamburger.style.color       = 'white';
     navLogo.src = './img/logo/AVONIC LOGO.svg';
+    if (langBtn) langBtn.style.color = 'rgba(255,255,255,0.75)';
   }
 }, { passive: true });
 
@@ -1602,29 +1558,62 @@ mobileMenu.querySelectorAll('a').forEach(link => {
 
   const COLOR_MAP = { optimal: null, warning: '#D97706', critical: '#EF4444' };
 
+  // Local dictionary for dynamic live statuses
+  const STATUS_DICT = {
+    en: {
+      optimal:  'Optimal',
+      critCold: 'Critically Cold',
+      tooCold:  'Too Cold',
+      critHot:  'Critically Hot',
+      tooHot:   'Too Hot',
+      critDry:  'Critically Dry',
+      dry:      'Dry',
+      critWet:  'Critically Wet',
+      wet:      'Wet',
+      toxicGas: 'Toxic Gas',
+      highGas:  'High Gas'
+    },
+    tl: {
+      optimal:  'Pinakamainam',
+      critCold: 'Napakalamig (Kritikal)',
+      tooCold:  'Masyadong Malamig',
+      critHot:  'Napakainit (Kritikal)',
+      tooHot:   'Masyadong Mainit',
+      critDry:  'Napakatuyo (Kritikal)',
+      dry:      'Masyadong Tuyo',
+      critWet:  'Napakabasa (Kritikal)',
+      wet:      'Masyadong Basa',
+      toxicGas: 'Nakakalasong Gas',
+      highGas:  'Mataas na Gas'
+    }
+  };
+
   function lpEvaluate(sensorType, value) {
-    let status = 'Optimal', cls = 'optimal';
+    let statusKey = 'optimal', cls = 'optimal';
     switch (sensorType) {
       case 'temperature':
-        if      (value < 15) { status = 'Critically Cold'; cls = 'critical'; }
-        else if (value < 22) { status = 'Too Cold';        cls = 'warning';  }
-        else if (value > 35) { status = 'Critically Hot';  cls = 'critical'; }
-        else if (value > 28) { status = 'Too Hot';         cls = 'warning';  }
+        if      (value < 15) { statusKey = 'critCold'; cls = 'critical'; }
+        else if (value < 22) { statusKey = 'tooCold';  cls = 'warning';  }
+        else if (value > 35) { statusKey = 'critHot';  cls = 'critical'; }
+        else if (value > 28) { statusKey = 'tooHot';   cls = 'warning';  }
         break;
       case 'soilMoisture':
       case 'humidity':
-        if      (value < 40) { status = 'Critically Dry';  cls = 'critical'; }
-        else if (value < 60) { status = 'Dry';             cls = 'warning';  }
-        else if (value > 90) { status = 'Critically Wet';  cls = 'critical'; }
-        else if (value > 80) { status = 'Wet';             cls = 'warning';  }
+        if      (value < 40) { statusKey = 'critDry';  cls = 'critical'; }
+        else if (value < 60) { statusKey = 'dry';      cls = 'warning';  }
+        else if (value > 90) { statusKey = 'critWet';  cls = 'critical'; }
+        else if (value > 80) { statusKey = 'wet';      cls = 'warning';  }
         break;
       case 'gasLevels':
-        if      (value > 200) { status = 'Toxic Gas';  cls = 'critical'; }
-        else if (value > 100) { status = 'High Gas';   cls = 'warning';  }
+        if      (value > 200) { statusKey = 'toxicGas'; cls = 'critical'; }
+        else if (value > 100) { statusKey = 'highGas';  cls = 'warning';  }
         break;
     }
-    return { status, cls };
+    return { statusKey, cls };
   }
+
+  // Stores the last generated numbers so we can re-translate without randomizing
+  let currentValues = { soilMoisture: 0, temperature: 0, humidity: 0, gasLevels: 0 };
 
   function lpUpdateCard(sensorType, value) {
     const cfg    = LP_CONFIGS[sensorType];
@@ -1638,21 +1627,47 @@ mobileMenu.querySelectorAll('a').forEach(link => {
     const valEl  = document.getElementById('lp-val-'    + sensorType);
     const statEl = document.getElementById('lp-status-' + sensorType);
 
+    // Read current language applied by lang.js
+    const currentLang = document.documentElement.lang === 'tl' ? 'tl' : 'en';
+    const statusText  = STATUS_DICT[currentLang][result.statusKey];
+
     if (ring)   { ring.style.strokeDashoffset = offset.toFixed(2); ring.style.stroke = color; }
     if (valEl)  { valEl.textContent = parseFloat(value).toFixed(1); }
-    if (statEl) { statEl.textContent = result.status; statEl.style.color = color; }
+    if (statEl) { 
+      statEl.textContent = statusText; 
+      statEl.style.color = color; 
+    }
   }
 
   function lpRandomize() {
     Object.keys(LP_CONFIGS).forEach(sensor => {
       const cfg = LP_CONFIGS[sensor];
       const val = cfg.randomMin + Math.random() * (cfg.randomMax - cfg.randomMin);
+      currentValues[sensor] = val; // save for language toggle
       lpUpdateCard(sensor, val);
     });
   }
 
+  function lpRetranslate() {
+    Object.keys(LP_CONFIGS).forEach(sensor => {
+      lpUpdateCard(sensor, currentValues[sensor]);
+    });
+  }
+
+  // Initialize
   lpRandomize();
   setInterval(lpRandomize, 3000);
+
+  // Instantly re-translate live numbers when language dropdown is changed
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === "lang") {
+        lpRetranslate();
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+
 })();
 </script>
 
@@ -1687,5 +1702,7 @@ document.querySelectorAll('.metric-card').forEach(card => {
   });
 });
 </script>
+  <!-- Language switcher -->
+  <script src="lang.js"></script>
 </body>
 </html>
