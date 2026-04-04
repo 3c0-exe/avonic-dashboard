@@ -173,10 +173,194 @@
       'footer-contact':      'Contact',
 
       /* Sensor */
-    'sensor-soil': 'Soil Moisture',
+      'sensor-soil': 'Soil Moisture',
       'sensor-temp': 'Temperature',
       'sensor-hum':  'Humidity',
       'sensor-gas':  'Gas Levels',
+
+      /* ── APP-SPECIFIC (app.html) ───────────────────────────── */
+
+      /* Sidebar nav */
+      'app-nav-home':      'Home',
+      'app-nav-dashboard': 'Dashboard',
+      'app-nav-settings':  'Settings',
+      'app-nav-logout':    'Log-out',
+
+      /* Home page */
+      'app-home-title':       'Home',
+      'app-home-bins-label':  'Vermicompost Bins',
+
+      /* Monitoring page */
+      'app-monitoring-crumb-path': 'Home > Monitoring',
+      'app-monitoring-crumb-name': 'Monitoring',
+      'app-sensor-soilMoisture':   'Soil Moisture',
+      'app-sensor-temperature':    'Temperature',
+      'app-sensor-humidity':       'Humidity',
+      'app-sensor-gasLevels':      'Gas Levels',
+
+      /* Dashboard page */
+      'app-dashboard-title':       'Dashboard',
+      'app-dashboard-welcome':     'Welcome to AVONIC\'s Dashboard page',
+      'app-dashboard-select':      'select a analytical page',
+      'app-qi-title':              'Quick Insights',
+      'app-qi-desc':               'Get instant snapshots of your bin\'s current conditions',
+      'app-bf-title':              'Bin Fluctuations',
+      'app-bf-desc':               'Get instant snapshots of your bin\'s current conditions',
+
+      /* Settings page */
+      'app-settings-title':           'Settings',
+      'app-settings-account-title':   'Account Profile',
+      'app-settings-username-label':  'Username',
+      'app-settings-email-label':     'Email',
+      'app-settings-update-profile':  'Update Profile',
+      'app-settings-change-password': 'Change Password',
+      'app-settings-claimed-title':   'Claimed Bins',
+      'app-settings-claim-btn':       '+ Claim',
+      'app-settings-resources-title': 'Resources',
+      'app-settings-manual-en':       'User Manual',
+      'app-settings-manual-en-lang':  '(English)',
+      'app-settings-manual-tl':       'User Manual',
+      'app-settings-manual-tl-lang':  '(Tagalog)',
+      'app-settings-lang-title':      'Language',
+      'app-settings-session-title':   'Session',
+      'app-settings-last-login':      'Last Login',
+      'app-settings-logout':          'Log Out',
+
+      /* Breadcrumbs — inner dashboard pages */
+      'app-qi-crumb-path':   'Dashboard > Quick Insights',
+      'app-qi-crumb-name':   'Quick Insights',
+      'app-bf-crumb-path':   'Dashboard > Bin Fluctuation',
+      'app-bf-crumb-name':   'Bin Fluctuation',
+
+      /* Quick Insights — table headers & stat labels */
+      'app-qi-th-time':       'Time',
+      'app-qi-th-reading':    'Reading',
+      'app-qi-th-status':     'Status',
+      'app-qi-stat-min':      'Min',
+      'app-qi-stat-avg':      'Average',
+      'app-qi-stat-max':      'Max',
+      'app-qi-stat-recent':   'Recent',
+      'app-qi-insight-label': 'Insight',
+
+      /* Mode labels (used by JS renderer) */
+      'app-mode-auto':         'Auto Mode',
+      'app-mode-manual':       'Manual Mode',
+      'app-mode-auto-short':   'Auto',
+      'app-mode-manual-short': 'Manual',
+      'app-updated-at':        'Updated at',
+
+      /* Sensor status conditions (used by JS renderer) */
+      'status-optimal':         'Optimal',
+      'status-critically-cold': 'Critically Cold',
+      'status-too-cold':        'Too Cold',
+      'status-too-hot':         'Too Hot',
+      'status-critically-hot':  'Critically Hot',
+      'status-dry':             'Dry',
+      'status-critically-dry':  'Critically Dry',
+      'status-wet':             'Wet',
+      'status-critically-wet':  'Critically Wet',
+      'status-high-gas':        'High Gas',
+      'status-toxic-gas':       'Toxic Gas',
+      'status-unknown':         'Unknown',
+
+      /* Status Modals */
+      'status-bat-low-title': 'Battery Low',
+      'status-bat-low-desc': 'Battery is at {v}%. Please charge your bin.',
+      'status-bat-full-title': 'Battery Full',
+      'status-bat-full-desc': 'Battery is at {v}%. Kindly unplug the charger.',
+      'status-bat-charge-title': 'Charging…',
+      'status-bat-title': 'Battery Status',
+      'status-bat-desc': 'Battery level is at {v}%.',
+
+      'status-water-low-title': 'Water Tank Low',
+      'status-water-low-desc': 'Water is at {v}%. Kindly refill your water tank.',
+      'status-water-full-title': 'Water Tank Full',
+      'status-water-full-desc': 'Water is at {v}%. Tank is full.',
+      'status-water-title': 'Water Tank',
+      'status-water-desc': 'Water level is at {v}%.',
+
+      'status-temp-title': 'Water Temperature',
+      'status-temp-desc': 'Current water temperature is {v} °C.',
+      'status-temp-nodata': 'No temperature data yet.',
+
+      'modal-btn-okay': 'Okay',
+      'modal-btn-dontshow': 'Don\'t show this again',
+      /* Action Modals */
+      'modal-edit-profile-title': 'Edit Profile',
+      'modal-edit-profile-desc': 'Update your display name and contact email.',
+      'modal-input-username': 'Username',
+      'modal-input-email': 'Email Address',
+      'modal-btn-save': 'Save Changes',
+      'modal-btn-cancel': 'Cancel',
+      
+      'modal-change-pw-title': 'Change Password',
+      'modal-change-pw-desc': 'Authorized changes require your current password.',
+      'modal-input-curr-pw': 'Current Password',
+      'modal-input-new-pw': 'New Password',
+      'modal-input-rep-pw': 'Repeat New Password',
+      'modal-btn-confirm': 'Confirm Update',
+      
+      'modal-confirm-title': 'Confirm Action',
+      'modal-confirm-desc': 'Are you sure you want to proceed?',
+      'modal-input-new-nickname': 'Enter new nickname',
+      
+      'modal-claim-bin-title': 'Claim New Bin',
+      'modal-claim-bin-desc': 'Enter the unique 6-digit claim code found on your AVONIC device.',
+      'modal-input-claim-code': 'Enter Claim Code',
+      'modal-btn-claim': 'Claim Device',
+      
+      'modal-logout-title': 'Log Out?',
+      'modal-logout-desc': 'Are you sure you wanna logout?',
+      'modal-btn-logout': 'Yes, log me out',
+
+      /* Auth Screens */
+      'auth-heading-login': 'Log in to your Account',
+      'auth-sub-login': 'Welcome back, please enter your details',
+      'auth-ph-username': 'Username',
+      'auth-ph-password': 'Password',
+      'auth-forgot-link': 'Forgot password?',
+      'auth-btn-login': 'Login →',
+      'auth-switch-no-acc': 'Don\'t have an account?',
+      'auth-switch-signup': 'Sign up',
+      
+      'auth-ph-reg-username': 'Username (3–20 alphanumeric)',
+      'auth-ph-email': 'Email address',
+      'auth-ph-reg-password': 'Password (min 6 characters)',
+      'auth-btn-register': 'Create Account →',
+      'auth-switch-has-acc': 'Already have an account?',
+      'auth-switch-login': 'Log in',
+      
+      'auth-forgot-desc': 'Enter your registered email and we\'ll send a reset link to your device via MQTT.',
+      'auth-ph-email-example': 'you@example.com',
+      'auth-btn-send-reset': 'Send Reset Link →',
+      'auth-back-login': '← Back to Login',
+      
+      'auth-reset-desc': 'Enter the token sent to your device and choose a new password.',
+      'auth-ph-token': 'Paste token here',
+      'auth-ph-new-password': 'New password',
+      'auth-btn-reset': 'Reset Password →',
+
+      /* Dashboard & Modes */
+      'app-dashboard-selection': 'Selection:',
+      'app-dashboard-date-reported': 'Date Reported:',
+      'app-dashboard-date-to': 'to',
+      'app-data-waiting': 'Waiting for data...',
+      'app-data-no-data': 'No data yet',
+      'app-data-loading': 'Loading...',
+      'app-data-collecting': 'Collecting data...',
+      'app-mode-label': 'Mode:',
+
+      /* Modals & Loading States */
+      'modal-mode-auto-title': 'Activate Auto Mode?',
+      'modal-mode-auto-desc': 'Turning on auto-mode makes the system operate by itself.',
+      'modal-mode-manual-title': 'Activate Manual Mode?',
+      'modal-mode-manual-desc': 'Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.',
+      'modal-btn-activate-bin': 'Activate for this bin',
+      'app-updated-just-now': 'Updated just now',
+      'app-fetching-bins': 'Fetching your bins...',
+      'app-no-bins-claimed': 'No bins claimed yet. Tap "+ Claim" to add one.',
+      'app-loading-bins': 'Loading Bins...',
+      'app-no-bins-connected': 'No bins connected',
     },
 
     /* ── TAGALOG ───────────────────────────── */
@@ -332,6 +516,190 @@
       'sensor-temp': 'Temperatura',
       'sensor-hum':  'Humidity',
       'sensor-gas':  'Antas ng Gas',
+
+      /* ── APP-SPECIFIC (app.html) ───────────────────────────── */
+
+      /* Sidebar nav */
+      'app-nav-home':      'Home',
+      'app-nav-dashboard': 'Dashboard',
+      'app-nav-settings':  'Mga Setting',
+      'app-nav-logout':    'Mag-log out',
+
+      /* Home page */
+      'app-home-title':       'Home',
+      'app-home-bins-label':  'Mga Vermicompost Bin',
+
+      /* Monitoring page */
+      'app-monitoring-crumb-path': 'Home > Pagsubaybay',
+      'app-monitoring-crumb-name': 'Pagsubaybay',
+      'app-sensor-soilMoisture':   'Moisture ng Lupa',
+      'app-sensor-temperature':    'Temperatura',
+      'app-sensor-humidity':       'Humidity',
+      'app-sensor-gasLevels':      'Antas ng Gas',
+
+      /* Dashboard page */
+      'app-dashboard-title':       'Dashboard',
+      'app-dashboard-welcome':     'Maligayang pagdating sa Dashboard ng AVONIC',
+      'app-dashboard-select':      'pumili ng pahina ng pagsusuri',
+      'app-qi-title':              'Mabilis na Pananaw',
+      'app-qi-desc':               'Makakuha ng mabilis na snapshot ng kasalukuyang kondisyon ng iyong bin',
+      'app-bf-title':              'Pagbabago ng Bin',
+      'app-bf-desc':               'Makakuha ng mabilis na snapshot ng kasalukuyang kondisyon ng iyong bin',
+
+      /* Settings page */
+      'app-settings-title':           'Mga Setting',
+      'app-settings-account-title':   'Profile ng Account',
+      'app-settings-username-label':  'Username',
+      'app-settings-email-label':     'Email',
+      'app-settings-update-profile':  'I-update ang Profile',
+      'app-settings-change-password': 'Baguhin ang Password',
+      'app-settings-claimed-title':   'Mga Naka-claim na Bin',
+      'app-settings-claim-btn':       '+ I-claim',
+      'app-settings-resources-title': 'Mga Mapagkukunan',
+      'app-settings-manual-en':       'Gabay ng Gumagamit',
+      'app-settings-manual-en-lang':  '(Ingles)',
+      'app-settings-manual-tl':       'Gabay ng Gumagamit',
+      'app-settings-manual-tl-lang':  '(Tagalog)',
+      'app-settings-lang-title':      'Wika',
+      'app-settings-session-title':   'Session',
+      'app-settings-last-login':      'Huling Pag-login',
+      'app-settings-logout':          'Mag-log Out',
+
+      /* Breadcrumbs — inner dashboard pages */
+      'app-qi-crumb-path':   'Dashboard > Mabilis na Pananaw',
+      'app-qi-crumb-name':   'Mabilis na Pananaw',
+      'app-bf-crumb-path':   'Dashboard > Pagbabago ng Bin',
+      'app-bf-crumb-name':   'Pagbabago ng Bin',
+
+      /* Quick Insights — table headers & stat labels */
+      'app-qi-th-time':       'Oras',
+      'app-qi-th-reading':    'Basahin',
+      'app-qi-th-status':     'Katayuan',
+      'app-qi-stat-min':      'Pinakamababa',
+      'app-qi-stat-avg':      'Karaniwan',
+      'app-qi-stat-max':      'Pinakamataas',
+      'app-qi-stat-recent':   'Pinakabago',
+      'app-qi-insight-label': 'Pananaw',
+
+      /* Mode labels (used by JS renderer) */
+      'app-mode-auto':         'Awtomatiko',
+      'app-mode-manual':       'Mano-mano',
+      'app-mode-auto-short':   'Awtomatiko',
+      'app-mode-manual-short': 'Mano-mano',
+      'app-updated-at':        'Na-update noong',
+
+      /* Sensor status conditions (used by JS renderer) */
+      'status-optimal':         'Mainam',
+      'status-critically-cold': 'Kritikal na Malamig',
+      'status-too-cold':        'Masyadong Malamig',
+      'status-too-hot':         'Masyadong Mainit',
+      'status-critically-hot':  'Kritikal na Mainit',
+      'status-dry':             'Tuyo',
+      'status-critically-dry':  'Kritikal na Tuyo',
+      'status-wet':             'Basa',
+      'status-critically-wet':  'Kritikal na Basa',
+      'status-high-gas':        'Mataas na Gas',
+      'status-toxic-gas':       'Nakakalason na Gas',
+      'status-unknown':         'Hindi Kilala',
+
+      /* Status Modals */
+      'status-bat-low-title': 'Mababa ang Baterya',
+      'status-bat-low-desc': 'Nasa {v}% ang baterya. Mangyaring i-charge ang iyong bin.',
+      'status-bat-full-title': 'Puno na ang Baterya',
+      'status-bat-full-desc': 'Nasa {v}% ang baterya. Mangyaring alisin ang charger.',
+      'status-bat-charge-title': 'Nagcha-charge…',
+      'status-bat-title': 'Katayuan ng Baterya',
+      'status-bat-desc': 'Ang antas ng baterya ay nasa {v}%.',
+
+      'status-water-low-title': 'Mababa ang Tangke ng Tubig',
+      'status-water-low-desc': 'Nasa {v}% ang tubig. Mangyaring lagyan ng tubig ang tangke.',
+      'status-water-full-title': 'Puno ang Tangke ng Tubig',
+      'status-water-full-desc': 'Nasa {v}% ang tubig. Puno na ang tangke.',
+      'status-water-title': 'Tangke ng Tubig',
+      'status-water-desc': 'Ang antas ng tubig ay nasa {v}%.',
+
+      'status-temp-title': 'Temperatura ng Tubig',
+      'status-temp-desc': 'Ang kasalukuyang temperatura ng tubig ay {v} °C.',
+      'status-temp-nodata': 'Wala pang datos ng temperatura.',
+
+      'modal-btn-okay': 'Sige',
+      'modal-btn-dontshow': 'Huwag na itong ipakita muli',
+
+      /* Action Modals */
+      'modal-edit-profile-title': 'I-edit ang Profile',
+      'modal-edit-profile-desc': 'I-update ang iyong display name at contact email.',
+      'modal-input-username': 'Username',
+      'modal-input-email': 'Email Address',
+      'modal-btn-save': 'I-save ang Pagbabago',
+      'modal-btn-cancel': 'Kanselahin',
+      
+      'modal-change-pw-title': 'Baguhin ang Password',
+      'modal-change-pw-desc': 'Kailangan ng kasalukuyang password para sa mga pagbabago.',
+      'modal-input-curr-pw': 'Kasalukuyang Password',
+      'modal-input-new-pw': 'Bagong Password',
+      'modal-input-rep-pw': 'Ulitin ang Bagong Password',
+      'modal-btn-confirm': 'Kumpirmahin',
+      
+      'modal-confirm-title': 'Kumpirmahin ang Aksyon',
+      'modal-confirm-desc': 'Sigurado ka bang gusto mong magpatuloy?',
+      'modal-input-new-nickname': 'Ipasok ang bagong palayaw',
+      
+      'modal-claim-bin-title': 'I-claim ang Bagong Bin',
+      'modal-claim-bin-desc': 'Ipasok ang natatanging 6-digit claim code sa iyong AVONIC device.',
+      'modal-input-claim-code': 'Ipasok ang Claim Code',
+      'modal-btn-claim': 'I-claim ang Device',
+      
+      'modal-logout-title': 'Mag-log Out?',
+      'modal-logout-desc': 'Sigurado ka bang gusto mong mag-logout?',
+      'modal-btn-logout': 'Oo, i-log out ako',
+
+      /* Auth Screens */
+      'auth-heading-login': 'Mag-log in sa iyong Account',
+      'auth-sub-login': 'Maligayang pagbabalik, mangyaring ilagay ang iyong detalye',
+      'auth-ph-username': 'Username',
+      'auth-ph-password': 'Password',
+      'auth-forgot-link': 'Nakalimutan ang password?',
+      'auth-btn-login': 'Mag-log in →',
+      'auth-switch-no-acc': 'Wala pang account?',
+      'auth-switch-signup': 'Mag-sign up',
+      
+      'auth-ph-reg-username': 'Username (3–20 alphanumeric)',
+      'auth-ph-email': 'Email address',
+      'auth-ph-reg-password': 'Password (min 6 characters)',
+      'auth-btn-register': 'Gumawa ng Account →',
+      'auth-switch-has-acc': 'Mayroon na bang account?',
+      'auth-switch-login': 'Mag-log in',
+      
+      'auth-forgot-desc': 'Ipasok ang iyong rehistradong email at magpapadala kami ng reset link sa iyong device via MQTT.',
+      'auth-ph-email-example': 'ikaw@example.com',
+      'auth-btn-send-reset': 'Ipadala ang Reset Link →',
+      'auth-back-login': '← Bumalik sa Login',
+      
+      'auth-reset-desc': 'Ipasok ang token na ipinadala sa iyong device at pumili ng bagong password.',
+      'auth-ph-token': 'I-paste ang token dito',
+      'auth-ph-new-password': 'Bagong password',
+      'auth-btn-reset': 'I-reset ang Password →',
+      /* Dashboard & Modes */
+      'app-dashboard-selection': 'Pagpili:',
+      'app-dashboard-date-reported': 'Petsa ng Ulat:',
+      'app-dashboard-date-to': 'hanggang',
+      'app-data-waiting': 'Naghihintay ng datos...',
+      'app-data-no-data': 'Wala pang datos',
+      'app-data-loading': 'Naglo-load...',
+      'app-data-collecting': 'Kumukuha ng datos...',
+      'app-mode-label': 'Paraan:',
+
+      /* Modals & Loading States */
+      'modal-mode-auto-title': 'I-activate ang Awtomatiko?',
+      'modal-mode-auto-desc': 'Ang pag-on ng awtomatiko ay nagpapahintulot sa system na gumana nang mag-isa.',
+      'modal-mode-manual-title': 'I-activate ang Mano-mano?',
+      'modal-mode-manual-desc': 'Ang pag-on ng mano-mano ay humihinto sa awtomatiko, na nangangahulugan din ng posibleng pagkakamali ng tao.',
+      'modal-btn-activate-bin': 'I-activate para sa bin na ito',
+      'app-updated-just-now': 'Na-update ngayon lang',
+      'app-fetching-bins': 'Kinukuha ang iyong mga bin...',
+      'app-no-bins-claimed': 'Wala pang naka-claim na bin. I-tap ang "+ Claim" para magdagdag.',
+      'app-loading-bins': 'Nilo-load ang mga Bin...',
+      'app-no-bins-connected': 'Walang nakakonektang bin',
     }
   };
 
@@ -342,11 +710,15 @@
     var t = translations[lang];
     if (!t) return;
 
-    /* Plain-text nodes */
+   /* Plain-text nodes & Placeholders */
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
       if (t[key] !== undefined) {
-        el.textContent = t[key];
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = t[key];
+        } else {
+          el.textContent = t[key];
+        }
       }
     });
 
@@ -368,11 +740,18 @@
       sel.value = lang;
     });
 
+    /* Sync the settings-page language select (#app-language-select) */
+    var appSel = document.getElementById('app-language-select');
+    if (appSel) appSel.value = lang;
+
     /* Update <html lang> attribute for accessibility */
     document.documentElement.lang = lang === 'tl' ? 'tl' : 'en';
 
     /* Persist */
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+
+    /* Fire a custom event so app.js can re-render any JS-injected text */
+    try { document.dispatchEvent(new CustomEvent('avonic:langchange', { detail: lang })); } catch(e) {}
 
     /* After FAQ answers are swapped, reset any open accordion max-heights
        so they re-measure correctly with the new text length.           */
@@ -387,49 +766,6 @@
         body.style.maxHeight = h + 'px';
       }
     });
-  }
-
-  /* ─────────────────────────────────────────────
-     DROPDOWN STYLES (injected once)
-  ───────────────────────────────────────────── */
-  function injectDropdownStyles() {
-    var style = document.createElement('style');
-    style.textContent = [
-      '.lang-dropdown-wrap { position: relative; display: inline-flex; align-items: center; gap: 6px; }',
-      '.lang-dropdown-wrap svg { pointer-events: none; flex-shrink: 0; }',
-      '.lang-dropdown {',
-      '  appearance: none;',
-      '  -webkit-appearance: none;',
-      '  background: transparent;',
-      '  border: none;',
-      '  outline: none;',
-      '  cursor: pointer;',
-      '  font-family: inherit;',
-      '  font-size: 0.875rem;',
-      '  font-weight: 600;',
-      '  color: inherit;',
-      '  padding: 0 18px 0 0;',
-      '  line-height: 1;',
-      '}',
-      /* Custom caret via background svg */
-      '.lang-dropdown-wrap::after {',
-      '  content: "";',
-      '  position: absolute;',
-      '  right: 0;',
-      '  top: 50%;',
-      '  transform: translateY(-50%);',
-      '  width: 10px;',
-      '  height: 6px;',
-      '  pointer-events: none;',
-      '  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'currentColor\'/%3E%3C/svg%3E");',
-      '  background-repeat: no-repeat;',
-      '  background-size: contain;',
-      '  opacity: 0.6;',
-      '}',
-      /* Dark option text so it's readable in browser native dropdown */
-      '.lang-dropdown option { color: #1A1A1A; background: #ffffff; }'
-    ].join('\n');
-    document.head.appendChild(style);
   }
 
   /* ─────────────────────────────────────────────
@@ -572,5 +908,21 @@
   } else {
     init();
   }
+
+  /* ─────────────────────────────────────────────
+     PUBLIC API
+     applyLanguage(lang) — called by the settings
+     page <select onchange="applyLanguage(...)">
+  ───────────────────────────────────────────── */
+  window.applyLanguage = applyLang;
+
+  /* t(key) — returns the translated string for the current language.
+     Useful for JS-rendered text that can't use data-i18n attributes. */
+  window.t = function(key) {
+    var lang = 'en';
+    try { lang = localStorage.getItem(STORAGE_KEY) || 'en'; } catch(e) {}
+    var dict = translations[lang] || translations['en'];
+    return dict[key] !== undefined ? dict[key] : (translations['en'][key] || key);
+  };
 
 })();

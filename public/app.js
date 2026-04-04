@@ -65,30 +65,31 @@ const Token = {
 // ════════════════════════════════════
 function evaluateCondition(sensorType, value) {
     if (!WORM_CONFIGS[sensorType]) {
-        return { status: 'Unknown', statusClass: 'warning', wormImage: 'Normal.png' };
+        return { status: (window.t ? window.t('status-unknown') : 'Unknown'), statusClass: 'warning', wormImage: 'Normal.png' };
     }
     const ranges = WORM_CONFIGS[sensorType];
-    let status = 'Optimal';
+    const _t = window.t || function(k){ return k; };
+    let status = _t('status-optimal');
     let statusClass = 'optimal';
     let wormImage = 'Normal.png';
 
     switch(sensorType) {
         case 'temperature':
-            if (value < ranges.critical_min) { status = 'Critically Cold'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-            else if (value < ranges.optimal_min) { status = 'Too Cold'; statusClass = 'warning'; wormImage = 'Too Dry.png'; }
-            else if (value > ranges.critical_max) { status = 'Critically Hot'; statusClass = 'critical'; wormImage = 'Too Hot.png'; }
-            else if (value > ranges.optimal_max) { status = 'Too Hot'; statusClass = 'warning'; wormImage = 'Too Hot.png'; }
+            if (value < ranges.critical_min) { status = _t('status-critically-cold'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = _t('status-too-cold'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = _t('status-critically-hot'); statusClass = 'critical'; wormImage = 'Too Hot.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-too-hot'); statusClass = 'warning'; wormImage = 'Too Hot.png'; }
             break;
         case 'soilMoisture':
         case 'humidity':
-            if (value < ranges.critical_min) { status = 'Critically Dry'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-            else if (value < ranges.optimal_min) { status = 'Dry'; statusClass = 'warning'; wormImage = 'Too Dry.png'; }
-            else if (value > ranges.critical_max) { status = 'Critically Wet'; statusClass = 'critical'; wormImage = 'Too Wet.png'; }
-            else if (value > ranges.optimal_max) { status = 'Wet'; statusClass = 'warning'; wormImage = 'Too Wet.png'; }
+            if (value < ranges.critical_min) { status = _t('status-critically-dry'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = _t('status-dry'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = _t('status-critically-wet'); statusClass = 'critical'; wormImage = 'Too Wet.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-wet'); statusClass = 'warning'; wormImage = 'Too Wet.png'; }
             break;
         case 'gasLevels':
-            if (value > ranges.critical_max) { status = 'Toxic Gas'; statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
-            else if (value > ranges.optimal_max) { status = 'High Gas'; statusClass = 'warning'; wormImage = 'Gas Too High.png'; }
+            if (value > ranges.critical_max) { status = _t('status-toxic-gas'); statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-high-gas'); statusClass = 'warning'; wormImage = 'Gas Too High.png'; }
             break;
     }
     return { status, statusClass, wormImage };
@@ -470,8 +471,8 @@ function renderHome(d) {
     setText('home-temp-val', '-- C°');
   }
 
-  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?'Auto Mode':'Manual Mode'}`;
-  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?'Auto Mode':'Manual Mode'}`;
+  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
+  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
 
   updateStatusPillAlerts(d);
   renderRecentQI();
@@ -517,12 +518,16 @@ function renderBin(n, d) {
 
   const now = new Date();
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  setText(`b${n}-updated`, 'Updated at ' + timeStr);
+  const updatedLabel = window.t ? window.t('app-updated-at') : 'Updated at';
+  setText(`b${n}-updated`, updatedLabel + ' ' + timeStr);
 
   const mb = $(`b${n}-mode-btn`);
   if(mb){
     const isAuto = S.mode[n] === 'auto';
-    mb.innerHTML = `${isAuto ? 'Auto' : 'Manual'}`;
+    const modeLabel = isAuto
+      ? (window.t ? window.t('app-mode-auto-short') : 'Auto')
+      : (window.t ? window.t('app-mode-manual-short') : 'Manual');
+    mb.innerHTML = modeLabel;
     mb.className = `mode-btn ${isAuto ? 'auto' : 'manual'}`;
   }
 }
@@ -598,10 +603,9 @@ async function loadMode() {
 function openModeModal(binNum) {
   const targetMode = S.mode[binNum] === 'auto' ? 'manual' : 'auto';
 
-  $('mode-modal-title').textContent = targetMode === 'auto' ? 'Activate Auto Mode?' : 'Activate Manual Mode?';
-  $('mode-modal-desc').textContent = targetMode === 'auto'
-    ? 'Turning on auto-mode makes the system operate by itself.'
-    : 'Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.';
+ const _t = window.t || function(k){ return k; };
+  $('mode-modal-title').textContent = targetMode === 'auto' ? _t('modal-mode-auto-title') : _t('modal-mode-manual-title');
+  $('mode-modal-desc').textContent = targetMode === 'auto' ? _t('modal-mode-auto-desc') : _t('modal-mode-manual-desc');
 
   const ill = $('mode-ill-img');
   if (ill) ill.src = targetMode === 'auto' ? '/img/photos/AutoMode.png' : '/img/photos/ManualMode.png';
@@ -620,7 +624,8 @@ function openModeModal(binNum) {
 
     const hmb = $(`home-b${binNum}-mode`);
     if(hmb) {
-      hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode === 'auto' ? 'Auto Mode' : 'Manual Mode'}`;
+      const _t = window.t || function(k){ return k; };
+      hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode === 'auto' ? _t('app-mode-auto') : _t('app-mode-manual')}`;
     }
 
     if(S.data) renderBin(binNum, S.data);
@@ -956,9 +961,9 @@ function updateStatusPillAlerts(d) {
     }
   }
 }
-
 function openStatusModal(type) {
   const d = S.data;
+  const _t = window.t || function(k){ return k; }; // Helper to fetch translation
 
   if (type === 'battery') {
     const v     = d ? (d.battery_percent || 0) : 0;
@@ -969,14 +974,14 @@ function openStatusModal(type) {
     const dontEl  = $('status-bat-dontshow');
 
     if (state === 'low') {
-      if (titleEl) titleEl.textContent = 'Battery Low';
-      if (descEl)  descEl.textContent  = `Battery is at ${v}%. Please charge your bin.`;
+      if (titleEl) titleEl.textContent = _t('status-bat-low-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-low-desc').replace('{v}', v);
     } else if (state === 'full') {
-      if (titleEl) titleEl.textContent = 'Battery Full';
-      if (descEl)  descEl.textContent  = `Battery is at ${v}%. Kindly unplug the charger.`;
+      if (titleEl) titleEl.textContent = _t('status-bat-full-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-full-desc').replace('{v}', v);
     } else {
-      if (titleEl) titleEl.textContent = charging ? 'Charging…' : 'Battery Status';
-      if (descEl)  descEl.textContent  = `Battery level is at ${v}%.`;
+      if (titleEl) titleEl.textContent = charging ? _t('status-bat-charge-title') : _t('status-bat-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-desc').replace('{v}', v);
     }
 
     updateBatteryModalSVG(v, charging, state);
@@ -991,15 +996,16 @@ function openStatusModal(type) {
     const dontEl  = $('status-water-dontshow');
 
     if (state === 'low') {
-      if (titleEl) titleEl.textContent = 'Water Tank Low';
-      if (descEl)  descEl.textContent  = `Water is at ${v}%. Kindly refill your water tank.`;
+      if (titleEl) titleEl.textContent = _t('status-water-low-title');
+      if (descEl)  descEl.textContent  = _t('status-water-low-desc').replace('{v}', v);
     } else if (state === 'full') {
-      if (titleEl) titleEl.textContent = 'Water Tank Full';
-      if (descEl)  descEl.textContent  = `Water is at ${v}%. Tank is full.`;
+      if (titleEl) titleEl.textContent = _t('status-water-full-title');
+      if (descEl)  descEl.textContent  = _t('status-water-full-desc').replace('{v}', v);
     } else {
-      if (titleEl) titleEl.textContent = 'Water Tank';
-      if (descEl)  descEl.textContent  = `Water level is at ${v}%.`;
+      if (titleEl) titleEl.textContent = _t('status-water-title');
+      if (descEl)  descEl.textContent  = _t('status-water-desc').replace('{v}', v);
     }
+    
     updateWaterModalSVG(v, state);
     if (dontEl) dontEl.style.display = (state === 'low' || state === 'full') ? '' : 'none';
     openModal('status-modal-water');
@@ -1008,13 +1014,16 @@ function openStatusModal(type) {
     const v = d ? d.ds18b20_temp : null;
     const titleEl = $('status-modal-temp-title');
     const descEl  = $('status-modal-temp-desc');
-    if (titleEl) titleEl.textContent = 'Water Temperature';
-    if (descEl)  descEl.textContent  = v != null ? `Current water temperature is ${parseFloat(v).toFixed(1)} °C.` : 'No temperature data yet.';
+    
+    if (titleEl) titleEl.textContent = _t('status-temp-title');
+    if (descEl)  descEl.textContent  = v != null 
+        ? _t('status-temp-desc').replace('{v}', parseFloat(v).toFixed(1)) 
+        : _t('status-temp-nodata');
+        
     updateTempModalSVG(v);
     openModal('status-modal-temp');
   }
 }
-
 function dismissStatusModal(type) {
   StatusModal.dismissed[type] = true;
   closeTopModal();
@@ -1033,7 +1042,6 @@ function setupDash() {
 
 function renderQI() {
   const h = S.hist, bin = 'b' + S.qiBin, data = h[bin][S.qiSens] || [], lbs = h.labels;
-  const NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
   const ICONS = {
     soilMoisture: '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
     temperature:  '/img/monitoring/Sensor Icons/Temperature Icon.svg',
@@ -1041,7 +1049,8 @@ function renderQI() {
     gasLevels:    '/img/monitoring/Sensor Icons/Gas Icon.svg'
   };
   const R = CFG.OPT[S.qiSens];
-  setText('qi-sensor-heading', NM[S.qiSens]);
+  const _t = window.t || function(k){ return k; };
+  setText('qi-sensor-heading', _t('app-sensor-' + S.qiSens));
 
   const iconEl = $('qi-sensor-icon');
   if(iconEl) iconEl.src = ICONS[S.qiSens];
@@ -1078,12 +1087,12 @@ function renderQI() {
     if(actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
     ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => setText(id, '--'));
-    setText('qi-insight', 'No data yet');
+    setText('qi-insight', _t('app-data-no-data'));
   }
 
   const tbody = $('qi-tbody');
   if(!tbody) return;
-  if(!data.length){ tbody.innerHTML = '<tr><td class="qi-empty" colspan="3">Waiting for data...</td></tr>'; return; }
+  if(!data.length){ tbody.innerHTML = `<tr><td class="qi-empty" colspan="3">${_t('app-data-waiting')}</td></tr>`; return; }
   const st = Math.max(0, data.length - 12);
   tbody.innerHTML = data.slice(st).map((v, i) => {
     const l = lbs[st+i] || '--';
@@ -1182,8 +1191,8 @@ function resizeBFCanvas() {
 }
 
 function renderBF() {
-  const NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
-  setText('bf-sensor-heading', NM[S.bfSens]);
+  const _t = window.t || function(k){ return k; };
+  setText('bf-sensor-heading', _t('app-sensor-' + S.bfSens));
   updateBF();
 }
 
@@ -1213,8 +1222,9 @@ function updateBF() {
     if (actionBtn) { actionBtn.disabled = !needsAction; actionBtn.title = needsAction ? 'View recommended actions' : 'No actions needed'; }
     if (actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
-    setText('bf-insights-text', 'Collecting data...');
-    if (actionBtn) { actionBtn.disabled = true; actionBtn.title = 'No data yet'; }
+    const _t = window.t || function(k){ return k; };
+    setText('bf-insights-text', _t('app-data-collecting'));
+    if (actionBtn) { actionBtn.disabled = true; actionBtn.title = _t('app-data-no-data'); }
     if (actionDot) actionDot.classList.remove('visible');
   }
 }
@@ -1613,7 +1623,8 @@ function renderClaimedBins(binsArray) {
   if (!container) return;
 
   if (!binsArray || binsArray.length === 0) {
-    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
+    const _t = window.t || function(k){ return k; };
+    container.innerHTML = `<div class="wm-placeholder">${_t('app-no-bins-claimed')}</div>`;
     updateGlobalBinDropdown([]);
     return;
   }
@@ -1720,7 +1731,8 @@ function updateGlobalBinDropdown(binsArray) {
   if(!select) return;
 
   if (!binsArray || binsArray.length === 0) {
-    select.innerHTML = '<option value="" disabled>No bins connected</option>';
+    const _t = window.t || function(k){ return k; };
+    select.innerHTML = `<option value="" disabled>${_t('app-no-bins-connected')}</option>`;
     return;
   }
 
@@ -1904,6 +1916,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+
+/* ── Re-render JS-injected text on language change ─────────── */
+document.addEventListener('avonic:langchange', function() {
+  // Re-render the current page so dynamic strings (mode labels,
+  // sensor status, "Updated at", etc.) immediately reflect the new language.
+  if (S.data) {
+    renderPage(Router.cur(), S.data);
+  }
+  // Also refresh home bin-mode labels if data is loaded
+  if (S.data) renderHome(S.data);
+});
 
 /* ── Language Preference ───────────────────────────────────── */
 (function initLanguageSelect() {

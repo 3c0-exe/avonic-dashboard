@@ -12,7 +12,7 @@
   /* ┌──────────────────────────────────────┐
      │  🔧 FLIP TO false BEFORE DEPLOYING   │
      └──────────────────────────────────────┘ */
-  var DEV_MODE = true;
+  var DEV_MODE = false;
 
   var STORAGE_KEY = 'avonic_lang';
   var MODAL_SEEN  = 'avonic_modal_seen';
