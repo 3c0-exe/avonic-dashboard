@@ -1,13 +1,13 @@
-/* ═══════════════════════════════════
-   AVONIC  –  app.js  v6.1  (Online)
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+   AVONIC  ΓÇô  app.js  v6.1  (Online)
    Connected to Railway + MongoDB backend
-   ═══════════════════════════════════ */
+   ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 'use strict';
 
 const BASE_URL = 'https://avonic-main-hub-production.up.railway.app';
 
 const WORM_CONFIGS = {
-  temperature:  { optimal_min: 22, optimal_max: 28, critical_min: 15, critical_max: 35, unit: '°C' },
+  temperature:  { optimal_min: 22, optimal_max: 28, critical_min: 15, critical_max: 35, unit: '┬░C' },
   soilMoisture: { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, unit: '%' },
   humidity:     { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, unit: '%' },
   gasLevels:    { optimal_min: 0,  optimal_max: 100, critical_max: 200, unit: 'ppm' }
@@ -19,7 +19,7 @@ const CFG = {
   OPT: WORM_CONFIGS
 };
 
-// ── State ───────────────────────────
+// ΓöÇΓöÇ State ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const S = {
   data: null,
   mode: { 1:'auto', 2:'auto' },
@@ -38,18 +38,18 @@ const S = {
   user: null
 };
 
-// ── Real-data caches ─────────────────
+// ΓöÇΓöÇ Real-data caches ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const QICache = { data: null, loading: false };
 const BFCache = { bin1: [], bin2: [], loading: false };
 
-// ── DOM helpers ──────────────────────
+// ΓöÇΓöÇ DOM helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const $ = (id) => document.getElementById(id);
 const setText = (id, v) => { const e = $(id); if(e) e.textContent = v; };
 const fmt = (v) => v != null ? parseFloat(v).toFixed(1) : '--';
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // AUTH TOKEN HELPERS
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 const Token = {
   get()     { return localStorage.getItem('avonic_token'); },
   set(t)    { localStorage.setItem('avonic_token', t); },
@@ -61,44 +61,39 @@ const Token = {
   }
 };
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // EVALUATE CONDITION
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function evaluateCondition(sensorType, value) {
-    if (!WORM_CONFIGS[sensorType]) {
-        return { status: (window.t ? window.t('status-unknown') : 'Unknown'), statusClass: 'warning', wormImage: 'Normal.png' };
-    }
-    const ranges = WORM_CONFIGS[sensorType];
-    const _t = window.t || function(k){ return k; };
-    let status = _t('status-optimal');
-    let statusClass = 'optimal';
-    let wormImage = 'Normal.png';
+  if (!WORM_CONFIGS[sensorType]) return { status: 'Unknown', statusClass: 'warning', wormImage: 'Normal.png' };
+  const ranges = WORM_CONFIGS[sensorType];
+  let status = 'Optimal', statusClass = 'optimal', wormImage = 'Normal.png';
 
-    switch(sensorType) {
-        case 'temperature':
-            if (value < ranges.critical_min) { status = _t('status-critically-cold'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-            else if (value < ranges.optimal_min) { status = _t('status-too-cold'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
-            else if (value > ranges.critical_max) { status = _t('status-critically-hot'); statusClass = 'critical'; wormImage = 'Too Hot.png'; }
-            else if (value > ranges.optimal_max) { status = _t('status-too-hot'); statusClass = 'warning'; wormImage = 'Too Hot.png'; }
-            break;
-        case 'soilMoisture':
-        case 'humidity':
-            if (value < ranges.critical_min) { status = _t('status-critically-dry'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-            else if (value < ranges.optimal_min) { status = _t('status-dry'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
-            else if (value > ranges.critical_max) { status = _t('status-critically-wet'); statusClass = 'critical'; wormImage = 'Too Wet.png'; }
-            else if (value > ranges.optimal_max) { status = _t('status-wet'); statusClass = 'warning'; wormImage = 'Too Wet.png'; }
-            break;
-        case 'gasLevels':
-            if (value > ranges.critical_max) { status = _t('status-toxic-gas'); statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
-            else if (value > ranges.optimal_max) { status = _t('status-high-gas'); statusClass = 'warning'; wormImage = 'Gas Too High.png'; }
-            break;
-    }
-    return { status, statusClass, wormImage };
+  switch(sensorType) {
+    case 'temperature':
+      if      (value < ranges.critical_min) { status = 'Critically Cold'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+      else if (value < ranges.optimal_min)  { status = 'Too Cold';         statusClass = 'warning';  wormImage = 'Too Dry.png'; }
+      else if (value > ranges.critical_max) { status = 'Critically Hot';   statusClass = 'critical'; wormImage = 'Too Hot.png'; }
+      else if (value > ranges.optimal_max)  { status = 'Too Hot';          statusClass = 'warning';  wormImage = 'Too Hot.png'; }
+      break;
+    case 'soilMoisture':
+    case 'humidity':
+      if      (value < ranges.critical_min) { status = 'Critically Dry'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+      else if (value < ranges.optimal_min)  { status = 'Dry';             statusClass = 'warning';  wormImage = 'Too Dry.png'; }
+      else if (value > ranges.critical_max) { status = 'Critically Wet'; statusClass = 'critical'; wormImage = 'Too Wet.png'; }
+      else if (value > ranges.optimal_max)  { status = 'Wet';             statusClass = 'warning';  wormImage = 'Too Wet.png'; }
+      break;
+    case 'gasLevels':
+      if      (value > ranges.critical_max) { status = 'Toxic Gas';  statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
+      else if (value > ranges.optimal_max)  { status = 'High Gas';   statusClass = 'warning';  wormImage = 'Gas Too High.png'; }
+      break;
+  }
+  return { status, statusClass, wormImage };
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // ROUTER & SIDEBAR
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 const ROUTES = {
   '': 'home', 'home': 'home',
   'bin1': 'bin1', 'bin2': 'bin2',
@@ -143,9 +138,9 @@ function setupSidebar() {
 }
 function closeSidebar() { document.body.classList.remove('sidebar-expanded'); }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // API
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 const API = {
   async get() {
     if (!S.activeEspID) throw new Error('NO_DEVICE');
@@ -231,7 +226,7 @@ const API = {
     return r.json();
   },
 
-  // Quick Insights — last N real readings
+  // Quick Insights ΓÇö last N real readings
   async getValidReadings(espID, limit = 50) {
     const r = await fetch(`${BASE_URL}/api/sensors/${espID}/valid-readings?limit=${limit}`, {
       headers: Token.headers(), cache: 'no-store'
@@ -241,7 +236,7 @@ const API = {
     return r.json();
   },
 
-  // Bin Fluctuations — hourly averages
+  // Bin Fluctuations ΓÇö hourly averages
   async getHourly(espID, start, end) {
     let url = `${BASE_URL}/api/sensors/${espID}/hourly`;
     const params = [];
@@ -264,7 +259,7 @@ const API = {
   }
 };
 
-// ── Flatten MongoDB sensor doc → flat UI format ──────────────
+// ΓöÇΓöÇ Flatten MongoDB sensor doc ΓåÆ flat UI format ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function flattenSensorData(json) {
   const d = json.data || json;
   if (!d) return null;
@@ -292,7 +287,7 @@ function flattenSensorData(json) {
   };
 }
 
-// ── Load devices ─────────────────────
+// ΓöÇΓöÇ Load devices ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 async function loadDevices() {
   try {
     const res = await API.getDevices();
@@ -323,9 +318,9 @@ async function loadProfile() {
   } catch(e) { console.error('Failed to load profile:', e); }
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // POLLING (live sensor data)
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 async function fetchAndRender() {
   document.querySelectorAll('.refresh-btn, .refresh-spin').forEach(b => b.classList.add('spinning'));
   try {
@@ -343,7 +338,7 @@ async function fetchAndRender() {
   } catch(e) {
     if (e.message?.includes('401')) {
       Token.clear(); Auth.loggedIn = false; authShow();
-      toast('Session expired — please log in again', 'err');
+      toast('Session expired ΓÇö please log in again', 'err');
     } else if (e.message !== 'NO_DEVICE') {
       console.error('Fetch error:', e.message);
     }
@@ -367,9 +362,9 @@ function pushHist(d) {
 
 function startPolling() { fetchAndRender(); setInterval(fetchAndRender, CFG.POLL); }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // PAGE RENDERERS
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function renderPage(id, d) {
   switch(id) {
     case 'home':            renderHome(d); break;
@@ -387,17 +382,15 @@ function renderHome(d) {
   setText('water-pct-text', (d.water_level != null ? d.water_level : '--') + '%');
   updateBatteryIcon(pct, d.charging || false);
   if (d.ds18b20_temp != null) {
-    setText('home-temp-val', fmt(d.ds18b20_temp) + ' C°');
+    setText('home-temp-val', fmt(d.ds18b20_temp) + ' C┬░');
   } else if (d.temp1 != null || d.temp2 != null) {
     const t = ((d.temp1||0)+(d.temp2||0)) / (d.temp1!=null&&d.temp2!=null ? 2 : 1);
-    setText('home-temp-val', fmt(t) + ' C°');
+    setText('home-temp-val', fmt(t) + ' C┬░');
   } else {
-    setText('home-temp-val', '-- C°');
+    setText('home-temp-val', '-- C┬░');
   }
-
-  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
-  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
-
+  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?'Auto Mode':'Manual Mode'}`;
+  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?'Auto Mode':'Manual Mode'}`;
   updateStatusPillAlerts(d);
   renderRecentQI();
 }
@@ -430,24 +423,14 @@ function renderBin(n, d) {
     }
   }
   const now = new Date();
-  const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  const updatedLabel = window.t ? window.t('app-updated-at') : 'Updated at';
-  setText(`b${n}-updated`, updatedLabel + ' ' + timeStr);
-
+  setText(`b${n}-updated`, 'Updated at ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0'));
   const mb = $(`b${n}-mode-btn`);
-  if(mb){
-    const isAuto = S.mode[n] === 'auto';
-    const modeLabel = isAuto
-      ? (window.t ? window.t('app-mode-auto-short') : 'Auto')
-      : (window.t ? window.t('app-mode-manual-short') : 'Manual');
-    mb.innerHTML = modeLabel;
-    mb.className = `mode-btn ${isAuto ? 'auto' : 'manual'}`;
-  }
+  if(mb) { const isAuto = S.mode[n]==='auto'; mb.innerHTML = isAuto?'Auto':'Manual'; mb.className = `mode-btn ${isAuto?'auto':'manual'}`; }
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // MODAL MANAGER
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 const ModalManager = (() => {
   let _queue = [], _current = null;
   function _show(id) {
@@ -476,7 +459,7 @@ function openModal(id)    { ModalManager.open(id); }
 function closeTopModal()  { ModalManager.close(); }
 function closeAllModals() { ModalManager.closeAll(); }
 
-// ── Mode ─────────────────────────────
+// ΓöÇΓöÇ Mode ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 async function loadMode() {
   try {
     const res = await API.getMode();
@@ -489,11 +472,10 @@ async function loadMode() {
 
 function openModeModal(binNum) {
   const targetMode = S.mode[binNum] === 'auto' ? 'manual' : 'auto';
-
- const _t = window.t || function(k){ return k; };
-  $('mode-modal-title').textContent = targetMode === 'auto' ? _t('modal-mode-auto-title') : _t('modal-mode-manual-title');
-  $('mode-modal-desc').textContent = targetMode === 'auto' ? _t('modal-mode-auto-desc') : _t('modal-mode-manual-desc');
-
+  $('mode-modal-title').textContent = targetMode === 'auto' ? 'Activate Auto Mode?' : 'Activate Manual Mode?';
+  $('mode-modal-desc').textContent  = targetMode === 'auto'
+    ? 'Turning on auto-mode makes the system operate by itself.'
+    : 'Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.';
   const ill = $('mode-ill-img');
   if (ill) ill.src = targetMode === 'auto' ? '/img/photos/AutoMode.png' : '/img/photos/ManualMode.png';
   $('mode-confirm-btn').onclick = async () => {
@@ -501,11 +483,7 @@ function openModeModal(binNum) {
     const mb = $(`b${binNum}-mode-btn`);
     if(mb) { const isAuto = targetMode==='auto'; mb.innerHTML = isAuto?'Auto':'Manual'; mb.className = `mode-btn ${isAuto?'auto':'manual'}`; }
     const hmb = $(`home-b${binNum}-mode`);
-    if(hmb) {
-      const _t = window.t || function(k){ return k; };
-      hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode === 'auto' ? _t('app-mode-auto') : _t('app-mode-manual')}`;
-    }
-
+    if(hmb) hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode==='auto'?'Auto Mode':'Manual Mode'}`;
     if(S.data) renderBin(binNum, S.data);
     if($('sensor-detail-modal')?.classList.contains('show'))
       openSensorModal(S.activeModalBin, S.activeModalSensor, $('sm-title').textContent, $('sm-icon').src);
@@ -523,7 +501,7 @@ function openModeModal(binNum) {
   openModal('mode-switch-modal');
 }
 
-// ── Sensor Detail Modal ──────────────
+// ΓöÇΓöÇ Sensor Detail Modal ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function openSensorModal(binNum, sensorType, title, iconPath) {
   S.activeModalBin = binNum; S.activeModalSensor = sensorType;
   $('sm-title').textContent = title; $('sm-icon').src = iconPath;
@@ -596,7 +574,7 @@ function populateManualActions(bin, sensor, container, d) {
   });
 }
 
-// ── Battery SVG ──────────────────────
+// ΓöÇΓöÇ Battery SVG ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const BAT_FILL_W = 20;
 function updateBatteryIcon(pct, charging) {
   const svg = $('bat-svg-icon'), fillBar = $('bat-fill-bar'), bolt = $('bat-bolt');
@@ -665,7 +643,7 @@ function updateTempModalSVG(tempVal) {
 }
 window.updateTempModalSVG = updateTempModalSVG;
 
-// ── Status Pills ─────────────────────
+// ΓöÇΓöÇ Status Pills ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const StatusModal = {
   dismissed: { battery: false, water: false },
   BATTERY_LOW: 20, BATTERY_FULL: 95, WATER_LOW: 20, WATER_FULL: 90,
@@ -689,91 +667,48 @@ function updateStatusPillAlerts(d) {
   }
   if (waterState !== StatusModal._lastWaterState) {
     StatusModal._lastWaterState = waterState;
-    if ((waterState === 'low' || waterState === 'full') && !StatusModal.dismissed.water) {
-      openStatusModal('water');
-    }
+    if ((waterState==='low'||waterState==='full') && !StatusModal.dismissed.water) openStatusModal('water');
   }
 }
 function openStatusModal(type) {
   const d = S.data;
-  const _t = window.t || function(k){ return k; }; // Helper to fetch translation
-
   if (type === 'battery') {
-    const v     = d ? (d.battery_percent || 0) : 0;
-    const state = getStatusPillState('battery', d);
-    const charging = d ? (d.charging || false) : false;
-    const titleEl = $('status-modal-bat-title');
-    const descEl  = $('status-modal-bat-desc');
-    const dontEl  = $('status-bat-dontshow');
-
-    if (state === 'low') {
-      if (titleEl) titleEl.textContent = _t('status-bat-low-title');
-      if (descEl)  descEl.textContent  = _t('status-bat-low-desc').replace('{v}', v);
-    } else if (state === 'full') {
-      if (titleEl) titleEl.textContent = _t('status-bat-full-title');
-      if (descEl)  descEl.textContent  = _t('status-bat-full-desc').replace('{v}', v);
-    } else {
-      if (titleEl) titleEl.textContent = charging ? _t('status-bat-charge-title') : _t('status-bat-title');
-      if (descEl)  descEl.textContent  = _t('status-bat-desc').replace('{v}', v);
-    }
-
+    const v = d?(d.battery_percent||0):0, state = getStatusPillState('battery',d), charging = d?(d.charging||false):false;
+    setText('status-modal-bat-title', state==='low'?'Battery Low':state==='full'?'Battery Full':charging?'ChargingΓÇª':'Battery Status');
+    setText('status-modal-bat-desc',  state==='low'?`Battery is at ${v}%. Please charge your bin.`:state==='full'?`Battery is at ${v}%. Kindly unplug the charger.`:`Battery level is at ${v}%.`);
     updateBatteryModalSVG(v, charging, state);
     const dontEl = $('status-bat-dontshow'); if(dontEl) dontEl.style.display = (state==='low'||state==='full')?'':'none';
     openModal('status-modal-battery');
   } else if (type === 'water') {
-    const v     = d ? (d.water_level != null ? d.water_level : 0) : 0;
-    const state = getStatusPillState('water', d);
-    const titleEl = $('status-modal-water-title');
-    const descEl  = $('status-modal-water-desc');
-    const dontEl  = $('status-water-dontshow');
-
-    if (state === 'low') {
-      if (titleEl) titleEl.textContent = _t('status-water-low-title');
-      if (descEl)  descEl.textContent  = _t('status-water-low-desc').replace('{v}', v);
-    } else if (state === 'full') {
-      if (titleEl) titleEl.textContent = _t('status-water-full-title');
-      if (descEl)  descEl.textContent  = _t('status-water-full-desc').replace('{v}', v);
-    } else {
-      if (titleEl) titleEl.textContent = _t('status-water-title');
-      if (descEl)  descEl.textContent  = _t('status-water-desc').replace('{v}', v);
-    }
-    
+    const v = d?(d.water_level!=null?d.water_level:0):0, state = getStatusPillState('water',d);
+    setText('status-modal-water-title', state==='low'?'Water Tank Low':state==='full'?'Water Tank Full':'Water Tank');
+    setText('status-modal-water-desc',  state==='low'?`Water is at ${v}%. Kindly refill your water tank.`:state==='full'?`Water is at ${v}%. Tank is full.`:`Water level is at ${v}%.`);
     updateWaterModalSVG(v, state);
     const dontEl = $('status-water-dontshow'); if(dontEl) dontEl.style.display = (state==='low'||state==='full')?'':'none';
     openModal('status-modal-water');
   } else if (type === 'temp') {
-    const v = d ? d.ds18b20_temp : null;
-    const titleEl = $('status-modal-temp-title');
-    const descEl  = $('status-modal-temp-desc');
-    
-    if (titleEl) titleEl.textContent = _t('status-temp-title');
-    if (descEl)  descEl.textContent  = v != null 
-        ? _t('status-temp-desc').replace('{v}', parseFloat(v).toFixed(1)) 
-        : _t('status-temp-nodata');
-        
+    const v = d?d.ds18b20_temp:null;
+    setText('status-modal-temp-title', 'Water Temperature');
+    setText('status-modal-temp-desc',  v!=null?`Current water temperature is ${parseFloat(v).toFixed(1)} ┬░C.`:'No temperature data yet.');
     updateTempModalSVG(v);
     openModal('status-modal-temp');
   }
 }
-function dismissStatusModal(type) {
-  StatusModal.dismissed[type] = true;
-  closeTopModal();
-}
-
+function dismissStatusModal(type) { StatusModal.dismissed[type] = true; closeTopModal(); }
 window.openStatusModal = openStatusModal;
 window.StatusModal = StatusModal;
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // DASHBOARD
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function setupDash() {
   if($('go-qi')) $('go-qi').addEventListener('click', () => window.location.hash = '#/quick-insights');
   if($('go-bf')) $('go-bf').addEventListener('click', () => window.location.hash = '#/bin-fluctuation');
 }
 
-// ════════════════════════════════════
-// QUICK INSIGHTS — real MongoDB data
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+// QUICK INSIGHTS ΓÇö real MongoDB data
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 async function fetchQIData() {
   if (!S.activeEspID) return;
   if (QICache.loading) return;
@@ -791,19 +726,18 @@ async function fetchQIData() {
 }
 
 function renderQI() {
-  const h = S.hist, bin = 'b' + S.qiBin, data = h[bin][S.qiSens] || [], lbs = h.labels;
+  const NM    = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
+  const UNITS = { soilMoisture:'%', temperature:'┬░C', humidity:'%', gasLevels:'ppm' };
   const ICONS = {
     soilMoisture: '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
     temperature:  '/img/monitoring/Sensor Icons/Temperature Icon.svg',
     humidity:     '/img/monitoring/Sensor Icons/Humidity Icon.svg',
     gasLevels:    '/img/monitoring/Sensor Icons/Gas Icon.svg'
   };
-  const R = CFG.OPT[S.qiSens];
-  const _t = window.t || function(k){ return k; };
-  setText('qi-sensor-heading', _t('app-sensor-' + S.qiSens));
+  const R = CFG.OPT[S.qiSens], unit = UNITS[S.qiSens];
 
-  const iconEl = $('qi-sensor-icon');
-  if(iconEl) iconEl.src = ICONS[S.qiSens];
+  setText('qi-sensor-heading', NM[S.qiSens]);
+  const iconEl = $('qi-sensor-icon'); if(iconEl) iconEl.src = ICONS[S.qiSens];
 
   const now = new Date();
   const dateEl = $('qi-date-block');
@@ -835,19 +769,19 @@ function renderQI() {
     if(actionBtn) { actionBtn.disabled=!needsAction; actionBtn.title=needsAction?'View recommended actions':'No actions needed'; }
     if(actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
-    ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => setText(id, '--'));
-    setText('qi-insight', _t('app-data-no-data'));
+    ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => setText(id,'--'));
+    setText('qi-insight', QICache.loading ? 'Loading...' : 'No data yet');
   }
 
-  const tbody = $('qi-tbody');
-  if(!tbody) return;
-  if(!data.length){ tbody.innerHTML = `<tr><td class="qi-empty" colspan="3">${_t('app-data-waiting')}</td></tr>`; return; }
-  const st = Math.max(0, data.length - 12);
-  tbody.innerHTML = data.slice(st).map((v, i) => {
-    const l = lbs[st+i] || '--';
-    const s = v < R.critical_min ? 'Low' : v > R.critical_max ? 'High' : 'Normal';
-    const c = s === 'Normal' ? 's-ok' : s === 'High' ? 's-hi' : 's-lo';
-    return `<tr><td>${l}</td><td>${fmt(v)} ${R.unit}</td><td class="${c}">${s}</td></tr>`;
+  const tbody = $('qi-tbody'); if(!tbody) return;
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td class="qi-empty" colspan="3">${QICache.loading?'Loading data...':'Waiting for data...'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.slice(0,12).map(({val, ts}) => {
+    const time = ts ? new Date(ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '--';
+    const s = val < R.critical_min ? 'Low' : val > R.critical_max ? 'High' : 'Normal';
+    return `<tr><td>${time}</td><td>${fmt(val)} ${unit}</td><td class="${s==='Normal'?'s-ok':s==='High'?'s-hi':'s-lo'}">${s}</td></tr>`;
   }).join('');
 }
 
@@ -862,7 +796,7 @@ function setupQI() {
   });
 }
 
-// renderRecentQI still uses live polling hist (for the home page pills — that's fine)
+// renderRecentQI still uses live polling hist (for the home page pills ΓÇö that's fine)
 function renderRecentQI() {
   const h = S.hist; if(!h) return;
   const sensors = [
@@ -887,9 +821,9 @@ function renderRecentQI() {
   if(updEl) { const now=new Date(); updEl.textContent='Last updated: '+now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'); }
 }
 
-// ════════════════════════════════════
-// BIN FLUCTUATIONS — real MongoDB hourly averages
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+// BIN FLUCTUATIONS ΓÇö real MongoDB hourly averages
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function initBFChart() {
   const canvas = $('bf-chart'); if(!canvas) return;
   if(S.bfChart){ S.bfChart.destroy(); S.bfChart = null; }
@@ -962,8 +896,8 @@ function resizeBFCanvas() {
 }
 
 function renderBF() {
-  const _t = window.t || function(k){ return k; };
-  setText('bf-sensor-heading', _t('app-sensor-' + S.bfSens));
+  const NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
+  setText('bf-sensor-heading', NM[S.bfSens]);
   updateBF();
 }
 
@@ -992,10 +926,9 @@ function updateBF() {
     if(actionBtn){ actionBtn.disabled=!needsAction; actionBtn.title=needsAction?'View recommended actions':'No actions needed'; }
     if(actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
-    const _t = window.t || function(k){ return k; };
-    setText('bf-insights-text', _t('app-data-collecting'));
-    if (actionBtn) { actionBtn.disabled = true; actionBtn.title = _t('app-data-no-data'); }
-    if (actionDot) actionDot.classList.remove('visible');
+    setText('bf-insights-text', BFCache.loading ? 'Loading...' : 'No data for this range.');
+    if(actionBtn){ actionBtn.disabled=true; actionBtn.title='No data yet'; }
+    if(actionDot) actionDot.classList.remove('visible');
   }
 }
 
@@ -1036,7 +969,7 @@ function setupBF() {
   ['bf-date-from-m','bf-date-to-m'].forEach(id => $(id)?.addEventListener('change', onDateChangeM));
 }
 
-// ── Worm Insights ────────────────────
+// ΓöÇΓöÇ Worm Insights ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function getWormInsight(sensorType, value) {
   const R = CFG.OPT[sensorType];
   if (!R) return { severity:'ok', title:'No data', steps:[] };
@@ -1044,30 +977,30 @@ function getWormInsight(sensorType, value) {
   let severity, title, steps = [];
   switch(sensorType) {
     case 'temperature':
-      if(v<R.critical_min){severity='critical';title=`⚠️ CRITICAL — Temperature too low (${fV}°C)`;steps=['Move worms to a warmer location immediately','Add insulation or a heating mat under the bin',`Keep temperature between ${R.optimal_min}–${R.optimal_max}°C`,'Monitor every hour until stable'];}
-      else if(v<R.optimal_min){severity='warning';title=`⚠️ Temperature below optimal (${fV}°C)`;steps=['Consider adding a gentle heat source nearby','Reduce ventilation to retain warmth',`Target range: ${R.optimal_min}–${R.optimal_max}°C`];}
-      else if(v>R.critical_max){severity='critical';title=`🔥 CRITICAL — Temperature too high (${fV}°C)`;steps=['Move bin to a cooler location NOW','Add ventilation or point a fan at the bin','Remove any heat sources nearby','Never expose bin to direct sunlight',`Target range: ${R.optimal_min}–${R.optimal_max}°C`];}
-      else if(v>R.optimal_max){severity='warning';title=`⚠️ Temperature above optimal (${fV}°C)`;steps=['Improve ventilation around the bin','Move to a cooler area or shade','Avoid direct heat sources',`Target range: ${R.optimal_min}–${R.optimal_max}°C`];}
-      else{severity='ok';title=`✅ Temperature is perfect (${fV}°C)`;steps=[`Optimal range ${R.optimal_min}–${R.optimal_max}°C maintained. Keep it up!`];}
+      if(v<R.critical_min){severity='critical';title=`ΓÜá∩╕Å CRITICAL ΓÇö Temperature too low (${fV}┬░C)`;steps=['Move worms to a warmer location immediately','Add insulation or a heating mat under the bin',`Keep temperature between ${R.optimal_min}ΓÇô${R.optimal_max}┬░C`,'Monitor every hour until stable'];}
+      else if(v<R.optimal_min){severity='warning';title=`ΓÜá∩╕Å Temperature below optimal (${fV}┬░C)`;steps=['Consider adding a gentle heat source nearby','Reduce ventilation to retain warmth',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}┬░C`];}
+      else if(v>R.critical_max){severity='critical';title=`≡ƒöÑ CRITICAL ΓÇö Temperature too high (${fV}┬░C)`;steps=['Move bin to a cooler location NOW','Add ventilation or point a fan at the bin','Remove any heat sources nearby','Never expose bin to direct sunlight',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}┬░C`];}
+      else if(v>R.optimal_max){severity='warning';title=`ΓÜá∩╕Å Temperature above optimal (${fV}┬░C)`;steps=['Improve ventilation around the bin','Move to a cooler area or shade','Avoid direct heat sources',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}┬░C`];}
+      else{severity='ok';title=`Γ£à Temperature is perfect (${fV}┬░C)`;steps=[`Optimal range ${R.optimal_min}ΓÇô${R.optimal_max}┬░C maintained. Keep it up!`];}
       break;
     case 'soilMoisture':
-      if(v<R.critical_min){severity='critical';title=`⚠️ CRITICAL — Soil too dry (${fV}%)`;steps=['Add water to the bedding immediately','Spray evenly — avoid pooling in one spot','Check and repair any drainage issues',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v<R.optimal_min){severity='warning';title=`⚠️ Soil moisture low (${fV}%)`;steps=['Gradually add moisture using a spray bottle','Distribute water evenly across the bedding',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v>R.critical_max){severity='critical';title=`💧 CRITICAL — Soil too wet (${fV}%)`;steps=['Stop all watering immediately','Add dry bedding material (shredded cardboard or paper)','Improve drainage — check for blockages','Turn bedding to increase airflow',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v>R.optimal_max){severity='warning';title=`⚠️ Soil moisture high (${fV}%)`;steps=['Reduce watering frequency','Mix in dry bedding to absorb excess moisture','Improve ventilation',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else{severity='ok';title=`✅ Soil moisture is perfect (${fV}%)`;steps=[`Ideal bedding consistency ${R.optimal_min}–${R.optimal_max}% maintained. Worms are happy!`];}
+      if(v<R.critical_min){severity='critical';title=`ΓÜá∩╕Å CRITICAL ΓÇö Soil too dry (${fV}%)`;steps=['Add water to the bedding immediately','Spray evenly ΓÇö avoid pooling in one spot','Check and repair any drainage issues',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v<R.optimal_min){severity='warning';title=`ΓÜá∩╕Å Soil moisture low (${fV}%)`;steps=['Gradually add moisture using a spray bottle','Distribute water evenly across the bedding',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v>R.critical_max){severity='critical';title=`≡ƒÆº CRITICAL ΓÇö Soil too wet (${fV}%)`;steps=['Stop all watering immediately','Add dry bedding material (shredded cardboard or paper)','Improve drainage ΓÇö check for blockages','Turn bedding to increase airflow',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v>R.optimal_max){severity='warning';title=`ΓÜá∩╕Å Soil moisture high (${fV}%)`;steps=['Reduce watering frequency','Mix in dry bedding to absorb excess moisture','Improve ventilation',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else{severity='ok';title=`Γ£à Soil moisture is perfect (${fV}%)`;steps=[`Ideal bedding consistency ${R.optimal_min}ΓÇô${R.optimal_max}% maintained. Worms are happy!`];}
       break;
     case 'humidity':
-      if(v<R.critical_min){severity='critical';title=`⚠️ CRITICAL — Humidity too low (${fV}%)`;steps=['Mist the bin surface regularly','Cover the bin to retain moisture','Check ventilation — may be too aggressive',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v<R.optimal_min){severity='warning';title=`⚠️ Humidity below optimal (${fV}%)`;steps=['Increase misting frequency','Reduce ventilation slightly',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v>R.critical_max){severity='critical';title=`💧 CRITICAL — Humidity too high (${fV}%)`;steps=['Increase ventilation immediately','Add dry bedding material','Check for pooling water inside the bin','Reduce misting until stable',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else if(v>R.optimal_max){severity='warning';title=`⚠️ Humidity above optimal (${fV}%)`;steps=['Improve air circulation around and inside the bin','Reduce watering frequency',`Target range: ${R.optimal_min}–${R.optimal_max}%`];}
-      else{severity='ok';title=`✅ Humidity is perfect (${fV}%)`;steps=[`Ideal air moisture ${R.optimal_min}–${R.optimal_max}% maintained. Conditions are excellent!`];}
+      if(v<R.critical_min){severity='critical';title=`ΓÜá∩╕Å CRITICAL ΓÇö Humidity too low (${fV}%)`;steps=['Mist the bin surface regularly','Cover the bin to retain moisture','Check ventilation ΓÇö may be too aggressive',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v<R.optimal_min){severity='warning';title=`ΓÜá∩╕Å Humidity below optimal (${fV}%)`;steps=['Increase misting frequency','Reduce ventilation slightly',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v>R.critical_max){severity='critical';title=`≡ƒÆº CRITICAL ΓÇö Humidity too high (${fV}%)`;steps=['Increase ventilation immediately','Add dry bedding material','Check for pooling water inside the bin','Reduce misting until stable',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else if(v>R.optimal_max){severity='warning';title=`ΓÜá∩╕Å Humidity above optimal (${fV}%)`;steps=['Improve air circulation around and inside the bin','Reduce watering frequency',`Target range: ${R.optimal_min}ΓÇô${R.optimal_max}%`];}
+      else{severity='ok';title=`Γ£à Humidity is perfect (${fV}%)`;steps=[`Ideal air moisture ${R.optimal_min}ΓÇô${R.optimal_max}% maintained. Conditions are excellent!`];}
       break;
     case 'gasLevels':
-      if(v>R.critical_max){severity='critical';title=`☠️ CRITICAL — Ammonia toxic (${fV} ppm)`;steps=['Stop feeding the bin immediately','Turn the bedding to release trapped gases','Add carbon-rich material (shredded paper or cardboard)','Increase ventilation right away','Remove any rotting food from the bin',`Safe level: below ${R.optimal_max} ppm`];}
-      else if(v>R.optimal_max){severity='warning';title=`⚠️ Ammonia levels elevated (${fV} ppm)`;steps=['Reduce protein-rich food in feedings','Add more carbon material to balance','Aerate by turning the bedding',`Safe level: below ${R.optimal_max} ppm`];}
-      else{severity='ok';title=`✅ Gas levels are safe (${fV} ppm)`;steps=[`Ammonia well-controlled below ${R.optimal_max} ppm. Bin chemistry is balanced!`];}
+      if(v>R.critical_max){severity='critical';title=`Γÿá∩╕Å CRITICAL ΓÇö Ammonia toxic (${fV} ppm)`;steps=['Stop feeding the bin immediately','Turn the bedding to release trapped gases','Add carbon-rich material (shredded paper or cardboard)','Increase ventilation right away','Remove any rotting food from the bin',`Safe level: below ${R.optimal_max} ppm`];}
+      else if(v>R.optimal_max){severity='warning';title=`ΓÜá∩╕Å Ammonia levels elevated (${fV} ppm)`;steps=['Reduce protein-rich food in feedings','Add more carbon material to balance','Aerate by turning the bedding',`Safe level: below ${R.optimal_max} ppm`];}
+      else{severity='ok';title=`Γ£à Gas levels are safe (${fV} ppm)`;steps=[`Ammonia well-controlled below ${R.optimal_max} ppm. Bin chemistry is balanced!`];}
       break;
     default: severity='ok'; title='No insight available'; steps=[];
   }
@@ -1081,7 +1014,7 @@ function renderWormInsightInto(container, sensorType, value) {
     warning:  { bg:'#fffbf0', border:'#f0dda0', dot:'#d97706', badge:'#d97706', label:'WARNING'  },
     ok:       { bg:'#f2faf4', border:'#b5d9be', dot:'#3a6b35', badge:'#3a6b35', label:'OPTIMAL'  }
   }[severity];
-  const cleanTitle = title.replace(/^[⚠️🔥💧☠️✅]+\s*(CRITICAL[\s—–-]*)?(WARNING[\s—–-]*)?(URGENT[\s—–-]*)?/i,'').trim();
+  const cleanTitle = title.replace(/^[ΓÜá∩╕Å≡ƒöÑ≡ƒÆºΓÿá∩╕ÅΓ£à]+\s*(CRITICAL[\sΓÇöΓÇô-]*)?(WARNING[\sΓÇöΓÇô-]*)?(URGENT[\sΓÇöΓÇô-]*)?/i,'').trim();
   container.innerHTML = `
     <div class="wi-card" style="background:${C.bg}; border-color:${C.border};">
       <div class="wi-status-strip"><span class="wi-badge" style="background:${C.badge};"><span class="wi-badge-dot"></span>${C.label}</span></div>
@@ -1134,14 +1067,14 @@ function openQIActionsModal() {
   openModal('qi-actions-modal');
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // SETTINGS
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function renderSettings(d) {
   const badge=$('dev-conn');
   if(badge){ badge.textContent=d.wifi_connected?'Connected':'Offline'; badge.className='dev-badge'+(d.wifi_connected?' online':''); }
   setText('dev-last-update', d.lastUpdate||'--');
-  setText('dev-id', S.activeEspID?`ESP32-S3 · ID: ${S.activeEspID}`:'--');
+  setText('dev-id', S.activeEspID?`ESP32-S3 ┬╖ ID: ${S.activeEspID}`:'--');
   if(S.user) {
     setText('acc-username', S.user.username||'--');
     setText('acc-email', S.user.email||'--');
@@ -1151,20 +1084,16 @@ function renderSettings(d) {
 }
 
 function renderClaimedBins(binsArray) {
-  const container = document.getElementById('claimed-bins-list');
-  if (!container) return;
-
-  if (!binsArray || binsArray.length === 0) {
-    const _t = window.t || function(k){ return k; };
-    container.innerHTML = `<div class="wm-placeholder">${_t('app-no-bins-claimed')}</div>`;
-    updateGlobalBinDropdown([]);
-    return;
+  const container = document.getElementById('claimed-bins-list'); if(!container) return;
+  if(!binsArray || binsArray.length===0) {
+    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
+    updateGlobalBinDropdown([]); return;
   }
   container.innerHTML = binsArray.map(bin => {
     const safeName = (bin.name||'Unnamed Bin').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return `<div class="claimed-bin-card">
       <div class="bin-visual-header">
-        <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">×</button>
+        <button class="bin-delete-x" onclick="confirmDeleteBin('${bin.bin_id}')">├ù</button>
         <img src="/img/claim-bin/ClaimBinIcon.svg" alt="Bin" class="bin-image">
       </div>
       <div class="bin-card-info">
@@ -1227,13 +1156,9 @@ async function handleClaimBin() {
 }
 
 function updateGlobalBinDropdown(binsArray) {
-  const select = document.getElementById('global-bin-select');
-  if(!select) return;
-
-  if (!binsArray || binsArray.length === 0) {
-    const _t = window.t || function(k){ return k; };
-    select.innerHTML = `<option value="" disabled>${_t('app-no-bins-connected')}</option>`;
-    return;
+  const select = document.getElementById('global-bin-select'); if(!select) return;
+  if(!binsArray || binsArray.length===0) {
+    select.innerHTML = '<option value="" disabled>No bins connected</option>'; return;
   }
   select.innerHTML = binsArray.map(bin => {
     const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
@@ -1255,10 +1180,10 @@ function handleGlobalBinChange() {
   fetchAndRender();
   loadMode();
   const bin = S.bins.find(b => b.bin_id===selectedId);
-  toast((bin?.status==='offline'?'🔴':'🟢')+' '+(bin?.name||selectedId), 'ok');
+  toast((bin?.status==='offline'?'≡ƒö┤':'≡ƒƒó')+' '+(bin?.name||selectedId), 'ok');
 }
 
-// ── Profile management ───────────────
+// ΓöÇΓöÇ Profile management ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function openEditProfileModal() {
   document.getElementById('edit-username').value = document.getElementById('acc-username').textContent.replace('Loading...','');
   document.getElementById('edit-email').value    = document.getElementById('acc-email').textContent.replace('--','');
@@ -1302,9 +1227,9 @@ async function handleChangePassword() {
   openModal('confirm-action-modal');
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // AUTH
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 const Auth = { loggedIn: false, username: '' };
 
 function authShow() { $('auth-overlay')?.classList.add('visible'); }
@@ -1326,9 +1251,9 @@ function authTogglePw(inputId, btn) {
   const show = inp.type==='password'; inp.type=show?'text':'password';
   const eyeImg=btn.querySelector('.auth-eye-img');
   if(eyeImg) eyeImg.src=show?'/img/auth-icons/openEyePassIcon.png':'/img/auth-icons/hiddenPassIcon.svg';
-  else btn.textContent=show?'🙈':'👁';
+  else btn.textContent=show?'≡ƒÖê':'≡ƒæü';
 }
-function authSetLoading(btnId, loading, label) { const btn=$(btnId); if(!btn) return; btn.disabled=loading; btn.textContent=loading?'Please wait…':label; }
+function authSetLoading(btnId, loading, label) { const btn=$(btnId); if(!btn) return; btn.disabled=loading; btn.textContent=loading?'Please waitΓÇª':label; }
 
 async function authLogin() {
   const username=($('login-username')||{}).value?.trim()||'', password=($('login-password')||{}).value||'';
@@ -1341,7 +1266,7 @@ async function authLogin() {
       Token.set(d.token); Auth.loggedIn=true; Auth.username=d.user?.username||username;
       authHide(); setText('dev-loggedin-user',Auth.username);
       await loadProfile(); await loadDevices(); await loadMode(); startPolling();
-      toast(`Welcome back, ${Auth.username} 👋`,'ok');
+      toast(`Welcome back, ${Auth.username} ≡ƒæï`,'ok');
     } else authBanner(d.error||'Invalid credentials.');
   } catch(e) { authBanner('Could not reach server. Check your connection.'); }
   finally { authSetLoading('login-submit',false,'Log In'); }
@@ -1405,12 +1330,12 @@ async function devBypassLogin() {
   Auth.loggedIn=true; Auth.username='dev'; authHide();
   setText('dev-loggedin-user','dev (bypassed)');
   await loadDevices(); await loadMode(); startPolling();
-  toast('⚡ Dev bypass — skipped login','ok');
+  toast('ΓÜí Dev bypass ΓÇö skipped login','ok');
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // TOAST
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 function toast(msg, type='') {
   const c=$('toast-container'); if(!c) return;
   const t=document.createElement('div');
@@ -1418,9 +1343,9 @@ function toast(msg, type='') {
   setTimeout(()=>t.remove(),3200);
 }
 
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // INIT
-// ════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 (function() {
   function showAuthEarly() { $('auth-overlay')?.classList.add('visible'); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',showAuthEarly);
@@ -1452,25 +1377,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         setText('acc-username',S.user.username||'--');
         setText('acc-email',S.user.email||'--');
         authHide();
-        await loadDevices();
-        await loadMode();
-        startPolling();
-      } else {
-        // Token expired — clear it and show login
-        Token.clear();
-        authShow();
-      }
-    } catch(e) {
-      Token.clear();
-      authShow();
-    }
-  } else {
-    authShow();
-  }
+        await loadDevices(); await loadMode(); startPolling();
+      } else { Token.clear(); authShow(); }
+    } catch(e) { Token.clear(); authShow(); }
+  } else { authShow(); }
 });
 
 
-/* ── Re-render JS-injected text on language change ─────────── */
 document.addEventListener('avonic:langchange', function() {
   // Re-render the current page so dynamic strings (mode labels,
   // sensor status, "Updated at", etc.) immediately reflect the new language.
@@ -1481,40 +1394,22 @@ document.addEventListener('avonic:langchange', function() {
   if (S.data) renderHome(S.data);
 });
 
-/* ── Language Preference ───────────────────────────────────── */
+/* ── Language Preference ─────────────────────────────────────────────────── */
 (function initLanguageSelect() {
   const saved = localStorage.getItem('avonic_language') || 'en';
   const sel = document.getElementById('app-language-select');
   if (sel) sel.value = saved;
   document.documentElement.setAttribute('lang', saved === 'tl' ? 'tl' : 'en');
 })();
- 
+
 function applyLanguage(langCode) {
   localStorage.setItem('avonic_language', langCode);
   document.documentElement.setAttribute('lang', langCode === 'tl' ? 'tl' : 'en');
-  // Optionally: reload page or swap i18n strings here
-  // window.location.reload();
 }
- 
-/* ── Manual PDF redirect guard ─────────────────────────────── */
-/*
-  When the user clicks a User Manual link, it opens the PDF in a
-  new tab. The PDF files should live at:
-    /manuals/user-manual-en.pdf
-    /manuals/user-manual-tl.pdf
- 
-  If the PDF is not yet uploaded you can swap in a hosted URL:
-    href="https://your-cdn.example.com/avonic-user-manual-en.pdf"
- 
-  The links already have target="_blank" and rel="noopener" so no
-  extra JS is needed for normal navigation.
- 
-  If you want to log download events, attach a click listener:
-*/
+
 document.querySelectorAll('.resource-manual-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const lang = btn.href.includes('-tl.') ? 'Tagalog' : 'English';
     console.log('[AVONIC] User Manual opened:', lang);
-    // Optional: send analytics ping here
   });
 });
