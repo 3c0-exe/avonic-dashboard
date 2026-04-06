@@ -1587,6 +1587,25 @@ function authTab(tab) {
   });
   const tabsEl = $('auth-tabs');
   if (tabsEl) tabsEl.style.display = (tab === 'forgot' || tab === 'reset') ? 'none' : '';
+
+  // Update heading text per tab
+  const titleEl = $('auth-heading-title');
+  const subEl   = $('auth-heading-sub');
+  const headings = {
+    login:    { title: 'Log in to your Account',       sub: 'Welcome back, please enter your details' },
+    register: { title: 'Create your Account',          sub: 'Join AVONIC — fill in your details to get started' },
+    forgot:   { title: 'Forgot your Password?',        sub: 'We\'ll send a reset link to your registered email' },
+    reset:    { title: 'Reset your Password',          sub: 'Enter the token sent to your device and set a new password' }
+  };
+  if (headings[tab]) {
+    if (titleEl) titleEl.textContent = headings[tab].title;
+    if (subEl)   subEl.textContent   = headings[tab].sub;
+  }
+
+  // Show/hide back-to-landing button (hide on forgot/reset which have their own back link)
+  const backBtn = $('auth-back-btn');
+  if (backBtn) backBtn.style.display = '';
+
   authClearBanner();
 }
 
@@ -1777,9 +1796,8 @@ async function authLogout() {
   S.activeEspID = null;
   S.user = null;
   closeAllModals();
-  authTab('login');
-  authShow();
   toast('Logged out', '');
+  setTimeout(() => { window.location.href = 'index.html'; }, 600);
 }
 
 // ── DEV BYPASS ───────────────────────
