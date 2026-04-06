@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AVONIC</title>
 <link rel="stylesheet" href="styles.css">
+  <!-- Phase 4: Driver.js tour -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
 </head>
 <body>
 
@@ -47,11 +49,8 @@
 
     
 
-    <!-- Tab switcher -->
-    <!-- <div class="auth-tabs" id="auth-tabs">
-      <button class="auth-tab active" data-tab="login"  onclick="authTab('login')">Log In</button>
-      <button class="auth-tab"        data-tab="register" onclick="authTab('register')">Sign Up</button>
-    </div> -->
+    <!-- Tab switcher — removed (redundant with inline switch links) -->
+    <div class="auth-tabs" id="auth-tabs" style="display:none;" aria-hidden="true"></div>
 
     <!-- Error / success banner -->
     <div class="auth-banner" id="auth-banner" style="display:none;"></div>
@@ -278,7 +277,7 @@
              
           </div>
           <div class="mode-selector-wrap" onclick="openModeModal(1)">
-            <span class="mode-lbl" data-i18n="app-mode-label">Mode:</span>
+            <span class="mode-lbl" data-i18n="app-mode-label">Mode: <span class="av-help" data-tip="Auto: AVONIC monitors sensors and reacts automatically — fans, pumps, and alerts. Manual: you trigger all actuators yourself.">?</span></span>
             <div class="mode-btn auto" id="b1-mode-btn">
               Auto  
             </div>
@@ -288,8 +287,7 @@
         <div class="sensor-grid">
           <div class="sensor-card" id="b1-soil-card" onclick="openSensorModal(1, 'soilMoisture', 'Soil Moisture', '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
             <div class="sc-info">
-              <div class="sc-name" data-i18n="app-sensor-soilMoisture">Soil Moisture</div>
-              <div class="sc-status" id="b1-soilMoisture-status">Optimal</div>
+              <div class="sc-name" data-i18n="app-sensor-soilMoisture">Soil Moisture <span class="av-help" data-tip="Optimal range is 60–80%. Below 60% is too dry for worms; above 90% risks anaerobic (oxygen-starved) conditions that produce bad odours.">?</span></div>
               <div class="sc-value"><span id="b1-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
             </div>
             <div class="ring-wrap">
@@ -318,8 +316,7 @@
 
           <div class="sensor-card" id="b1-hum-card" onclick="openSensorModal(1, 'humidity', 'Humidity', '/img/monitoring/Sensor Icons/Humidity Icon.svg')">
             <div class="sc-info">
-              <div class="sc-name" data-i18n="app-sensor-humidity">Humidity</div>
-              <div class="sc-status" id="b1-humidity-status">Optimal</div>
+              <div class="sc-name" data-i18n="app-sensor-humidity">Humidity <span class="av-help" data-tip="Air humidity inside the bin. Worms breathe through their skin, so 60–80% keeps them healthy. Low humidity dries them out; high humidity suffocates.">?</span></div>
               <div class="sc-value"><span id="b1-humidity-val">--</span><span class="sc-unit">%</span></div>
             </div>
             <div class="ring-wrap">
@@ -333,8 +330,7 @@
 
           <div class="sensor-card" id="b1-gas-card" onclick="openSensorModal(1, 'gasLevels', 'Gas Levels', '/img/monitoring/Sensor Icons/Gas Icon.svg')">
             <div class="sc-info">
-              <div class="sc-name" data-i18n="app-sensor-gasLevels">Gas Levels</div>
-              <div class="sc-status" id="b1-gasLevels-status">Optimal</div>
+              <div class="sc-name" data-i18n="app-sensor-gasLevels">Gas Levels <span class="av-help" data-tip="Measured in PPM (Parts Per Million). 0–100 ppm is safe for worms. Above 200 ppm is toxic — AVONIC will trigger the ventilation fan automatically.">?</span></div>
               <div class="sc-value"><span id="b1-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
             </div>
             <div class="ring-wrap">
@@ -380,7 +376,7 @@
         <div class="sensor-grid">
           <div class="sensor-card" id="b2-soil-card" onclick="openSensorModal(2, 'soilMoisture', 'Soil Moisture', '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
             <div class="sc-info">
-              <div class="sc-name" data-i18n="app-sensor-soilMoisture">Soil Moisture</div>
+              <div class="sc-name" data-i18n="app-sensor-soilMoisture">Soil Moisture <span class="av-help" data-tip="Optimal range is 60–80%. Below 60% is too dry for worms; above 90% risks anaerobic (oxygen-starved) conditions that produce bad odours.">?</span></div>
               <div class="sc-status" id="b2-soilMoisture-status">Optimal</div>
               <div class="sc-value"><span id="b2-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
             </div>
@@ -425,7 +421,7 @@
 
           <div class="sensor-card" id="b2-gas-card" onclick="openSensorModal(2, 'gasLevels', 'Gas Levels', '/img/monitoring/Sensor Icons/Gas Icon.svg')">
             <div class="sc-info">
-              <div class="sc-name" data-i18n="app-sensor-gasLevels">Gas Levels</div>
+              <div class="sc-name" data-i18n="app-sensor-gasLevels">Gas Levels <span class="av-help" data-tip="Measured in PPM (Parts Per Million). 0–100 ppm is safe for worms. Above 200 ppm is toxic — AVONIC will trigger the ventilation fan automatically.">?</span></div>
               <div class="sc-status" id="b2-gasLevels-status">Optimal</div>
               <div class="sc-value"><span id="b2-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
             </div>
@@ -645,12 +641,12 @@
               </button>
             </div>
             <!-- Date row shown on mobile inside sidebar -->
-            <div class="date-row">
+            <div class="bf-sidebar-date">
                 <span class="date-label" data-i18n="app-dashboard-date-reported">Date Reported:</span>
                 <div class="date-pill">
-                  <input type="date" class="date-in" id="bf-date-from">
+                  <input type="date" class="date-in" id="bf-date-from-mob">
                   <span data-i18n="app-dashboard-date-to">to</span>
-                  <input type="date" class="date-in" id="bf-date-to">
+                  <input type="date" class="date-in" id="bf-date-to-mob">
                 </div>
               </div>
           </div>
@@ -1267,8 +1263,11 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js"></script>
+  <!-- Phase 4: Driver.js tour -->
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+ <script src="app.js"></script>
 <script src="lang.js"></script>
+<script src="welcome-modal.js"></script>   <!-- ← add this line -->
 <script src="dummy-data-injector.js"></script>
 </body>
 </html>

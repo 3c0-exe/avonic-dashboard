@@ -12,7 +12,7 @@
   /* ┌──────────────────────────────────────┐
      │  🔧 FLIP TO false BEFORE DEPLOYING   │
      └──────────────────────────────────────┘ */
-  var DEV_MODE = false;
+  var DEV_MODE = true;
 
   var STORAGE_KEY = 'avonic_lang';
   var MODAL_SEEN  = 'avonic_modal_seen';
@@ -20,6 +20,9 @@
   if (!DEV_MODE) {
     try { if (sessionStorage.getItem(MODAL_SEEN)) return; } catch (e) {}
   }
+
+
+  try { localStorage.removeItem('avonic_tour_ready'); } catch (e) {}
 
   /* ─────────────────────────────────────────────
      COPY
@@ -325,21 +328,37 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
-    overlay.classList.remove('av-visible');
-    document.body.style.overflow = '';
-    overlay.addEventListener('transitionend', function fn() {
-      overlay.removeEventListener('transitionend', fn);
-      overlay.style.display = 'none';
-    });
-    if (!DEV_MODE) {
-      try { sessionStorage.setItem(MODAL_SEEN, '1'); } catch (e) {}
-    }
+  function closeModal(onComplete) {
+  overlay.classList.remove('av-visible');
+  document.body.style.overflow = '';
+  if (!DEV_MODE) {
+    try { sessionStorage.setItem(MODAL_SEEN, '1'); } catch (e) {}
   }
+  setTimeout(function () {
+    overlay.style.display = 'none';
+    if (typeof onComplete === 'function') onComplete();
+  }, 320);
+}
 
   closeBtn.addEventListener('click', closeModal);
-  cta.addEventListener('click', closeModal);
   skip.addEventListener('click', closeModal);
+
+  /* ── Phase 2: CTA → Tour Bridge ─────────────────────────────
+     "Get Started" saves the language, sets a tour flag, then
+     fires the Driver.js tour if the dashboard already has a bin.
+     If the user hasn't claimed a bin yet the flag stays in
+     localStorage and maybeStartTour() in app.js picks it up
+     automatically after the first successful claim.           */
+cta.addEventListener('click', function () {
+  try { localStorage.setItem(STORAGE_KEY, currentLang); } catch (e) {}
+  try { localStorage.setItem('avonic_tour_ready', 'true'); } catch (e) {}
+
+  closeModal(function () {
+    if (typeof window.avonicStartTour === 'function') {
+      window.avonicStartTour();
+    }
+  });
+});
   overlay.addEventListener('click', function (e) {
     if (e.target === overlay) closeModal();
   });

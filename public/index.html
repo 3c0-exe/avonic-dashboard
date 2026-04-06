@@ -195,7 +195,7 @@
         <span class="lang-display-label">EN</span>
       </button>
       <a href="app.html" id="nav-login" data-i18n="nav-login" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">Login</a>
-      <a href="app.html" id="nav-cta"
+      <a href="app.html?tab=register" id="nav-cta"
         class="text-sm font-bold px-5 py-2 rounded-full transition-all duration-200"
         style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;" data-i18n="nav-signup">
         Sign-up
@@ -231,7 +231,7 @@
               style="background:#808080;color:#ffffff;outline:1px solid black;">
               Login
             </a>
-            <a href="app.html" data-i18n="nav-signup" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+            <a href="app.html?tab=register" data-i18n="nav-signup" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
               style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
               Sign-up
             </a>
@@ -938,7 +938,7 @@
 
           <!-- CTA -->
           <div class="mt-10 flex justify-center md:justify-start">
-            <a href="#"
+            <a href="app.html?tab=register"
                class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
                style="background:#ECBD01; border: solid black 1px;" data-i18n="gs-cta">
               Register Now
@@ -1349,7 +1349,7 @@
           <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.5);" data-i18n="footer-gs-body">
             Ready to put your vermicomposting bin on autopilot? Register your AVONIC account today.
           </p>
-          <a href="#"
+          <a href="app.html?tab=register"
                class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
                style="background:#ECBD01; border: solid black 1px;" data-i18n="footer-gs-cta">
               Register Now
@@ -1704,9 +1704,23 @@ document.querySelectorAll('.metric-card').forEach(card => {
 </script>
   <!-- Language switcher -->
   <script src="lang.js"></script>
-  <script src="welcome-modal.js"></script>
+  <!-- <script src="welcome-modal.js"></script> -->
 
   <!-- Scroll reveal animations -->
   <script src="scroll-reveal.js"></script>
+
+  <!-- ── Phase 1: Deep-link hero CTA → Register tab ── -->
+  <script>
+  (function () {
+    // Hero "Get Started →" still uses href="#" — wire it up
+    var heroCta = document.querySelector('[data-i18n="hero-cta"]');
+    if (heroCta) {
+      heroCta.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = 'app.html?tab=register';
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
