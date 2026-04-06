@@ -1,1169 +1,1712 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AVONIC</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AVONIC — Smarter Worm Health</title>
 
-<!-- ══════════════════════════════════════
-     AUTH SCREEN  (shown before dashboard)
-     ══════════════════════════════════════ -->
-<div class="auth-overlay visible" id="auth-overlay">
+  <!-- Tailwind CDN with custom config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            /* ── Swap these out when you provide your config file ── */
+            brand: {
+              green:       '#1E3A28',   /* Hero dark green */
+              greenLight:  '#2E5E3A',   /* Hero mid green */
+              greenAccent: '#4A7C3F',   /* Leaf accent */
+              cream:       '#F2EDE3',   /* Farmers section bg */
+              beige:       '#E8E0D0',   /* Light card bg */
+              brown:       '#3B2208',   /* Tutorial section bg */
+              gold:        '#C89B3C',   /* CTA button */
+              goldLight:   '#E8B84B',   /* CTA hover */
+              text:        '#1A1A1A',
+              textMuted:   '#5A5A5A',
+            }
+          },
+          fontFamily: {
+            serif: ['"DM Serif Display"', 'Georgia', 'serif'],
+            body:  ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease forwards',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- LEFT: Illustration panel -->
-  <div class="auth-illus">
-    <div class="auth-illus-inner">
-      
-    
-      <!-- Main illustration image -->
-      <div class="auth-illus-main">
-        <img src="/img/Login-Clipart.png" alt="AVONIC illustration" class="auth-illus-img">
-      </div>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* ── CSS variable fallbacks (CDN color safety net) ── */
+    :root {
+      --c-green:        #1E3A28;
+      --c-green-light:  #2E5E3A;
+      --c-green-accent: #4A7C3F;
+      --c-cream:        #F2EDE3;
+      --c-beige:        #E8E0D0;
+      --c-gold:         #C89B3C;
+      --c-gold-light:   #E8B84B;
+      --c-text:         #1A1A1A;
+      --c-text-muted:   #5A5A5A;
+    }
+    /* Force backgrounds where CDN tokens may fail */
+    #hero-section   { background-color: var(--c-green) !important; }
+    #farmers-section{ background-color: var(--c-cream) !important; }
+    #navbar         { /* transparent by default, JS adds bg */ }
+
+    /* ── Nav scroll state ── */
+    #navbar {
+      transition: background 0.35s ease, box-shadow 0.35s ease;
+    }
+  
+    /* ── Staggered fade-up ── */
+    .anim-hidden { opacity: 0; }
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.18s; }
+    .stagger-3 { animation-delay: 0.32s; }
+    .stagger-4 { animation-delay: 0.46s; }
+
+    /* ── Noise grain overlay on hero ── */
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
        
-    </div>
-  </div>
+      pointer-events: none;
+    }
 
-  <!-- RIGHT: Form panel -->
-  <div class="auth-card">
+    /* ── Mobile menu ── */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* ── Floating cards pulse ring ── */
+    @keyframes ringPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232,184,75,0.4); }
+      50%       { box-shadow: 0 0 0 8px rgba(232,184,75,0); }
+    }
+    .ring-pulse { animation: ringPulse 2.5s ease-in-out infinite; }
+
+ /* ── Stack container — same size as SVGs ── */
+  .sdg-stack {
+    position: relative;
+    width: 168.9px;
+    height: 168.9px;
+    flex-shrink: 0;
+  }
+
+  /* Logo sits at center, static */
+  .sdg-logo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Arc overlaid exactly on top, rotates from center */
+  .sdg-arc {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center center;
+    animation: sdg-spin 12s linear infinite;
+  }
+
+  @keyframes sdg-spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ── Card flip logic ── */
+  .sdg-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .sdg-card-inner {
+    position: relative;
+    width: 100%;
+  }
+  .sdg-img-face {
+    width: 100%;
+    transition: opacity 0.4s ease;
+  }
+  .sdg-text-face {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .sdg-card:hover .sdg-text-face,
+  .sdg-card.active .sdg-text-face {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .sdg-card:hover .sdg-img-face,
+  .sdg-card.active .sdg-img-face {
+    opacity: 0;
+  }
+  </style>
+</head>
+<body class="bg-white overflow-x-hidden">
+
+  <!-- ════════════════════════════════════════════
+       NAV
+  ════════════════════════════════════════════ -->
+  <!-- NAV -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-8 transition-all duration-300 ease-in-out">
+  <div id="nav-inner" class="mx-auto flex items-center justify-between transition-all duration-300 ease-in-out max-w-[1405px]">
 
     <!-- Logo -->
-    <div class="auth-logo">
-      <img src="/img/auth-icons/AVONIC LOGO.svg" alt="AVONIC" class="auth-logo-img">
+    <a href="index.html" class="flex items-center gap-2.5">
+      <img id="nav-logo" src="./img/logo/AVONIC LOGO.svg" alt="AVONIC"
+        onerror="this.style.display='none'"
+        class="h-8 w-auto transition-all duration-300" />
+    </a>
+
+    <!-- Desktop CTA -->
+    <div class="hidden md:flex items-center gap-4">
+      <!-- Language Toggle -->
+      <button id="lang-btn-desktop" class="lang-toggle-btn flex items-center gap-1.5 text-sm font-semibold text-white/70 hover:text-white transition-colors duration-200" aria-label="Switch language" style="cursor:pointer;background:none;border:none;padding:0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span class="lang-display-label">EN</span>
+      </button>
+      <a href="app.html" id="nav-login" data-i18n="nav-login" class="text-sm font-semibold text-white/75 hover:text-white transition-colors duration-200">Login</a>
+      <a href="app.html" id="nav-cta"
+        class="text-sm font-bold px-5 py-2 rounded-full transition-all duration-200"
+        style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;" data-i18n="nav-signup">
+        Sign-up
+      </a>
     </div>
 
-    <!-- Heading -->
-    <div class="auth-heading">
-      <h2 class="auth-title" id="auth-heading-title">Log in to your Account</h2>
-      <p class="auth-subtitle" id="auth-heading-sub">Welcome back, please enter your details</p>
+    <!-- Hamburger -->
+    <button id="hamburger" class="md:hidden p-1.5 rounded-lg transition-colors text-white" aria-label="Toggle menu">
+      <svg id="icon-open" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg id="icon-close" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
+      <div class="mt-3 rounded-[24px] border border-black overflow-hidden" style="background:#D4D4D8;">
+        <ul class="flex flex-col px-6 py-5 gap-4 text-sm font-semibold" style="color:#1E3A28;">
+          <li><a href="#farmers-section" data-i18n="nav-farmers" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Filipino Farmers</a></li>
+          <li><a href="#watches-section" data-i18n="nav-features" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Features</a></li>
+          <li><a href="#modes-section" data-i18n="nav-hiw" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">How It Works</a></li>
+          <li><a href="#get-started-section" data-i18n="nav-gs" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Get Started</a></li>
+          <li><a href="#tutorials-section" data-i18n="nav-tutorials" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">Tutorials</a></li>
+          <li><a href="#faq-section" data-i18n="nav-faq" class="block py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;">FAQ</a></li>
+          <!-- Language Toggle -->
+          <li class="pt-2">
+            <button class="lang-toggle-btn flex items-center gap-2 py-1 hover:opacity-70 transition-opacity" style="color:#1E3A28;cursor:pointer;background:none;border:none;padding:4px 0;font-size:0.875rem;font-weight:600;font-family:inherit;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span class="lang-display-label">EN</span>
+            </button>
+          </li>
+          <li class="pt-3 border-t flex flex-col gap-3" style="border-color:rgba(30,58,40,0.2);">
+            <a href="app.html" data-i18n="nav-login" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+              style="background:#808080;color:#ffffff;outline:1px solid black;">
+              Login
+            </a>
+            <a href="app.html" data-i18n="nav-signup" class="text-center font-bold px-5 py-3 rounded-full transition-colors"
+              style="background:#ECBD01;color:#1a1a1a;outline:1px solid black;">
+              Sign-up
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+
+  <!-- ════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════ -->
+  <section id="hero-section" class="hero-section relative bg-brand-green flex items-center overflow-hidden pt-16" style="background-color: #1E3A28;min-height:92vh;">
+
+    <!-- Ambient glow orbs -->
+    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-brand-greenLight opacity-25 blur-[80px] pointer-events-none"></div>
+    <div class="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-brand-greenAccent opacity-15 blur-[60px] pointer-events-none"></div>
+    <div class="absolute top-1/2 right-1/4 w-40 h-40 rounded-full bg-brand-gold opacity-10 blur-[40px] pointer-events-none"></div>
+
+   <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-2 gap-12 items-center py-10 md:py-14">
+
+  <!-- ── Left: copy ── -->
+  <div class="flex flex-col">
+
+    <!-- Badge -->
+    <div class="anim-hidden animate-fade-up stagger-1 inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-white/80 font-medium mb-7 backdrop-blur-sm self-start" data-i18n="hero-badge">
+      LOCALIZED  •  AUTOMATED  •  SUSTAINABLE
     </div>
 
-    <!-- Keyhole icon placeholder -->
-    <div class="auth-keyhole-wrap">
-      <img src="img/auth-icons/clipartKeyWorm.png" alt="">
+    <!-- Headline -->
+    <h1 class="anim-hidden animate-fade-up stagger-2 font-serif text-white leading-[1.08] mb-6">
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal" data-i18n="hero-h1-1">Smarter</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] font-normal" data-i18n="hero-h1-2">Worm Health.</span>
+      <span class="block text-[clamp(2.4rem,5vw,3.75rem)] text-brand-goldLight italic" data-i18n="hero-h1-3">Better Compost.</span>
+    </h1>
+
+    <!-- Mobile: video + stats below bin -->
+    <div class="md:hidden flex flex-col items-center mb-8 -mx-6">
+      <!-- Video -->
+      <div class="relative flex justify-center items-center w-full">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="w-64 h-64 rounded-full bg-brand-greenAccent opacity-20 blur-3xl"></div>
+        </div>
+        <video
+          src="./vid/bin-loop.mp4"
+          autoplay loop muted playsinline
+          class="relative z-10 w-full object-contain"
+          style="mix-blend-mode:screen;max-width:300px;opacity:1;"
+        ></video>
+      </div>
+      <!-- Stats under the bin -->
+      <div class="flex items-center justify-center gap-8 pt-6 border-t border-white/10 w-full px-6">
+        <div class="text-center">
+          <p class="font-serif text-white text-2xl font-bold">4</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-1">Sensors Tracked</p>
+        </div>
+        <div class="w-px h-10 bg-white/15"></div>
+        <div class="text-center">
+          <p class="font-serif text-white text-2xl font-bold">2</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-2">Smart Modes</p>
+        </div>
+        <div class="w-px h-10 bg-white/15"></div>
+        <div class="text-center">
+          <p class="font-serif text-white text-xl font-bold">Live</p>
+          <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-3">Real-time Data</p>
+        </div>
+      </div>
     </div>
 
-    
+    <!-- Body -->
+    <p class="anim-hidden animate-fade-up stagger-3 text-white/65 text-base md:text-lg leading-relaxed max-w-md mb-8 font-body" data-i18n="hero-body">
+      AVONIC monitors your vermicomposting bin in real-time — tracking soil moisture,
+      temperature, humidity, and gas levels so your worms always thrive.
+    </p>
 
-    <!-- Tab switcher -->
-    <!-- <div class="auth-tabs" id="auth-tabs">
-      <button class="auth-tab active" data-tab="login"  onclick="authTab('login')">Log In</button>
-      <button class="auth-tab"        data-tab="register" onclick="authTab('register')">Sign Up</button>
-    </div> -->
-
-    <!-- Error / success banner -->
-    <div class="auth-banner" id="auth-banner" style="display:none;"></div>
-
-    <!-- ── LOGIN FORM ── -->
-    <div class="auth-form" id="auth-form-login">
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-icon-img"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-          <input class="auth-input" id="login-username" type="text" placeholder="Username" autocomplete="username">
-        </div>
-      </div>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input auth-input--padded" id="login-password" type="password" placeholder="Password" autocomplete="current-password">
-          <button class="auth-pw-eye" onclick="authTogglePw('login-password', this)" tabindex="-1"><img src="/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/img/auth-icons/openEyePassIcon.png" data-hidden="/img/auth-icons/hiddenPassIcon.svg"></button>
-        </div>
-        <button class="auth-forgot-link" onclick="authTab('forgot')">Forgot password?</button>
-      </div>
-      <button class="auth-submit" id="login-submit" onclick="authLogin()">Login →</button>
-      <p class="auth-switch-text">Don't have an account? <button class="auth-switch-link" onclick="authTab('register')">Sign up</button></p>
+    <!-- CTAs -->
+    <div class="anim-hidden animate-fade-up stagger-4 flex flex-wrap gap-3 mb-10 justify-center md:justify-start">
+      <a href="#" data-i18n="hero-cta"
+         class="border border-white/25 hover:border-white/50 hover:bg-white/8 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 text-sm backdrop-blur-sm">
+        Get Started →
+      </a>
     </div>
 
-    <!-- ── REGISTER FORM ── -->
-    <div class="auth-form" id="auth-form-register" style="display:none;">
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-icon-img"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-          <input class="auth-input" id="reg-username" type="text" placeholder="Username (3–20 alphanumeric)" autocomplete="username">
-        </div>
+    <!-- Stats strip: desktop only -->
+    <div class="anim-hidden animate-fade-up stagger-4 hidden md:flex items-center gap-8 pt-8 border-t border-white/10">
+      <div>
+        <p class="font-serif text-white text-2xl font-bold">4</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-1">Sensors Tracked</p>
       </div>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/emailIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input" id="reg-email" type="email" placeholder="Email address" autocomplete="email">
-        </div>
+      <div class="w-px h-10 bg-white/15"></div>
+      <div>
+        <p class="font-serif text-white text-2xl font-bold">2</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-2">Smart Modes</p>
       </div>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input auth-input--padded" id="reg-password" type="password" placeholder="Password (min 6 characters)" autocomplete="new-password">
-          <button class="auth-pw-eye" onclick="authTogglePw('reg-password', this)" tabindex="-1"><img src="/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/img/auth-icons/openEyePassIcon.png" data-hidden="/img/auth-icons/hiddenPassIcon.svg"></button>
-        </div>
+      <div class="w-px h-10 bg-white/15"></div>
+      <div>
+        <p class="font-serif text-white text-xl font-bold">Live</p>
+        <p class="text-white/45 text-xs mt-0.5 font-body" data-i18n="hero-stat-3">Real-time Data</p>
       </div>
-      <button class="auth-submit" id="register-submit" onclick="authRegister()">Create Account →</button>
-      <p class="auth-switch-text">Already have an account? <button class="auth-switch-link" onclick="authTab('login')">Log in</button></p>
+    </div>
+  </div>
+
+  <!-- ── Right: product video (desktop only) ── -->
+  <div class="hidden md:flex relative justify-center items-center -mr-6 md:-mr-12 lg:-mr-20">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-brand-greenAccent opacity-20 blur-3xl"></div>
+    </div>
+    <video
+      id="hero-video"
+      src="./vid/bin-loop.mp4"
+      autoplay loop muted playsinline
+      class="relative z-10 w-full object-contain"
+      style="opacity:0;transition:opacity 1.1s ease;mix-blend-mode:screen;max-width:min(720px, 55vw);"
+    ></video>
+  </div>
+
+</div>
+
+    <!-- Wave transition into next section -->
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+      <svg viewBox="0 0 1440 72" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-14 md:h-[72px]" style="display:block;overflow:visible;">
+        <path d="M0 72 Q180 20 360 48 Q540 76 720 36 Q900 -4 1080 32 Q1260 68 1440 24 L1440 72 Z" fill="#F2EDE3"/>
+      </svg>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       FILIPINO FARMERS
+  ════════════════════════════════════════════ -->
+  <section id="farmers-section" class="bg-brand-cream relative overflow-hidden py-0" style="background-color: #F2EDE3;">
+
+    <!-- Decorative dot grid -->
+    <div class="absolute top-6 right-6 opacity-[0.07] pointer-events-none" aria-hidden="true">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <defs><pattern id="dotgrid" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="2" fill="#4A7C3F"/></pattern></defs>
+        <rect width="160" height="160" fill="url(#dotgrid)"/>
+      </svg>
     </div>
 
-    <!-- ── FORGOT PASSWORD FORM ── -->
-    <div class="auth-form" id="auth-form-forgot" style="display:none;">
-      <p class="auth-desc">Enter your registered email and we'll send a reset link to your device via MQTT.</p>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/emailIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input" id="forgot-email" type="email" placeholder="you@example.com">
-        </div>
-      </div>
-      <button class="auth-submit" id="forgot-submit" onclick="authForgot()">Send Reset Link →</button>
-      <button class="auth-link" onclick="authTab('login')">← Back to Login</button>
-    </div>
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-2 items-stretch min-h-[520px] md:min-h-[580px]">
 
-    <!-- ── RESET PASSWORD FORM ── -->
-    <div class="auth-form" id="auth-form-reset" style="display:none;">
-      <p class="auth-desc">Enter the token sent to your device and choose a new password.</p>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input" id="reset-token" type="text" placeholder="Paste token here">
-        </div>
-      </div>
-      <div class="auth-field">
-        <div class="auth-input-wrap">
-          <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" alt="" class="auth-icon-img"></span>
-          <input class="auth-input auth-input--padded" id="reset-password" type="password" placeholder="New password">
-          <button class="auth-pw-eye" onclick="authTogglePw('reset-password', this)" tabindex="-1"><img src="/img/auth-icons/openEyePassIcon.png" alt="" class="auth-eye-img" data-open="/img/auth-icons/openEyePassIcon.png" data-hidden="/img/auth-icons/hiddenPassIcon.svg"></button>
-        </div>
-      </div>
-      <button class="auth-submit" id="reset-submit" onclick="authReset()">Reset Password →</button>
-      <button class="auth-link" onclick="authTab('login')">← Back to Login</button>
-    </div>
-
-    <!-- ── DEV BYPASS ── -->
-    <div class="auth-dev-bypass">
-      <button onclick="devBypassLogin()">⚡ Dev Bypass</button>
-    </div>
-
+      <!-- Left: Farmer photo — hidden on mobile, visible on desktop -->
+<div class="hidden md:flex relative items-center justify-center py-14 px-8 md:px-12 lg:px-16 min-h-[380px] md:min-h-0">
+  <div class="absolute w-80 h-80 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.07;filter:blur(60px);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div style="animation: floatCard 5s ease-in-out infinite;
+              filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
+    <img
+      src="/img/landing-page/filipino-farmers-picture.png"
+      alt="Filipino Farmers"
+      class="relative z-10 w-full object-contain rounded-2xl"
+      style="max-width: 420px;"
+      onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
+    />
   </div>
 </div>
-<!-- ── END AUTH SCREEN ── -->
 
-<header class="topbar">
-  <div class="topbar-left">
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="topbar-logo">
-      <img src="/img/logo/AVONIC LOGO.svg" alt="AVONIC" class="logo-img">
-    </div>
+        <!-- Right: Copy -->
+        <div class="flex flex-col justify-center py-14 px-8 md:px-12 lg:px-16">
+
+  <div class="flex items-center gap-2 mb-2 justify-center md:justify-start">
+    <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+    <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="farmers-eyebrow">THIS PROJECT IS DEDICATED FOR OUR HARDWORKING</p>
+  </div>
+  
+  <h2 class="font-serif leading-[1.05] mb-3 text-center md:text-left">
+    <span class="block text-[clamp(2.8rem,5vw,4rem)] text-brand-text font-normal" data-i18n="farmers-h2">Filipino Farmers</span>
+  </h2>
+
+  <p class="text-brand-textMuted text-base font-semibold mb-5 font-body text-center md:text-left" data-i18n="farmers-mission">
+    it's our mission to make them become more productive than ever
+  </p>
+
+  <div class="md:hidden mb-5" style="animation: floatCard 5s ease-in-out infinite;
+              filter: drop-shadow(0 20px 40px rgba(30,58,40,0.15)) drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
+    <img
+      src="/img/landing-page/filipino-farmers-picture.png"
+      alt="Filipino Farmers"
+      class="relative z-10 w-full object-contain rounded-2xl"
+      style="max-width: 420px;"
+      onerror="this.outerHTML = `<div class='w-72 h-72 rounded-2xl flex flex-col items-center justify-center bg-brand-greenAccent/10 border border-brand-beige text-brand-greenAccent/40 text-center p-8'><p class='text-sm font-medium'>farmer.jpg</p></div>`"
+    />
   </div>
 
-  <div class="topbar-right">
-    <span class="tb-conn-text">Connected to:</span>
-    <div class="tb-bin-selector">
-      <div class="tb-bin-icon-bg">
-        <img src="/img/claim-bin/ClaimBinIcon.svg" alt="Bin">
-      </div>
-      <select id="global-bin-select" class="tb-bin-dropdown" onchange="handleGlobalBinChange()">
-        <option value="" disabled selected>Loading Bins...</option>
-      </select>
-      <img src="/img/dropdownIcon.svg" alt="Drop" class="tb-chevron">
-    </div>
-    
-    
+  <p class="text-brand-textMuted text-base leading-relaxed max-w-md mb-7 font-body" data-i18n="farmers-body">
+    Vermicomposting is transforming agriculture across the Philippines, but managing
+    worm bins effectively remains a challenge. AVONIC gives every Filipino farmer
+    the smart tools they need — no expertise required.
+  </p>
+
+  <div class="flex flex-wrap gap-2.5 mb-8 justify-center md:justify-start">
+    <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.5 2 2 6.5 2 12"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="1"/>
+        <path d="M7 17c1-2 3-3 5-3s4 1 5 3"/><path d="M5 20c1-1 2-2 3-3"/>
+      </svg>
+      <span data-i18n="farmers-tag-1">Boosts soil quality</span>
+    </span>
+
+    <span class="bg-white rounded-full px-4 py-1.5 shadow-sm border border-brand-beige text-xs font-semibold text-brand-text inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+      </svg>
+      <span data-i18n="farmers-tag-2">Mobile monitoring</span>
+    </span>
+
+    <span class="bg-white rounded-full px-4 py-1.5 border border-brand-greenAccent/25 text-xs font-semibold text-brand-greenAccent inline-flex items-center gap-1.5">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
+      </svg>
+      <span data-i18n="farmers-tag-3">Zero-waste farming</span>
+    </span>
   </div>
-</header>
 
-<div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-<aside class="sidebar">
-  <nav class="sidebar-nav">
-    <a href="#/home" class="nav-item active" data-route="home" title="Home">
-      <img src="/img/nav/HomeIcon.svg" alt="" class="nav-ic">
-      <span class="nav-label">Home</span>
-    </a>
-    <a href="#/dashboard" class="nav-item" data-route="dashboard" title="Dashboard">
-      <img src="/img/nav/DashboardIcon.svg" alt="" class="nav-ic">
-      <span class="nav-label">Dashboard</span>
-    </a>
-    <a href="#/settings" class="nav-item" data-route="settings" title="Settings">
-      <img src="/img/nav/SettingsIcon.svg" alt="" class="nav-ic">
-      <span class="nav-label">Settings</span>
-    </a>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="support-card">
-      <div class="support-title">Support 24/7</div>
-      <div class="support-sub">Contact us anytime.</div>
+  <a href="#" class="inline-flex items-center gap-2 text-brand-greenAccent font-bold text-sm group hover:gap-3 transition-all duration-200 self-center md:self-start">
+    <span data-i18n="farmers-learn">Learn about our impact</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform duration-200">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </a>
+</div>
+      </div>
     </div>
-    <button class="nav-item nav-logout" title="Logout" onclick="openLogoutModal()">
-      <img src="/img/nav/LogoutIcon.svg" alt="" class="nav-ic">
-      <span class="nav-label">Log-out</span>
-    </button>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       VERMICOMPOSTING SYSTEM
+  ════════════════════════════════════════════ -->
+  <section id="system-section" style="background-color:#F2EDE3;" class="relative overflow-hidden py-16">
+
+  <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.06;filter:blur(60px);"></div>
+  <div class="absolute top-0 right-0 w-60 h-60 rounded-full pointer-events-none" style="background:#C89B3C;opacity:0.07;filter:blur(50px);"></div>
+
+  <div class="max-w-7xl mx-auto px-6 md:px-12">
+
+    <div class="flex items-center gap-2 mb-12 justify-center md:justify-start">
+      <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+      <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;">What is AVONIC?</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-14 lg:gap-20 items-center">
+
+      <!-- Left: copy -->
+       <div class="anim-hidden" style="animation:fadeUp 0.7s ease forwards;">
+  <h2 class="font-serif leading-[1.08] mb-8 text-center md:text-left" style="color:#1A1A1A;">
+    <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;" data-i18n="system-h2-1">A Vermicomposting</span>
+    <span class="block" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;" data-i18n="system-h2-2">System That</span>
+    <span class="block italic" style="font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;color:#4A7C3F;" data-i18n="system-h2-3">Thinks For You</span>
+  </h2>
+
+  <div class="md:hidden flex justify-center items-center relative mb-6 -mx-6">
+    <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.1;filter:blur(50px);"></div>
+    <img
+      src="./img/Login-Clipart.png"
+      alt="AVONIC Smart Vermicomposting Illustration"
+      class="relative z-10 w-full object-contain"
+      style="max-width:300px;filter:drop-shadow(0 20px 40px rgba(30,58,40,0.18));"
+    />
   </div>
-</aside>
 
-<main class="main">
+  <ul class="space-y-3 mb-8">
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-1">Real-time soil moisture tracking and alerts</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-2">Automatic temperature and humidity regulation</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-3">Harmful gas level detection before damage occurs</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:#4A7C3F;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="text-sm" style="color:#5A5A5A;" data-i18n="system-feat-4">Mobile alerts so you never miss a critical change</span>
+    </li>
+  </ul>
 
-  <section class="page active" id="page-home">
-    <div class="page-card">
-      <div class="page-body">
-        <div class="home-header">
-          <h1 class="home-title">Home</h1>
-          <div class="status-pills">
-            <div class="spill spill-clickable" id="spill-bat" onclick="openStatusModal('battery')" title="Battery Status">
-              <!-- Dynamic battery icon: fill + charging bolt -->
-              <svg id="bat-svg-icon" viewBox="0 0 28 14" width="28" height="14" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:block;">
-                <!-- Outer shell -->
-                <rect x="0.75" y="0.75" width="23.5" height="12.5" rx="2.5" ry="2.5"
-                      fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <!-- Terminal nub -->
-                <rect x="24.5" y="4" width="3" height="6" rx="1.2" ry="1.2" fill="currentColor"/>
-                <!-- Fill bar (width animated via JS) -->
-                <rect id="bat-fill-bar" x="2" y="2" width="0" height="10" rx="1.5" ry="1.5" fill="currentColor"/>
-                <!-- Charging bolt (hidden by default) -->
-                <g id="bat-bolt" style="display:none;">
-                  <polygon points="15,2 11,7.5 14,7.5 13,12 17,6.5 14,6.5" fill="#fff" opacity="0.92"/>
-                </g>
-              </svg>
-              <span id="bat-pct-text">--%</span>
-            </div>
-            <div class="spill spill-group">
-              <div class="spill-half spill-clickable" id="spill-water" onclick="openStatusModal('water')" title="Water Tank Status">
-                <img src="/img/sensors/WaterIcon.svg" alt="" class="ic-sm">
-                <span id="water-pct-text">--%</span>
-              </div>
-              <div class="spill-divider"></div>
-              <div class="spill-half spill-clickable" id="spill-temp" onclick="openStatusModal('temp')" title="Water Temperature">
-                <span id="home-temp-val">-- C°</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="rounded-2xl p-6 border" style="background:#1E3A28;border-color:#2E5E3A;">
+    <p class="text-xs font-bold tracking-[0.18em] uppercase mb-3" style="color:#E8B84B;" data-i18n="system-callout-label">Why traditional vermicomposting keeps failing</p>
+    <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.7);" data-i18n="system-callout-body">
+      Most farmers rely on guesswork — checking moisture by feel, eyeballing temperature,
+      missing early warning signs. Without real data, worm colonies crash silently.
+      AVONIC replaces guesswork with precision monitoring, 24/7.
+    </p>
+  </div>
+</div>
 
-        <div class="home-divider"></div>
-        <div class="section-label">Vermicompost Bins</div>
+      <!-- Right: illustration -->
+      <div class="hidden md:flex relative items-center justify-center anim-hidden" style="animation: floatCard 5s ease-in-out infinite;">
 
-        <div class="bins-grid">
-          <a href="#/bin1" class="bin-card" data-route="bin1">
-            <div class="bin-name">Bin 1</div>
-            <div class="bin-mode" id="home-b1-mode">
-              <span class="bin-dot"></span> Auto Mode
-            </div>
-          </a>
-          <a href="#/bin2" class="bin-card" data-route="bin2">
-            <div class="bin-name">Bin 2</div>
-            <div class="bin-mode" id="home-b2-mode">
-              <span class="bin-dot"></span> Auto Mode
-            </div>
-          </a>
-        </div>
- 
-
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-bin1">
-    <div class="page-card">
-      <div class="page-body bin-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/home'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path">Home &gt; Monitoring</span>
-            <span class="crumb-name">Monitoring</span>
-          </div>
-        </div>
-
-        <div class="bin-banner">
-          <div class="banner-left">
-            <div class="banner-title">Bin 1</div>
-            <div class="banner-sub" id="b1-updated">Updated just now</div>
-             
-          </div>
-          <div class="mode-selector-wrap" onclick="openModeModal(1)">
-            <span class="mode-lbl">Mode:</span>
-            <div class="mode-btn auto" id="b1-mode-btn">
-              Auto  
-            </div>
-          </div>
-        </div>
-
-        <div class="sensor-grid">
-          <div class="sensor-card" id="b1-soil-card" onclick="openSensorModal(1, 'soilMoisture', 'Soil Moisture', '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Soil Moisture</div>
-              <div class="sc-status" id="b1-soilMoisture-status">Optimal</div>
-              <div class="sc-value"><span id="b1-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b1-soilMoisture-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b1-temp-card" onclick="openSensorModal(1, 'temperature', 'Temperature', '/img/monitoring/Sensor Icons/Temperature Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Temperature</div>
-              <div class="sc-status" id="b1-temperature-status">Optimal</div>
-              <div class="sc-value"><span id="b1-temperature-val">--</span><span class="sc-unit">°C</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b1-temperature-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b1-hum-card" onclick="openSensorModal(1, 'humidity', 'Humidity', '/img/monitoring/Sensor Icons/Humidity Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Humidity</div>
-              <div class="sc-status" id="b1-humidity-status">Optimal</div>
-              <div class="sc-value"><span id="b1-humidity-val">--</span><span class="sc-unit">%</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b1-humidity-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b1-gas-card" onclick="openSensorModal(1, 'gasLevels', 'Gas Levels', '/img/monitoring/Sensor Icons/Gas Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Gas Levels</div>
-              <div class="sc-status" id="b1-gasLevels-status">Optimal</div>
-              <div class="sc-value"><span id="b1-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b1-gasLevels-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-bin2">
-    <div class="page-card">
-      <div class="page-body bin-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/home'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path">Home &gt; Monitoring</span>
-            <span class="crumb-name">Monitoring</span>
-          </div>
-        </div>
-
-        <div class="bin-banner">
-          <div class="banner-left">
-            <div class="banner-title">Bin 2</div>
-            <div class="banner-sub" id="b2-updated">Updated just now</div>
-             
-          </div>
-          <div class="mode-selector-wrap" onclick="openModeModal(2)">
-            <span class="mode-lbl">Mode:</span>
-            <div class="mode-btn auto" id="b2-mode-btn">
-              Auto  
-            </div>
-          </div>
-        </div>
-
-        <div class="sensor-grid">
-          <div class="sensor-card" id="b2-soil-card" onclick="openSensorModal(2, 'soilMoisture', 'Soil Moisture', '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Soil Moisture</div>
-              <div class="sc-status" id="b2-soilMoisture-status">Optimal</div>
-              <div class="sc-value"><span id="b2-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b2-soilMoisture-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b2-temp-card" onclick="openSensorModal(2, 'temperature', 'Temperature', '/img/monitoring/Sensor Icons/Temperature Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Temperature</div>
-              <div class="sc-status" id="b2-temperature-status">Optimal</div>
-              <div class="sc-value"><span id="b2-temperature-val">--</span><span class="sc-unit">°C</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b2-temperature-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b2-hum-card" onclick="openSensorModal(2, 'humidity', 'Humidity', '/img/monitoring/Sensor Icons/Humidity Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Humidity</div>
-              <div class="sc-status" id="b2-humidity-status">Optimal</div>
-              <div class="sc-value"><span id="b2-humidity-val">--</span><span class="sc-unit">%</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b2-humidity-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-
-          <div class="sensor-card" id="b2-gas-card" onclick="openSensorModal(2, 'gasLevels', 'Gas Levels', '/img/monitoring/Sensor Icons/Gas Icon.svg')">
-            <div class="sc-info">
-              <div class="sc-name">Gas Levels</div>
-              <div class="sc-status" id="b2-gasLevels-status">Optimal</div>
-              <div class="sc-value"><span id="b2-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
-            </div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 68 68">
-                <circle class="ring-track" cx="34" cy="34" r="28"/>
-                <circle class="ring-arc" id="b2-gasLevels-ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-              </svg>
-              <div class="ring-icon"><img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="page page-fill" id="page-dashboard">
-    <div class="page-card">
-      <div class="page-body">
-        <div class="home-header"><h1 class="home-title">Dashboard</h1></div>
-        <div class="home-divider"></div>
-        <div class="dash-grid">
-          <div class="dash-card yellow" id="go-qi">
-            <img src="/img/nav/QuickInsights.svg" alt="" class="dash-icon">
-            <div class="dash-title">QUICK INSIGHTS</div>
-            <div class="dash-desc">Get instant snapshots of your bin's current conditions.</div>
-          </div>
-          <div class="dash-card green" id="go-bf">
-            <img src="/img/nav/BinFluctuations.svg" alt="" class="dash-icon">
-            <div class="dash-title">BIN FLUCTUATIONS</div>
-            <div class="dash-desc">Track environmental changes over time with detailed graphs.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page page-fill" id="page-quick-insights">
-    <div class="page-card">
-      <div class="page-body qi-page-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path">Dashboard &gt; Quick Insights</span>
-            <span class="crumb-name">Quick Insights</span>
-          </div>
-        </div>
-
-        <div class="qi-layout">
-
-          <!-- LEFT SIDEBAR -->
-          <div class="qi-sidebar">
-            <select class="bin-dd" id="qi-bin-select">
-              <option value="1">Bin 1</option>
-              <option value="2">Bin 2</option>
-            </select>
-            <div class="qi-sidebar-btns">
-              <button class="qi-sens-btn active" data-qi-sensor="soilMoisture">
-                <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md">
-                <span>Soil Moisture</span>
-              </button>
-              <button class="qi-sens-btn" data-qi-sensor="temperature">
-                <img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md">
-                <span>Temperature</span>
-              </button>
-              <button class="qi-sens-btn" data-qi-sensor="humidity">
-                <img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md">
-                <span>Humidity</span>
-              </button>
-              <button class="qi-sens-btn" data-qi-sensor="gasLevels">
-                <img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md">
-                <span>Gas Levels</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- RIGHT PANEL -->
-           <div class="qi-panel">
-
-            <div class="qi-panel-top">
-              <div class="bf-sensor-row">
-                <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-sm" id="qi-sensor-icon">
-                <span class="bf-sensor-name" id="qi-sensor-heading">Soil Moisture</span>
-              </div>
-              <div class="qi-date-info" id="qi-date-block">Loading...</div>
-            </div>
-
-            <div class="qi-stats-row">
-              <div class="qi-stat-box"><div class="qi-lbl">Min</div><div class="qi-val"><span id="qi-min">--</span><span class="u"> %</span></div></div>
-              <div class="qi-stat-box"><div class="qi-lbl">Average</div><div class="qi-val"><span id="qi-avg">--</span><span class="u"> %</span></div></div>
-              <div class="qi-stat-box"><div class="qi-lbl">Max</div><div class="qi-val"><span id="qi-max">--</span><span class="u"> %</span></div></div>
-              <div class="qi-stat-box"><div class="qi-lbl">Recent</div><div class="qi-val"><span id="qi-recent">--</span><span class="u"> %</span></div></div>
-            </div>
-
-            <div class="qi-tbl-wrap">
-              <table class="qi-tbl">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>Reading</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="qi-tbody"><tr><td class="qi-empty" colspan="3">Waiting for data...</td></tr></tbody>
-              </table>
-            </div>
-
-            <div class="qi-insight-bottom">
-              <div class="qi-ins-header-row">
-                <div class="qi-lbl">Insight <span class="qi-ins-dot" id="qi-ins-dot"></span></div>
-                <button class="bf-action-btn qi-action-btn" id="qi-action-btn" onclick="openQIActionsModal()" disabled title="No actions needed">
-                  <span class="bf-action-dot" id="qi-action-dot"></span>
-                  <img src="/img/actuators/WrenchIcon.svg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Actions">
-                  <span class="bf-wrench-fallback" style="display:none">🔧</span>
-                </button>
-              </div>
-              <div class="qi-val qi-ins-val" id="qi-insight">No data yet</div>
-            </div>
-
-          </div>
-
-            <!-- Scrollable table with sticky header -->
-            <!-- <div class="qi-tbl-wrap">
-              <table class="qi-tbl">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>Reading</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="qi-tbody"><tr><td class="qi-empty" colspan="3">Waiting for data...</td></tr></tbody>
-              </table>
-            </div> -->
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page page-fill" id="page-bin-fluctuation">
-    <div class="page-card">
-      <div class="page-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path">Dashboard &gt; Bin Fluctuation</span>
-            <span class="crumb-name">Bin Fluctuation</span>
-          </div>
-        </div>
-
-        <div class="bf-layout">
-
-          <!-- LEFT SIDEBAR -->
-          <div class="bf-sidebar">
-            <select class="bin-dd" id="bf-bin-select">
-              <option value="1">Bin 1</option>
-              <option value="2">Bin 2</option>
-            </select>
-            <div class="bf-sidebar-btns">
-              <button class="bf-sens-btn active" data-bf-sensor="soilMoisture">
-                <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-md">
-                <span>Soil Moisture</span>
-              </button>
-              <button class="bf-sens-btn" data-bf-sensor="temperature">
-                <img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="" class="ic-md">
-                <span>Temperature</span>
-              </button>
-              <button class="bf-sens-btn" data-bf-sensor="humidity">
-                <img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="" class="ic-md">
-                <span>Humidity</span>
-              </button>
-              <button class="bf-sens-btn" data-bf-sensor="gasLevels">
-                <img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="" class="ic-md">
-                <span>Gas Levels</span>
-              </button>
-            </div>
-            <!-- Date row shown on mobile inside sidebar -->
-            <div class="bf-sidebar-date">
-              <span class="date-label">Date Reported:</span>
-              <div class="date-pill">
-                <input type="date" class="date-in" id="bf-date-from-m">
-                <span>to</span>
-                <input type="date" class="date-in" id="bf-date-to-m">
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT PANEL -->
-          <div class="bf-panel">
-
-            <!-- Top bar: sensor + date -->
-            <div class="bf-panel-top">
-              <div class="bf-sensor-row">
-                <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="" class="ic-sm" id="bf-sensor-icon">
-                <span class="bf-sensor-name" id="bf-sensor-heading">Soil Moisture</span>
-              </div>
-              <div class="date-row">
-                <span class="date-label">Date Reported:</span>
-                <div class="date-pill">
-                  <input type="date" class="date-in" id="bf-date-from">
-                  <span>to</span>
-                  <input type="date" class="date-in" id="bf-date-to">
-                </div>
-              </div>
-            </div>
-
-            <!-- Mid: avg+worm | insights+action -->
-            <div class="bf-mid">
-              <div class="bf-avg-box">
-                <div class="bf-avg-lbl">Average</div>
-                <div class="bf-avg-valrow">
-                  <span class="bf-avg-num" id="bf-avg-val">--</span><span class="bf-avg-unit" id="bf-avg-unit"> %</span>
-                </div>
-                <img src="/img/worm-conditions/Normal.png" alt="Worm" id="bf-worm-img" class="bf-worm">
-              </div>
-              <div class="bf-ins-box">
-                <div class="bf-ins-header">
-                  <span class="bf-ins-title">Insights</span>
-                  <button class="bf-action-btn" id="bf-action-btn" onclick="openBFActionsModal()" disabled title="No actions needed">
-                    <span class="bf-action-dot" id="bf-action-dot"></span>
-                    <img src="/img/actuators/WrenchIcon.svg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Actions">
-                    <span class="bf-wrench-fallback" style="display:none">🔧</span>
-                  </button>
-                </div>
-                <div class="bf-ins-text" id="bf-insights-text">Loading...</div>
-              </div>
-            </div>
-
-            <!-- Scrollable chart -->
-            <div class="chart-scroll-wrap">
-              <div class="chart-scroll-inner">
-                <canvas id="bf-chart"></canvas>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-settings">
-     <div class="page-card ">
-  <div class="page-body settings">
-    <div class="home-header"><h1 class="home-title">Settings</h1></div>
-    <div class="home-divider"></div>
-    
-    <div class="settings-grid">
-      <div class="settings-col">
         
-         <div class="settings-card">
-        <div class="settings-sec-title">Account Profile</div>
-        <div class="dev-row">
-          <span class="dev-key">Username</span>
-          <span class="dev-val" id="acc-username">DevUser_2026</span>
-        </div>
-        <div class="dev-row">
-          <span class="dev-key">Email</span>
-          <span class="dev-val" id="acc-email">dev@avonic.online</span>
-        </div>
 
-        <div class="account-actions-stack mt-4" style="display: flex; flex-direction: column; gap: 12px;">
-           
-          
-          <div class="account-actions-stack mt-4" style="display: flex; flex-direction: column; gap: 12px;">
-            <button class="btn-primary" onclick="openEditProfileModal()">Update Profile</button>
-            <button class="btn-secondary" onclick="openChangePasswordModal()" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <img src="/img/auth-icons/userPasswordIcon.svg" class="ic-xs" style="opacity: 0.7;">
-              <span>Change Password</span>
-            </button>
+       
+
+        <!-- The illustration -->
+        <img
+          src="./img/Login-Clipart.png"
+          alt="AVONIC Smart Vermicomposting Illustration"
+          class="relative z-10 w-full object-contain drop-shadow-2xl"
+          style="max-width: min(490px, 100%); filter: drop-shadow(0 20px 40px rgba(30,58,40,0.18));"
+        />
+
+       
+
+      </div>
+      <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 56 Q200 16 440 36 Q680 56 900 20 Q1140 -8 1440 32 L1440 56 Z" fill="#ffffff"/>
+  </svg>
+</div>
+    </div>
+  </div>
+</section>
+
+  <!-- ════════════════════════════════════════════
+       WHAT AVONIC WATCHES
+  ════════════════════════════════════════════ -->
+  <section id="watches-section" style="background:#FFFFFF;" class="relative overflow-hidden py-20 md:py-28">
+
+    <!-- Background pattern -->
+    <div class="absolute inset-0 pointer-events-none opacity-[0.025]" aria-hidden="true">
+      <svg width="100%" height="100%"><defs><pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1E3A28" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+
+      <!-- Header -->
+       <div class="text-center mb-14">
+  <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-4 border" style="background:#F2EDE3;color:#4A7C3F;border-color:#4A7C3F;border-opacity:0.2;" data-i18n="watches-eyebrow">
+    Sensor Data
+  </div>
+  <h2 class="font-serif" style="font-size:clamp(2rem,4vw,3rem);color:#1A1A1A;font-weight:400;" data-i18n-html="watches-h2">
+  What <span style="color:#4A7C3F;font-style:italic;">AVONIC</span> Watches
+</h2>
+  <p class="mt-3 text-sm max-w-md mx-auto" style="color:#5A5A5A;" data-i18n="watches-subhead">
+    Four critical parameters — monitored continuously so your worms always have the perfect environment.
+  </p>
+</div>
+
+     <!-- 2×2 metric cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+
+  <!-- Card 1: Soil Moisture -->
+<div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#080808;transition:box-shadow 0.2s ease;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-soil">Soil Moisture</p>
+        <p id="lp-status-soilMoisture" class="text-xs font-semibold" style="color:#4A7C3F;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-soilMoisture" cx="32" cy="32" r="26" fill="none" stroke="#4A7C3F" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Soil Moisture Icon.svg" alt="Soil Moisture" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-soilMoisture" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
+    </div>
+  </div>
+
+  <!-- Card 2: Temperature -->
+<div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+         <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-temp">Temperature</p>
+        <p id="lp-status-temperature" class="text-xs font-semibold" style="color:#C89B3C;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-temperature" cx="32" cy="32" r="26" fill="none" stroke="#C89B3C" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Temperature Icon.svg" alt="Temperature" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-temperature" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">°C</span>
+    </div>
+  </div>
+
+  <!-- Card 3: Humidity -->
+<div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+         <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-hum">Humidity</p>
+        <p id="lp-status-humidity" class="text-xs font-semibold" style="color:#2E6E8E;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-humidity" cx="32" cy="32" r="26" fill="none" stroke="#2E6E8E" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Humidity Icon.svg" alt="Humidity" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-humidity" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">%</span>
+    </div>
+  </div>
+
+  <!-- Card 4: Gas Levels -->
+<div class="metric-card rounded-3xl p-6 border" style="background:#FAFAF8;border-color:#000000;transition:box-shadow 0.2s ease;">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#000000;" data-i18n="sensor-gas">Gas Levels</p>
+        <p id="lp-status-gasLevels" class="text-xs font-semibold" style="color:#7A5C3A;">Optimal</p>
+      </div>
+      <div class="relative w-16 h-16 flex-shrink-0">
+        <svg viewBox="0 0 64 64" class="w-full h-full -rotate-90">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#E8E0D0" stroke-width="6"/>
+          <circle id="lp-ring-gasLevels" cx="32" cy="32" r="26" fill="none" stroke="#7A5C3A" stroke-width="6"
+            stroke-dasharray="163.36" stroke-dashoffset="81.68"
+            stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease, stroke 0.5s ease;"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center">
+          <img src="/img/monitoring/Sensor Icons/Gas Icon.svg" alt="Gas Levels" style="width:24px;height:24px;object-fit:contain;">
+        </span>
+      </div>
+    </div>
+    <div class="flex items-baseline gap-1">
+      <span id="lp-val-gasLevels" class="font-serif" style="font-size:3rem;line-height:1;color:#1A1A1A;font-weight:400;">--</span>
+      <span class="text-xl font-semibold" style="color:#5A5A5A;">ppm</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom note -->
+<p class="text-center text-xs mt-8 pb-16 md:pb-4" style="color:#5A5A5A;opacity:0.7;" data-i18n="watches-note">
+  These are live sensor values that update automatically
+</p>
+
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 28 Q300 -4 600 36 Q900 72 1200 16 Q1320 6 1440 34 L1440 56 L0 56 Z" fill="#F2EDE3"/>
+  </svg>
+</div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       WHAT'S YOUR MODE?
+  ════════════════════════════════════════════ -->
+ <section id="modes-section" style="background-color:#F2EDE3;" class="relative overflow-hidden py-20 md:py-28">
+
+  <div class="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style="background:#1E3A28;opacity:0.05;filter:blur(80px);"></div>
+  <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none" style="background:#C89B3C;opacity:0.06;filter:blur(60px);"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+        <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="modes-eyebrow">Smart Control</p>
+        <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+      </div>
+      <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#1A1A1A;font-weight:400;">
+        <span data-i18n="modes-h2-plain">What's Your </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="modes-h2-em">Mode?</span>
+      </h2>
+      <p class="text-sm max-w-md mx-auto" style="color:#5A5A5A;" data-i18n="modes-subhead">
+        Choose how AVONIC manages your bin — let it think for you, or take full control yourself.
+      </p>
+    </div>
+
+    <!-- Mode toggle tabs -->
+    <div class="flex justify-center mb-10">
+      <div class="inline-flex rounded-2xl p-1.5 gap-1" style="background:#E8E0D0;">
+        <button
+          data-mode="auto"
+          class="mode-btn font-body text-sm font-semibold px-6 py-2.5 rounded-xl transition-all duration-250 cursor-pointer"
+          style="background:#1E3A28;color:#ffffff;box-shadow:0 2px 12px rgba(30,58,40,0.25);"
+          data-i18n="modes-tab-auto">
+          Auto Mode
+        </button>
+        <button
+          data-mode="manual"
+          class="mode-btn font-body text-sm font-semibold px-6 py-2.5 rounded-xl transition-all duration-250 cursor-pointer"
+          style="background:transparent;color:#5A5A5A;"
+          data-i18n="modes-tab-manual">
+          Manual Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- AUTO MODE PANEL -->
+    <div data-mode="auto" class="mode-panel items-center gap-10 md:gap-16 flex-col md:flex-row" style="display:flex;">
+
+      <!-- Illustration -->
+      <div class="flex-1 flex justify-center items-center relative">
+        <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.08;filter:blur(40px);"></div>
+        <img
+          src="./img/photos/AutoMode.png"
+          alt="Auto Mode illustration"
+          class="relative z-10 w-full object-contain"
+          style="max-width: min(520px, 100%); margin-left: -2rem;"
+        />
+      </div>
+
+      <!-- Copy -->
+      <div class="flex-1 max-w-lg flex flex-col items-center md:items-start text-center md:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide mb-4" style="background:#1E3A28;color:#E8B84B;" data-i18n="modes-auto-badge">
+          ✦ Recommended
+        </div>
+        <h3 class="font-serif mb-4" style="font-size:clamp(1.5rem,2.5vw,2rem);color:#1A1A1A;font-weight:400;">
+          <span data-i18n="modes-auto-h3-plain">Auto Mode — </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="modes-auto-h3-em">Set it & forget it</span>
+        </h3>
+        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;" data-i18n="modes-auto-body">
+          The system continuously monitors all four parameters and automatically adjusts
+          conditions to keep your worms in the perfect environment. AVONIC reacts in real-time
+          — so you can focus on your farm, not your bin.
+        </p>
+        <div class="space-y-3 w-full">
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-1">Real-time automated adjustments</span>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-2">Smart alerts only when action is needed</span>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-auto-feat-3">Learns optimal patterns over time</span>
           </div>
         </div>
       </div>
+    </div>
 
-        <div class="settings-card">
-          <div class="settings-sec-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Claimed Bins</span>
-            <button class="wm-scan-btn" onclick="openModal('claim-bin-modal')">+ Claim</button>
+    <!-- MANUAL MODE PANEL -->
+    <div data-mode="manual" class="mode-panel items-center gap-10 md:gap-16 flex-col md:flex-row" style="display:none;">
+
+      <!-- Illustration -->
+      <div class="flex-1 flex justify-center items-center relative">
+        <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#C89B3C;opacity:0.08;filter:blur(40px);"></div>
+        <img
+          src="./img/photos/ManualMode.png"
+          alt="Manual Mode illustration"
+          class="relative z-10 w-full object-contain"
+          style="max-width: min(360px, 90%);"
+        />
+      </div>
+
+      <!-- Copy -->
+      <div class="flex-1 max-w-lg flex flex-col items-center md:items-start text-center md:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide mb-4" style="background:#F2EDE3;color:#7A5C3A;border:1px solid #E8E0D0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+            </svg> <span data-i18n="modes-manual-badge">Full Control</span>
+        </div>
+        <h3 class="font-serif mb-4" style="font-size:clamp(1.5rem,2.5vw,2rem);color:#1A1A1A;font-weight:400;">
+          <span data-i18n="modes-manual-h3-plain">Manual Mode — </span><span style="color:#C89B3C;font-style:italic;" data-i18n="modes-manual-h3-em">You call the shots</span>
+        </h3>
+        <p class="text-sm leading-relaxed mb-6" style="color:#5A5A5A;" data-i18n="modes-manual-body">
+          Take complete control of your vermicomposting system. Manually adjust moisture,
+          temperature, and ventilation from the app — ideal for experienced farmers who
+          know exactly what their worms need.
+        </p>
+        <div class="space-y-3 w-full">
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-1">Full manual override from the app</span>
           </div>
-          <div class="bins-scroll-container" id="claimed-bins-list">
-             <div class="wm-placeholder">Fetching your bins...</div>
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-2">Adjust any parameter remotely, anytime</span>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl px-4 py-3" style="background:white;border:1px solid #E8E0D0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M1 6l11 7L23 6"/><path d="M1 6v12a1 1 0 0 0 1 1h20a1 1 0 0 0 1-1V6"/>
+            </svg>
+            <span class="text-sm font-medium" style="color:#1A1A1A;" data-i18n="modes-manual-feat-3">Live sensor data always visible</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="settings-col">
-        
-        <div class="settings-card">
-          <div class="settings-sec-title">Resources</div>
-          <div class="dash-card green" style="padding: 20px; min-height: auto; flex-direction: row; gap: 15px; border-radius: 12px; border:none;">
-            <img src="/img/nav/QuickInsights.svg" alt="" style="width:40px; height:40px;">
-            <div style="text-align:left;">
-              <div class="dev-name">User Manual</div>
-              <div class="dev-id" style="color: rgba(255,255,255,0.8);">Learn how to maintain your bin.</div>
+  </div>
+
+  <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 56 Q240 10 480 38 Q720 66 960 22 Q1200 -8 1440 28 L1440 56 Z" fill="#ffffff"/>
+  </svg>
+</div>
+</section>
+
+  <!-- ════════════════════════════════════════════
+       HOW TO GET STARTED
+  ════════════════════════════════════════════ -->
+  <section id="get-started-section" style="background:#ffffff;" class="relative overflow-hidden py-20 md:py-28">
+
+    
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+      <div class="grid md:grid-cols-2 gap-14 lg:gap-20 items-center">
+
+        <!-- Left: Steps -->
+        <div>
+          <!-- Eyebrow -->
+          <div class="flex items-center gap-2 mb-8">
+            <div class="w-6 h-0.5 rounded-full" style="background:#4A7C3F;"></div>
+            <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#4A7C3F;" data-i18n="gs-eyebrow">Onboarding</p>
+          </div>
+
+          <h2 class="font-serif mb-10 text-center md:text-left" style="font-size:clamp(1.9rem,3.5vw,2.8rem);color:#1A1A1A;font-weight:400;line-height:1.1;">
+            <span data-i18n="gs-h2-plain">How to get </span><span style="color:#4A7C3F;font-style:italic;" data-i18n="gs-h2-em">started</span>
+          </h2>
+
+          <!-- Illustration: mobile only -->
+          <div class="md:hidden flex justify-center items-center relative mb-8 -mx-6">
+            <div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.08;filter:blur(50px);"></div>
+            <img
+              src="/img/landing-page/phone-register-illustration.png"
+              alt="Sign Up Illustration"
+              class="relative z-10 w-full object-contain"
+              style="max-width:300px;filter:drop-shadow(0 20px 40px rgba(30,58,40,0.12));"
+            />
+          </div>
+
+          <!-- Step 1 -->
+          <div class="step-item relative flex gap-5 mb-0 group">
+            <div class="flex flex-col items-center">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md transition-transform duration-200 group-hover:scale-110" style="background:#1E3A28;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="w-px flex-1 my-2" style="background:#E8E0D0;min-height:32px;"></div>
             </div>
-            <a href="/manual" target="_blank" class="back-btn" style="margin-left:auto; background:white;">
-               <img src="/img/nav/BackIcon.svg" style="transform: rotate(180deg);">
+            <div class="pb-8">
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;" data-i18n="gs-step1-label">Step 1</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step1-title">Register your AVONIC account</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step1-body">Create your free account in seconds. No credit card needed — just your email and you're in.</p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-item relative flex gap-5 mb-0 group">
+            <div class="flex flex-col items-center">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md transition-transform duration-200 group-hover:scale-110" style="background:#1E3A28;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div class="w-px flex-1 my-2" style="background:#E8E0D0;min-height:32px;"></div>
+            </div>
+            <div class="pb-8">
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#4A7C3F;" data-i18n="gs-step2-label">Step 2</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step2-title">Log in to your account</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step2-body">Sign in on any device — mobile, tablet, or desktop. Your dashboard is always in sync.</p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-item relative flex gap-5 group">
+            <div class="flex flex-col items-center">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4V5a3 3 0 0 0-3-3z"/><path d="M12 12v4M10 14h4"/></svg>
+              </div>
+            </div>
+            <div class="pb-2">
+              <p class="text-xs font-bold tracking-[0.15em] uppercase mb-1" style="color:#C89B3C;" data-i18n="gs-step3-label">Step 3</p>
+              <h4 class="font-body font-bold text-base mb-1.5" style="color:#1A1A1A;" data-i18n="gs-step3-title">Connect to your ESP ID</h4>
+              <p class="text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="gs-step3-body">Pair your AVONIC sensor module by entering your unique ESP ID. Live data starts flowing immediately.</p>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="mt-10 flex justify-center md:justify-start">
+            <a href="#"
+               class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
+               style="background:#ECBD01; border: solid black 1px;" data-i18n="gs-cta">
+              Register Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
         </div>
 
-        <div class="settings-card">
-          <div class="settings-sec-title">Session</div>
-          <div class="dev-row">
-            <span class="dev-key">Last Login</span>
-            <span class="dev-val" id="acc-last-login">--</span>
-          </div>
-          <button class="settings-danger-btn settings-danger-btn--hard w-100 mt-4" onclick="openLogoutModal()">
-            Log Out
-          </button>
+        
+        <!-- Right: Illustration -->
+        
+      <div class="hidden md:flex justify-center items-center relative">
+          <div class="absolute w-72 h-72 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.08;filter:blur(50px);"></div>
+          <img
+            src="/img/landing-page/sign-up-illustration.png"
+            alt="Sign Up Illustration"
+            class="relative z-10 w-full object-contain"
+            style="max-width: min(480px, 100%); filter: drop-shadow(0 20px 40px rgba(30,58,40,0.12));"
+          />
         </div>
+
       </div>
     </div>
-  </div>
+
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 24 Q360 56 720 12 Q1080 -24 1440 32 L1440 56 L0 56 Z" fill="#3B2208"/>
+  </svg>
 </div>
   </section>
 
 
-</main>
+  <!-- ════════════════════════════════════════════
+       WATCH THE TUTORIALS
+  ════════════════════════════════════════════ -->
+  <section id="tutorials-section" style="background:#3B2208;" class="relative overflow-hidden py-20 md:py-28">
 
-<div class="sys-modal" id="edit-profile-modal">
-  <div class="mode-ill">
-    <img src="/img/curious-worm.png" alt="Profile">
-  </div>
-  <h2 class="sys-modal-title">Edit Profile</h2>
-  <p class="sys-modal-desc">Update your display name and contact email.</p>
+    
 
-  <div class="auth-form">
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/AVONIC LOGO.svg" style="width:16px; opacity:0.5;"></span>
-        <input class="auth-input" id="edit-username" type="text" placeholder="Username">
-      </div>
-    </div>
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/emailIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input" id="edit-email" type="email" placeholder="Email Address">
-      </div>
-    </div>
-  </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 
-  <div class="sys-modal-actions mt-4">
-    <button class="btn-primary" onclick="handleUpdateProfile()">Save Changes</button>
-    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+      <!-- Header -->
+      <div class="text-center mb-12">
+  <div class="flex items-center justify-center gap-2 mb-4">
+    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
+    <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#C89B3C;" data-i18n="tutorials-eyebrow">Learn AVONIC</p>
+    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
   </div>
+  <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#ffffff;font-weight:400;" data-i18n="tutorials-h2">
+    Watch the Tutorials
+  </h2>
+  <p class="text-sm max-w-md mx-auto" style="color:rgba(255,255,255,0.55);" data-i18n="tutorials-subhead">
+    Get up and running fast with our step-by-step video guides.
+  </p>
 </div>
 
-<div class="sys-modal" id="change-password-modal">
-  <div class="mode-ill">
-    <img src="/img/auth-icons/clipartKeyWorm.png" alt="Security">
-  </div>
-  <h2 class="sys-modal-title">Change Password</h2>
-  <p class="sys-modal-desc">Authorized changes require your current password.</p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
 
-  <div class="auth-form">
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-current" type="password" placeholder="Current Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-current', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-1.jpg" alt="Tutorial 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
       </div>
     </div>
-    <div class="auth-divider" style="height:1px; background:#eee; margin: 8px 0;"></div>
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-new" type="password" placeholder="New Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-new', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
-      </div>
-    </div>
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-repeat" type="password" placeholder="Repeat New Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-repeat', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
-      </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card1-tag">Getting Started</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card1-title">Setting up your AVONIC device</p>
     </div>
   </div>
 
-  <div class="sys-modal-actions mt-4">
-    <button class="btn-primary" onclick="handleChangePassword()">Confirm Update</button>
-    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-2.jpg" alt="Tutorial 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card2-tag">Dashboard</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card2-title">Reading your sensor data live</p>
+    </div>
   </div>
+
+  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
+      <img src="./images/tutorial-3.jpg" alt="Tutorial 3" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="p-4">
+      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card3-tag">Advanced</p>
+      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card3-title">Auto vs Manual mode explained</p>
+    </div>
+  </div>
+
 </div>
 
-
-<div class="sys-modal" id="change-password-modal">
-  <div class="mode-ill">
-    <img src="/img/auth-icons/clipartKeyWorm.png" alt="Security">
-  </div>
-  <h2 class="sys-modal-title">Change Password</h2>
-  <p class="sys-modal-desc">Authorized changes require your current password.</p>
-
-  <div class="auth-form">
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-current" type="password" placeholder="Current Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-current', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
-      </div>
-    </div>
-    <div style="height:1px; background:#eee; margin: 8px 0;"></div>
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-new" type="password" placeholder="New Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-new', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
-      </div>
-    </div>
-    <div class="auth-field">
-      <div class="auth-input-wrap">
-        <span class="auth-input-icon"><img src="/img/auth-icons/userPasswordIcon.svg" class="auth-icon-img"></span>
-        <input class="auth-input auth-input--padded" id="change-pw-repeat" type="password" placeholder="Repeat New Password">
-        <button class="auth-pw-eye" onclick="authTogglePw('change-pw-repeat', this)"><img src="/img/auth-icons/openEyePassIcon.png" class="auth-eye-img"></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="sys-modal-actions mt-4">
-    <button class="btn-primary" onclick="handleChangePassword()">Confirm Update</button>
-    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
-  </div>
-</div>
-
-
-<div class="sys-modal" id="confirm-action-modal">
-  <div class="mode-ill">
-    <img src="/img/curious-worm.png" alt="Confirm" id="confirm-modal-img">
-  </div>
-  <h2 class="sys-modal-title" id="confirm-modal-title">Confirm Action</h2>
-  <p class="sys-modal-desc" id="confirm-modal-desc">Are you sure you want to proceed?</p>
-  
-  <div class="auth-field" id="rename-input-container" style="display:none; margin-bottom: 20px;">
-    <input class="auth-input" id="new-bin-nickname" type="text" placeholder="Enter new nickname" style="padding-left:12px;">
-  </div>
-
-  <div class="sys-modal-actions">
-    <button class="btn-primary" id="confirm-modal-btn">Confirm</button>
-    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
-  </div>
-</div>
-
-
-<div class="sys-modal" id="claim-bin-modal">
-  <div class="mode-ill">
-    <img src="/img/photos/AutoMode.png" alt="Claim">
-  </div>
-  <h2 class="sys-modal-title">Claim New Bin</h2>
-  <p class="sys-modal-desc">Enter the unique 6-digit claim code found on your AVONIC device.</p>
-  
-  <div class="auth-field" style="margin-bottom: 20px;">
-    <input class="auth-input" id="claim-code-input" type="text" placeholder="Enter Claim Code" style="padding-left:12px;">
-  </div>
-
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="handleClaimBin()">Claim Device</button>
-    <button class="btn-secondary" onclick="closeTopModal()">Cancel</button>
-  </div>
-</div>
-
-
-<div class="toast-container" id="toast-container"></div>
-
-<div class="sys-modal-overlay" id="sys-modal-overlay" onclick="closeAllModals()"></div>
-
-<div class="sys-modal" id="mode-switch-modal">
-  <div class="mode-ill">
-    <img id="mode-ill-img" src="" alt="Mode">
-  </div>
-  <h2 class="sys-modal-title" id="mode-modal-title">Activate Mode?</h2>
-  <p class="sys-modal-desc" id="mode-modal-desc">Changing modes affects the bin.</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" id="mode-confirm-btn">Activate for this bin</button>
-    <button class="btn-secondary" onclick="closeAllModals()">Cancel</button>
-  </div>
-</div>
-
-<div class="sys-modal" id="sensor-detail-modal">
-  <div class="sens-modal-header">
-    <div class="sm-head-left">
-      <img src="" alt="" class="ic-sm" id="sm-icon">
-      <span class="sm-title" id="sm-title">Sensor</span>
-    </div>
-    <img src="/img/nav/RefreshIcon.svg" alt="refresh" class="ic-sm refresh-spin" onclick="fetchAndRender()" style="cursor:pointer; opacity: 0.5;">
-  </div>
-  
-  <hr class="sm-divider">
-
-  <p class="sm-subtitle">Current Reading</p>
-  <div class="sm-reading-card">
-    <div class="sm-rc-left">
-      <div class="sm-val-lrg"><span id="sm-val">--</span><span class="sm-unit" id="sm-unit">%</span></div>
-      <div class="sm-status-ind" id="sm-status-ind"><span class="dot"></span><span id="sm-status-text">Optimal</span></div>
-    </div>
-    <div class="sm-rc-right">
-      <img src="" alt="Worm" id="sm-worm-img" class="sm-worm-clipart">
-    </div>
-  </div>
-
-  <div id="sm-manual-area" style="display:none;">
-    <p class="sm-subtitle mt-4">Manual Actions</p>
-    <div class="sm-actuator-grid" id="sm-actuator-grid">
-      </div>
-  </div>
-
-  <div class="sys-modal-actions" style="margin-top: 24px;">
-    <button class="btn-cancel w-100" onclick="closeAllModals()">Cancel</button>
-  </div>
-</div>
-
-<nav class="bottom-nav" id="bottom-nav">
-  <a href="#/dashboard" class="bnav-item" data-route="dashboard">
-    <img src="/img/nav/DashboardIcon.svg" alt="" class="bnav-ic">
+<div class="text-center">
+  <a href="#" class="inline-flex items-center gap-2 font-body font-bold text-sm px-8 py-3.5 rounded-full border transition-all duration-200 hover:-translate-y-0.5" style="background:transparent;border-color:#C89B3C;color:#E8B84B;">
+    <span data-i18n="tutorials-watch-more">Watch More</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
-  <a href="#/home" class="bnav-item active" data-route="home">
-    <img src="/img/nav/HomeIcon.svg" alt="" class="bnav-ic">
-  </a>
-  <a href="#/settings" class="bnav-item" data-route="settings">
-    <img src="/img/nav/SettingsIcon.svg" alt="" class="bnav-ic">
-  </a>
-</nav>
-
-<div class="act-modal" id="bf-actions-modal">
-  <button class="act-modal-close" onclick="closeTopModal()" aria-label="Close">✕</button>
-  <div class="act-modal-sensor" id="bf-act-sensor">
-    <img src="" alt="" class="act-modal-icon" id="bf-act-icon">
-    <span id="bf-act-title">Actions</span>
-  </div>
-  <div class="act-modal-body" id="bf-actuator-grid"></div>
 </div>
 
-<div class="act-modal" id="qi-actions-modal">
-  <button class="act-modal-close" onclick="closeTopModal()" aria-label="Close">✕</button>
-  <div class="act-modal-sensor" id="qi-act-sensor">
-    <img src="" alt="" class="act-modal-icon" id="qi-act-icon">
-    <span id="qi-act-title">Actions</span>
+    </div>
+
+<div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 56 Q180 16 420 40 Q660 64 900 18 Q1140 -18 1440 26 L1440 56 Z" fill="#1E3A28"/>
+  </svg>
+</div>
+    
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       SECTION 5 — THIS PROJECT CONTRIBUTES TO
+  ════════════════════════════════════════════ -->
+  <section id="contributes-section" class="relative overflow-hidden py-24 md:py-32" style="background-color:#1E3A28;">
+
+     
+
+    <!-- Subtle grain overlay -->
+    <div class="absolute inset-0 pointer-events-none opacity-[0.04]" aria-hidden="true"
+         style="background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\");">
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+
+      <!-- Header -->
+      <div class="text-center mb-16 anim-hidden">
+  <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase mb-5 border" style="background:rgba(255,255,255,0.06);color:#E8B84B;border-color:rgba(232,184,75,0.25);" data-i18n="contributes-eyebrow">
+    Sustainability Impact
   </div>
-  <div class="act-modal-body" id="qi-actuator-grid"></div>
+  <h2 class="font-serif mb-4" style="font-size:clamp(2rem,4vw,3rem);font-weight:400;color:#ffffff;">
+    <span data-i18n="contributes-h2-plain">This Project</span><br><span style="color:#E8B84B;font-style:italic;" data-i18n="contributes-h2-em">Contributes To</span>
+  </h2>
+  <p class="text-sm max-w-xl mx-auto leading-relaxed" style="color:rgba(255,255,255,0.55);" data-i18n="contributes-subhead">
+    AVONIC aligns with the United Nations Sustainable Development Goals, bringing technology to farming communities that need it most.
+  </p>
 </div>
 
-<div class="sys-modal" id="logout-confirm-modal">
-  <div class="mode-ill">
-    <img src="/img/curious-worm.png" alt="Curious Worm">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14 max-w-5xl mx-auto">
+
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_2_text_arc.svg" class="sdg-arc" alt="">
+      </div>
+    </div>
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg2-title">SDG 2: Zero Hunger</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg2-body">
+        AVONIC supports sustainable agriculture by improving compost quality and plant health, helping local farmers grow more nutritious crops with fewer resources.
+      </p>
+    </div>
   </div>
-  <h2 class="sys-modal-title">Log Out?</h2>
-  <p class="sys-modal-desc">Are you sure you wanna logout?</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="authLogout()" style="background: var(--danger); color: #fff;">Yes, log me out</button>
-    <button class="btn-secondary" onclick="closeAllModals()">Cancel</button>
+
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_12_text_arc.svg" class="sdg-arc" alt="">
+      </div>
+    </div>
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg12-title">SDG 12: Responsible Consumption and Production</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg12-body">
+        By recycling organic waste through vermicomposting, AVONIC promotes responsible production and consumption, reducing landfill waste and closing the nutrient loop in farming.
+      </p>
+    </div>
   </div>
+
+  <div class="sdg-card rounded-2xl overflow-hidden cursor-pointer" style="background:#1E3A28;border:1px solid rgba(255,255,255,0.08);">
+    <div class="sdg-img-face flex items-center justify-center" style="padding:2.5rem;aspect-ratio:1/1;">
+      <div class="sdg-stack">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_logo.svg" class="sdg-logo" alt="">
+        <img src="/img/landing-page/sdg/separeted_svgs/sdg_15_text_arc.svg" class="sdg-arc" alt="">
+      </div>
+    </div>
+    <div class="sdg-text-face flex flex-col justify-center" style="padding:2rem;background:#2E5E3A;">
+      <p class="font-bold mb-3" style="color:#E8B84B;font-size:0.875rem;" data-i18n="contributes-sdg15-title">SDG 15: Life on Land</p>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.75rem;line-height:1.6;" data-i18n="contributes-sdg15-body">
+        AVONIC supports the restoration and sustainable management of land ecosystems by improving soil health and promoting sustainable agriculture, helping local farmers cultivate crops responsibly while protecting biodiversity and preventing land degradation.
+      </p>
+    </div>
+  </div>
+
 </div>
 
-<!-- ── Status Pill Modals ─────────────────────────────── -->
-<div class="sys-modal" id="status-modal-battery">
-  <div class="mode-ill" style="margin-bottom:8px;">
-    <div id="bat-modal-ill" style="display:flex;align-items:center;justify-content:center;">
-      <svg id="bat-modal-svg" viewBox="0 0 160 160" width="130" height="130" xmlns="http://www.w3.org/2000/svg">
-        <circle id="bat-modal-circle" cx="80" cy="80" r="72" fill="#2E6B47"/>
-        <!-- Battery body — centred in circle -->
-        <rect x="26" y="62" width="96" height="38" rx="7" ry="7" fill="none" stroke="white" stroke-width="4"/>
-        <!-- Terminal nub -->
-        <rect x="122" y="74" width="10" height="14" rx="3" ry="3" fill="white"/>
-        <!-- Fill clip -->
-        <clipPath id="bat-modal-clip">
-          <rect x="30" y="66" width="88" height="30" rx="4" ry="4"/>
-        </clipPath>
-        <rect id="bat-modal-fill" x="30" y="66" width="0" height="30" rx="4" ry="4"
-              fill="white" clip-path="url(#bat-modal-clip)"/>
-        <!-- chargingIcon.svg — centred over battery -->
-        <image id="bat-modal-bolt"
-          href="/img/bin-status/chargingIcon.svg"
-          x="65" y="60" width="22" height="40" fill="white"
-          style="display:none"/>
+<div class="anim-hidden rounded-2xl px-8 py-6 border flex flex-col md:flex-row items-center gap-4 md:gap-8" style="background:rgba(255,255,255,0.04);border-color:rgba(232,184,75,0.2);">
+  <div class="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center" style="background:rgba(232,184,75,0.15);">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="#E8B84B" opacity="0.7"/></svg>
+  </div>
+  <p class="text-center md:text-left text-sm italic leading-relaxed" style="color:rgba(255,255,255,0.6);" data-i18n="contributes-quote">
+    "By putting smart technology in the hands of Filipino farmers, we're not just improving harvests — we're building a more sustainable future for agriculture."
+  </p>
+  <p class="flex-shrink-0 text-xs font-bold tracking-wide uppercase" style="color:#E8B84B;" data-i18n="contributes-quote-attr">— AVONIC Team</p>
+</div>
+
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+    <path d="M0 28 Q280 60 560 18 Q840 -16 1080 38 Q1260 66 1440 12 L1440 56 L0 56 Z" fill="#F2EDE3"/>
+  </svg>
+</div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       SECTION 6 — FAQ
+  ════════════════════════════════════════════ -->
+  <section id="faq-section" class="relative overflow-hidden py-24 md:py-32" style="background-color:#F2EDE3;">
+
+    <!-- Soft decorative blobs -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style="background:#4A7C3F;opacity:0.05;filter:blur(80px);"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none" style="background:#C89B3C;opacity:0.06;filter:blur(70px);"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-6 md:px-12">
+
+      <!-- Header -->
+<!-- Header -->
+<div class="mb-14 anim-hidden">
+
+  <!-- Badge — centered above -->
+  <div class="flex justify-center mb-6">
+    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.18em] uppercase border" style="background:rgba(74,124,63,0.08);color:#4A7C3F;border-color:rgba(74,124,63,0.2);" data-i18n="faq-badge">
+      Got Questions?
+    </div>
+  </div>
+
+  <!-- Illustration + Heading side by side, centered as a unit -->
+  <div class="flex items-center justify-evenly gap-5 flex-col sm:flex-row">
+
+    <!-- Illustration -->
+    <img
+      src="/img/landing-page/FAQ-illustration.svg"
+      alt="FAQ Illustration"
+      style="width:clamp(90px,12vw,140px);height:auto;object-fit:contain;flex-shrink:0;"
+    />
+
+    <!-- Heading text -->
+    <div class="text-center sm:text-left">
+      <h2 class="font-serif" style="font-weight:400;color:#1A1A1A;line-height:1.08;">
+        <span class="block" style="font-size:clamp(1.8rem,3.5vw,2.6rem);" data-i18n="faq-h2-line1">Frequently&nbsp; Asked</span>
+        <span class="block italic" style="font-size:clamp(2.8rem,5vw,5rem);color:#4A7C3F;" data-i18n="faq-h2-em">Questions</span>
+      </h2>
+    </div>
+
+  </div>
+
+</div>
+
+      <!-- Accordion -->
+      <div id="faq-accordion" class="flex flex-col gap-3 anim-hidden" style="animation:fadeUp 0.7s ease 0.1s forwards;">
+
+        <!-- FAQ Item 1 -->
+        <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
+          <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q1">What sensors does AVONIC use?</span>
+            <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
+              <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a1">
+              AVONIC uses four precision sensors: a soil moisture sensor, a DHT22 temperature and humidity sensor, and an MQ-4 gas sensor to detect harmful methane or ammonia levels. All readings are captured in real-time and transmitted to your AVONIC dashboard via Wi-Fi.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
+          <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q2">Do I need technical knowledge to use AVONIC?</span>
+            <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
+              <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a2">
+              Not at all. AVONIC is designed with Filipino farmers in mind — no coding or tech experience required. Simply plug in your device, connect it to your Wi-Fi, and follow the step-by-step setup tutorial in the app. The dashboard uses simple visuals and plain language to show you exactly what your bin needs.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
+          <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q3">What is the difference between Auto Mode and Manual Mode?</span>
+            <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
+              <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n-html="faq-a3">
+              In <strong style="color:#1A1A1A;">Auto Mode</strong>, AVONIC continuously monitors your bin and automatically activates pumps, fans, or alerts when values go out of the optimal range — a true set-it-and-forget-it experience. In <strong style="color:#1A1A1A;">Manual Mode</strong>, you receive all the same real-time data but control every action yourself, giving you full visibility and hands-on management of your bin.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="faq-item rounded-2xl border overflow-hidden transition-all duration-300" style="background:#ffffff;border-color:#E8E0D0;">
+          <button class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left group" aria-expanded="false">
+            <span class="font-semibold text-sm pr-4" style="color:#1A1A1A;" data-i18n="faq-q4">Is AVONIC suitable for large-scale farms?</span>
+            <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300" style="background:#F2EDE3;">
+              <svg class="faq-arrow transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div class="faq-body overflow-hidden" style="max-height:0;transition:max-height 0.35s ease;">
+            <p class="px-6 pb-5 text-sm leading-relaxed" style="color:#5A5A5A;" data-i18n="faq-a4">
+              AVONIC works great for both home gardeners and larger operations. Each unit monitors one bin independently, and multiple units can be registered to a single account — giving you a unified dashboard view across all your bins from one screen.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       SECTION 7 — FOOTER
+  ════════════════════════════════════════════ -->
+  <footer id="footer" class="relative overflow-hidden pt-20 pb-8" style="background-color:#2C2C2C;">
+
+    <!-- Top wave from FAQ cream to footer green -->
+    <div class="absolute -top-1 left-0 right-0 pointer-events-none" style="margin-top:-1px;">
+      <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full" style="display:block;">
+        <path d="M0 0 Q360 60 720 30 Q1080 0 1440 40 L1440 0 Z" fill="#F2EDE3"/>
       </svg>
     </div>
-  </div>
-  <h2 class="sys-modal-title" id="status-modal-bat-title">Battery</h2>
-  <p class="sys-modal-desc" id="status-modal-bat-desc">Checking battery level…</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
-    <button class="btn-secondary" id="status-bat-dontshow" onclick="dismissStatusModal('battery')">Don't show this again</button>
-  </div>
-</div>
 
-<div class="sys-modal" id="status-modal-water">
-  <div class="mode-ill">
-    <div id="water-modal-ill" style="display:flex;align-items:center;justify-content:center;">
-      <svg id="water-modal-svg" viewBox="14 12 132 158" width="124" height="148" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Drop silhouette used as both clip + outline -->
-          <clipPath id="water-drop-clip">
-            <path d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"/>
-          </clipPath>
-          <!-- Ripple gradient for fill surface -->
-          <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#7dd3fc"/>
-            <stop offset="100%" stop-color="#2563eb" stop-opacity="0.85"/>
-          </linearGradient>
-        </defs>
+    <!-- Ambient glow -->
+    <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full pointer-events-none" style="background:#555555;opacity:0.3;filter:blur(80px);"></div>
 
-        <!-- Drop background (empty = light grey) -->
-        <path id="water-drop-bg"
-          d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"
-          fill="#e8f4fd"/>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 
-        <!-- Water fill — clipped to drop shape, height driven by JS -->
-        <rect id="water-modal-fill"
-          x="22" y="164" width="116" height="0"
-          fill="url(#water-grad)"
-          clip-path="url(#water-drop-clip)"/>
+      <!-- Top grid: Logo + cols -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 pb-14 border-b" style="border-color:rgba(255,255,255,0.1);">
 
-        <!-- Surface wave on top of fill -->
-        <g id="water-wave-group" clip-path="url(#water-drop-clip)" style="display:none">
-          <ellipse id="water-wave" cx="80" cy="164" rx="60" ry="7"
-            fill="#93c5fd" opacity="0.55">
-          </ellipse>
-        </g>
+        <!-- Brand col -->
+        <div class="md:col-span-1">
 
-        <!-- Drop outline (always on top) -->
-        <path
-          d="M80,18 C80,18 28,82 28,118 C28,148 52,164 80,164 C108,164 132,148 132,118 C132,82 80,18 80,18 Z"
-          fill="none" stroke="#1e3a5f" stroke-width="5" stroke-linejoin="round"/>
+          <!-- Logo -->
+          <a href="index.html" class="flex items-center gap-2.5 group">
+            <img src="./img/logo/AVONIC LOGO.svg" alt="AVONIC" 
+              onerror="this.style.display='none'"
+              class="h-12 w-auto" />
+          </a>
 
-      </svg>
+          <p class="text-sm leading-relaxed mb-6" style="color:rgba(255,255,255,0.5);" data-i18n="footer-tagline">
+            Smart vermicomposting IoT for Filipino farmers. Monitor, automate, and grow — from anywhere.
+          </p>
+          <!-- Social icons -->
+          <div class="flex items-center gap-3">
+            <!-- Facebook -->
+            <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200 hover:-translate-y-0.5" style="border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.65)"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <!-- Instagram -->
+            <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200 hover:-translate-y-0.5" style="border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <!-- GitHub -->
+            <a href="#" aria-label="GitHub" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200 hover:-translate-y-0.5" style="border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.65)"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Nav col: Product -->
+        <div>
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-product">Product</h4>
+          <ul class="space-y-3">
+            <li><a href="#watches-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-features">Features</a></li>
+            <li><a href="#modes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-hiw">How It Works</a></li>
+            <li><a href="#get-started-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-gs">Get Started</a></li>
+            <li><a href="#tutorials-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-tutorials">Tutorials</a></li>
+          </ul>
+        </div>
+
+        <!-- Nav col: Learn -->
+        <div>
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-learn">Learn</h4>
+          <ul class="space-y-3">
+            <li><a href="#farmers-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-farmers">Filipino Farmers</a></li>
+            <li><a href="#system-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-vermi">Vermicomposting</a></li>
+            <li><a href="#contributes-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-sdg">SDG Impact</a></li>
+            <li><a href="#faq-section" class="text-sm transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.5);" data-i18n="footer-link-faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- CTA col -->
+        <div>
+          <h4 class="text-xs font-bold tracking-[0.2em] uppercase mb-5" style="color:#E8B84B;" data-i18n="footer-col-gs">Get Started</h4>
+          <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.5);" data-i18n="footer-gs-body">
+            Ready to put your vermicomposting bin on autopilot? Register your AVONIC account today.
+          </p>
+          <a href="#"
+               class="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 text-black"
+               style="background:#ECBD01; border: solid black 1px;" data-i18n="footer-gs-cta">
+              Register Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-7">
+        <p class="text-xs" style="color:rgba(255,255,255,0.3);" data-i18n="footer-copyright">
+          © 2025 AVONIC. All rights reserved. Built for Filipino farmers. 🇵🇭
+        </p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-privacy">Privacy Policy</a>
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-terms">Terms of Service</a>
+          <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,0.3);" data-i18n="footer-contact">Contact</a>
+        </div>
+      </div>
+
     </div>
-  </div>
-  <h2 class="sys-modal-title" id="status-modal-water-title">Water Tank</h2>
-  <p class="sys-modal-desc" id="status-modal-water-desc">Checking water level…</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
-    <button class="btn-secondary" id="status-water-dontshow" onclick="dismissStatusModal('water')">Don't show this again</button>
-  </div>
-</div>
+  </footer>
 
-<div class="sys-modal" id="status-modal-temp">
-  <div class="mode-ill">
-    <div id="temp-modal-ill" style="display:flex;align-items:center;justify-content:center;">
-      <!--
-        Thermometer geometry (viewBox 30 8 100 158):
-        Tube: x=70–90 (width 20), top cap centre cx=80 cy=22 r=10
-        Bulb: cx=80 cy=128 r=22
-        Left side:  x=70, from y=22 down to where bulb tangent meets → y=128
-        Right side: x=90, same
-        Single path traces: top-cap arc → right side → bulb arc (CW bottom) → left side → close
-      -->
-      <svg id="temp-modal-svg" viewBox="30 8 100 158" width="88" height="138" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Clip = exact same shape as the outline path -->
-          <clipPath id="therm-body-clip">
-            <path d="
-              M80,12
-              A10,10 0 0 1 90,22
-              L90,113
-              A22,22 0 1 1 70,113
-              L70,22
-              A10,10 0 0 1 80,12
-              Z"/>
-          </clipPath>
 
-          <linearGradient id="therm-grad-cold"   x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#93c5fd"/>
-            <stop offset="100%" stop-color="#2563eb"/>
-          </linearGradient>
-          <linearGradient id="therm-grad-warm"   x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#fde68a"/>
-            <stop offset="100%" stop-color="#f59e0b"/>
-          </linearGradient>
-          <linearGradient id="therm-grad-hot"    x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#fca5a5"/>
-            <stop offset="100%" stop-color="#ef4444"/>
-          </linearGradient>
-          <linearGradient id="therm-grad-normal" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#6ee7b7"/>
-            <stop offset="100%" stop-color="#10b981"/>
-          </linearGradient>
-        </defs>
+  <!-- ════════════════════════════════════════════
+       SCRIPTS
+  ════════════════════════════════════════════ -->
+<script>
+/* ── Sticky nav ── */
+const navbar    = document.getElementById('navbar');
+const navInner  = document.getElementById('nav-inner');
+const navLogin  = document.getElementById('nav-login');
+const navLogo   = document.getElementById('nav-logo');
+const navCta    = document.getElementById('nav-cta');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const iconOpen   = document.getElementById('icon-open');
+const iconClose  = document.getElementById('icon-close');
+let menuOpen = false;
 
-        <!-- Body background (empty/grey) -->
-        <path d="
-          M80,12
-          A10,10 0 0 1 90,22
-          L90,113
-          A22,22 0 1 1 70,113
-          L70,22
-          A10,10 0 0 1 80,12
-          Z"
-          fill="#efefed"/>
+navInner.style.transition   = 'background 0.3s ease, border-radius 0.3s ease, outline 0.3s ease, padding 0.3s ease';
+navInner.style.borderRadius = '46px';
+navInner.style.outline      = '1px solid transparent';
+navInner.style.padding      = '10px 0px';
 
-        <!-- Mercury fill — single rect clipped to body shape, rises from bottom -->
-        <!-- Total clippable height: from y=12 (top) to y=150 (bulb bottom) = 138px -->
-        <rect id="therm-tube-fill"
-          x="56" y="101" width="48" height="50"
-          fill="url(#therm-grad-normal)"
-          clip-path="url(#therm-body-clip)"/>
+// Scroll pill effect
+window.addEventListener('scroll', () => {
+  // Query inside the event so it catches the newly injected dropdown from lang.js!
+  const langBtn = document.getElementById('lang-btn-desktop');
+  
+  if (window.scrollY > 50) {
+    navInner.style.background   = '#E8E8E8';
+    navInner.style.borderRadius = '46px';
+    navInner.style.outline      = '1px solid black';
+    navInner.style.padding      = '10px 32px';
+    navLogin.style.color        = '#1a1a1a';
+    hamburger.style.color       = '#1E3A28';
+    navLogo.src = './img/logo/AVONIC LOGO GREEN.svg';
+    if (langBtn) langBtn.style.color = '#1a1a1a';
+  } else {
+    navInner.style.background   = 'transparent';
+    navInner.style.borderRadius = '46px';
+    navInner.style.outline      = '2px solid transparent';
+    navInner.style.padding      = '10px 0px';
+    navLogin.style.color        = 'rgba(255,255,255,0.75)';
+    hamburger.style.color       = 'white';
+    navLogo.src = './img/logo/AVONIC LOGO.svg';
+    if (langBtn) langBtn.style.color = 'rgba(255,255,255,0.75)';
+  }
+}, { passive: true });
 
-        <!-- Outline — single unified stroke, no seam -->
-        <path d="
-          M80,12
-          A10,10 0 0 1 90,22
-          L90,113
-          A22,22 0 1 1 70,113
-          L70,22
-          A10,10 0 0 1 80,12
-          Z"
-          fill="none" stroke="#1e293b" stroke-width="3.5"
-          stroke-linejoin="round"/>
+// Mobile menu toggle
+hamburger.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  mobileMenu.style.maxHeight = menuOpen ? mobileMenu.scrollHeight + 'px' : '0';
+  iconOpen.classList.toggle('hidden', menuOpen);
+  iconClose.classList.toggle('hidden', !menuOpen);
+});
 
-        <!-- Tick marks -->
-        <line x1="90" y1="38"  x2="96" y2="38"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
-        <line x1="90" y1="58"  x2="98" y2="58"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
-        <line x1="90" y1="78"  x2="96" y2="78"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
-        <line x1="90" y1="98"  x2="98" y2="98"  stroke="#c5c2bc" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </div>
-  </div>
-  <h2 class="sys-modal-title" id="status-modal-temp-title">Water Temperature</h2>
-  <p class="sys-modal-desc" id="status-modal-temp-desc">Checking temperature…</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="closeTopModal()">Okay</button>
-  </div>
-</div>
-</div>
-<!-- ── End Status Pill Modals ─────────────────────────── -->
+// Close menu on nav link click
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuOpen = false;
+    mobileMenu.style.maxHeight = '0';
+    iconOpen.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+  });
+});
+    /* ── Scroll-triggered fade-up animations ── */
+    const animEls = document.querySelectorAll('.anim-hidden');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.remove('anim-hidden');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+    animEls.forEach(el => io.observe(el));
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/js/chart.umd.min.js"></script>
-<script src="LoadingState.js"></script>
-<script src="app.js"></script>
-<script src="dummy-data-injector.js"></script>
+    /* ── Force-reveal hero elements on load (already in viewport) ── */
+    window.addEventListener('load', () => {
+      document.querySelectorAll('#hero-section .anim-hidden').forEach(el => {
+        el.classList.remove('anim-hidden');
+      });
+
+      /* ── Fade in hero video once it can play ── */
+      const heroVideo = document.getElementById('hero-video');
+      if (heroVideo) {
+        const fadeIn = () => { heroVideo.style.opacity = '1'; };
+        if (heroVideo.readyState >= 3) {
+          fadeIn();
+        } else {
+          heroVideo.addEventListener('canplay', fadeIn, { once: true });
+          setTimeout(fadeIn, 800);
+        }
+      }
+    });
+
+    /* ── Animate gauge rings when scrolled into view ── */
+    const gaugeEls = document.querySelectorAll('circle[stroke-dasharray]');
+    gaugeEls.forEach(g => {
+      g.dataset.target = g.getAttribute('stroke-dashoffset') || '81.68';
+      g.style.strokeDashoffset = '163.36';
+      g.style.transition = 'stroke-dashoffset 1.2s ease 0.2s';
+    });
+    const gaugeObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.strokeDashoffset = e.target.dataset.target;
+          gaugeObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    gaugeEls.forEach(g => gaugeObs.observe(g));
+
+    /* ── Phase 3: Mode tab switching ── */
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const modePanels = document.querySelectorAll('.mode-panel');
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.mode;
+        modeBtns.forEach(b => {
+          b.classList.remove('active-mode');
+          b.style.background = 'transparent';
+          b.style.color = '#5A5A5A';
+          b.style.boxShadow = 'none';
+        });
+        btn.classList.add('active-mode');
+        btn.style.background = '#1E3A28';
+        btn.style.color = '#ffffff';
+        btn.style.boxShadow = '0 2px 12px rgba(30,58,40,0.25)';
+        modePanels.forEach(p => {
+          p.style.display = p.dataset.mode === target ? 'flex' : 'none';
+        });
+      });
+    });
+    /* Trigger first mode on load */
+    if (modeBtns.length) modeBtns[0].click();
+
+    /* ── Ensure fadeUp keyframe exists ── */
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}`;
+    document.head.appendChild(styleEl);
+
+    /* ── FAQ Accordion ── */
+    document.querySelectorAll('.faq-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item    = trigger.closest('.faq-item');
+        const body    = item.querySelector('.faq-body');
+        const arrow   = item.querySelector('.faq-arrow');
+        const icon    = item.querySelector('.faq-icon');
+        const isOpen  = trigger.getAttribute('aria-expanded') === 'true';
+
+        /* Close all others */
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+          i.querySelector('.faq-body').style.maxHeight = '0';
+          i.querySelector('.faq-arrow').style.transform = 'rotate(0deg)';
+          i.querySelector('.faq-icon').style.background = '#F2EDE3';
+          i.style.borderColor = '#E8E0D0';
+        });
+
+        /* Toggle current */
+        if (!isOpen) {
+          trigger.setAttribute('aria-expanded', 'true');
+          body.style.maxHeight = body.scrollHeight + 'px';
+          arrow.style.transform = 'rotate(180deg)';
+          icon.style.background = '#1E3A28';
+          arrow.setAttribute('stroke', '#E8B84B');
+          item.style.borderColor = '#4A7C3F';
+        }
+      });
+    });
+  </script>
+   
+ <script>
+(function () {
+  const LP_CONFIGS = {
+    soilMoisture: { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, randomMin: 20,  randomMax: 100, defaultColor: '#4A7C3F' },
+    temperature:  { optimal_min: 22, optimal_max: 28, critical_min: 15, critical_max: 35, randomMin: 10,  randomMax: 42,  defaultColor: '#C89B3C' },
+    humidity:     { optimal_min: 60, optimal_max: 80, critical_min: 40, critical_max: 90, randomMin: 20,  randomMax: 100, defaultColor: '#2E6E8E' },
+    gasLevels:    { optimal_min: 0,  optimal_max: 100, critical_min: 0, critical_max: 200, randomMin: 0,  randomMax: 250, defaultColor: '#7A5C3A' }
+  };
+
+  const COLOR_MAP = { optimal: null, warning: '#D97706', critical: '#EF4444' };
+
+  // Local dictionary for dynamic live statuses
+  const STATUS_DICT = {
+    en: {
+      optimal:  'Optimal',
+      critCold: 'Critically Cold',
+      tooCold:  'Too Cold',
+      critHot:  'Critically Hot',
+      tooHot:   'Too Hot',
+      critDry:  'Critically Dry',
+      dry:      'Dry',
+      critWet:  'Critically Wet',
+      wet:      'Wet',
+      toxicGas: 'Toxic Gas',
+      highGas:  'High Gas'
+    },
+    tl: {
+      optimal:  'Pinakamainam',
+      critCold: 'Napakalamig (Kritikal)',
+      tooCold:  'Masyadong Malamig',
+      critHot:  'Napakainit (Kritikal)',
+      tooHot:   'Masyadong Mainit',
+      critDry:  'Napakatuyo (Kritikal)',
+      dry:      'Masyadong Tuyo',
+      critWet:  'Napakabasa (Kritikal)',
+      wet:      'Masyadong Basa',
+      toxicGas: 'Nakakalasong Gas',
+      highGas:  'Mataas na Gas'
+    }
+  };
+
+  function lpEvaluate(sensorType, value) {
+    let statusKey = 'optimal', cls = 'optimal';
+    switch (sensorType) {
+      case 'temperature':
+        if      (value < 15) { statusKey = 'critCold'; cls = 'critical'; }
+        else if (value < 22) { statusKey = 'tooCold';  cls = 'warning';  }
+        else if (value > 35) { statusKey = 'critHot';  cls = 'critical'; }
+        else if (value > 28) { statusKey = 'tooHot';   cls = 'warning';  }
+        break;
+      case 'soilMoisture':
+      case 'humidity':
+        if      (value < 40) { statusKey = 'critDry';  cls = 'critical'; }
+        else if (value < 60) { statusKey = 'dry';      cls = 'warning';  }
+        else if (value > 90) { statusKey = 'critWet';  cls = 'critical'; }
+        else if (value > 80) { statusKey = 'wet';      cls = 'warning';  }
+        break;
+      case 'gasLevels':
+        if      (value > 200) { statusKey = 'toxicGas'; cls = 'critical'; }
+        else if (value > 100) { statusKey = 'highGas';  cls = 'warning';  }
+        break;
+    }
+    return { statusKey, cls };
+  }
+
+  // Stores the last generated numbers so we can re-translate without randomizing
+  let currentValues = { soilMoisture: 0, temperature: 0, humidity: 0, gasLevels: 0 };
+
+  function lpUpdateCard(sensorType, value) {
+    const cfg    = LP_CONFIGS[sensorType];
+    const result = lpEvaluate(sensorType, value);
+    const maxVal = sensorType === 'gasLevels' ? 250 : 100;
+    const pct    = Math.min(1, Math.max(0, value / maxVal));
+    const offset = 163.36 - (pct * 163.36);
+    const color  = COLOR_MAP[result.cls] || cfg.defaultColor;
+
+    const ring   = document.getElementById('lp-ring-'   + sensorType);
+    const valEl  = document.getElementById('lp-val-'    + sensorType);
+    const statEl = document.getElementById('lp-status-' + sensorType);
+
+    // Read current language applied by lang.js
+    const currentLang = document.documentElement.lang === 'tl' ? 'tl' : 'en';
+    const statusText  = STATUS_DICT[currentLang][result.statusKey];
+
+    if (ring)   { ring.style.strokeDashoffset = offset.toFixed(2); ring.style.stroke = color; }
+    if (valEl)  { valEl.textContent = parseFloat(value).toFixed(1); }
+    if (statEl) { 
+      statEl.textContent = statusText; 
+      statEl.style.color = color; 
+    }
+  }
+
+  function lpRandomize() {
+    Object.keys(LP_CONFIGS).forEach(sensor => {
+      const cfg = LP_CONFIGS[sensor];
+      const val = cfg.randomMin + Math.random() * (cfg.randomMax - cfg.randomMin);
+      currentValues[sensor] = val; // save for language toggle
+      lpUpdateCard(sensor, val);
+    });
+  }
+
+  function lpRetranslate() {
+    Object.keys(LP_CONFIGS).forEach(sensor => {
+      lpUpdateCard(sensor, currentValues[sensor]);
+    });
+  }
+
+  // Initialize
+  lpRandomize();
+  setInterval(lpRandomize, 3000);
+
+  // Instantly re-translate live numbers when language dropdown is changed
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === "lang") {
+        lpRetranslate();
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+
+})();
+</script>
+
+<script>
+  /* tap toggle for mobile */
+ document.querySelectorAll('.sdg-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('active'));
+  });
+</script>
+
+
+<script>
+  document.querySelectorAll('#nav-cta, #hero-section a, #get-started-section a[href="#"], #tutorials-section a[href="#"], #footer a[href="#"]').forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    btn.style.boxShadow = '1px 3px 0px 0px rgba(0,0,0,1)';
+    btn.style.transform = 'translateY(-1px)';
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.boxShadow = 'none';
+    btn.style.transform = 'translateY(0)';
+  });
+});
+
+document.querySelectorAll('.metric-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.boxShadow = '0px 7.293328762054443px 0px 0px rgba(0,0,0,1)';
+    card.style.transform = 'translateY(-2px)';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.boxShadow = 'none';
+    card.style.transform = 'translateY(0)';
+  });
+});
+</script>
+  <!-- Language switcher -->
+  <script src="lang.js"></script>
+  <script src="welcome-modal.js"></script>
+
+  <!-- Scroll reveal animations -->
+  <script src="scroll-reveal.js"></script>
 </body>
 </html>

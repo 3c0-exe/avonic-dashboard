@@ -65,30 +65,35 @@ const Token = {
 // EVALUATE CONDITION
 // ════════════════════════════════════
 function evaluateCondition(sensorType, value) {
-  if (!WORM_CONFIGS[sensorType]) return { status: 'Unknown', statusClass: 'warning', wormImage: 'Normal.png' };
-  const ranges = WORM_CONFIGS[sensorType];
-  let status = 'Optimal', statusClass = 'optimal', wormImage = 'Normal.png';
+    if (!WORM_CONFIGS[sensorType]) {
+        return { status: (window.t ? window.t('status-unknown') : 'Unknown'), statusClass: 'warning', wormImage: 'Normal.png' };
+    }
+    const ranges = WORM_CONFIGS[sensorType];
+    const _t = window.t || function(k){ return k; };
+    let status = _t('status-optimal');
+    let statusClass = 'optimal';
+    let wormImage = 'Normal.png';
 
-  switch(sensorType) {
-    case 'temperature':
-      if      (value < ranges.critical_min) { status = 'Critically Cold'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-      else if (value < ranges.optimal_min)  { status = 'Too Cold';         statusClass = 'warning';  wormImage = 'Too Dry.png'; }
-      else if (value > ranges.critical_max) { status = 'Critically Hot';   statusClass = 'critical'; wormImage = 'Too Hot.png'; }
-      else if (value > ranges.optimal_max)  { status = 'Too Hot';          statusClass = 'warning';  wormImage = 'Too Hot.png'; }
-      break;
-    case 'soilMoisture':
-    case 'humidity':
-      if      (value < ranges.critical_min) { status = 'Critically Dry'; statusClass = 'critical'; wormImage = 'Too Dry.png'; }
-      else if (value < ranges.optimal_min)  { status = 'Dry';             statusClass = 'warning';  wormImage = 'Too Dry.png'; }
-      else if (value > ranges.critical_max) { status = 'Critically Wet'; statusClass = 'critical'; wormImage = 'Too Wet.png'; }
-      else if (value > ranges.optimal_max)  { status = 'Wet';             statusClass = 'warning';  wormImage = 'Too Wet.png'; }
-      break;
-    case 'gasLevels':
-      if      (value > ranges.critical_max) { status = 'Toxic Gas';  statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
-      else if (value > ranges.optimal_max)  { status = 'High Gas';   statusClass = 'warning';  wormImage = 'Gas Too High.png'; }
-      break;
-  }
-  return { status, statusClass, wormImage };
+    switch(sensorType) {
+        case 'temperature':
+            if (value < ranges.critical_min) { status = _t('status-critically-cold'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = _t('status-too-cold'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = _t('status-critically-hot'); statusClass = 'critical'; wormImage = 'Too Hot.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-too-hot'); statusClass = 'warning'; wormImage = 'Too Hot.png'; }
+            break;
+        case 'soilMoisture':
+        case 'humidity':
+            if (value < ranges.critical_min) { status = _t('status-critically-dry'); statusClass = 'critical'; wormImage = 'Too Dry.png'; }
+            else if (value < ranges.optimal_min) { status = _t('status-dry'); statusClass = 'warning'; wormImage = 'Too Dry.png'; }
+            else if (value > ranges.critical_max) { status = _t('status-critically-wet'); statusClass = 'critical'; wormImage = 'Too Wet.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-wet'); statusClass = 'warning'; wormImage = 'Too Wet.png'; }
+            break;
+        case 'gasLevels':
+            if (value > ranges.critical_max) { status = _t('status-toxic-gas'); statusClass = 'critical'; wormImage = 'Gas Too High.png'; }
+            else if (value > ranges.optimal_max) { status = _t('status-high-gas'); statusClass = 'warning'; wormImage = 'Gas Too High.png'; }
+            break;
+    }
+    return { status, statusClass, wormImage };
 }
 
 // ════════════════════════════════════
@@ -389,8 +394,10 @@ function renderHome(d) {
   } else {
     setText('home-temp-val', '-- C°');
   }
-  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?'Auto Mode':'Manual Mode'}`;
-  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?'Auto Mode':'Manual Mode'}`;
+
+  if ($('home-b1-mode')) $('home-b1-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[1]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
+  if ($('home-b2-mode')) $('home-b2-mode').innerHTML = `<span class="bin-dot"></span> ${S.mode[2]==='auto'?(window.t?window.t('app-mode-auto'):'Auto Mode'):(window.t?window.t('app-mode-manual'):'Manual Mode')}`;
+
   updateStatusPillAlerts(d);
   renderRecentQI();
 }
@@ -423,9 +430,19 @@ function renderBin(n, d) {
     }
   }
   const now = new Date();
-  setText(`b${n}-updated`, 'Updated at ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0'));
+  const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const updatedLabel = window.t ? window.t('app-updated-at') : 'Updated at';
+  setText(`b${n}-updated`, updatedLabel + ' ' + timeStr);
+
   const mb = $(`b${n}-mode-btn`);
-  if(mb) { const isAuto = S.mode[n]==='auto'; mb.innerHTML = isAuto?'Auto':'Manual'; mb.className = `mode-btn ${isAuto?'auto':'manual'}`; }
+  if(mb){
+    const isAuto = S.mode[n] === 'auto';
+    const modeLabel = isAuto
+      ? (window.t ? window.t('app-mode-auto-short') : 'Auto')
+      : (window.t ? window.t('app-mode-manual-short') : 'Manual');
+    mb.innerHTML = modeLabel;
+    mb.className = `mode-btn ${isAuto ? 'auto' : 'manual'}`;
+  }
 }
 
 // ════════════════════════════════════
@@ -472,10 +489,11 @@ async function loadMode() {
 
 function openModeModal(binNum) {
   const targetMode = S.mode[binNum] === 'auto' ? 'manual' : 'auto';
-  $('mode-modal-title').textContent = targetMode === 'auto' ? 'Activate Auto Mode?' : 'Activate Manual Mode?';
-  $('mode-modal-desc').textContent  = targetMode === 'auto'
-    ? 'Turning on auto-mode makes the system operate by itself.'
-    : 'Turning on Manual Mode disables auto-mode, which also means risk for potential human errors.';
+
+ const _t = window.t || function(k){ return k; };
+  $('mode-modal-title').textContent = targetMode === 'auto' ? _t('modal-mode-auto-title') : _t('modal-mode-manual-title');
+  $('mode-modal-desc').textContent = targetMode === 'auto' ? _t('modal-mode-auto-desc') : _t('modal-mode-manual-desc');
+
   const ill = $('mode-ill-img');
   if (ill) ill.src = targetMode === 'auto' ? '/img/photos/AutoMode.png' : '/img/photos/ManualMode.png';
   $('mode-confirm-btn').onclick = async () => {
@@ -483,7 +501,11 @@ function openModeModal(binNum) {
     const mb = $(`b${binNum}-mode-btn`);
     if(mb) { const isAuto = targetMode==='auto'; mb.innerHTML = isAuto?'Auto':'Manual'; mb.className = `mode-btn ${isAuto?'auto':'manual'}`; }
     const hmb = $(`home-b${binNum}-mode`);
-    if(hmb) hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode==='auto'?'Auto Mode':'Manual Mode'}`;
+    if(hmb) {
+      const _t = window.t || function(k){ return k; };
+      hmb.innerHTML = `<span class="bin-dot"></span> ${targetMode === 'auto' ? _t('app-mode-auto') : _t('app-mode-manual')}`;
+    }
+
     if(S.data) renderBin(binNum, S.data);
     if($('sensor-detail-modal')?.classList.contains('show'))
       openSensorModal(S.activeModalBin, S.activeModalSensor, $('sm-title').textContent, $('sm-icon').src);
@@ -667,34 +689,77 @@ function updateStatusPillAlerts(d) {
   }
   if (waterState !== StatusModal._lastWaterState) {
     StatusModal._lastWaterState = waterState;
-    if ((waterState==='low'||waterState==='full') && !StatusModal.dismissed.water) openStatusModal('water');
+    if ((waterState === 'low' || waterState === 'full') && !StatusModal.dismissed.water) {
+      openStatusModal('water');
+    }
   }
 }
 function openStatusModal(type) {
   const d = S.data;
+  const _t = window.t || function(k){ return k; }; // Helper to fetch translation
+
   if (type === 'battery') {
-    const v = d?(d.battery_percent||0):0, state = getStatusPillState('battery',d), charging = d?(d.charging||false):false;
-    setText('status-modal-bat-title', state==='low'?'Battery Low':state==='full'?'Battery Full':charging?'Charging…':'Battery Status');
-    setText('status-modal-bat-desc',  state==='low'?`Battery is at ${v}%. Please charge your bin.`:state==='full'?`Battery is at ${v}%. Kindly unplug the charger.`:`Battery level is at ${v}%.`);
+    const v     = d ? (d.battery_percent || 0) : 0;
+    const state = getStatusPillState('battery', d);
+    const charging = d ? (d.charging || false) : false;
+    const titleEl = $('status-modal-bat-title');
+    const descEl  = $('status-modal-bat-desc');
+    const dontEl  = $('status-bat-dontshow');
+
+    if (state === 'low') {
+      if (titleEl) titleEl.textContent = _t('status-bat-low-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-low-desc').replace('{v}', v);
+    } else if (state === 'full') {
+      if (titleEl) titleEl.textContent = _t('status-bat-full-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-full-desc').replace('{v}', v);
+    } else {
+      if (titleEl) titleEl.textContent = charging ? _t('status-bat-charge-title') : _t('status-bat-title');
+      if (descEl)  descEl.textContent  = _t('status-bat-desc').replace('{v}', v);
+    }
+
     updateBatteryModalSVG(v, charging, state);
     const dontEl = $('status-bat-dontshow'); if(dontEl) dontEl.style.display = (state==='low'||state==='full')?'':'none';
     openModal('status-modal-battery');
   } else if (type === 'water') {
-    const v = d?(d.water_level!=null?d.water_level:0):0, state = getStatusPillState('water',d);
-    setText('status-modal-water-title', state==='low'?'Water Tank Low':state==='full'?'Water Tank Full':'Water Tank');
-    setText('status-modal-water-desc',  state==='low'?`Water is at ${v}%. Kindly refill your water tank.`:state==='full'?`Water is at ${v}%. Tank is full.`:`Water level is at ${v}%.`);
+    const v     = d ? (d.water_level != null ? d.water_level : 0) : 0;
+    const state = getStatusPillState('water', d);
+    const titleEl = $('status-modal-water-title');
+    const descEl  = $('status-modal-water-desc');
+    const dontEl  = $('status-water-dontshow');
+
+    if (state === 'low') {
+      if (titleEl) titleEl.textContent = _t('status-water-low-title');
+      if (descEl)  descEl.textContent  = _t('status-water-low-desc').replace('{v}', v);
+    } else if (state === 'full') {
+      if (titleEl) titleEl.textContent = _t('status-water-full-title');
+      if (descEl)  descEl.textContent  = _t('status-water-full-desc').replace('{v}', v);
+    } else {
+      if (titleEl) titleEl.textContent = _t('status-water-title');
+      if (descEl)  descEl.textContent  = _t('status-water-desc').replace('{v}', v);
+    }
+    
     updateWaterModalSVG(v, state);
     const dontEl = $('status-water-dontshow'); if(dontEl) dontEl.style.display = (state==='low'||state==='full')?'':'none';
     openModal('status-modal-water');
   } else if (type === 'temp') {
-    const v = d?d.ds18b20_temp:null;
-    setText('status-modal-temp-title', 'Water Temperature');
-    setText('status-modal-temp-desc',  v!=null?`Current water temperature is ${parseFloat(v).toFixed(1)} °C.`:'No temperature data yet.');
+    const v = d ? d.ds18b20_temp : null;
+    const titleEl = $('status-modal-temp-title');
+    const descEl  = $('status-modal-temp-desc');
+    
+    if (titleEl) titleEl.textContent = _t('status-temp-title');
+    if (descEl)  descEl.textContent  = v != null 
+        ? _t('status-temp-desc').replace('{v}', parseFloat(v).toFixed(1)) 
+        : _t('status-temp-nodata');
+        
     updateTempModalSVG(v);
     openModal('status-modal-temp');
   }
 }
-function dismissStatusModal(type) { StatusModal.dismissed[type] = true; closeTopModal(); }
+function dismissStatusModal(type) {
+  StatusModal.dismissed[type] = true;
+  closeTopModal();
+}
+
 window.openStatusModal = openStatusModal;
 window.StatusModal = StatusModal;
 
@@ -726,18 +791,19 @@ async function fetchQIData() {
 }
 
 function renderQI() {
-  const NM    = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
-  const UNITS = { soilMoisture:'%', temperature:'°C', humidity:'%', gasLevels:'ppm' };
+  const h = S.hist, bin = 'b' + S.qiBin, data = h[bin][S.qiSens] || [], lbs = h.labels;
   const ICONS = {
     soilMoisture: '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg',
     temperature:  '/img/monitoring/Sensor Icons/Temperature Icon.svg',
     humidity:     '/img/monitoring/Sensor Icons/Humidity Icon.svg',
     gasLevels:    '/img/monitoring/Sensor Icons/Gas Icon.svg'
   };
-  const R = CFG.OPT[S.qiSens], unit = UNITS[S.qiSens];
+  const R = CFG.OPT[S.qiSens];
+  const _t = window.t || function(k){ return k; };
+  setText('qi-sensor-heading', _t('app-sensor-' + S.qiSens));
 
-  setText('qi-sensor-heading', NM[S.qiSens]);
-  const iconEl = $('qi-sensor-icon'); if(iconEl) iconEl.src = ICONS[S.qiSens];
+  const iconEl = $('qi-sensor-icon');
+  if(iconEl) iconEl.src = ICONS[S.qiSens];
 
   const now = new Date();
   const dateEl = $('qi-date-block');
@@ -769,19 +835,19 @@ function renderQI() {
     if(actionBtn) { actionBtn.disabled=!needsAction; actionBtn.title=needsAction?'View recommended actions':'No actions needed'; }
     if(actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
-    ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => setText(id,'--'));
-    setText('qi-insight', QICache.loading ? 'Loading...' : 'No data yet');
+    ['qi-min','qi-avg','qi-max','qi-recent'].forEach(id => setText(id, '--'));
+    setText('qi-insight', _t('app-data-no-data'));
   }
 
-  const tbody = $('qi-tbody'); if(!tbody) return;
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td class="qi-empty" colspan="3">${QICache.loading?'Loading data...':'Waiting for data...'}</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = data.slice(0,12).map(({val, ts}) => {
-    const time = ts ? new Date(ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '--';
-    const s = val < R.critical_min ? 'Low' : val > R.critical_max ? 'High' : 'Normal';
-    return `<tr><td>${time}</td><td>${fmt(val)} ${unit}</td><td class="${s==='Normal'?'s-ok':s==='High'?'s-hi':'s-lo'}">${s}</td></tr>`;
+  const tbody = $('qi-tbody');
+  if(!tbody) return;
+  if(!data.length){ tbody.innerHTML = `<tr><td class="qi-empty" colspan="3">${_t('app-data-waiting')}</td></tr>`; return; }
+  const st = Math.max(0, data.length - 12);
+  tbody.innerHTML = data.slice(st).map((v, i) => {
+    const l = lbs[st+i] || '--';
+    const s = v < R.critical_min ? 'Low' : v > R.critical_max ? 'High' : 'Normal';
+    const c = s === 'Normal' ? 's-ok' : s === 'High' ? 's-hi' : 's-lo';
+    return `<tr><td>${l}</td><td>${fmt(v)} ${R.unit}</td><td class="${c}">${s}</td></tr>`;
   }).join('');
 }
 
@@ -896,8 +962,8 @@ function resizeBFCanvas() {
 }
 
 function renderBF() {
-  const NM = { soilMoisture:'Soil Moisture', temperature:'Temperature', humidity:'Humidity', gasLevels:'Gas Levels' };
-  setText('bf-sensor-heading', NM[S.bfSens]);
+  const _t = window.t || function(k){ return k; };
+  setText('bf-sensor-heading', _t('app-sensor-' + S.bfSens));
   updateBF();
 }
 
@@ -926,9 +992,10 @@ function updateBF() {
     if(actionBtn){ actionBtn.disabled=!needsAction; actionBtn.title=needsAction?'View recommended actions':'No actions needed'; }
     if(actionDot) actionDot.classList.toggle('visible', needsAction);
   } else {
-    setText('bf-insights-text', BFCache.loading ? 'Loading...' : 'No data for this range.');
-    if(actionBtn){ actionBtn.disabled=true; actionBtn.title='No data yet'; }
-    if(actionDot) actionDot.classList.remove('visible');
+    const _t = window.t || function(k){ return k; };
+    setText('bf-insights-text', _t('app-data-collecting'));
+    if (actionBtn) { actionBtn.disabled = true; actionBtn.title = _t('app-data-no-data'); }
+    if (actionDot) actionDot.classList.remove('visible');
   }
 }
 
@@ -1084,10 +1151,14 @@ function renderSettings(d) {
 }
 
 function renderClaimedBins(binsArray) {
-  const container = document.getElementById('claimed-bins-list'); if(!container) return;
-  if(!binsArray || binsArray.length===0) {
-    container.innerHTML = '<div class="wm-placeholder">No bins claimed yet. Tap "+ Claim" to add one.</div>';
-    updateGlobalBinDropdown([]); return;
+  const container = document.getElementById('claimed-bins-list');
+  if (!container) return;
+
+  if (!binsArray || binsArray.length === 0) {
+    const _t = window.t || function(k){ return k; };
+    container.innerHTML = `<div class="wm-placeholder">${_t('app-no-bins-claimed')}</div>`;
+    updateGlobalBinDropdown([]);
+    return;
   }
   container.innerHTML = binsArray.map(bin => {
     const safeName = (bin.name||'Unnamed Bin').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -1156,9 +1227,13 @@ async function handleClaimBin() {
 }
 
 function updateGlobalBinDropdown(binsArray) {
-  const select = document.getElementById('global-bin-select'); if(!select) return;
-  if(!binsArray || binsArray.length===0) {
-    select.innerHTML = '<option value="" disabled>No bins connected</option>'; return;
+  const select = document.getElementById('global-bin-select');
+  if(!select) return;
+
+  if (!binsArray || binsArray.length === 0) {
+    const _t = window.t || function(k){ return k; };
+    select.innerHTML = `<option value="" disabled>${_t('app-no-bins-connected')}</option>`;
+    return;
   }
   select.innerHTML = binsArray.map(bin => {
     const displayName = bin.name ? `${bin.name} (${bin.bin_id})` : bin.bin_id;
@@ -1377,8 +1452,69 @@ document.addEventListener('DOMContentLoaded', async () => {
         setText('acc-username',S.user.username||'--');
         setText('acc-email',S.user.email||'--');
         authHide();
-        await loadDevices(); await loadMode(); startPolling();
-      } else { Token.clear(); authShow(); }
-    } catch(e) { Token.clear(); authShow(); }
-  } else { authShow(); }
+        await loadDevices();
+        await loadMode();
+        startPolling();
+      } else {
+        // Token expired — clear it and show login
+        Token.clear();
+        authShow();
+      }
+    } catch(e) {
+      Token.clear();
+      authShow();
+    }
+  } else {
+    authShow();
+  }
+});
+
+
+/* ── Re-render JS-injected text on language change ─────────── */
+document.addEventListener('avonic:langchange', function() {
+  // Re-render the current page so dynamic strings (mode labels,
+  // sensor status, "Updated at", etc.) immediately reflect the new language.
+  if (S.data) {
+    renderPage(Router.cur(), S.data);
+  }
+  // Also refresh home bin-mode labels if data is loaded
+  if (S.data) renderHome(S.data);
+});
+
+/* ── Language Preference ───────────────────────────────────── */
+(function initLanguageSelect() {
+  const saved = localStorage.getItem('avonic_language') || 'en';
+  const sel = document.getElementById('app-language-select');
+  if (sel) sel.value = saved;
+  document.documentElement.setAttribute('lang', saved === 'tl' ? 'tl' : 'en');
+})();
+ 
+function applyLanguage(langCode) {
+  localStorage.setItem('avonic_language', langCode);
+  document.documentElement.setAttribute('lang', langCode === 'tl' ? 'tl' : 'en');
+  // Optionally: reload page or swap i18n strings here
+  // window.location.reload();
+}
+ 
+/* ── Manual PDF redirect guard ─────────────────────────────── */
+/*
+  When the user clicks a User Manual link, it opens the PDF in a
+  new tab. The PDF files should live at:
+    /manuals/user-manual-en.pdf
+    /manuals/user-manual-tl.pdf
+ 
+  If the PDF is not yet uploaded you can swap in a hosted URL:
+    href="https://your-cdn.example.com/avonic-user-manual-en.pdf"
+ 
+  The links already have target="_blank" and rel="noopener" so no
+  extra JS is needed for normal navigation.
+ 
+  If you want to log download events, attach a click listener:
+*/
+document.querySelectorAll('.resource-manual-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const lang = btn.href.includes('-tl.') ? 'Tagalog' : 'English';
+    console.log('[AVONIC] User Manual opened:', lang);
+    // Optional: send analytics ping here
+  });
 });
