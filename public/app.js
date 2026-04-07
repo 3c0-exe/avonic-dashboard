@@ -468,8 +468,11 @@ async function fetchAndRender() {
         populateManualActions(S.activeModalBin, S.activeModalSensor, $('sm-actuator-grid'), d);
       }
     }
-  } catch(e) {
+   } catch(e) {
     if (e.message && e.message.includes('401')) {
+      // --- ADD THIS LINE TO PROTECT DEV BYPASS ---
+      if (Token.get() === 'DEV_BYPASS_TOKEN') return; 
+      // -------------------------------------------
       Token.clear();
       Auth.loggedIn = false;
       authShow();
@@ -1568,15 +1571,20 @@ const Auth = {
 
 function authShow() {
   const ov = $('auth-overlay');
-  if (ov) ov.classList.add('visible');
+  if (ov) {
+    ov.style.display = ''; // Reset display so it's not permanently hidden
+    setTimeout(() => ov.classList.add('visible'), 10); // Allow CSS to fade it in
+  }
 }
 
 function authHide() {
   const ov = $('auth-overlay');
-  if (ov) ov.classList.remove('visible');
+  if (ov) {
+    ov.classList.remove('visible');
+    setTimeout(() => { ov.style.display = 'none'; }, 400); // Hide completely after CSS fade out
+  }
   window.location.hash = '#/home';
 }
-
 function authTab(tab) {
   ['login','register','forgot','reset'].forEach(t => {
     const f = $('auth-form-' + t);
@@ -1795,19 +1803,29 @@ async function authLogout() {
   S.bins = [];
   S.activeEspID = null;
   S.user = null;
+
+  // --- ADD THIS TO KILL ANTI-FLICKER ---
+  const antiFlicker = document.getElementById('anti-flicker');
+  if (antiFlicker) antiFlicker.remove();
+  // -------------------------------------
+
   closeAllModals();
   toast('Logged out', '');
-  setTimeout(() => { window.location.href = 'index.html'; }, 600);
+  
+  setTimeout(() => { window.location.href = 'app.html'; }, 600);
 }
-
 // ── DEV BYPASS ───────────────────────
 async function devBypassLogin() {
+  Token.set('DEV_BYPASS_TOKEN'); // Save the dummy token!
   Auth.loggedIn = true;
   Auth.username = 'dev';
   authHide();
   setText('dev-loggedin-user', 'dev (bypassed)');
-  await loadDevices();
-  await loadMode();
+  
+  // Wrap these in try/catch because the backend might reject the fake token
+  try { await loadDevices(); } catch(e) {}
+  try { await loadMode(); } catch(e) {}
+  
   startPolling();
   toast('⚡ Dev bypass — skipped login', 'ok');
 }
@@ -2049,25 +2067,27 @@ function toast(msg, type='') {
 // INIT
 // ════════════════════════════════════
 
-// Show auth screen early to prevent dashboard flash
+ // ════════════════════════════════════
+// INIT
+// ════════════════════════════════════
+
+// ── Run synchronously to kill the flicker immediately ──
 (function() {
-  function showAuthEarly() {
-    const ov = document.getElementById('auth-overlay');
-    if (ov) ov.classList.add('visible');
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showAuthEarly);
-  } else {
-    showAuthEarly();
+  const ov = document.getElementById('auth-overlay');
+  if (ov) {
+    if (localStorage.getItem('avonic_token')) {
+      ov.classList.remove('visible');
+      ov.style.display = 'none'; // Force hide instantly
+    } else {
+      ov.classList.add('visible');
+      ov.style.display = '';
+    }
   }
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Phase 1: Deep-link tab parser ──────────────────────────
-  // Reads ?tab=register (or login) from the URL, waits for the
-  // auth overlay to appear, then switches to that tab automatically.
-  // Cleans the URL afterwards so a refresh doesn't re-trigger it.
   (function parseTabParam() {
     const params = new URLSearchParams(window.location.search);
     const tab    = params.get('tab');
@@ -2081,10 +2101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }, 80);
 
-    // Safety valve — stop polling after 4 s
     setTimeout(function () { clearInterval(trySwitch); }, 4000);
-
-    // Remove ?tab=... from the address bar so refresh is clean
     const cleanUrl = window.location.pathname + window.location.hash;
     window.history.replaceState({}, '', cleanUrl);
   })();
@@ -2094,26 +2111,55 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupDash();
   setupQI();
   setupBF();
-  $('refresh-btn')?.addEventListener('click', fetchAndRender);
+  
+  const refreshBtn = document.getElementById('refresh-btn');
+  if (refreshBtn) refreshBtn.addEventListener('click', fetchAndRender);
 
   // Enter key bindings
   ['login-password', 'login-username'].forEach(id => {
-    $(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') authLogin(); });
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('keydown', e => { if (e.key === 'Enter') authLogin(); });
   });
   ['reg-username','reg-email','reg-password'].forEach(id => {
-    $(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') authRegister(); });
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('keydown', e => { if (e.key === 'Enter') authRegister(); });
   });
-  $('forgot-email')?.addEventListener('keydown', e => { if (e.key === 'Enter') authForgot(); });
-  $('reset-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') authReset(); });
-
+  
+  const fEmail = document.getElementById('forgot-email');
+  if(fEmail) fEmail.addEventListener('keydown', e => { if (e.key === 'Enter') authForgot(); });
+  
+  const rPass = document.getElementById('reset-password');
+  if(rPass) rPass.addEventListener('keydown', e => { if (e.key === 'Enter') authReset(); });
+ 
   // ── Auto-login if token exists ──────────────────────────────
   const existingToken = Token.get();
-  if (existingToken) {
+  
+  // 1. Check for Dev Bypass FIRST
+  if (existingToken === 'DEV_BYPASS_TOKEN') {
+    authHide();
+    Auth.loggedIn = true;
+    Auth.username = 'dev';
+    setText('dev-loggedin-user', 'dev (bypassed)');
+    
+    if (!window.location.hash || window.location.hash === '#/') {
+      window.location.hash = '#/home';
+    }
+
+    try { await loadDevices(); } catch(e) {}
+    try { await loadMode(); } catch(e) {}
+    startPolling();
+
+  // 2. Otherwise, do normal token validation
+  } else if (existingToken) {
+    
+    // Optimistically hide auth so you don't wait for the database
+    authHide();
+    
     try {
-      // Verify token is still valid by fetching profile
       const r = await fetch(`${BASE_URL}/api/user/profile`, {
         headers: { 'Authorization': 'Bearer ' + existingToken }
       });
+      
       if (r.ok) {
         const profileData = await r.json();
         Auth.loggedIn = true;
@@ -2122,24 +2168,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         setText('dev-loggedin-user', Auth.username);
         setText('acc-username', S.user.username || '--');
         setText('acc-email', S.user.email || '--');
-        authHide();
+        
+        if (!window.location.hash || window.location.hash === '#/') {
+          window.location.hash = '#/home';
+        }
+
         await loadDevices();
         await loadMode();
         startPolling();
-      } else {
-        // Token expired — clear it and show login
+      } else if (r.status === 401) {
+        // ONLY delete the token if the server explicitly says it is expired
         Token.clear();
+        const antiFlicker = document.getElementById('anti-flicker');
+        if (antiFlicker) antiFlicker.remove();
         authShow();
+        toast('Session expired. Please log in.', 'err');
+      } else {
+        // Server threw a 502/504 error, but token is still good. Do NOT delete token!
+        const antiFlicker = document.getElementById('anti-flicker');
+        if (antiFlicker) antiFlicker.remove();
+        authShow();
+        toast('Server error. Please try again.', 'err');
       }
     } catch(e) {
-      Token.clear();
+      // Network error (Railway is asleep, or lost internet). Do NOT delete token!
+      const antiFlicker = document.getElementById('anti-flicker');
+      if (antiFlicker) antiFlicker.remove();
       authShow();
+      toast('Could not connect to server. Waking up...', 'warn');
     }
   } else {
     authShow();
   }
 });
-
 
 // ════════════════════════════════════
 // PHASE 4 — Interactive UI Tour
