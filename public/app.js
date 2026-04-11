@@ -501,6 +501,54 @@ function pushHist(d) {
   }
 }
 
+// Pre-populate S.hist from MongoDB history on login/device-select
+function pushHistFromDB(readings) {
+  readings.forEach(r => {
+    const ts = new Date(r.timestamp);
+    const label = ts.getHours().toString().padStart(2, '0') + ':' +
+                  ts.getMinutes().toString().padStart(2, '0');
+    const h = S.hist;
+    h.labels.push(label);
+    h.b1.temperature.push(r.bin1?.temp      ?? null);
+    h.b1.humidity.push(   r.bin1?.humidity  ?? null);
+    h.b1.soilMoisture.push(r.bin1?.soil     ?? null);
+    h.b1.gasLevels.push(  r.bin1?.gas       ?? null);
+    h.b2.temperature.push(r.bin2?.temp      ?? null);
+    h.b2.humidity.push(   r.bin2?.humidity  ?? null);
+    h.b2.soilMoisture.push(r.bin2?.soil     ?? null);
+    h.b2.gasLevels.push(  r.bin2?.gas       ?? null);
+    if (h.labels.length > CFG.HIST) {
+      h.labels.shift();
+      ['temperature','soilMoisture','humidity','gasLevels'].forEach(k => {
+        h.b1[k].shift(); h.b2[k].shift();
+      });
+    }
+  });
+  console.log(`📈 Preloaded ${readings.length} historical readings into S.hist`);
+}
+
+async function fetchHistory(espID, hours = 24) {
+  try {
+    const r = await fetch(
+      `${BASE_URL}/api/sensors/${espID}/history?hours=${hours}`,
+      { headers: Token.headers(), cache: 'no-store' }
+    );
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (d.success && Array.isArray(d.readings) && d.readings.length > 0) {
+      pushHistFromDB(d.readings);
+      // Refresh whichever chart page is active
+      if (Router.cur() === 'bin-fluctuation') updateBF();
+      if (Router.cur() === 'quick-insights')  renderQI();
+      renderRecentQI();
+      toast(`📊 Loaded ${d.readings.length} historical readings`, 'ok');
+    }
+  } catch(e) {
+    console.warn('⚠️ History prefetch failed (non-fatal):', e.message);
+    // Silent fail — live polling fills hist over time anyway
+  }
+}
+
 function startPolling() {
   fetchAndRender();
   setInterval(fetchAndRender, CFG.POLL);
@@ -1678,6 +1726,7 @@ async function authLogin() {
       await loadDevices();
       await loadMode();
       startPolling();
+      if (S.activeEspID) fetchHistory(S.activeEspID); // ← add
       toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     } else {
       authBanner(d.error || 'Invalid credentials.');
@@ -1718,6 +1767,7 @@ async function authRegister() {
         await loadProfile();
         await loadDevices();
         startPolling();
+        if (S.activeEspID) fetchHistory(S.activeEspID); // ← optional, safe to add
         toast('Account created! Add a device to get started.', 'ok');
       } else {
         authBanner('Account created! Please log in.', 'ok');
@@ -1969,14 +2019,15 @@ function handleGlobalBinChange() {
   S.activeEspID = selectedId;
 
   // Clear old history when switching bins
-  S.hist = {
-    labels:[],
-    b1:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] },
-    b2:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] }
-  };
+      S.hist = {
+          labels:[],
+          b1:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] },
+          b2:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] }
+        };
 
-  fetchAndRender(); // Immediately fetch the selected device's data
-  loadMode();       // Reload mode state for new device
+        fetchAndRender();
+        loadMode();
+        fetchHistory(selectedId); // ← add
 
   const bin = S.bins.find(b => b.bin_id === selectedId);
   const icon = bin?.status === 'offline' ? '🔴' : '🟢';
