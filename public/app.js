@@ -503,6 +503,13 @@ function pushHist(d) {
 
 // Pre-populate S.hist from MongoDB history on login/device-select
 function pushHistFromDB(readings) {
+  // Clear any existing live-poll entries first so history is the baseline
+  S.hist = {
+    labels: [],
+    b1: { temperature: [], soilMoisture: [], humidity: [], gasLevels: [] },
+    b2: { temperature: [], soilMoisture: [], humidity: [], gasLevels: [] }
+  };
+
   readings.forEach(r => {
     const ts = new Date(r.timestamp);
     const label = ts.getHours().toString().padStart(2, '0') + ':' +
@@ -517,13 +524,13 @@ function pushHistFromDB(readings) {
     h.b2.humidity.push(   r.bin2?.humidity  ?? null);
     h.b2.soilMoisture.push(r.bin2?.soil     ?? null);
     h.b2.gasLevels.push(  r.bin2?.gas       ?? null);
-    if (h.labels.length > CFG.HIST) {
-      h.labels.shift();
-      ['temperature','soilMoisture','humidity','gasLevels'].forEach(k => {
-        h.b1[k].shift(); h.b2[k].shift();
-      });
-    }
+    // No cap here — we want all 200 history points as the baseline
+    // Live polling via pushHist() will append on top and cap naturally
   });
+
+  // Now set CFG.HIST to 200 so live polling doesn't immediately evict history
+  CFG.HIST = 200;
+
   console.log(`📈 Preloaded ${readings.length} historical readings into S.hist`);
 }
 
