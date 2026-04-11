@@ -1187,6 +1187,7 @@ body.sidebar-expanded .nav-logout {
 .sys-modal.tour-preview,
 .sys-modal-overlay.tour-preview {
   z-index: 10001 !important;
+  
 }
 
 /* ── While sensor-preview modal is open: suppress Driver.js popover + ring ──
@@ -5046,4 +5047,52 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
 
 .driver-popover {
   z-index: 10000 !important;
+}
+
+
+/* Force Quicksand uniformly across all Driver.js elements */
+.av-tour-popover.driver-popover * {
+  font-family: 'Quicksand', sans-serif !important;
+}
+
+
+/* Ensure the highlighted element text is always readable */
+.driver-active-element {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+ 
+/* 2. Fix the Topbar Stacking Issue */
+/* When a topbar element is active, we must ensure its parent container 
+   does not clip the highlight or fight the overlay stacking */
+.topbar:has(.driver-active-element) {
+  z-index: 9999 !important;
+}
+
+/* 3. Smooth the Transition */
+.driver-active-element {
+  transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* ── Phase 4: Tour Modal (Steps 6 & 7) Darken & Font Fix ── */
+
+/* 1. Force the dark background during the modal preview steps */
+#sys-modal-overlay.tour-preview {
+    background: rgba(0, 0, 0, 0.75) !important; /* Matches tour darkness */
+    z-index: 10000 !important; /* Lifts overlay above topbar */
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* 2. Lift the modal above the dark overlay */
+#sensor-detail-modal.tour-preview {
+    z-index: 10001 !important;
+}
+
+/* 3. Force Quicksand uniformly for the modal and tour popovers */
+#sensor-detail-modal.tour-preview,
+#sensor-detail-modal.tour-preview *,
+.av-tour-popover.driver-popover,
+.av-tour-popover.driver-popover * {
+    font-family: 'Quicksand', sans-serif !important;
 }

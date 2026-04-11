@@ -167,7 +167,7 @@
     </div>
   </div>
 
-  <div class="topbar-right">
+<div class="topbar-right">
     <span class="tb-conn-text">Connected to:</span>
 
     <!-- Language Toggle -->
@@ -185,6 +185,7 @@
       </select>
       <img src="/img/dropdownIcon.svg" alt="Drop" class="tb-chevron">
     </div>
+  </div>
     
     
   </div>
@@ -311,6 +312,8 @@
           <div class="sensor-card" id="b1-soil-card" onclick="openSensorModal(1, 'soilMoisture', 'Soil Moisture', '/img/monitoring/Sensor Icons/Soil Moisture Icon.svg')">
             <div class="sc-info">
               <div class="sc-name" data-i18n="app-sensor-soilMoisture">Soil Moisture <span class="av-help" data-tip="Optimal range is 60–80%. Below 60% is too dry for worms; above 90% risks anaerobic (oxygen-starved) conditions that produce bad odours.">?</span></div>
+              <div class="sc-status" id="b1-soilMoisture-status">Optimal</div>
+              
               <div class="sc-value"><span id="b1-soilMoisture-val">--</span><span class="sc-unit">%</span></div>
             </div>
             <div class="ring-wrap">
@@ -340,6 +343,7 @@
           <div class="sensor-card" id="b1-hum-card" onclick="openSensorModal(1, 'humidity', 'Humidity', '/img/monitoring/Sensor Icons/Humidity Icon.svg')">
             <div class="sc-info">
               <div class="sc-name" data-i18n="app-sensor-humidity">Humidity <span class="av-help" data-tip="Air humidity inside the bin. Worms breathe through their skin, so 60–80% keeps them healthy. Low humidity dries them out; high humidity suffocates.">?</span></div>
+              <div class="sc-status" id="b1-humidity-status">Optimal</div>
               <div class="sc-value"><span id="b1-humidity-val">--</span><span class="sc-unit">%</span></div>
             </div>
             <div class="ring-wrap">
@@ -354,6 +358,7 @@
           <div class="sensor-card" id="b1-gas-card" onclick="openSensorModal(1, 'gasLevels', 'Gas Levels', '/img/monitoring/Sensor Icons/Gas Icon.svg')">
             <div class="sc-info">
               <div class="sc-name" data-i18n="app-sensor-gasLevels">Gas Levels <span class="av-help" data-tip="Measured in PPM (Parts Per Million). 0–100 ppm is safe for worms. Above 200 ppm is toxic — AVONIC will trigger the ventilation fan automatically.">?</span></div>
+              <div class="sc-status" id="b1-gasLevels-status">Optimal</div>
               <div class="sc-value"><span id="b1-gasLevels-val">--</span><span class="sc-unit">ppm</span></div>
             </div>
             <div class="ring-wrap">
