@@ -559,6 +559,7 @@ async function fetchHistory(espID, hours = 24) {
 function startPolling() {
   fetchAndRender();
   setInterval(fetchAndRender, CFG.POLL);
+  setInterval(loadMode, 15000); // Re-sync mode every 15 seconds
 }
 
 // ════════════════════════════════════
