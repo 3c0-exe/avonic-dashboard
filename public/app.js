@@ -1597,6 +1597,75 @@ function setupBF() {
       updateBF();
     });
   });
+  // Wire desktop date pickers
+function applyDateRange() {
+  const from = $('bf-date-from')?.value || $('bf-date-from-mob')?.value;
+  const to   = $('bf-date-to')?.value   || $('bf-date-to-mob')?.value;
+  if (from && to) fetchHourlyRange(from, to);
+}
+
+['bf-date-from', 'bf-date-to', 'bf-date-from-mob', 'bf-date-to-mob'].forEach(id => {
+  const el = $(id);
+  if (el) el.addEventListener('change', applyDateRange);
+});
+
+// Keep desktop and mobile inputs in sync
+function syncDateInputs(sourceId, targetId) {
+  const src = $(sourceId), tgt = $(targetId);
+  if (src && tgt) src.addEventListener('change', () => { tgt.value = src.value; });
+}
+syncDateInputs('bf-date-from',     'bf-date-from-mob');
+syncDateInputs('bf-date-from-mob', 'bf-date-from');
+syncDateInputs('bf-date-to',       'bf-date-to-mob');
+syncDateInputs('bf-date-to-mob',   'bf-date-to');
+}
+
+async function fetchHourlyRange(startDate, endDate) {
+  if (!S.activeEspID) return;
+  try {
+    const r = await fetch(
+      `${BASE_URL}/api/sensors/${S.activeEspID}/hourly?start=${startDate}&end=${endDate}`,
+      { headers: Token.headers(), cache: 'no-store' }
+    );
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (!d.success) return;
+
+    const bin1Rows = d.bin1 || [];
+    const bin2Rows = d.bin2 || [];
+    const allLabels = [...new Set([
+      ...bin1Rows.map(r => r.label),
+      ...bin2Rows.map(r => r.label)
+    ])].sort();
+
+    S.hist = {
+      labels: [],
+      b1: { temperature: [], soilMoisture: [], humidity: [], gasLevels: [] },
+      b2: { temperature: [], soilMoisture: [], humidity: [], gasLevels: [] }
+    };
+
+    allLabels.forEach(label => {
+      const r1 = bin1Rows.find(r => r.label === label) || {};
+      const r2 = bin2Rows.find(r => r.label === label) || {};
+      S.hist.labels.push(label);
+      S.hist.b1.temperature.push(r1.temperature ?? null);
+      S.hist.b1.soilMoisture.push(r1.soilMoisture ?? null);
+      S.hist.b1.humidity.push(r1.humidity ?? null);
+      S.hist.b1.gasLevels.push(r1.gasLevels ?? null);
+      S.hist.b2.temperature.push(r2.temperature ?? null);
+      S.hist.b2.soilMoisture.push(r2.soilMoisture ?? null);
+      S.hist.b2.humidity.push(r2.humidity ?? null);
+      S.hist.b2.gasLevels.push(r2.gasLevels ?? null);
+    });
+
+    CFG.HIST = Math.max(200, allLabels.length);
+    updateBF();
+    renderRecentQI();
+    toast(`📅 Loaded ${allLabels.length} hourly readings`, 'ok');
+  } catch(e) {
+    console.warn('⚠️ Hourly range fetch failed:', e.message);
+    toast('Failed to load date range data', 'err');
+  }
 }
 
 function renderSettings(d) {
