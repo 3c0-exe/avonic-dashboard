@@ -1290,7 +1290,9 @@ function renderQI() {
   if(dateEl) dateEl.textContent = 'Date: ' + now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) + '\nUpdated: ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
   if(data.length){
-    const mn = Math.min(...data), mx = Math.max(...data), av = data.reduce((a,b)=>a+b,0) / data.length;
+    const valid = data.filter(v => v != null);
+    if (!valid.length) return; // no valid data yet
+    const mn = Math.min(...valid), mx = Math.max(...valid), av = valid.reduce((a,b)=>a+b,0) / valid.length;
     const recent = data[data.length - 1];
 
     setText('qi-min', fmt(mn)); setText('qi-avg', fmt(av)); setText('qi-max', fmt(mx)); setText('qi-recent', fmt(recent));
