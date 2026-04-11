@@ -1731,12 +1731,12 @@ async function authLogin() {
       authHide();
       setText('dev-loggedin-user', Auth.username);
       // Load devices then start polling
-      await loadProfile();
-      await loadDevices();
-      await loadMode();
-      startPolling();
-      if (S.activeEspID) fetchHistory(S.activeEspID); // ← add
-      toast(`Welcome back, ${Auth.username} 👋`, 'ok');
+await loadProfile();
+await loadDevices();
+await loadMode();
+if (S.activeEspID) await fetchHistory(S.activeEspID);
+startPolling();
+toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     } else {
       authBanner(d.error || 'Invalid credentials.');
     }
@@ -1773,11 +1773,11 @@ async function authRegister() {
         Auth.username = d.user?.username || username;
         authHide();
         setText('dev-loggedin-user', Auth.username);
-        await loadProfile();
-        await loadDevices();
-        startPolling();
-        if (S.activeEspID) fetchHistory(S.activeEspID); // ← optional, safe to add
-        toast('Account created! Add a device to get started.', 'ok');
+await loadProfile();
+await loadDevices();
+if (S.activeEspID) await fetchHistory(S.activeEspID);
+startPolling();
+toast('Account created! Add a device to get started.', 'ok');
       } else {
         authBanner('Account created! Please log in.', 'ok');
         setTimeout(() => authTab('login'), 1500);
@@ -2020,23 +2020,22 @@ function updateGlobalBinDropdown(binsArray) {
   select.value = activeBinId;
 }
 
-function handleGlobalBinChange() {
+async function handleGlobalBinChange() {
   const select = document.getElementById('global-bin-select');
   const selectedId = select.value;
   if (!selectedId) return;
 
   S.activeEspID = selectedId;
 
-  // Clear old history when switching bins
-      S.hist = {
-          labels:[],
-          b1:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] },
-          b2:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] }
-        };
+  S.hist = {
+    labels:[],
+    b1:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] },
+    b2:{ temperature:[], soilMoisture:[], humidity:[], gasLevels:[] }
+  };
 
-        fetchAndRender();
-        loadMode();
-        fetchHistory(selectedId); // ← add
+  loadMode();
+  await fetchHistory(selectedId);
+  fetchAndRender();
 
   const bin = S.bins.find(b => b.bin_id === selectedId);
   const icon = bin?.status === 'offline' ? '🔴' : '🟢';
@@ -2233,9 +2232,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           window.location.hash = '#/home';
         }
 
-        await loadDevices();
-        await loadMode();
-        startPolling();
+await loadDevices();
+await loadMode();
+if (S.activeEspID) await fetchHistory(S.activeEspID);
+startPolling();
       } else if (r.status === 401) {
         // ONLY delete the token if the server explicitly says it is expired
         Token.clear();
