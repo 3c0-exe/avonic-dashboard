@@ -1622,13 +1622,19 @@ syncDateInputs('bf-date-to-mob',   'bf-date-to');
 
 async function fetchHourlyRange(startDate, endDate) {
   if (!S.activeEspID) return;
+  console.log('📅 Fetching hourly range:', startDate, 'to', endDate);
   try {
+    const endISO   = new Date(endDate + 'T23:59:59Z').toISOString();
+    const startISO = new Date(startDate + 'T00:00:00Z').toISOString();
+    console.log('📅 Adjusted range:', startISO, 'to', endISO);
     const r = await fetch(
-      `${BASE_URL}/api/sensors/${S.activeEspID}/hourly?start=${startDate}&end=${endDate}`,
+      `${BASE_URL}/api/sensors/${S.activeEspID}/hourly?start=${startISO}&end=${endISO}`,
       { headers: Token.headers(), cache: 'no-store' }
     );
+    console.log('📅 Hourly response status:', r.status);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
+    console.log('📅 Hourly data:', d);
     if (!d.success) return;
 
     const bin1Rows = d.bin1 || [];
