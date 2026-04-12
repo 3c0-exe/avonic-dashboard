@@ -303,7 +303,7 @@ function flattenSensorData(json) {
     soil1_percent:          b1.soil         ?? null,
     gas1_ppm:               b1.gas          ?? null,
     ds18b20_temp:           b1.ds18b20      ?? null,
-    ultrasonic:             b1.ultrasonic   ?? null,
+    water_level_bin1: b1.water_level ?? null,
     bin1_exhaust_fan_state: b1.exhaust_fan  ?? false,
     bin1_intake_fan_state:  b1.intake_fan   ?? false,
     bin1_pump_state:        b1.pump         ?? false,
