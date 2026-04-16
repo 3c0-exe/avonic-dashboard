@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════
    EXPORT MANAGER (export.js)
-   Multi-sensor with Preset System Actions & Live Preview
+   Native Data Spans & Dynamic Bar Charts
    ════════════════════════════════════════════ */
 const ExportManager = (() => {
   let currentContext = 'Dashboard';
@@ -8,15 +8,13 @@ const ExportManager = (() => {
   let currentPreviewPage = 0;
 
   function init() {
-    // Listeners for Live Preview Updating
     document.querySelectorAll('.ex-sens-cb, #ex-insight-cb').forEach(el => {
-      el.addEventListener('change', () => {
-        currentPreviewPage = 0; // Reset to page 1 if they change settings
+      if(el) el.addEventListener('change', () => {
+        currentPreviewPage = 0; 
         updatePreview();
       });
     });
 
-    // Pagination Click Listeners
     const prevBtn = document.getElementById('ex-prev-page');
     const nextBtn = document.getElementById('ex-next-page');
     if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPreviewPage > 0) { currentPreviewPage--; renderCurrentPage(); }});
@@ -26,13 +24,79 @@ const ExportManager = (() => {
   function openExport(contextName) {
     currentContext = contextName;
     currentPreviewPage = 0;
-    updatePreview(); // Generate initial preview
+    updatePreview(); 
     if (typeof openModal === 'function') openModal('export-modal');
   }
 
+  function getReportDateString() {
+    if (currentContext === 'Bin Fluctuation') {
+      // Intelligently grab the exact boundaries of the currently plotted data
+      if (typeof S !== 'undefined' && S.hist && S.hist.labels && S.hist.labels.length > 0) {
+        const start = S.hist.labels[0];
+        const end = S.hist.labels[S.hist.labels.length - 1];
+        return start === end ? `Span: ${start}` : `Span: ${start} to ${end}`;
+      }
+      return `Span: Current Selection`;
+    }
+    return `Generated: ${new Date().toLocaleDateString()}`;
+  }
+
+  // ─── DATA EXTRACTION ROUTER ───────────────────────────────────
+
+  function getActiveData(binNum, sensorKey) {
+    if (currentContext === 'Bin Fluctuation') {
+      return extractFluctuationData(binNum, sensorKey);
+    }
+    return extractQuickInsightsData(binNum, sensorKey);
+  }
+
+  function extractQuickInsightsData(binNum, sensorKey) {
+    const binKey = 'b' + binNum;
+    const labels = S.hist?.labels || [];
+    const values = S.hist?.[binKey]?.[sensorKey] || [];
+    
+    const limits = (typeof CFG !== 'undefined' && CFG.OPT) ? CFG.OPT[sensorKey] : null;
+    const unit = limits ? limits.unit : '';
+    const names = { soilMoisture: 'Soil Moisture', temperature: 'Temperature', humidity: 'Humidity', gasLevels: 'Gas Levels' };
+    const sensorName = names[sensorKey] || sensorKey;
+
+    const icons = {
+      soilMoisture: '/img/monitoring/Sensor%20Icons/Moisture%20Icon.svg',
+      temperature: '/img/monitoring/Sensor%20Icons/Temperature%20Icon.svg',
+      humidity: '/img/monitoring/Sensor%20Icons/Humidity%20Icon.svg',
+      gasLevels: '/img/monitoring/Sensor%20Icons/Gas%20Icon.svg'
+    };
+    const iconPath = icons[sensorKey] || '';
+
+    const valid = values.filter(v => v != null);
+    const min = valid.length ? Math.min(...valid) : 0;
+    const max = valid.length ? Math.max(...valid) : 0;
+    const avg = valid.length ? valid.reduce((a,b) => a + b, 0) / valid.length : 0;
+    const recent = valid.length ? valid[valid.length - 1] : 0;
+
+    let actionData = { title: '', steps: [], severity: 'ok' };
+    if (typeof getWormInsight === 'function') {
+      actionData = getWormInsight(sensorKey, avg);
+    }
+
+    return { sensorName, sensorKey, unit, iconPath, stats: { min, max, avg, recent }, labels, values, limits, actionData, isBarChart: false };
+  }
+
+  function extractFluctuationData(binNum, sensorKey) {
+    const baseData = extractQuickInsightsData(binNum, sensorKey);
+    baseData.isBarChart = true;
+    
+    const absoluteMax = baseData.stats.max > 0 ? baseData.stats.max : 1; 
+    baseData.barWidths = baseData.values.map(v => {
+      if (v == null) return 0;
+      let pct = (v / absoluteMax) * 100;
+      return pct > 100 ? 100 : pct;
+    });
+
+    return baseData;
+  }
+
   // ─── LIVE PREVIEW ENGINE ──────────────────────────────────────
-  
- // ─── LIVE PREVIEW ENGINE ──────────────────────────────────────
   
   function updatePreview() {
     if (typeof S === 'undefined' || !S.hist) return;
@@ -46,45 +110,45 @@ const ExportManager = (() => {
     if (selectedCheckboxes.length === 0) {
       previewPages.push(`<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#aaa; font-size: 12px; font-weight: 600;">Please select at least one sensor.</div>`);
     } else {
-      const date = new Date().toLocaleDateString();
+      const dateString = getReportDateString();
+      const ROWS_FIRST_PAGE = currentContext === 'Bin Fluctuation' ? 6 : 8;   
+      const ROWS_OTHER_PAGES = currentContext === 'Bin Fluctuation' ? 14 : 18; 
       
-      // Define how many rows safely fit on the mini A4 canvas
-      const ROWS_FIRST_PAGE = 8;   // Less rows because it has the header & stats
-      const ROWS_OTHER_PAGES = 18; // More rows because it's just raw table data
-      
-      selectedCheckboxes.forEach(cb => {
-        const data = extractSensorData(binNum, cb.value);
+      selectedCheckboxes.forEach((cb, sIndex) => {
+        const data = getActiveData(binNum, cb.value);
         const totalRows = data.labels.length;
-        
         let startIndex = 0;
         let isFirstPage = true;
 
-        // Loop to create as many pages as needed for this specific sensor
         do {
            let chunkLimit = isFirstPage ? ROWS_FIRST_PAGE : ROWS_OTHER_PAGES;
-           
-           // If there is no data at all, ensure at least one empty page renders
            if (totalRows === 0) chunkLimit = 1; 
 
            let limitRows = data.labels.slice(startIndex, startIndex + chunkLimit);
            let limitVals = data.values.slice(startIndex, startIndex + chunkLimit);
+           let limitBars = data.isBarChart ? data.barWidths.slice(startIndex, startIndex + chunkLimit) : [];
 
            let pageHtml = '';
 
            if (isFirstPage) {
-              // ── Full Header for the First Page ──
+              if (sIndex === 0) {
+                pageHtml += `
+                  <div class="ex-prev-header" style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #111; padding-bottom: 8px; margin-bottom: 16px;">
+                    <div style="text-align: left; line-height: 1.2;">
+                      <strong style="font-size: 11px; color: #111;">AVONIC SYSTEM</strong><br>
+                      <span style="font-size: 9px; color: #666;">${dateString}</span>
+                    </div>
+                    <h1 style="margin: 0; padding: 0; border: none; text-align: right; font-size: 15px; color: #111;">${currentContext} - Bin ${binNum} Export</h1>
+                  </div>`;
+              }
+              
               pageHtml += `
-                <div class="ex-prev-header">
-                  <h1>${currentContext} - Bin ${binNum}</h1>
-                  <div class="ex-prev-meta">Generated: ${date}</div>
-                </div>
                 <h2 class="ex-prev-sensor-h2">
                   <img src="${data.iconPath}" width="14" height="14"> ${data.sensorName}
                 </h2>`;
 
               if (includeInsight && data.actionData && data.actionData.title) {
                 const color = getSeverityColor(data.actionData.severity);
-                // Preview only shows top 2 steps to save canvas space
                 const stepsHtml = data.actionData.steps.slice(0, 2).map(s => `<li>${s}</li>`).join('');
                 pageHtml += `
                   <div class="ex-prev-insight" style="border-left: 3px solid ${color};">
@@ -100,10 +164,10 @@ const ExportManager = (() => {
                   <div class="ex-prev-stat-box">Max<span>${data.stats.max.toFixed(1)}${data.unit}</span></div>
                 </div>`;
            } else {
-              // ── Minimal Header for Continuation Pages ──
               pageHtml += `
-                <div class="ex-prev-header" style="margin-bottom: 12px;">
-                  <div class="ex-prev-meta" style="margin-bottom: 4px;">${currentContext} - Bin ${binNum} | ${date}</div>
+                <div class="ex-prev-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px;">
+                  <span style="font-size: 9px; color: #666;">AVONIC SYSTEM | ${dateString}</span>
+                  <strong style="font-size: 10px; color: #666; text-align: right;">${currentContext} - Bin ${binNum} Export</strong>
                 </div>
                 <h2 class="ex-prev-sensor-h2" style="color: #666;">
                   <img src="${data.iconPath}" width="12" height="12" style="opacity: 0.5;"> 
@@ -111,8 +175,11 @@ const ExportManager = (() => {
                 </h2>`;
            }
 
-           // ── Build the Table Chunk ──
-           pageHtml += `<table class="ex-prev-table"><tr><th>Time</th><th>Reading</th><th>Status</th></tr>`;
+           if (data.isBarChart) {
+             pageHtml += `<table class="ex-prev-table"><tr><th style="width: 20%; text-align: left;">Time Span</th><th style="width: 20%;">Average</th><th style="width: 60%; text-align: left;">Trend</th></tr>`;
+           } else {
+             pageHtml += `<table class="ex-prev-table"><tr><th>Time</th><th>Reading</th><th>Status</th></tr>`;
+           }
            
            if (limitRows.length === 0) {
               pageHtml += `<tr><td colspan="3" style="color:#aaa;">No data available</td></tr>`;
@@ -120,19 +187,28 @@ const ExportManager = (() => {
              for (let i = 0; i < limitRows.length; i++) {
                let val = limitVals[i];
                if (val == null) continue;
-               let status = 'Normal';
-               if (data.limits) {
-                  if (val <= data.limits.critical_min) status = 'Low';
-                  else if (val >= data.limits.critical_max) status = 'High';
+               
+               if (data.isBarChart) {
+                 const barColor = getBarColor(val, data.limits);
+                 pageHtml += `
+                   <tr>
+                     <td style="text-align: left;">${limitRows[i]}</td>
+                     <td><strong>${val}</strong><span style="font-size:6px; color:#666; margin-left:2px;">${data.unit}</span></td>
+                     <td style="text-align: left; vertical-align: middle;">
+                       <div style="width: 100%; background: #eee; height: 8px; border-radius: 4px; overflow: hidden;">
+                         <div style="width: ${limitBars[i]}%; background: ${barColor}; height: 100%;"></div>
+                       </div>
+                     </td>
+                   </tr>`;
+               } else {
+                 let status = getStatusText(val, data.limits);
+                 pageHtml += `<tr><td>${limitRows[i]}</td><td>${val} ${data.unit}</td><td>${status}</td></tr>`;
                }
-               pageHtml += `<tr><td>${limitRows[i]}</td><td>${val} ${data.unit}</td><td>${status}</td></tr>`;
              }
            }
            pageHtml += `</table>`;
 
-           // Push this completed chunk to the pagination array
            previewPages.push(pageHtml);
-           
            startIndex += chunkLimit;
            isFirstPage = false;
 
@@ -184,13 +260,13 @@ const ExportManager = (() => {
     const binNum = S.qiBin || 1;
     let reportData = {
       title: `${currentContext} - Bin ${binNum}`,
-      date: new Date().toLocaleString(),
+      dateStr: getReportDateString(),
       includeInsight: includeInsight,
       sensors: []
     };
 
     selectedCheckboxes.forEach(cb => {
-      reportData.sensors.push(extractSensorData(binNum, cb.value));
+      reportData.sensors.push(getActiveData(binNum, cb.value));
     });
 
     if (format === 'CSV') generateCSV(reportData);
@@ -200,37 +276,7 @@ const ExportManager = (() => {
     setTimeout(() => { if (typeof closeTopModal === 'function') closeTopModal(); }, 800);
   }
 
-  function extractSensorData(binNum, sensorKey) {
-    const binKey = 'b' + binNum;
-    const labels = S.hist.labels || [];
-    const values = S.hist[binKey]?.[sensorKey] || [];
-    
-    const limits = (typeof CFG !== 'undefined' && CFG.OPT) ? CFG.OPT[sensorKey] : null;
-    const unit = limits ? limits.unit : '';
-    const names = { soilMoisture: 'Soil Moisture', temperature: 'Temperature', humidity: 'Humidity', gasLevels: 'Gas Levels' };
-    const sensorName = names[sensorKey] || sensorKey;
-
-    const icons = {
-      soilMoisture: '/img/monitoring/Sensor%20Icons/Soil%20Moisture%20Icon.svg',
-      temperature: '/img/monitoring/Sensor%20Icons/Temperature%20Icon.svg',
-      humidity: '/img/monitoring/Sensor%20Icons/Humidity%20Icon.svg',
-      gasLevels: '/img/monitoring/Sensor%20Icons/Gas%20Icon.svg'
-    };
-    const iconPath = icons[sensorKey] || '';
-
-    const valid = values.filter(v => v != null);
-    const min = valid.length ? Math.min(...valid) : 0;
-    const max = valid.length ? Math.max(...valid) : 0;
-    const avg = valid.length ? valid.reduce((a,b) => a + b, 0) / valid.length : 0;
-    const recent = valid.length ? valid[valid.length - 1] : 0;
-
-    let actionData = { title: '', steps: [], severity: 'ok' };
-    if (typeof getWormInsight === 'function') {
-      actionData = getWormInsight(sensorKey, avg);
-    }
-
-    return { sensorName, sensorKey, unit, iconPath, stats: { min, max, avg, recent }, labels, values, limits, actionData };
-  }
+  // ─── HELPERS ──────────────────────────────────────────────────
 
   function getSeverityColor(severity) {
     if (severity === 'critical') return '#ef4444'; 
@@ -238,10 +284,24 @@ const ExportManager = (() => {
     return '#3a6b35'; 
   }
 
+  function getStatusText(val, limits) {
+    if (!limits) return 'Normal';
+    if (val <= limits.critical_min) return 'Low';
+    if (val >= limits.critical_max) return 'High';
+    return 'Normal';
+  }
+
+  function getBarColor(val, limits) {
+    if (!limits) return '#3a6b35';
+    if (val <= limits.critical_min || val >= limits.critical_max) return '#ef4444';
+    if (val <= limits.optimal_min || val >= limits.optimal_max) return '#f59e0b';  
+    return '#6aab7a'; 
+  }
+
   // ─── FILE GENERATORS ──────────────────────────────────────────
 
   function generateCSV(report) {
-    let csv = `Report,${report.title}\nDate,"${report.date}"\n\n`;
+    let csv = `Report,${report.title} Export\nDetails,"${report.dateStr}"\n\n`;
     
     report.sensors.forEach(data => {
       csv += `--- ${data.sensorName.toUpperCase()} ---\n`;
@@ -249,31 +309,27 @@ const ExportManager = (() => {
         csv += `System Evaluation,"${data.actionData.title}"\n`;
         csv += `Recommended Actions,"${data.actionData.steps.join('; ')}"\n`;
       }
-      csv += `Min,${data.stats.min.toFixed(1)}\nMax,${data.stats.max.toFixed(1)}\nAverage,${data.stats.avg.toFixed(1)}\nRecent,${data.stats.recent.toFixed(1)}\n\n`;
+      csv += `Min,${data.stats.min.toFixed(1)}\nMax,${data.stats.max.toFixed(1)}\nAverage,${data.stats.avg.toFixed(1)}\n\n`;
       
-      csv += "Time,Reading,Status\n";
+      csv += data.isBarChart ? "Time Span,Reading,Status\n" : "Time,Reading,Status\n";
       for (let i = 0; i < data.labels.length; i++) {
         let val = data.values[i];
         if (val == null) continue;
-        let status = 'Normal';
-        if (data.limits) {
-           if (val <= data.limits.critical_min) status = 'Low';
-           else if (val >= data.limits.critical_max) status = 'High';
-        }
+        let status = getStatusText(val, data.limits);
         csv += `"${data.labels[i]}",${val},${status}\n`;
       }
       csv += `\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    triggerDownload(URL.createObjectURL(blob), `AVONIC_${report.title.replace(/\s+/g, '_')}.csv`);
+    triggerDownload(URL.createObjectURL(blob), `AVONIC_${report.title.replace(/\s+/g, '_')}_Export.csv`);
   }
 
   function generateDOCS(report) {
     let html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head>
         <meta charset='utf-8'>
-        <title>${report.title}</title>
+        <title>${report.title} Export</title>
         <style>
           @page WordSection1 { size: 595.3pt 841.9pt; margin: 56.7pt; }
           div.WordSection1 { page: WordSection1; }
@@ -283,7 +339,17 @@ const ExportManager = (() => {
       </head>
       <body>
       <div class="WordSection1">
-        <h2>AVONIC: ${report.title}</h2><p><strong>Generated:</strong> ${report.date}</p><hr>`;
+        <table style="width: 100%; border-bottom: 2px solid #111; margin-bottom: 25px;" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="text-align: left; vertical-align: bottom; padding-bottom: 10px;">
+              <strong style="font-size: 14px; color: #111;">AVONIC SYSTEM</strong><br>
+              <span style="font-size: 12px; color: #666;">${report.dateStr}</span>
+            </td>
+            <td style="text-align: right; vertical-align: bottom; padding-bottom: 10px;">
+              <h1 style="margin: 0; font-size: 24px; color: #111;">${report.title} Export</h1>
+            </td>
+          </tr>
+        </table>`;
 
     report.sensors.forEach(data => {
       html += `<h3>
@@ -302,108 +368,184 @@ const ExportManager = (() => {
       
       html += `<ul><li style="text-align: left;"><strong>Min:</strong> ${data.stats.min.toFixed(1)} ${data.unit}</li><li style="text-align: left;"><strong>Average:</strong> ${data.stats.avg.toFixed(1)} ${data.unit}</li><li style="text-align: left;"><strong>Max:</strong> ${data.stats.max.toFixed(1)} ${data.unit}</li></ul>`;
       
-      html += `<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: center;">
-          <tr style="background-color: #e2e2e2;">
-            <th style="text-align: center;">Time</th>
-            <th style="text-align: center;">Reading</th>
-            <th style="text-align: center;">Status</th>
-          </tr>`;
+      if (data.isBarChart) {
+        html += `<table border="1" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse: collapse; width: 100%;\">
+            <tr style=\"background-color: #e2e2e2;\">
+              <th style=\"text-align: left; width: 25%;\">Time Span</th>
+              <th style=\"text-align: center; width: 20%;\">Average</th>
+              <th style=\"text-align: left; width: 55%;\">Trend Graph</th>
+            </tr>`;
+      } else {
+        html += `<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: center;">
+            <tr style="background-color: #e2e2e2;">
+              <th style="text-align: center;">Time</th><th style="text-align: center;">Reading</th><th style="text-align: center;">Status</th>
+            </tr>`;
+      }
           
       for (let i = 0; i < data.labels.length; i++) {
         let val = data.values[i];
         if (val == null) continue;
-        let status = 'Normal';
-        if (data.limits) {
-           if (val <= data.limits.critical_min) status = 'Low';
-           else if (val >= data.limits.critical_max) status = 'High';
+
+        if (data.isBarChart) {
+           const barColor = getBarColor(val, data.limits);
+           html += `<tr>
+              <td style="text-align: left;">${data.labels[i]}</td>
+              <td style="text-align: center;"><strong>${val}</strong> ${data.unit}</td>
+              <td style="text-align: left; vertical-align: middle;">
+                <div style="width: 100%; background: #eee; height: 16px;">
+                  <div style="width: ${data.barWidths[i]}%; background: ${barColor}; height: 16px;"></div>
+                </div>
+              </td>
+            </tr>`;
+        } else {
+           let status = getStatusText(val, data.limits);
+           html += `<tr>
+              <td style="text-align: center;">${data.labels[i]}</td>
+              <td style="text-align: center;">${val} ${data.unit}</td>
+              <td style="text-align: center;">${status}</td>
+            </tr>`;
         }
-        html += `<tr>
-            <td style="text-align: center;">${data.labels[i]}</td>
-            <td style="text-align: center;">${val} ${data.unit}</td>
-            <td style="text-align: center;">${status}</td>
-          </tr>`;
       }
       html += `</table><br><br>`;
     });
 
     html += `</div></body></html>`;
     const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
-    triggerDownload(URL.createObjectURL(blob), `AVONIC_${report.title.replace(/\s+/g, '_')}.doc`);
+    triggerDownload(URL.createObjectURL(blob), `AVONIC_${report.title.replace(/\s+/g, '_')}_Export.doc`);
   }
 
-function generatePDF(report) {
+  function generatePDF(report) {
     let html = `<html><head><title>${report.title} Export</title>
       <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
       <style>
         @page { size: A4 portrait; margin: 15mm; }
-        body { font-family: 'Quicksand', sans-serif; padding: 0; color: #111; background: #fff; }
-        h1 { border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 5px;}
-        .meta { font-size: 14px; color: #666; margin-bottom: 30px; }
-        .sensor-block { margin-bottom: 50px; page-break-inside: auto; }
-        h2 { color: #2e4f39; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        body { font-family: 'Quicksand', sans-serif; padding: 0; color: #111; background: #fff; 
+          -webkit-print-color-adjust: exact !important; 
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
         
-        .action-box { background: #f9f9f9; padding: 12px; margin-bottom: 20px; text-align: left; border-radius: 4px; page-break-inside: avoid;}
+        .pdf-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #111; padding-bottom: 12px; margin-bottom: 25px; }
+        .pdf-header-left { text-align: left; line-height: 1.4; }
+        .pdf-header h1 { margin: 0; font-size: 26px; text-align: right; }
+        
+        h2 { color: #2e4f39; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .action-box { background: #f9f9f9; padding: 12px; margin-bottom: 20px; text-align: left; border-radius: 4px; }
         .action-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
         .action-list { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.4; }
         
-        .stats { display: flex; gap: 15px; margin-bottom: 20px; page-break-inside: avoid; }
+        .stats { display: flex; gap: 15px; margin-bottom: 20px; }
         .stat-box { border: 1px solid #ccc; padding: 10px 15px; border-radius: 6px; flex: 1; text-align: center; }
         .stat-val { font-size: 20px; font-weight: bold; display: block; margin-top: 5px; color: #111;}
         
-        /* ── PDF Pagination Rules ── */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: center; page-break-inside: auto; }
-        tr { page-break-inside: avoid; page-break-after: auto; }
-        thead { display: table-header-group; } /* Forces header to repeat on new pages */
-        tfoot { display: table-footer-group; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 0; text-align: center; }
         th, td { border-bottom: 1px solid #ccc; padding: 8px; text-align: center; font-size: 13px; }
-        th { background: #eee; }
-      </style></head><body>
-      <h1>${report.title}</h1><div class="meta">Generated: ${report.date}</div>`;
-
-    report.sensors.forEach(data => {
-      html += `<div class="sensor-block">
-                 <h2>
-                   <img src="${window.location.origin}${data.iconPath}" width="26" height="26">
-                   ${data.sensorName}
-                 </h2>`;
-                 
-      if (report.includeInsight && data.actionData.title) {
-        const color = getSeverityColor(data.actionData.severity);
-        const stepsHtml = data.actionData.steps.map(s => `<li>${s}</li>`).join('');
-        html += `<div class="action-box" style="border-left: 4px solid ${color};">
-                   <div class="action-title">${data.actionData.title}</div>
-                   <ul class="action-list">${stepsHtml}</ul>
-                 </div>`;
-      }
-      
-      html += `<div class="stats">
-          <div class="stat-box">Min<span class="stat-val">${data.stats.min.toFixed(1)} ${data.unit}</span></div>
-          <div class="stat-box">Average<span class="stat-val">${data.stats.avg.toFixed(1)} ${data.unit}</span></div>
-          <div class="stat-box">Max<span class="stat-val">${data.stats.max.toFixed(1)} ${data.unit}</span></div>
-        </div>
+        th { background: #eee !important; }
         
-        <table>
-          <thead>
-            <tr><th>Time</th><th>Reading</th><th>Status</th></tr>
-          </thead>
-          <tbody>`;
+        .bar-bg { width: 100%; background: #eee !important; height: 12px; border-radius: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 6px; }
+        
+        .page-break { page-break-after: always; margin-bottom: 20px; }
+      </style></head><body>`;
 
-      for (let i = 0; i < data.labels.length; i++) {
-        let val = data.values[i];
-        if (val == null) continue;
-        let status = 'Normal';
-        if (data.limits) {
-           if (val <= data.limits.critical_min) status = 'Low';
-           else if (val >= data.limits.critical_max) status = 'High';
+    const isFluctuation = currentContext === 'Bin Fluctuation';
+    const ROWS_FIRST_PAGE = isFluctuation ? 18 : 22; 
+    const ROWS_OTHER_PAGES = isFluctuation ? 32 : 38; 
+
+    report.sensors.forEach((data, sIndex) => {
+      const totalRows = data.labels.length;
+      let startIndex = 0;
+      let isFirstPage = true;
+
+      do {
+        let chunkLimit = isFirstPage ? ROWS_FIRST_PAGE : ROWS_OTHER_PAGES;
+        if (totalRows === 0) chunkLimit = 1; 
+
+        let limitRows = data.labels.slice(startIndex, startIndex + chunkLimit);
+        let limitVals = data.values.slice(startIndex, startIndex + chunkLimit);
+        let limitBars = data.isBarChart ? data.barWidths.slice(startIndex, startIndex + chunkLimit) : [];
+
+        if (isFirstPage) {
+          if (sIndex === 0) {
+             html += `
+               <div class="pdf-header">
+                 <div class="pdf-header-left">
+                   <strong style="font-size: 15px;">AVONIC SYSTEM</strong><br>
+                   <span style="font-size: 12px; color: #666;">${report.dateStr}</span>
+                 </div>
+                 <h1>${report.title} Export</h1>
+               </div>`;
+          }
+          
+          html += `<h2><img src="${window.location.origin}${data.iconPath}" width="26" height="26"> ${data.sensorName}</h2>`;
+                     
+          if (report.includeInsight && data.actionData.title) {
+            const color = getSeverityColor(data.actionData.severity);
+            const stepsHtml = data.actionData.steps.map(s => `<li>${s}</li>`).join('');
+            html += `<div class="action-box" style="border-left: 4px solid ${color} !important;">
+                       <div class="action-title">${data.actionData.title}</div>
+                       <ul class="action-list">${stepsHtml}</ul>
+                     </div>`;
+          }
+          
+          html += `<div class="stats">
+              <div class="stat-box">Min<span class="stat-val">${data.stats.min.toFixed(1)} ${data.unit}</span></div>
+              <div class="stat-box">Average<span class="stat-val">${data.stats.avg.toFixed(1)} ${data.unit}</span></div>
+              <div class="stat-box">Max<span class="stat-val">${data.stats.max.toFixed(1)} ${data.unit}</span></div>
+            </div>`;
+        } else {
+          html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 16px; font-size: 11px; color: #666;">
+              <span>AVONIC SYSTEM | ${report.dateStr}</span>
+              <strong style="text-align: right;">${report.title} Export (Continued)</strong>
+            </div>
+            <h2 style="color: #666;"><img src="${window.location.origin}${data.iconPath}" width="20" height="20" style="opacity: 0.5;"> ${data.sensorName} (Continued)</h2>`;
         }
-        html += `<tr><td>${data.labels[i]}</td><td>${val} ${data.unit}</td><td>${status}</td></tr>`;
-      }
-      html += `</tbody></table></div>`;
+
+        if (data.isBarChart) {
+          html += `<table><tr><th style="width: 20%; text-align: left;">Time Span</th><th style="width: 20%;">Average</th><th style="width: 60%; text-align: left;">Trend</th></tr>`;
+        } else {
+          html += `<table><tr><th>Time</th><th>Reading</th><th>Status</th></tr>`;
+        }
+
+        if (limitRows.length === 0) {
+           html += `<tr><td colspan="3" style="color:#aaa;">No data available</td></tr>`;
+        } else {
+          for (let i = 0; i < limitRows.length; i++) {
+            let val = limitVals[i];
+            if (val == null) continue;
+            
+            if (data.isBarChart) {
+              const barColor = getBarColor(val, data.limits);
+              html += `<tr>
+                <td style="text-align: left;">${limitRows[i]}</td>
+                <td><strong>${val}</strong><span style="font-size:10px; color:#666; margin-left:2px;">${data.unit}</span></td>
+                <td style="text-align: left; vertical-align: middle;">
+                  <div class="bar-bg">
+                    <div class="bar-fill" style="width: ${limitBars[i]}%; background: ${barColor} !important;"></div>
+                  </div>
+                </td>
+              </tr>`;
+            } else {
+              let status = getStatusText(val, data.limits);
+              html += `<tr><td>${limitRows[i]}</td><td>${val} ${data.unit}</td><td>${status}</td></tr>`;
+            }
+          }
+        }
+        html += `</table>`;
+
+        startIndex += chunkLimit;
+        isFirstPage = false;
+
+        if (startIndex < totalRows || sIndex < report.sensors.length - 1) {
+            html += `<div class="page-break"></div>`;
+        }
+
+      } while (startIndex < totalRows);
     });
 
     html += `</body></html>`;
 
-    // ── THE FIX: Invisible Iframe Printer ──
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.right = '0';
@@ -413,7 +555,6 @@ function generatePDF(report) {
     iframe.style.border = 'none';
     document.body.appendChild(iframe);
 
-    // Write the HTML securely into the iframe
     const doc = iframe.contentWindow || iframe.contentDocument;
     if (doc.document) doc.document.write(html);
     else doc.write(html);
@@ -421,15 +562,10 @@ function generatePDF(report) {
     if (doc.document) doc.document.close();
     else doc.close();
 
-    // Trigger print once the font has a split second to load
     setTimeout(() => {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
-      
-      // Clean up the iframe from the DOM after printing
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 1000);
+      setTimeout(() => document.body.removeChild(iframe), 1000);
     }, 400);
   }
 
