@@ -2437,3 +2437,4 @@ document.querySelectorAll('.resource-manual-btn').forEach(btn => {
     // Optional: send analytics ping here
   });
 });
+

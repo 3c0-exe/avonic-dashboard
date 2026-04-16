@@ -5096,3 +5096,261 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
 .av-tour-popover.driver-popover * {
     font-family: 'Quicksand', sans-serif !important;
 }
+
+/* ════════════════════════════════════════════
+   EXPORT MODAL (Split Layout)
+   ════════════════════════════════════════════ */
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  color: #111;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.export-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.export-modal {
+  padding: 0 !important; /* Overrides sys-modal default padding */
+  max-width: 680px !important; /* Wider for the split layout */
+  border: 1.5px solid #111;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.export-modal-inner {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 440px; 
+}
+
+/* ── Left Side: Preview ── */
+.export-left {
+  flex: 1;
+  background: #ffffff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-preview-badge {
+  display: inline-block;
+  border: 1.5px solid #111;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #111;
+  background: #dcdcdc; /* Matching the wireframe pill */
+  width: fit-content;
+  margin-bottom: 24px;
+}
+
+.export-a4-placeholder {
+  flex: 1;
+  background: #fdfdfd;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 14px;
+  width: 100%;
+  /* A4 Aspect Ratio constraint */
+  aspect-ratio: 1 / 1.414;
+  margin: 0 auto;
+  max-height: 500px; 
+}
+
+/* ── Right Side: Controls ── */
+.export-right {
+  width: 250px;
+  background: #dcdcdc; /* Wireframe grey */
+  border-left: 1.5px solid #111;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 24px;
+}
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1; /* Pushes the Exit button to the bottom */
+}
+
+.export-opt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  padding: 14px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #111;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.export-opt-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px #111;
+}
+
+.export-opt-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #111;
+}
+
+.export-opt-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-exit-btn {
+  width: 100%;
+  background: #4a4a4a;
+  color: #ffffff;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 24px;
+}
+
+.export-exit-btn:hover {
+  background: #333333;
+}
+
+/* ── Mobile Adjustments ── */
+@media (max-width: 768px) {
+  .export-modal-inner {
+    flex-direction: column;
+  }
+  .export-right {
+    width: 100%;
+    border-left: none;
+    border-top: 1.5px solid #111;
+    padding-bottom: 24px; /* Ensure bottom padding */
+  }
+  .export-a4-placeholder {
+    max-height: 300px; /* Restrict height on mobile so it fits the screen */
+  }
+}
+
+/* ── Export Checkboxes ── */
+.export-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-check {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.export-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #111; /* Makes the native checkbox black */
+  cursor: pointer;
+  border: 1.5px solid #111;
+}
+
+/* ── Export Live Preview & Pagination ── */
+.export-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+}
+
+.ex-page-btn {
+  background: #ffffff;
+  border: 1.5px solid #111;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.1s;
+}
+
+.ex-page-btn:hover:not(:disabled) { background: #e2e2e2; }
+.ex-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.export-a4-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #f0f0f0;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.export-a4-placeholder {
+  background: #ffffff;
+  width: 100%;
+  aspect-ratio: 1 / 1.414; /* Pure A4 Ratio */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 18px; 
+  font-family: 'Quicksand', sans-serif;
+  overflow: hidden;
+  position: relative;
+  color: #111;
+  /* Override the old flex centering */
+  display: block; 
+}
+
+/* Miniaturized Document Styles */
+.ex-prev-header h1 { font-size: 14px; margin: 0 0 4px 0; border-bottom: 1px solid #111; padding-bottom: 4px; }
+.ex-prev-meta { font-size: 8px; color: #666; margin-bottom: 12px; }
+.ex-prev-sensor-h2 { font-size: 12px; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px; color: #2e4f39;}
+.ex-prev-insight { background: #f9f9f9; padding: 6px; font-size: 8px; margin-bottom: 10px; border-radius: 3px; }
+.ex-prev-stats { display: flex; gap: 6px; margin-bottom: 12px; }
+.ex-prev-stat-box { border: 1px solid #ccc; padding: 6px; border-radius: 4px; flex: 1; text-align: center; font-size: 7px; }
+.ex-prev-stat-box span { display: block; font-size: 11px; font-weight: bold; margin-top: 2px;}
+.ex-prev-table { width: 100%; border-collapse: collapse; font-size: 7.5px; text-align: center; }
+.ex-prev-table th, .ex-prev-table td { border-bottom: 1px solid #eee; padding: 4px; }
+.ex-prev-table th { background: #fafafa; }

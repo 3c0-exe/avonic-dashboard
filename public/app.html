@@ -526,13 +526,24 @@
   <section class="page page-fill" id="page-quick-insights">
     <div class="page-card">
       <div class="page-body qi-page-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path" data-i18n="app-qi-crumb-path">Dashboard &gt; Quick Insights</span>
-            <span class="crumb-name" data-i18n="app-qi-crumb-name">Quick Insights</span>
+         <div class="bin-crumb" style="justify-content: space-between;">
+  
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="back-btn" onclick="window.location.hash='#/dashboard'">
+              <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+            </button>
+            <div>
+              <span class="crumb-path" data-i18n="app-qi-crumb-path">Dashboard &gt; Quick Insights</span>
+              <span class="crumb-name" data-i18n="app-qi-crumb-name">Quick Insights</span>
+            </div>
+          </div>
+
+          <div class="export-dropdown">
+            <button class="export-btn" onclick="ExportManager.openExport('Quick Insights')">
+              
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              EXPORT
+            </button>
           </div>
         </div>
 
@@ -632,15 +643,26 @@
   <section class="page page-fill" id="page-bin-fluctuation">
     <div class="page-card">
       <div class="page-body">
-        <div class="bin-crumb">
-          <button class="back-btn" onclick="window.location.hash='#/dashboard'">
-            <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
-          </button>
-          <div>
-            <span class="crumb-path" data-i18n="app-bf-crumb-path">Dashboard &gt; Bin Fluctuation</span>
-            <span class="crumb-name" data-i18n="app-bf-crumb-name">Bin Fluctuation</span>
-          </div>
-        </div>
+        <div class="bin-crumb" style="justify-content: space-between;">
+  
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <button class="back-btn" onclick="window.location.hash='#/dashboard'">
+      <img src="/img/nav/BackIcon.svg" alt="Back" class="ic-sm">
+    </button>
+    <div>
+      <span class="crumb-path" data-i18n="app-bf-crumb-path">Dashboard &gt; Bin Fluctuation</span>
+      <span class="crumb-name" data-i18n="app-bf-crumb-name">Bin Fluctuation</span>
+    </div>
+  </div>
+
+  <div class="export-dropdown">
+    <button class="export-btn" onclick="ExportManager.openExport('Bin Fluctuation')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      EXPORT
+    </button>
+  </div>
+
+</div>
 
         <div class="bf-layout">
 
@@ -1275,6 +1297,74 @@
   </div>
 </div>
 </div>
+<div class="sys-modal export-modal" id="export-modal">
+  <div class="export-modal-inner">
+    
+    <div class="export-left">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="export-preview-badge" style="margin-bottom: 0;">Preview</div>
+        
+        <div class="export-pagination" id="ex-pagination" style="display: none;">
+          <button id="ex-prev-page" class="ex-page-btn">&larr;</button>
+          <span id="ex-page-indicator">Page 1 of 1</span>
+          <button id="ex-next-page" class="ex-page-btn">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="export-a4-wrapper">
+        <div class="export-a4-placeholder" id="ex-a4-canvas">
+          </div>
+      </div>
+    </div>
+
+    <div class="export-right">
+      <h3 class="export-title" style="margin-bottom: 12px;">Export Settings</h3>
+      
+      <div class="export-settings-group">
+        <label class="export-check"><input type="checkbox" value="temperature" class="ex-sens-cb" checked> Temperature</label>
+        <label class="export-check"><input type="checkbox" value="soilMoisture" class="ex-sens-cb" checked> Soil Moisture</label>
+        <label class="export-check"><input type="checkbox" value="humidity" class="ex-sens-cb" checked> Humidity</label>
+        <label class="export-check"><input type="checkbox" value="gasLevels" class="ex-sens-cb" checked> Gas Levels</label>
+      </div>
+
+      <div class="export-settings-group" style="margin-top: 12px; margin-bottom: 24px;">
+        <label class="export-check" style="color: #4B644E;">
+          <input type="checkbox" id="ex-insight-cb" checked> Include Recommended Actions
+        </label>
+      </div>
+
+      <div class="export-options">
+        
+        <button class="export-opt-btn" onclick="ExportManager.processExport('PDF')">
+          <span class="export-opt-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15h6"></path><path d="M9 11h6"></path></svg>
+            PDF
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+
+        <button class="export-opt-btn" onclick="ExportManager.processExport('DOCS')">
+          <span class="export-opt-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
+            DOCS
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+
+        <button class="export-opt-btn" onclick="ExportManager.processExport('CSV')">
+          <span class="export-opt-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M8 13h8"></path><path d="M8 17h8"></path><path d="M12 11v8"></path></svg>
+            CSV
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+
+      </div>
+
+      <button class="export-exit-btn" onclick="closeTopModal()">Exit</button>
+    </div>
+  </div>
+</div>
 <!-- ── End Status Pill Modals ─────────────────────────── -->
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
@@ -1285,6 +1375,7 @@
 <script src="tour.js"></script>  <!-- Phase 4: tour logic — after app.js, before welcome-modal.js -->
 <script src="lang.js"></script>
 <script src="welcome-modal.js"></script>   <!-- ← add this line -->
-<!-- <script src="dummy-data-injector.js"></script> -->
+<script src="dummy-data-injector.js"></script>
+<script src="export.js"></script>
 </body>
 </html>
