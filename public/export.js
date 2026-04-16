@@ -24,8 +24,21 @@ const ExportManager = (() => {
   function openExport(contextName) {
     currentContext = contextName;
     currentPreviewPage = 0;
+
+    // Reset mobile pagination to Page 1
+    const inner = document.getElementById('export-modal-inner');
+    if (inner) inner.classList.remove('show-mobile-preview');
+
     updatePreview(); 
     if (typeof openModal === 'function') openModal('export-modal');
+  }
+
+  function toggleMobilePreview(show) {
+    const inner = document.getElementById('export-modal-inner');
+    if (inner) {
+      if (show) inner.classList.add('show-mobile-preview');
+      else inner.classList.remove('show-mobile-preview');
+    }
   }
 
   function getReportDateString() {
@@ -578,7 +591,7 @@ const ExportManager = (() => {
     document.body.removeChild(link);
   }
 
-  return { init, openExport, processExport };
+  return { init, openExport, processExport, toggleMobilePreview };
 })();
 
 if (document.readyState === 'loading') {

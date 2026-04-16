@@ -5354,3 +5354,85 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
 .ex-prev-table { width: 100%; border-collapse: collapse; font-size: 7.5px; text-align: center; }
 .ex-prev-table th, .ex-prev-table td { border-bottom: 1px solid #eee; padding: 4px; }
 .ex-prev-table th { background: #fafafa; }
+
+
+/* ── Mobile Tweaks for Export Button ── */
+@media (max-width: 768px) {
+  .export-btn-text {
+    display: none;
+  }
+  
+  .export-btn {
+    padding: 8px 10px; /* Squares up the button since it's just an icon now */
+  }
+}
+
+/* ════════════════════════════════════════════
+   EXPORT MODAL MOBILE PAGINATION
+   ════════════════════════════════════════════ */
+.ex-mobile-preview-btn, .ex-mobile-back {
+  display: none; /* Hidden by default on Desktop */
+}
+
+@media (max-width: 768px) {
+  /* Default Mobile State: Show Controls (Page 1) */
+  .export-left {
+    display: none; 
+  }
+  
+  .export-right {
+    display: flex;
+    width: 100%;
+    border-left: none;
+    padding-bottom: 24px;
+  }
+
+  /* Show the mobile navigation buttons */
+  .ex-mobile-preview-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: #eef5ed;
+    color: #2e4f39;
+    border: 1.5px solid #2e4f39;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .ex-mobile-preview-btn:active {
+    background: #d4e8d8;
+  }
+
+  .ex-mobile-back {
+    display: block;
+    background: transparent;
+    border: none;
+    color: #111;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 0 0 16px 0;
+    margin-bottom: 16px;
+    border-bottom: 1.5px solid #ccc;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  /* Active Preview State (Page 2) */
+  .export-modal-inner.show-mobile-preview .export-left {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .export-modal-inner.show-mobile-preview .export-right {
+    display: none;
+  }
+}
