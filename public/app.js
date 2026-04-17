@@ -305,9 +305,9 @@ function flattenSensorData(json) {
     soil1_percent:          b1.soil         ?? null,
     gas1_ppm:               b1.gas          ?? null,
     ds18b20_temp:           b1.ds18b20      ?? null,
-    water_level_bin1: b1.water_level ?? null,
-    bin1_exhaust_fan_state: b1.exhaust_fan  ?? false,
-    bin1_intake_fan_state:  b1.intake_fan   ?? false,
+water_level_bin1: b1.ultrasonic ?? null,    // master sends "ultrasonic"
+bin1_intake_fan_state: b1.fan ?? false,      // master sends "fan" (single field)
+bin1_exhaust_fan_state: b1.fan ?? false,     // same field — no separate exhaust
     bin1_pump_state:        b1.pump         ?? false,
 
     // Bin 2
@@ -316,8 +316,8 @@ function flattenSensorData(json) {
     soil2_percent:          b2.soil         ?? null,
     gas2_ppm:               b2.gas          ?? null,
     water_level:            b2.water_level  ?? null,
-    bin2_exhaust_fan_state: b2.exhaust_fan  ?? false,
-    bin2_intake_fan_state:  b2.intake_fan   ?? false,
+    bin2_intake_fan_state: b2.fan ?? false,
+    bin2_exhaust_fan_state: b2.fan ?? false,
     bin2_pump_state:        b2.pump         ?? false,
 
     // Peltier
