@@ -160,9 +160,10 @@ const API = {
     });
     if (r.status === 401) throw new Error('401');
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const json = await r.json();
-    // Flatten the nested MongoDB structure into the flat format the UI expects
-    return flattenSensorData(json);
+// AFTER
+const json = await r.json();
+console.log('API /latest response:', JSON.stringify(json).slice(0, 300));
+return flattenSensorData(json);
   },
 
   // Send actuator command via backend → MQTT → ESP32
@@ -287,9 +288,10 @@ const API = {
 // ── Flatten MongoDB sensor doc → flat UI format ───────────────
 // The backend stores data as { bin1: {temp, humidity, soil, gas,...}, bin2: {...}, system: {...} }
 // The UI expects flat keys like temp1, hum1, soil1_percent, gas1_ppm etc.
+// AFTER
 function flattenSensorData(json) {
-  const d = json.data || json;
-  if (!d) return null;
+  const d = json.data || json.reading || json;
+  if (!d || !d.bin1) return null;
 
   const b1  = d.bin1   || {};
   const b2  = d.bin2   || {};
