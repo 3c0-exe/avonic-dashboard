@@ -636,9 +636,9 @@
 
       /* Mode labels (used by JS renderer) */
       'app-mode-auto':         'Awtomatiko',
-      'app-mode-manual':       'Mano-mano',
+      'app-mode-manual':       'Manwal',
       'app-mode-auto-short':   'Awtomatiko',
-      'app-mode-manual-short': 'Mano-mano',
+      'app-mode-manual-short': 'Manwal',
       'app-updated-at':        'Na-update noong',
 
       /* Sensor status conditions (used by JS renderer) */
@@ -745,8 +745,8 @@
       /* Modals & Loading States */
       'modal-mode-auto-title': 'I-activate ang Awtomatiko?',
       'modal-mode-auto-desc': 'Ang pag-on ng awtomatiko ay nagpapahintulot sa system na gumana nang mag-isa.',
-      'modal-mode-manual-title': 'I-activate ang Mano-mano?',
-      'modal-mode-manual-desc': 'Ang pag-on ng mano-mano ay humihinto sa awtomatiko, na nangangahulugan din ng posibleng pagkakamali ng tao.',
+      'modal-mode-manual-title': 'I-activate ang Manwal Mode?',
+      'modal-mode-manual-desc': 'Ang pag-on ng Manwal Mode ay humihinto sa awtomatiko, na nangangahulugan din ng posibleng pagkakamali ng tao.',
       'modal-btn-activate-bin': 'I-activate para sa bin na ito',
       'app-updated-just-now': 'Na-update ngayon lang',
       'app-fetching-bins': 'Kinukuha ang iyong mga bin...',
