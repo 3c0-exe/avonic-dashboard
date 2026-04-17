@@ -581,7 +581,7 @@ function renderPage(id, d) {
 function renderHome(d) {
   const pct = d.battery_percent || 0;
   setText('bat-pct-text', pct + '%');
-  setText('water-pct-text', (d.water_level != null ? d.water_level : '--') + '%');
+  setText('water-pct-text', (d.water_level_bin1 != null ? d.water_level_bin1 : '--') + '%');
 
   updateBatteryIcon(pct, d.charging || false);
 
@@ -1169,7 +1169,7 @@ function getStatusPillState(type, d) {
     return 'normal';
   }
   if (type === 'water') {
-    const v = d.water_level != null ? d.water_level : 50;
+    const v = d.water_level_bin1 != null ? d.water_level_bin1 : 50;
     if (v <= StatusModal.WATER_LOW)  return 'low';
     if (v >= StatusModal.WATER_FULL) return 'full';
     return 'normal';
