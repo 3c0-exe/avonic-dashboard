@@ -1291,8 +1291,12 @@
   </div>
   <h2 class="sys-modal-title" id="status-modal-temp-title">Water Temperature</h2>
   <p class="sys-modal-desc" id="status-modal-temp-desc">Checking temperature…</p>
-  <div class="sys-modal-actions">
-    <button class="btn-primary" onclick="closeTopModal()" data-i18n="modal-btn-okay">Okay</button>
+  <div class="sys-modal-actions" style="flex-direction:column; gap:10px;">
+    <button class="btn-primary" id="peltier-toggle-btn" onclick="togglePeltierLoop()"
+      style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
+      ❄️ <span id="peltier-btn-label">Start Cooling</span>
+    </button>
+    <button class="btn-secondary" onclick="closeTopModal()" style="width:100%;">Close</button>
   </div>
 </div>
 </div>

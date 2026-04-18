@@ -1263,9 +1263,57 @@ function openStatusModal(type) {
         : _t('status-temp-nodata');
         
     updateTempModalSVG(v);
+
+    // Sync peltier button to current state
+    const isOn = S.data && S.data.peltier_main_state;
+    const btnLabel = $('peltier-btn-label');
+    const btn = $('peltier-toggle-btn');
+    if (btnLabel) btnLabel.textContent = isOn ? 'Stop Cooling' : 'Start Cooling';
+    if (btn) btn.style.background = isOn ? 'var(--danger)' : '';
+
     openModal('status-modal-temp');
   }
 }
+
+// ====== PELTIER LOOP TOGGLE ======
+async function togglePeltierLoop() {
+  const isOn = S.data && S.data.peltier_main_state;
+  const newState = !isOn;
+
+  const btn = $('peltier-toggle-btn');
+  const btnLabel = $('peltier-btn-label');
+  if (btn) btn.disabled = true;
+
+  try {
+    if (!S.activeEspID) throw new Error('No device selected');
+
+    const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/peltier`, {
+      method: 'POST',
+      headers: Token.headers(),
+      body: JSON.stringify({
+        device: 'peltier-both',
+        state: newState ? 1 : 0,
+        source: 'online_dashboard'
+      })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+
+    if (S.data) {
+      S.data.peltier_main_state = newState;
+      S.data.peltier_pump_state = newState;
+    }
+
+    if (btnLabel) btnLabel.textContent = newState ? 'Stop Cooling' : 'Start Cooling';
+    if (btn) btn.style.background = newState ? 'var(--danger)' : '';
+
+    toast('Peltier ' + (newState ? 'ON ❄️' : 'OFF'), 'ok');
+  } catch(e) {
+    toast('Failed to toggle cooling: ' + e.message, 'err');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 function dismissStatusModal(type) {
   StatusModal.dismissed[type] = true;
   closeTopModal();
