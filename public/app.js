@@ -1287,13 +1287,11 @@ async function togglePeltierLoop() {
   try {
     if (!S.activeEspID) throw new Error('No device selected');
 
-    const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/peltier`, {
+    const r = await fetch(`${BASE_URL}/api/peltier/loop`, {
       method: 'POST',
       headers: Token.headers(),
       body: JSON.stringify({
-        device: 'peltier-both',
-        state: newState ? 1 : 0,
-        source: 'online_dashboard'
+        state: newState ? 'on' : 'off'
       })
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
