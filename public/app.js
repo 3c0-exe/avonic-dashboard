@@ -325,8 +325,9 @@ bin1_exhaust_fan_state: b1.fan ?? false,     // same field — no separate exhau
     peltier_pump_state:     pel.pump        ?? false,
 
     // System
-    battery_percent:        sys.battery_level    ?? null,
-    charging:               sys.battery_charging ?? false,
+battery_percent:        sys.battery_percent  ?? sys.battery_level ?? null,
+charging:               sys.battery_charging ?? false,
+battery_voltage:        sys.battery_voltage  ?? null,
     wifi_connected:         sys.wifi_rssi != null,
     uptime:                 sys.uptime      ?? null,
 
@@ -584,7 +585,7 @@ function renderHome(d) {
   setText('bat-pct-text', pct + '%');
   setText('water-pct-text', (d.water_level_bin1 != null ? d.water_level_bin1 : '--') + '%');
 
-  updateBatteryIcon(pct, d.charging || false);
+  updateBatteryIcon(pct, d.charging || d.battery_charging || false);
 
   if (d.ds18b20_temp != null) {
     setText('home-temp-val', fmt(d.ds18b20_temp) + ' C°');
