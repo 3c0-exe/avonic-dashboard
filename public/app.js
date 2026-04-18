@@ -459,6 +459,7 @@ async function fetchAndRender() {
       return;
     }
     const d = await API.get();
+    console.log('flattenSensorData result:', d); // ← ADD THIS
     if (!d) return;
     S.data = d;
     pushHist(d);
