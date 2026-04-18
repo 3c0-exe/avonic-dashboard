@@ -1025,7 +1025,15 @@
   <p class="sys-modal-desc" data-i18n="modal-claim-bin-desc">Enter the unique 6-digit claim code found on your AVONIC device.</p>
   
   <div class="auth-field" style="margin-bottom: 20px;">
-    <input class="auth-input" id="claim-code-input" type="text" placeholder="Enter Claim Code" style="padding-left:12px;" data-i18n="modal-input-claim-code">
+    <input class="auth-input" id="claim-code-input" type="text" 
+      placeholder="AVONIC-XXXXXXXXXXXX"
+      maxlength="19"
+      style="padding-left:12px; text-transform:uppercase; letter-spacing:1px;"
+      oninput="validateClaimInput(this)"
+      data-i18n="modal-input-claim-code">
+    <p id="claim-input-hint" style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+      Format: AVONIC- followed by 12 characters (e.g. AVONIC-9888E014CDD0)
+    </p>
   </div>
 
   <div class="sys-modal-actions">

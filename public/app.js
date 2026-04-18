@@ -2237,6 +2237,35 @@ async function handleChangePassword() {
   openModal('confirm-action-modal');
 }
 
+function validateClaimInput(input) {
+  // Force uppercase
+  input.value = input.value.toUpperCase();
+
+  // Auto-insert "AVONIC-" prefix if user starts typing without it
+  if (input.value.length > 0 && !input.value.startsWith('AVONIC-')) {
+    input.value = 'AVONIC-' + input.value.replace('AVONIC-', '');
+  }
+
+  // Only allow hex characters after the prefix
+  const prefix = 'AVONIC-';
+  if (input.value.length > prefix.length) {
+    const suffix = input.value.slice(prefix.length).replace(/[^0-9A-F]/g, '');
+    input.value = prefix + suffix;
+  }
+
+  // Visual feedback
+  const hint = document.getElementById('claim-input-hint');
+  if (!hint) return;
+  const pattern = /^AVONIC-[0-9A-F]{12}$/;
+  if (pattern.test(input.value)) {
+    hint.style.color = 'var(--green-accent)';
+    hint.textContent = '✓ Valid Device ID';
+  } else {
+    hint.style.color = 'var(--text-muted)';
+    hint.textContent = 'Format: AVONIC- followed by 12 characters (e.g. AVONIC-9888E014CDD0)';
+  }
+}
+
 // ════════════════════════════════════
 // TOAST
 // ════════════════════════════════════
