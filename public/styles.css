@@ -2961,13 +2961,13 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
     border-radius: 0;
     justify-content: flex-start;
   }
-
-  .auth-back-row {
-    position: absolute;
-    top: 18px;
-    left: 20px;
+ .auth-back-row {
+    position: fixed;
+    top: 16px;
+    left: 16px;
     width: auto;
     margin-bottom: 0;
+    z-index: 10001;
   }
 
   .auth-back-label {
@@ -5433,6 +5433,6 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   }
   
   .export-modal-inner.show-mobile-preview .export-right {
-    display: none;
+    display: none;v
   }
 }
