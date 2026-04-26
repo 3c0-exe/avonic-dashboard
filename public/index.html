@@ -974,92 +974,331 @@
   <!-- ════════════════════════════════════════════
        WATCH THE TUTORIALS
   ════════════════════════════════════════════ -->
-  <section id="tutorials-section" style="background:#3B2208;" class="relative overflow-hidden py-20 md:py-28">
+  <!-- ── YouTube Video Modal ── -->
+  <div id="yt-modal" class="fixed inset-0 z-[9999] flex items-center justify-center" style="display:none!important;" aria-modal="true" role="dialog" aria-label="Video player">
+    <!-- Backdrop -->
+    <div id="yt-backdrop" class="absolute inset-0" style="background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"></div>
 
-    
+    <!-- Modal shell -->
+    <div id="yt-shell" class="relative z-10 w-full flex flex-col" style="max-width:min(900px,94vw);">
+
+      <!-- Top bar: title + controls -->
+      <div class="flex items-center justify-between px-1 pb-3">
+        <div class="flex flex-col">
+          <p id="yt-modal-tag" class="text-xs font-bold tracking-widest uppercase" style="color:#C89B3C;"></p>
+          <p id="yt-modal-title" class="text-sm font-semibold mt-0.5" style="color:rgba(255,255,255,0.9);"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Open on YouTube -->
+          <a id="yt-modal-yt-link" href="#" target="_blank" rel="noopener"
+             class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all duration-150 hover:bg-white/10"
+             style="color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.15);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.75 12.64 12.64 0 0 0-8.45 0A4.83 4.83 0 0 1 4.41 6.69C3.23 8.41 3 10.46 3 12s.23 3.59 1.41 5.31a4.83 4.83 0 0 1 3.77 2.75 12.64 12.64 0 0 0 8.45 0 4.83 4.83 0 0 1 3.77-2.75C20.77 15.59 21 13.54 21 12s-.23-3.59-1.41-5.31zM10 15V9l5 3-5 3z"/></svg>
+            YouTube
+          </a>
+          <!-- Close -->
+          <button id="yt-close" aria-label="Close video"
+                  class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 hover:bg-white/15"
+                  style="color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Player wrapper — 16:9 responsive -->
+      <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl" style="aspect-ratio:16/9;background:#0f0f0f;">
+
+        <!-- Branded fallback — sits behind iframe, visible only when iframe fails/is empty -->
+        <div id="yt-fallback" class="absolute inset-0 flex flex-col items-center justify-center gap-5 text-center px-8" style="background:linear-gradient(135deg,#1a0e00 0%,#0f0a00 60%,#0f0f0f 100%);">
+          <!-- Blurred thumbnail bg -->
+          <img id="yt-fallback-thumb" src="" alt="" aria-hidden="true"
+               class="absolute inset-0 w-full h-full object-cover"
+               style="opacity:0.18;filter:blur(14px);transform:scale(1.1);" />
+          <!-- Animated ring -->
+          <div class="relative z-10 flex flex-col items-center gap-5">
+            <div class="relative flex items-center justify-center">
+              <span class="absolute w-20 h-20 rounded-full" style="background:rgba(200,155,60,0.12);animation:ringPulse 2.5s ease-in-out infinite;"></span>
+              <div class="relative w-16 h-16 rounded-full flex items-center justify-center" style="background:rgba(200,155,60,0.1);border:1.5px solid rgba(200,155,60,0.35);">
+                <!-- Film reel icon -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C89B3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="3"/>
+                  <circle cx="6.5" cy="7" r="1.2" fill="#C89B3C" stroke="none"/>
+                  <circle cx="17.5" cy="7" r="1.2" fill="#C89B3C" stroke="none"/>
+                  <circle cx="6.5" cy="17" r="1.2" fill="#C89B3C" stroke="none"/>
+                  <circle cx="17.5" cy="17" r="1.2" fill="#C89B3C" stroke="none"/>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <p class="font-serif text-lg mb-1" style="color:#ffffff;font-weight:400;">Video Preview</p>
+              <p id="yt-fallback-title" class="text-sm font-semibold mb-2" style="color:#C89B3C;"></p>
+              <p class="text-xs leading-relaxed max-w-xs" style="color:rgba(255,255,255,0.4);">Watch the full episode directly on YouTube while we resolve the embed.</p>
+            </div>
+            <a id="yt-fallback-link" href="#" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2.5 font-bold text-sm px-7 py-3 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+               style="background:#C89B3C;color:#1a1a1a;box-shadow:0 4px 20px rgba(200,155,60,0.3);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
+              Watch on YouTube
+            </a>
+          </div>
+        </div>
+
+        <!-- iframe: hidden initially, fades in only when YouTube confirms playback -->
+        <iframe id="yt-iframe"
+          src=""
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"
+          class="absolute inset-0 w-full h-full border-0"
+          style="z-index:3;opacity:0;transition:opacity 0.4s ease;">
+        </iframe>
+      </div>
+
+      <!-- Bottom bar: episode navigation -->
+      <div class="flex items-center justify-between mt-3 px-1">
+        <button id="yt-prev" class="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-150 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed" style="color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.15);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Previous
+        </button>
+        <div id="yt-dots" class="flex items-center gap-2"></div>
+        <button id="yt-next" class="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-150 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed" style="color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.15);">
+          Next
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section id="tutorials-section" style="background:#3B2208;" class="relative overflow-hidden py-20 md:py-28">
 
     <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 
       <!-- Header -->
       <div class="text-center mb-12">
-  <div class="flex items-center justify-center gap-2 mb-4">
-    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
-    <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#C89B3C;" data-i18n="tutorials-eyebrow">Learn AVONIC</p>
-    <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
-  </div>
-  <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#ffffff;font-weight:400;" data-i18n="tutorials-h2">
-    Watch the Tutorials
-  </h2>
-  <p class="text-sm max-w-md mx-auto" style="color:rgba(255,255,255,0.55);" data-i18n="tutorials-subhead">
-    Get up and running fast with our step-by-step video guides.
-  </p>
-</div>
-
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
-
-  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-      <img src="./images/tutorial-1.jpg" alt="Tutorial 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
+          <p class="text-xs font-bold tracking-[0.2em] uppercase" style="color:#C89B3C;" data-i18n="tutorials-eyebrow">Learn AVONIC</p>
+          <div class="w-6 h-0.5 rounded-full" style="background:#C89B3C;opacity:0.6;"></div>
         </div>
+        <h2 class="font-serif mb-3" style="font-size:clamp(2rem,4vw,3rem);color:#ffffff;font-weight:400;" data-i18n="tutorials-h2">
+          Watch the Tutorials
+        </h2>
+        <p class="text-sm max-w-md mx-auto" style="color:rgba(255,255,255,0.55);" data-i18n="tutorials-subhead">
+          Get up and running fast with our step-by-step video guides.
+        </p>
       </div>
-    </div>
-    <div class="p-4">
-      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card1-tag">Getting Started</p>
-      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card1-title">Setting up your AVONIC device</p>
-    </div>
-  </div>
 
-  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-      <img src="./images/tutorial-2.jpg" alt="Tutorial 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <!-- ── 3-column grid ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
+
+        <!-- EP1 — What is AVONIC -->
+        <div class="yt-card group rounded-2xl overflow-hidden border cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+             style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);"
+             data-yt-id="r4QXvhJoHuo"
+             data-yt-tag="Episode 1"
+             data-yt-title="What is AVONIC?"
+             role="button" tabindex="0" aria-label="Play: What is AVONIC?">
+          <!-- Thumbnail -->
+          <div class="relative overflow-hidden" style="aspect-ratio:16/9;background:#2A1504;">
+            <img src="https://img.youtube.com/vi/r4QXvhJoHuo/mqdefault.jpg"
+                 alt="EP1 thumbnail"
+                 class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-200 group-hover:scale-105"
+                 style="transition:opacity 0.2s ease, transform 0.35s ease;" />
+            <!-- Play button -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 group-hover:scale-110" style="background:#C89B3C;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              </div>
+            </div>
+            <!-- Duration badge -->
+            <div class="absolute bottom-2 right-2 rounded-md px-1.5 py-0.5 text-[10px] font-bold" style="background:rgba(0,0,0,0.75);color:#fff;">EP 1</div>
+          </div>
+          <div class="p-4">
+            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;">Episode 1</p>
+            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);">What is AVONIC?</p>
+            <p class="text-xs mt-1.5" style="color:rgba(255,255,255,0.4);">Introduction to the system</p>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="p-4">
-      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card2-tag">Dashboard</p>
-      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card2-title">Reading your sensor data live</p>
-    </div>
-  </div>
 
-  <div class="group rounded-2xl overflow-hidden border cursor-pointer transition-transform duration-200 hover:-translate-y-1" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
-    <div class="relative aspect-video overflow-hidden" style="background:#2A1504;">
-      <img src="./images/tutorial-3.jpg" alt="Tutorial 3" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-200" onerror="this.outerHTML = `<div class='w-full h-full flex items-center justify-center' style='background:#2A1504;'><svg width=32 height=32 viewBox='0 0 24 24' fill=none stroke='rgba(255,255,255,0.2)' stroke-width=1><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points='21 15 16 10 5 21'/></svg></div>`"/>
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110" style="background:#C89B3C;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <!-- EP2 — How AVONIC Works -->
+        <div class="yt-card group rounded-2xl overflow-hidden border cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+             style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);"
+             data-yt-id="UPueh-7IiA8"
+             data-yt-tag="Episode 2"
+             data-yt-title="How AVONIC Works"
+             role="button" tabindex="0" aria-label="Play: How AVONIC Works">
+          <div class="relative overflow-hidden" style="aspect-ratio:16/9;background:#2A1504;">
+            <img src="https://img.youtube.com/vi/UPueh-7IiA8/mqdefault.jpg"
+                 alt="EP2 thumbnail"
+                 class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-200 group-hover:scale-105"
+                 style="transition:opacity 0.2s ease, transform 0.35s ease;" />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 group-hover:scale-110" style="background:#C89B3C;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              </div>
+            </div>
+            <div class="absolute bottom-2 right-2 rounded-md px-1.5 py-0.5 text-[10px] font-bold" style="background:rgba(0,0,0,0.75);color:#fff;">EP 2</div>
+          </div>
+          <div class="p-4">
+            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;">Episode 2</p>
+            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);">How AVONIC Works</p>
+            <p class="text-xs mt-1.5" style="color:rgba(255,255,255,0.4);">Sensors, modes &amp; live data</p>
+          </div>
         </div>
-      </div>
+
+        <!-- EP3 — Coming Soon -->
+        <div class="rounded-2xl overflow-hidden border relative" style="background:#4A2A0A;border-color:rgba(255,255,255,0.08);">
+          <!-- Greyed-out placeholder thumbnail -->
+          <div class="relative overflow-hidden" style="aspect-ratio:16/9;background:#2A1504;">
+            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <!-- Animated pulse ring -->
+              <div class="relative flex items-center justify-center">
+                <span class="absolute w-14 h-14 rounded-full opacity-20 animate-ping" style="background:#C89B3C;animation-duration:1.8s;"></span>
+                <div class="relative w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(200,155,60,0.18);border:1px solid rgba(200,155,60,0.3);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C89B3C" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+              </div>
+              <p class="text-xs font-bold tracking-widest uppercase" style="color:#C89B3C;">Coming Soon</p>
+            </div>
+            <div class="absolute bottom-2 right-2 rounded-md px-1.5 py-0.5 text-[10px] font-bold" style="background:rgba(0,0,0,0.75);color:rgba(255,255,255,0.5);">EP 3</div>
+          </div>
+          <div class="p-4">
+            <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:rgba(200,155,60,0.45);">Episode 3</p>
+            <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.4);">More from AVONIC</p>
+            <p class="text-xs mt-1.5" style="color:rgba(255,255,255,0.25);">Video in production — stay tuned</p>
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+
+    </div><!-- /max-w -->
+
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
+      <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
+        <path d="M0 56 Q180 16 420 40 Q660 64 900 18 Q1140 -18 1440 26 L1440 56 Z" fill="#1E3A28"/>
+      </svg>
     </div>
-    <div class="p-4">
-      <p class="text-xs font-bold tracking-wide uppercase mb-1" style="color:#C89B3C;" data-i18n="tutorials-card3-tag">Advanced</p>
-      <p class="text-sm font-semibold leading-snug" style="color:rgba(255,255,255,0.85);" data-i18n="tutorials-card3-title">Auto vs Manual mode explained</p>
-    </div>
-  </div>
 
-</div>
-
-<div class="text-center">
-  <a href="#" class="inline-flex items-center gap-2 font-body font-bold text-sm px-8 py-3.5 rounded-full border transition-all duration-200 hover:-translate-y-0.5" style="background:transparent;border-color:#C89B3C;color:#E8B84B;">
-    <span data-i18n="tutorials-watch-more">Watch More</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </a>
-</div>
-
-    </div>
-
-<div class="absolute bottom-0 left-0 right-0 pointer-events-none z-10" style="margin-bottom:-1px;">
-  <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-10 md:h-14" style="display:block;overflow:visible;">
-    <path d="M0 56 Q180 16 420 40 Q660 64 900 18 Q1140 -18 1440 26 L1440 56 Z" fill="#1E3A28"/>
-  </svg>
-</div>
-    
   </section>
+
+  <!-- ── YouTube Modal Script ── -->
+  <script>
+  /* Safety net: ensure body scroll is never stuck from a stale cache */
+  document.body.style.overflow = '';
+  (function () {
+    const VIDEOS = [
+      { id: 'r4QXvhJoHuo', tag: 'Episode 1', title: 'What is AVONIC?' },
+      { id: 'UPueh-7IiA8', tag: 'Episode 2', title: 'How AVONIC Works' }
+    ];
+
+    const modal      = document.getElementById('yt-modal');
+    const backdrop   = document.getElementById('yt-backdrop');
+    const iframe     = document.getElementById('yt-iframe');
+    const closeBtn   = document.getElementById('yt-close');
+    const prevBtn    = document.getElementById('yt-prev');
+    const nextBtn    = document.getElementById('yt-next');
+    const dotsWrap   = document.getElementById('yt-dots');
+    const modalTag   = document.getElementById('yt-modal-tag');
+    const modalTitle = document.getElementById('yt-modal-title');
+    const ytLink     = document.getElementById('yt-modal-yt-link');
+
+    let currentIdx = 0;
+
+    /* Build nav dots */
+    VIDEOS.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'yt-dot w-2 h-2 rounded-full transition-all duration-200';
+      dot.setAttribute('aria-label', 'Go to episode ' + (i + 1));
+      dot.addEventListener('click', () => openModal(i));
+      dotsWrap.appendChild(dot);
+    });
+
+    function updateDots(idx) {
+      dotsWrap.querySelectorAll('.yt-dot').forEach((d, i) => {
+        d.style.background = i === idx ? '#C89B3C' : 'rgba(255,255,255,0.25)';
+        d.style.transform  = i === idx ? 'scale(1.4)' : 'scale(1)';
+      });
+    }
+
+    const fallbackThumb = document.getElementById('yt-fallback-thumb');
+    const fallbackLink  = document.getElementById('yt-fallback-link');
+    const fallbackTitle = document.getElementById('yt-fallback-title');
+    const fallbackEl    = document.getElementById('yt-fallback');
+
+    function showIframe() {
+      iframe.style.opacity = '1';
+      iframe.style.pointerEvents = 'auto';
+      fallbackEl.style.visibility = 'hidden';
+    }
+
+    function hideIframe() {
+      iframe.style.opacity = '0';
+      iframe.style.pointerEvents = 'none';
+      iframe.src = '';
+      fallbackEl.style.visibility = 'visible';
+    }
+
+    function populateFallback(v) {
+      fallbackThumb.src         = 'https://img.youtube.com/vi/' + v.id + '/maxresdefault.jpg';
+      fallbackLink.href         = 'https://youtu.be/' + v.id;
+      fallbackTitle.textContent = v.title;
+    }
+
+    function openModal(idx) {
+      currentIdx = idx;
+      const v = VIDEOS[idx];
+
+      modalTag.textContent   = v.tag;
+      modalTitle.textContent = v.title;
+      ytLink.href = 'https://youtu.be/' + v.id;
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === VIDEOS.length - 1;
+      updateDots(idx);
+
+      /* Always populate fallback behind the iframe */
+      populateFallback(v);
+      hideIframe();
+
+      /* Load iframe — onload reveals it and hides the fallback */
+      iframe.src = 'https://www.youtube.com/embed/' + v.id
+        + '?autoplay=1&rel=0&modestbranding=1';
+      iframe.onload = showIframe;
+
+      modal.style.setProperty('display', 'flex', 'important');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      hideIframe();
+      fallbackThumb.src = '';
+      modal.style.setProperty('display', 'none', 'important');
+      document.body.style.overflow = '';
+    }
+
+    /* Card click handlers */
+    document.querySelectorAll('.yt-card').forEach(card => {
+      const handler = () => {
+        const idx = VIDEOS.findIndex(v => v.id === card.dataset.ytId);
+        if (idx !== -1) openModal(idx);
+      };
+      card.addEventListener('click', handler);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); } });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    prevBtn.addEventListener('click', () => { if (currentIdx > 0) openModal(currentIdx - 1); });
+    nextBtn.addEventListener('click', () => { if (currentIdx < VIDEOS.length - 1) openModal(currentIdx + 1); });
+
+    document.addEventListener('keydown', e => {
+      if (modal.style.display === 'none' || modal.style.display === '') return;
+      if (e.key === 'Escape')      closeModal();
+      if (e.key === 'ArrowLeft'  && currentIdx > 0)                 openModal(currentIdx - 1);
+      if (e.key === 'ArrowRight' && currentIdx < VIDEOS.length - 1) openModal(currentIdx + 1);
+    });
+  })();
+  </script>
 
 
   <!-- ════════════════════════════════════════════
