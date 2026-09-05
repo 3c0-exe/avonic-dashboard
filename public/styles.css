@@ -44,7 +44,8 @@
 /* Regular Weight */
 @font-face {
     font-family: 'Quicksand';
-    src: url('../assets/fonts/Quicksand-Regular.ttf') format('truetype');
+    src: url('assets/fonts/Quicksand-Regular.ttf') format('truetype'),
+         url('/assets/fonts/Quicksand-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -5433,6 +5434,219 @@ background: linear-gradient(180deg, #2A4633 0%, #67AC7D 100%);
   }
   
   .export-modal-inner.show-mobile-preview .export-right {
-    display: none;v
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════════
+   DEMO MODE & SIMULATION DECK STYLES
+   ════════════════════════════════════════════ */
+.auth-demo-btn {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #2E6B47 0%, #1A4D2E 100%) !important;
+  border: 1.5px solid #C89B3C !important;
+  color: #F2EDE3 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 16px rgba(46, 107, 71, 0.35);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.auth-demo-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #378257 0%, #225C37 100%) !important;
+  box-shadow: 0 6px 22px rgba(200, 155, 60, 0.4);
+  border-color: #E8B84B !important;
+}
+
+.auth-demo-hint {
+  font-size: 11.5px;
+  color: #6B8068;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+/* Simulation Deck Floating Bar */
+#avonic-sim-deck {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sim-deck-card {
+  background: rgba(18, 38, 25, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(200, 155, 60, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  padding: 16px 18px;
+  width: 320px;
+  color: #F2EDE3;
+  user-select: none;
+}
+
+.sim-deck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sim-deck-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-live-pulse {
+  width: 8px;
+  height: 8px;
+  background-color: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #4ade80;
+  animation: simPulse 2s infinite;
+}
+
+@keyframes simPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.sim-deck-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #E8E0D0;
+}
+
+.sim-deck-min-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #E8E0D0;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sim-deck-min-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sim-scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sim-scenario-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #D6E2D5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.sim-scenario-btn:hover {
+  background: rgba(200, 155, 60, 0.15);
+  border-color: rgba(200, 155, 60, 0.5);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.sim-scenario-btn.active {
+  background: #C89B3C;
+  border-color: #E8B84B;
+  color: #1A281E;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(200, 155, 60, 0.4);
+}
+
+.sim-deck-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(232, 224, 208, 0.65);
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sim-deck-pulse-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #E8E0D0;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sim-deck-pulse-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Minimized Floating Badge */
+.sim-deck-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(18, 38, 25, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid #C89B3C;
+  color: #F2EDE3;
+  padding: 8px 14px;
+  border-radius: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.25s ease;
+}
+
+.sim-deck-badge:hover {
+  transform: scale(1.04);
+  background: rgba(26, 56, 36, 0.98);
+  box-shadow: 0 10px 28px rgba(200, 155, 60, 0.4);
+}
+
+@media (max-width: 640px) {
+  #avonic-sim-deck {
+    bottom: 84px;
+    right: 14px;
+  }
+  .sim-deck-card {
+    width: 290px;
+    padding: 12px 14px;
   }
 }

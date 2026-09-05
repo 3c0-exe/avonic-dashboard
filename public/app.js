@@ -4,8 +4,9 @@
    ═══════════════════════════════════ */
 'use strict';
 
-// ── Backend URL ───────────────────────────────────────────────
-// Change this to your Railway URL once deployed
+// ── Standalone & Demo Configuration ───────────────────────────
+// Set to true to run 100% client-side with realistic simulated telemetry
+const STANDALONE_MODE = true;
 const BASE_URL = 'https://avonic-main-hub-production.up.railway.app';
 
 // ── Sensor Configs & Worm Conditions ──────────────────────────
@@ -17,7 +18,7 @@ const WORM_CONFIGS = {
 };
 
 const CFG = {
-  POLL: 10000, // 10s — less aggressive for cloud polling vs local
+  POLL: 3500, // 3.5s — snappy, responsive live simulation
   HIST: 48,
   OPT: WORM_CONFIGS
 };
@@ -148,11 +149,420 @@ function closeSidebar() {
 }
 
 // ════════════════════════════════════
-// API — Online Backend
+// STANDALONE / DEMO MOCK BACKEND
+// Completely removes Railway / MongoDB / Hardware dependency
+// ════════════════════════════════════
+
+const AvonicMockDB = {
+  KEYS: {
+    DEVICES: 'avonic_mock_devices',
+    PROFILE: 'avonic_mock_profile',
+    USERS: 'avonic_mock_users',
+    MODES: 'avonic_mock_modes'
+  },
+
+  init() {
+    try {
+      if (!localStorage.getItem(this.KEYS.DEVICES)) {
+        const defaultDevices = [
+          {
+            espID: "AV-B92",
+            nickname: "Main Vermibin - Zone A",
+            status: "online",
+            mqtt_connected: true,
+            last_seen: new Date().toISOString()
+          },
+          {
+            espID: "AV-X11",
+            nickname: "Kitchen Hub - Zone B",
+            status: "online",
+            mqtt_connected: true,
+            last_seen: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem(this.KEYS.DEVICES, JSON.stringify(defaultDevices));
+      }
+
+      if (!localStorage.getItem(this.KEYS.PROFILE)) {
+        const defaultProfile = {
+          username: "DemoUser",
+          email: "demo@avonic.io",
+          last_login: new Date().toISOString()
+        };
+        localStorage.setItem(this.KEYS.PROFILE, JSON.stringify(defaultProfile));
+      }
+
+      if (!localStorage.getItem(this.KEYS.USERS)) {
+        const defaultUsers = [
+          { username: "demo", email: "demo@avonic.io", password: "password123" }
+        ];
+        localStorage.setItem(this.KEYS.USERS, JSON.stringify(defaultUsers));
+      }
+
+      if (!localStorage.getItem(this.KEYS.MODES)) {
+        localStorage.setItem(this.KEYS.MODES, JSON.stringify({
+          "AV-B92": { 1: "auto", 2: "auto" },
+          "AV-X11": { 1: "auto", 2: "auto" }
+        }));
+      }
+    } catch(e) {
+      console.warn('Storage unavailable:', e);
+    }
+  },
+
+  getDevices() {
+    this.init();
+    try {
+      return JSON.parse(localStorage.getItem(this.KEYS.DEVICES)) || [];
+    } catch(e) { return []; }
+  },
+
+  claimDevice(espID, nickname) {
+    this.init();
+    const list = this.getDevices();
+    const id = (espID || 'AV-NEW').toUpperCase().trim();
+    const existing = list.find(d => d.espID === id);
+    if (existing) {
+      existing.status = 'online';
+      existing.mqtt_connected = true;
+      localStorage.setItem(this.KEYS.DEVICES, JSON.stringify(list));
+      return existing;
+    }
+    const newDev = {
+      espID: id,
+      nickname: nickname || id,
+      status: "online",
+      mqtt_connected: true,
+      last_seen: new Date().toISOString()
+    };
+    list.push(newDev);
+    localStorage.setItem(this.KEYS.DEVICES, JSON.stringify(list));
+    return newDev;
+  },
+
+  unclaimDevice(espID) {
+    this.init();
+    let list = this.getDevices();
+    list = list.filter(d => d.espID !== espID);
+    localStorage.setItem(this.KEYS.DEVICES, JSON.stringify(list));
+    return true;
+  },
+
+  renameDevice(espID, nickname) {
+    this.init();
+    const list = this.getDevices();
+    const dev = list.find(d => d.espID === espID);
+    if (dev) {
+      dev.nickname = nickname;
+      localStorage.setItem(this.KEYS.DEVICES, JSON.stringify(list));
+    }
+    return true;
+  },
+
+  getProfile() {
+    this.init();
+    try {
+      return JSON.parse(localStorage.getItem(this.KEYS.PROFILE)) || { username: 'DemoUser', email: 'demo@avonic.io' };
+    } catch(e) {
+      return { username: 'DemoUser', email: 'demo@avonic.io' };
+    }
+  },
+
+  updateProfile(username, email) {
+    this.init();
+    const prof = { username, email, last_login: new Date().toISOString() };
+    localStorage.setItem(this.KEYS.PROFILE, JSON.stringify(prof));
+    return prof;
+  },
+
+  getModes(espID) {
+    this.init();
+    try {
+      const all = JSON.parse(localStorage.getItem(this.KEYS.MODES)) || {};
+      return all[espID] || { 1: "auto", 2: "auto" };
+    } catch(e) {
+      return { 1: "auto", 2: "auto" };
+    }
+  },
+
+  setMode(espID, bin, mode) {
+    this.init();
+    try {
+      const all = JSON.parse(localStorage.getItem(this.KEYS.MODES)) || {};
+      if (!all[espID]) all[espID] = { 1: "auto", 2: "auto" };
+      all[espID][bin] = mode;
+      localStorage.setItem(this.KEYS.MODES, JSON.stringify(all));
+      return all[espID];
+    } catch(e) {
+      return { 1: mode, 2: mode };
+    }
+  },
+
+  login(username, password) {
+    this.init();
+    const users = JSON.parse(localStorage.getItem(this.KEYS.USERS)) || [];
+    let user = users.find(u => u.username && u.username.toLowerCase() === (username || '').toLowerCase());
+    if (!user) {
+      // In demo mode, accept any non-empty credentials and auto-register session
+      user = { username: username || 'DemoUser', email: `${(username || 'demo').toLowerCase()}@avonic.io`, password: password || '123' };
+      users.push(user);
+      localStorage.setItem(this.KEYS.USERS, JSON.stringify(users));
+    }
+    this.updateProfile(user.username, user.email || `${user.username}@avonic.io`);
+    return {
+      token: 'DEMO_TOKEN_' + Date.now(),
+      user: { username: user.username, email: user.email }
+    };
+  },
+
+  register(username, email, password) {
+    this.init();
+    const users = JSON.parse(localStorage.getItem(this.KEYS.USERS)) || [];
+    const user = { username, email, password };
+    users.push(user);
+    localStorage.setItem(this.KEYS.USERS, JSON.stringify(users));
+    this.updateProfile(username, email);
+    return {
+      token: 'DEMO_TOKEN_' + Date.now(),
+      user: { username, email }
+    };
+  }
+};
+
+const AvonicSimulator = {
+  scenario: 'stable', // 'stable', 'heat', 'dry', 'gas', 'critical_system', 'live'
+  
+  actuators: {
+    b1_intake_fan: false,
+    b1_exhaust_fan: false,
+    b1_pump: false,
+    b2_intake_fan: false,
+    b2_exhaust_fan: false,
+    b2_pump: false,
+    peltier_main: false,
+    peltier_pump: false
+  },
+
+  battery: 88,
+  water: 84,
+  charging: false,
+
+  setScenario(name) {
+    this.scenario = name;
+    if (name === 'heat') {
+      this.actuators.b1_intake_fan = true;
+      this.actuators.b1_exhaust_fan = true;
+      this.actuators.peltier_main = true;
+    } else if (name === 'dry') {
+      this.actuators.b1_pump = true;
+    } else if (name === 'gas') {
+      this.actuators.b1_exhaust_fan = true;
+    } else if (name === 'critical_system') {
+      this.battery = 12;
+      this.water = 8;
+    } else if (name === 'stable') {
+      this.battery = 88;
+      this.water = 84;
+    }
+  },
+
+  setActuator(ep, stateVal) {
+    const on = stateVal === 'on' || stateVal === true;
+    if (ep.includes('bin1')) {
+      if (ep.includes('exhaust-fan')) this.actuators.b1_exhaust_fan = on;
+      if (ep.includes('intake-fan')) this.actuators.b1_intake_fan = on;
+      if (ep.includes('pump')) this.actuators.b1_pump = on;
+    } else if (ep.includes('bin2')) {
+      if (ep.includes('exhaust-fan')) this.actuators.b2_exhaust_fan = on;
+      if (ep.includes('intake-fan')) this.actuators.b2_intake_fan = on;
+      if (ep.includes('pump')) this.actuators.b2_pump = on;
+    } else if (ep.includes('peltier')) {
+      this.actuators.peltier_main = on;
+      this.actuators.peltier_pump = on;
+    }
+    return true;
+  },
+
+  rnd(min, max, dec = 1) {
+    const val = Math.random() * (max - min) + min;
+    return +val.toFixed(dec);
+  },
+
+  getLatestData() {
+    const mode1 = S.mode[1] || 'auto';
+    const mode2 = S.mode[2] || 'auto';
+    let b1, b2;
+
+    switch (this.scenario) {
+      case 'heat':
+        b1 = { temp: this.rnd(35.5, 37.2), hum: this.rnd(42, 52), soil: this.rnd(50, 60), gas: this.rnd(45, 75) };
+        b2 = { temp: this.rnd(34.8, 36.5), hum: this.rnd(44, 54), soil: this.rnd(52, 62), gas: this.rnd(40, 70) };
+        break;
+      case 'dry':
+        b1 = { temp: this.rnd(26.0, 27.5), hum: this.rnd(32, 38), soil: this.rnd(34, 39), gas: this.rnd(30, 55) };
+        b2 = { temp: this.rnd(25.8, 27.0), hum: this.rnd(34, 40), soil: this.rnd(35, 41), gas: this.rnd(28, 50) };
+        break;
+      case 'gas':
+        b1 = { temp: this.rnd(25.2, 26.8), hum: this.rnd(68, 76), soil: this.rnd(72, 78), gas: this.rnd(210, 245) };
+        b2 = { temp: this.rnd(24.9, 26.4), hum: this.rnd(66, 74), soil: this.rnd(70, 76), gas: this.rnd(195, 230) };
+        break;
+      case 'critical_system':
+        b1 = { temp: this.rnd(24.0, 25.8), hum: this.rnd(68, 74), soil: this.rnd(70, 76), gas: this.rnd(25, 45) };
+        b2 = { temp: this.rnd(24.2, 26.0), hum: this.rnd(67, 73), soil: this.rnd(69, 75), gas: this.rnd(28, 48) };
+        this.battery = 12;
+        this.water = 8;
+        break;
+      case 'live':
+        b1 = { temp: this.rnd(21.0, 31.0), hum: this.rnd(50, 85), soil: this.rnd(55, 85), gas: this.rnd(15, 110) };
+        b2 = { temp: this.rnd(21.5, 30.5), hum: this.rnd(52, 83), soil: this.rnd(54, 82), gas: this.rnd(18, 105) };
+        break;
+      case 'stable':
+      default:
+        b1 = { temp: this.rnd(24.0, 25.6), hum: this.rnd(70, 76), soil: this.rnd(71, 77), gas: this.rnd(22, 38) };
+        b2 = { temp: this.rnd(24.4, 25.9), hum: this.rnd(68, 74), soil: this.rnd(69, 75), gas: this.rnd(24, 42) };
+        break;
+    }
+
+    // Smart automatic actuator state
+    let b1_exh = this.actuators.b1_exhaust_fan;
+    let b1_int = this.actuators.b1_intake_fan;
+    let b1_pmp = this.actuators.b1_pump;
+
+    let b2_exh = this.actuators.b2_exhaust_fan;
+    let b2_int = this.actuators.b2_intake_fan;
+    let b2_pmp = this.actuators.b2_pump;
+
+    if (mode1 === 'auto') {
+      b1_exh = b1.temp > 28 || b1.gas > 100;
+      b1_int = b1.temp > 28;
+      b1_pmp = b1.soil < 60;
+    }
+    if (mode2 === 'auto') {
+      b2_exh = b2.temp > 28 || b2.gas > 100;
+      b2_int = b2.temp > 28;
+      b2_pmp = b2.soil < 60;
+    }
+
+    const waterTemp = b1.temp > 30 ? this.rnd(28.0, 31.5) : this.rnd(23.2, 24.8);
+    const now = new Date();
+
+    return {
+      temp1: b1.temp,
+      hum1: b1.hum,
+      soil1_percent: b1.soil,
+      gas1_ppm: b1.gas,
+      bin1_intake_fan_state: b1_int,
+      bin1_exhaust_fan_state: b1_exh,
+      bin1_pump_state: b1_pmp,
+
+      temp2: b2.temp,
+      hum2: b2.hum,
+      soil2_percent: b2.soil,
+      gas2_ppm: b2.gas,
+      bin2_intake_fan_state: b2_int,
+      bin2_exhaust_fan_state: b2_exh,
+      bin2_pump_state: b2_pmp,
+
+      ds18b20_temp: waterTemp,
+      water_level: this.water,
+      water_level_bin1: this.water,
+      peltier_main_state: this.actuators.peltier_main,
+      peltier_pump_state: this.actuators.peltier_pump,
+      battery_percent: this.battery,
+      charging: this.charging,
+      wifi_connected: true,
+      lastUpdate: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      espID: S.activeEspID || 'AV-B92'
+    };
+  },
+
+  getHistory(espID, hours = 24) {
+    const points = Math.min(200, Math.max(24, Math.floor(hours * 4)));
+    const now = Date.now();
+    const intervalMs = (hours * 3600 * 1000) / points;
+    const readings = [];
+
+    const baseT = this.scenario === 'heat' ? 34 : 24.5;
+    const baseS = this.scenario === 'dry' ? 42 : 73;
+    const baseH = this.scenario === 'dry' ? 38 : 71;
+    const baseG = this.scenario === 'gas' ? 190 : 32;
+
+    for (let i = points - 1; i >= 0; i--) {
+      const ts = new Date(now - i * intervalMs);
+      const angle = (i / points) * Math.PI * 2;
+      const diurnalTemp = Math.sin(angle) * 1.5;
+
+      readings.push({
+        timestamp: ts.toISOString(),
+        bin1: {
+          temp: +(baseT + diurnalTemp + (Math.random() * 0.8 - 0.4)).toFixed(1),
+          humidity: +(baseH - diurnalTemp * 0.5 + (Math.random() * 1.5 - 0.75)).toFixed(1),
+          soil: +(baseS + (Math.random() * 1.2 - 0.6)).toFixed(1),
+          gas: +(baseG + (Math.random() * 6 - 3)).toFixed(1)
+        },
+        bin2: {
+          temp: +(baseT + 0.4 + diurnalTemp + (Math.random() * 0.8 - 0.4)).toFixed(1),
+          humidity: +(baseH - 2 - diurnalTemp * 0.5 + (Math.random() * 1.5 - 0.75)).toFixed(1),
+          soil: +(baseS - 2 + (Math.random() * 1.2 - 0.6)).toFixed(1),
+          gas: +(baseG + 4 + (Math.random() * 6 - 3)).toFixed(1)
+        }
+      });
+    }
+    return readings;
+  },
+
+  getHourlyRange(startDate, endDate) {
+    const hours = 24;
+    const bin1 = [];
+    const bin2 = [];
+
+    const baseT = this.scenario === 'heat' ? 34 : 24.5;
+    const baseS = this.scenario === 'dry' ? 42 : 73;
+    const baseH = this.scenario === 'dry' ? 38 : 71;
+    const baseG = this.scenario === 'gas' ? 190 : 32;
+
+    for (let h = 0; h < hours; h++) {
+      const label = h.toString().padStart(2, '0') + ':00';
+      const angle = (h / 24) * Math.PI * 2;
+      const diurnal = Math.sin(angle) * 1.8;
+
+      bin1.push({
+        label,
+        temperature: +(baseT + diurnal).toFixed(1),
+        soilMoisture: +(baseS + Math.sin(angle * 2) * 2).toFixed(1),
+        humidity: +(baseH - diurnal * 0.7).toFixed(1),
+        gasLevels: +(baseG + Math.cos(angle) * 8).toFixed(1)
+      });
+
+      bin2.push({
+        label,
+        temperature: +(baseT + 0.5 + diurnal).toFixed(1),
+        soilMoisture: +(baseS - 1.5 + Math.sin(angle * 2) * 2).toFixed(1),
+        humidity: +(baseH - 2 - diurnal * 0.7).toFixed(1),
+        gasLevels: +(baseG + 3 + Math.cos(angle) * 8).toFixed(1)
+      });
+    }
+
+    return { success: true, bin1, bin2 };
+  }
+};
+
+window.AvonicMockDB = AvonicMockDB;
+window.AvonicSimulator = AvonicSimulator;
+
+// ════════════════════════════════════
+// API — Unified Client / Mock Interface
 // ════════════════════════════════════
 const API = {
   // Fetch latest sensor data from the active device
   async get() {
+    if (STANDALONE_MODE) {
+      if (!S.activeEspID && S.bins && S.bins.length > 0) {
+        S.activeEspID = S.bins[0].bin_id;
+      }
+      return AvonicSimulator.getLatestData();
+    }
+
     if (!S.activeEspID) throw new Error('NO_DEVICE');
     const r = await fetch(`${BASE_URL}/api/sensors/${S.activeEspID}/latest`, {
       headers: Token.headers(),
@@ -160,14 +570,17 @@ const API = {
     });
     if (r.status === 401) throw new Error('401');
     if (!r.ok) throw new Error('HTTP ' + r.status);
-// AFTER
-const json = await r.json();
-console.log('API /latest response:', JSON.stringify(json).slice(0, 300));
-return flattenSensorData(json);
+    const json = await r.json();
+    return flattenSensorData(json);
   },
 
-  // Send actuator command via backend → MQTT → ESP32
+  // Send actuator command
   async cmd(ep, val) {
+    if (STANDALONE_MODE) {
+      AvonicSimulator.setActuator(ep, val);
+      return { success: true, state: val };
+    }
+
     const r = await fetch(`${BASE_URL}/api${ep}`, {
       method: 'POST',
       headers: Token.headers(),
@@ -180,6 +593,10 @@ return flattenSensorData(json);
 
   // Get all claimed devices for the logged-in user
   async getDevices() {
+    if (STANDALONE_MODE) {
+      return { success: true, devices: AvonicMockDB.getDevices() };
+    }
+
     const r = await fetch(`${BASE_URL}/api/devices/claimed`, {
       headers: Token.headers()
     });
@@ -189,6 +606,11 @@ return flattenSensorData(json);
 
   // Claim a device by espID
   async claimDevice(espID) {
+    if (STANDALONE_MODE) {
+      const dev = AvonicMockDB.claimDevice(espID);
+      return { success: true, device: dev };
+    }
+
     const r = await fetch(`${BASE_URL}/api/devices/claim`, {
       method: 'POST',
       headers: Token.headers(),
@@ -203,6 +625,11 @@ return flattenSensorData(json);
 
   // Unclaim a device
   async unclaimDevice(espID) {
+    if (STANDALONE_MODE) {
+      AvonicMockDB.unclaimDevice(espID);
+      return { success: true };
+    }
+
     const r = await fetch(`${BASE_URL}/api/devices/${espID}/unclaim`, {
       method: 'DELETE',
       headers: Token.headers()
@@ -213,6 +640,11 @@ return flattenSensorData(json);
 
   // Rename a device
   async renameDevice(espID, nickname) {
+    if (STANDALONE_MODE) {
+      AvonicMockDB.renameDevice(espID, nickname);
+      return { success: true };
+    }
+
     const r = await fetch(`${BASE_URL}/api/devices/${espID}/nickname`, {
       method: 'PUT',
       headers: Token.headers(),
@@ -224,6 +656,10 @@ return flattenSensorData(json);
 
   // Get user profile
   async getProfile() {
+    if (STANDALONE_MODE) {
+      return { success: true, user: AvonicMockDB.getProfile() };
+    }
+
     const r = await fetch(`${BASE_URL}/api/user/profile`, {
       headers: Token.headers()
     });
@@ -233,6 +669,11 @@ return flattenSensorData(json);
 
   // Update user profile
   async updateProfile(username, email) {
+    if (STANDALONE_MODE) {
+      const user = AvonicMockDB.updateProfile(username, email);
+      return { success: true, user };
+    }
+
     const r = await fetch(`${BASE_URL}/api/user/profile`, {
       method: 'PUT',
       headers: Token.headers(),
@@ -247,6 +688,11 @@ return flattenSensorData(json);
 
   // Get mode state for active device
   async getMode() {
+    if (STANDALONE_MODE) {
+      const modes = AvonicMockDB.getModes(S.activeEspID || 'AV-B92');
+      return { success: true, bin_modes: { bin1: modes[1], bin2: modes[2] } };
+    }
+
     if (!S.activeEspID) return null;
     const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/mode`, {
       headers: Token.headers()
@@ -257,6 +703,11 @@ return flattenSensorData(json);
 
   // Set mode for a bin
   async setMode(bin, mode) {
+    if (STANDALONE_MODE) {
+      AvonicMockDB.setMode(S.activeEspID || 'AV-B92', bin, mode);
+      return { success: true, bin, mode };
+    }
+
     if (!S.activeEspID) return;
     const r = await fetch(`${BASE_URL}/api/devices/${S.activeEspID}/mode`, {
       method: 'POST',
@@ -272,6 +723,10 @@ return flattenSensorData(json);
 
   // Change password
   async changePassword(currentPassword, newPassword) {
+    if (STANDALONE_MODE) {
+      return { success: true };
+    }
+
     const r = await fetch(`${BASE_URL}/api/user/change-password`, {
       method: 'POST',
       headers: Token.headers(),
@@ -288,8 +743,9 @@ return flattenSensorData(json);
 // ── Flatten MongoDB sensor doc → flat UI format ───────────────
 // The backend stores data as { bin1: {temp, humidity, soil, gas,...}, bin2: {...}, system: {...} }
 // The UI expects flat keys like temp1, hum1, soil1_percent, gas1_ppm etc.
-// AFTER
 function flattenSensorData(json) {
+  if (!json) return null;
+  if (json.temp1 !== undefined) return json; // Pass through if already flat
   const d = json.data || json.reading || json;
   if (!d || !d.bin1) return null;
 
@@ -540,23 +996,27 @@ function pushHistFromDB(readings) {
 
 async function fetchHistory(espID, hours = 24) {
   try {
-    const r = await fetch(
-      `${BASE_URL}/api/sensors/${espID}/history?hours=${hours}`,
-      { headers: Token.headers(), cache: 'no-store' }
-    );
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    if (d.success && Array.isArray(d.readings) && d.readings.length > 0) {
-      pushHistFromDB(d.readings);
-      // Refresh whichever chart page is active
+    let readings = [];
+    if (STANDALONE_MODE) {
+      readings = AvonicSimulator.getHistory(espID, hours);
+    } else {
+      const r = await fetch(
+        `${BASE_URL}/api/sensors/${espID}/history?hours=${hours}`,
+        { headers: Token.headers(), cache: 'no-store' }
+      );
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d.success && Array.isArray(d.readings)) readings = d.readings;
+    }
+
+    if (Array.isArray(readings) && readings.length > 0) {
+      pushHistFromDB(readings);
       if (Router.cur() === 'bin-fluctuation') updateBF();
       if (Router.cur() === 'quick-insights')  renderQI();
       renderRecentQI();
-      toast(`📊 Loaded ${d.readings.length} historical readings`, 'ok');
     }
   } catch(e) {
     console.warn('⚠️ History prefetch failed (non-fatal):', e.message);
-    // Silent fail — live polling fills hist over time anyway
   }
 }
 
@@ -1285,16 +1745,20 @@ async function togglePeltierLoop() {
   if (btn) btn.disabled = true;
 
   try {
-    if (!S.activeEspID) throw new Error('No device selected');
+    if (!S.activeEspID && S.bins && S.bins.length > 0) {
+      S.activeEspID = S.bins[0].bin_id;
+    }
 
-    const r = await fetch(`${BASE_URL}/api/peltier/loop`, {
-      method: 'POST',
-      headers: Token.headers(),
-      body: JSON.stringify({
-        state: newState ? 'on' : 'off'
-      })
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (STANDALONE_MODE) {
+      AvonicSimulator.setActuator('/peltier/loop', newState ? 'on' : 'off');
+    } else {
+      const r = await fetch(`${BASE_URL}/api/peltier/loop`, {
+        method: 'POST',
+        headers: Token.headers(),
+        body: JSON.stringify({ state: newState ? 'on' : 'off' })
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+    }
 
     if (S.data) {
       S.data.peltier_main_state = newState;
@@ -1672,21 +2136,24 @@ syncDateInputs('bf-date-to-mob',   'bf-date-to');
 }
 
 async function fetchHourlyRange(startDate, endDate) {
-  if (!S.activeEspID) return;
-  console.log('📅 Fetching hourly range:', startDate, 'to', endDate);
+  if (!S.activeEspID && S.bins && S.bins.length > 0) {
+    S.activeEspID = S.bins[0].bin_id;
+  }
   try {
-    const endISO   = new Date(endDate + 'T23:59:59Z').toISOString();
-    const startISO = new Date(startDate + 'T00:00:00Z').toISOString();
-    console.log('📅 Adjusted range:', startISO, 'to', endISO);
-    const r = await fetch(
-      `${BASE_URL}/api/sensors/${S.activeEspID}/hourly?start=${startISO}&end=${endISO}`,
-      { headers: Token.headers(), cache: 'no-store' }
-    );
-    console.log('📅 Hourly response status:', r.status);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    console.log('📅 Hourly data:', d);
-    if (!d.success) return;
+    let d;
+    if (STANDALONE_MODE) {
+      d = AvonicSimulator.getHourlyRange(startDate, endDate);
+    } else {
+      const endISO   = new Date(endDate + 'T23:59:59Z').toISOString();
+      const startISO = new Date(startDate + 'T00:00:00Z').toISOString();
+      const r = await fetch(
+        `${BASE_URL}/api/sensors/${S.activeEspID}/hourly?start=${startISO}&end=${endISO}`,
+        { headers: Token.headers(), cache: 'no-store' }
+      );
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      d = await r.json();
+    }
+    if (!d || !d.success) return;
 
     const bin1Rows = d.bin1 || [];
     const bin2Rows = d.bin2 || [];
@@ -1835,8 +2302,8 @@ function authSetLoading(btnId, loading, label) {
 
 // ── LOGIN ────────────────────────────
 async function authLogin() {
-  const username = ($('login-username') || {}).value?.trim() || '';
-  const password = ($('login-password') || {}).value || '';
+  const username = ($('login-username') || {}).value?.trim() || 'demo';
+  const password = ($('login-password') || {}).value || 'password123';
 
   if (!username || !password) { authBanner('Username and password required.'); return; }
 
@@ -1844,6 +2311,22 @@ async function authLogin() {
   authClearBanner();
 
   try {
+    if (STANDALONE_MODE) {
+      const d = AvonicMockDB.login(username, password);
+      Token.set(d.token);
+      Auth.loggedIn = true;
+      Auth.username = d.user?.username || username;
+      authHide();
+      setText('dev-loggedin-user', Auth.username);
+      await loadProfile();
+      await loadDevices();
+      await loadMode();
+      if (S.activeEspID) await fetchHistory(S.activeEspID);
+      startPolling();
+      toast(`Welcome back, ${Auth.username} 👋`, 'ok');
+      return;
+    }
+
     const r = await fetch(`${BASE_URL}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1857,12 +2340,12 @@ async function authLogin() {
       authHide();
       setText('dev-loggedin-user', Auth.username);
       // Load devices then start polling
-await loadProfile();
-await loadDevices();
-await loadMode();
-if (S.activeEspID) await fetchHistory(S.activeEspID);
-startPolling();
-toast(`Welcome back, ${Auth.username} 👋`, 'ok');
+      await loadProfile();
+      await loadDevices();
+      await loadMode();
+      if (S.activeEspID) await fetchHistory(S.activeEspID);
+      startPolling();
+      toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     } else {
       authBanner(d.error || 'Invalid credentials.');
     }
@@ -1872,6 +2355,22 @@ toast(`Welcome back, ${Auth.username} 👋`, 'ok');
     authSetLoading('login-submit', false, 'Log In');
   }
 }
+
+async function demoInstantLogin() {
+  const d = AvonicMockDB.login('DemoUser', 'demo123');
+  Token.set(d.token);
+  Auth.loggedIn = true;
+  Auth.username = d.user.username;
+  authHide();
+  setText('dev-loggedin-user', Auth.username);
+  await loadProfile();
+  await loadDevices();
+  await loadMode();
+  if (S.activeEspID) await fetchHistory(S.activeEspID);
+  startPolling();
+  toast(`✨ Instant Demo Access — Welcome, ${Auth.username}!`, 'ok');
+}
+window.demoInstantLogin = demoInstantLogin;
 
 // ── REGISTER ─────────────────────────
 async function authRegister() {
@@ -1885,6 +2384,21 @@ async function authRegister() {
   authClearBanner();
 
   try {
+    if (STANDALONE_MODE) {
+      const d = AvonicMockDB.register(username, email, password);
+      Token.set(d.token);
+      Auth.loggedIn = true;
+      Auth.username = d.user?.username || username;
+      authHide();
+      setText('dev-loggedin-user', Auth.username);
+      await loadProfile();
+      await loadDevices();
+      if (S.activeEspID) await fetchHistory(S.activeEspID);
+      startPolling();
+      toast('Account created! Add a device to get started.', 'ok');
+      return;
+    }
+
     const r = await fetch(`${BASE_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1899,11 +2413,11 @@ async function authRegister() {
         Auth.username = d.user?.username || username;
         authHide();
         setText('dev-loggedin-user', Auth.username);
-await loadProfile();
-await loadDevices();
-if (S.activeEspID) await fetchHistory(S.activeEspID);
-startPolling();
-toast('Account created! Add a device to get started.', 'ok');
+        await loadProfile();
+        await loadDevices();
+        if (S.activeEspID) await fetchHistory(S.activeEspID);
+        startPolling();
+        toast('Account created! Add a device to get started.', 'ok');
       } else {
         authBanner('Account created! Please log in.', 'ok');
         setTimeout(() => authTab('login'), 1500);
@@ -1925,6 +2439,17 @@ async function authForgot() {
 
   authSetLoading('forgot-submit', true, 'Send Reset Link');
   authClearBanner();
+
+  if (STANDALONE_MODE) {
+    setTimeout(() => {
+      authBanner('Reset link simulated! Token: DEMO-RESET-2026', 'ok');
+      const resetTokenInput = document.getElementById('reset-token');
+      if (resetTokenInput) resetTokenInput.value = 'DEMO-RESET-2026';
+      setTimeout(() => authTab('reset'), 1600);
+      authSetLoading('forgot-submit', false, 'Send Reset Link');
+    }, 400);
+    return;
+  }
 
   try {
     const r = await fetch(`${BASE_URL}/api/password/reset-request`, {
@@ -1954,6 +2479,15 @@ async function authReset() {
 
   authSetLoading('reset-submit', true, 'Reset Password');
   authClearBanner();
+
+  if (STANDALONE_MODE) {
+    setTimeout(() => {
+      authBanner('Password successfully updated! Please log in.', 'ok');
+      setTimeout(() => authTab('login'), 1500);
+      authSetLoading('reset-submit', false, 'Reset Password');
+    }, 400);
+    return;
+  }
 
   try {
     const r = await fetch(`${BASE_URL}/api/password/reset`, {
@@ -1989,30 +2523,18 @@ async function authLogout() {
   S.activeEspID = null;
   S.user = null;
 
-  // --- ADD THIS TO KILL ANTI-FLICKER ---
   const antiFlicker = document.getElementById('anti-flicker');
   if (antiFlicker) antiFlicker.remove();
-  // -------------------------------------
 
   closeAllModals();
   toast('Logged out', '');
   
   setTimeout(() => { window.location.href = 'app.html'; }, 600);
 }
+
 // ── DEV BYPASS ───────────────────────
 async function devBypassLogin() {
-  Token.set('DEV_BYPASS_TOKEN'); // Save the dummy token!
-  Auth.loggedIn = true;
-  Auth.username = 'dev';
-  authHide();
-  setText('dev-loggedin-user', 'dev (bypassed)');
-  
-  // Wrap these in try/catch because the backend might reject the fake token
-  try { await loadDevices(); } catch(e) {}
-  try { await loadMode(); } catch(e) {}
-  
-  startPolling();
-  toast('⚡ Dev bypass — skipped login', 'ok');
+  demoInstantLogin();
 }
 
 // ════════════════════════════════════
@@ -2348,6 +2870,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Auto-login if token exists ──────────────────────────────
   const existingToken = Token.get();
   
+  if (STANDALONE_MODE) {
+    if (existingToken) {
+      authHide();
+      const profileData = AvonicMockDB.getProfile();
+      Auth.loggedIn = true;
+      Auth.username = profileData.username || 'DemoUser';
+      S.user = profileData;
+      setText('dev-loggedin-user', Auth.username);
+      setText('acc-username', S.user.username || '--');
+      setText('acc-email', S.user.email || '--');
+      
+      if (!window.location.hash || window.location.hash === '#/') {
+        window.location.hash = '#/home';
+      }
+
+      await loadDevices();
+      await loadMode();
+      if (S.activeEspID) await fetchHistory(S.activeEspID);
+      startPolling();
+    } else {
+      const userInp = document.getElementById('login-username');
+      const passInp = document.getElementById('login-password');
+      if (userInp && !userInp.value) userInp.value = 'demo';
+      if (passInp && !passInp.value) passInp.value = 'demo123';
+      authShow();
+    }
+    return;
+  }
+
   // 1. Check for Dev Bypass FIRST
   if (existingToken === 'DEV_BYPASS_TOKEN') {
     authHide();
@@ -2387,26 +2938,23 @@ document.addEventListener('DOMContentLoaded', async () => {
           window.location.hash = '#/home';
         }
 
-await loadDevices();
-await loadMode();
-if (S.activeEspID) await fetchHistory(S.activeEspID);
-startPolling();
+        await loadDevices();
+        await loadMode();
+        if (S.activeEspID) await fetchHistory(S.activeEspID);
+        startPolling();
       } else if (r.status === 401) {
-        // ONLY delete the token if the server explicitly says it is expired
         Token.clear();
         const antiFlicker = document.getElementById('anti-flicker');
         if (antiFlicker) antiFlicker.remove();
         authShow();
         toast('Session expired. Please log in.', 'err');
       } else {
-        // Server threw a 502/504 error, but token is still good. Do NOT delete token!
         const antiFlicker = document.getElementById('anti-flicker');
         if (antiFlicker) antiFlicker.remove();
         authShow();
         toast('Server error. Please try again.', 'err');
       }
     } catch(e) {
-      // Network error (Railway is asleep, or lost internet). Do NOT delete token!
       const antiFlicker = document.getElementById('anti-flicker');
       if (antiFlicker) antiFlicker.remove();
       authShow();

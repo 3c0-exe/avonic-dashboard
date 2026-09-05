@@ -1,0 +1,22 @@
+{
+  "name": "avonic-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AVONIC — Smarter Worm Health Smart Vermicomposting Dashboard (Standalone Demo)",
+  "scripts": {
+    "start": "serve public",
+    "dev": "serve public"
+  },
+  "keywords": [
+    "vermicomposting",
+    "dashboard",
+    "iot",
+    "agriculture",
+    "sensors"
+  ],
+  "author": "AVONIC Team",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

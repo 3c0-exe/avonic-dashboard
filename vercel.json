@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/app", "destination": "/public/app.html" },
+    { "source": "/app.html", "destination": "/public/app.html" },
+    { "source": "/:path*", "destination": "/public/:path*" }
+  ]
+}
